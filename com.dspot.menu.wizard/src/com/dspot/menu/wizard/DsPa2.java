@@ -96,7 +96,7 @@ public class DsPa2 extends WizardPage {
 		lb3.setText("Amplification method :  ");
 		
 		Text tx2 = new Text(composite,SWT.BORDER);
-		tx2.setText("Add");
+		tx2.setText("MethodAdd");
 		tx2.setLayoutData(gd);
 		tx2.addKeyListener(new KeyListener() {
 			@Override

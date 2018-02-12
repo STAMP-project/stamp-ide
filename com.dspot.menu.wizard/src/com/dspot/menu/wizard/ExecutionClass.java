@@ -23,7 +23,7 @@ public class ExecutionClass extends Thread {
 		
 		out.println(" DSpot is beeing executed ");
 		out.println();
-	    String[] Orders = {"cmd","/C","java -jar C:\\Users\\A683946\\workspace\\com.dspot.menu.wizard\\lib\\dspot-1.0.5-jar-with-dependencies.jar -p"+parameters[1]+"\\dspot.properties -i 1 -t "+parameters[3]+" -a MethodAdd"};
+	    String[] Orders = {"cmd","/C","java -jar C:\\Users\\A683946\\workspace\\com.dspot.menu.wizard\\lib\\dspot-1.0.5-jar-with-dependencies.jar -p "+parameters[1]+"\\dspot.properties -i "+parameters[2]+" -t "+parameters[3]+" -a "+parameters[4]};
 
 		try {
 			Process pro = Runtime.getRuntime().exec(Orders);
