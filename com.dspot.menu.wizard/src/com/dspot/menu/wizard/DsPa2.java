@@ -12,10 +12,14 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SegmentListener;
+import org.eclipse.swt.events.SegmentEvent;
 
 public class DsPa2 extends WizardPage {
 	
-	private boolean[] Comp = {true,false};
+	private boolean[] Comp = {true,false};  // this is to set page complete
+	// [0] i : number of iterations, [1] execution test class, [2] Method
+	private String[] MyStrings = new String[3];
 	
 	public DsPa2() {
 		super("Second page");
@@ -47,7 +51,8 @@ public class DsPa2 extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				
 				Comp[0] = spin.getSelection() > 0;  // we need a positive number of iterations
-				setPageComplete(Comp[0] && Comp[1]);
+				MyStrings[0] = (new Integer(spin.getSelection()).toString());
+				setPageComplete(Comp[0] && Comp[1]);				
 				
 			}
 		});
@@ -72,9 +77,19 @@ public class DsPa2 extends WizardPage {
 			@Override
 			public void keyReleased(KeyEvent e) {
 			Comp[1] = !tx1.getText().isEmpty();	  // look at the "!"
+			MyStrings[1] = tx1.getText();
 			setPageComplete(Comp[0] && Comp[1]);
 			}
 		});   // end of the Keylistener
+		
+     tx1.addSegmentListener(new SegmentListener() {  // if the user copy-pastes the key listener dosn't detect it
+    	 @Override
+    	 public void getSegments(SegmentEvent e) {
+ 			Comp[1] = !tx1.getText().isEmpty();	  // look at the "!"
+ 			MyStrings[1] = tx1.getText();
+ 			setPageComplete(Comp[0] && Comp[1]); 
+    	 }
+     });  // end of the segment listener
 		
 		// Third row (3,x) Method
 		Label lb3 = new Label(composite,SWT.NONE);   // A label in (3,1)
@@ -83,10 +98,34 @@ public class DsPa2 extends WizardPage {
 		Text tx2 = new Text(composite,SWT.BORDER);
 		tx2.setText("Add");
 		tx2.setLayoutData(gd);
+		tx2.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				
+				MyStrings[2] = tx2.getText();
+				
+			}
+		});
+		
+		tx2.addSegmentListener(new SegmentListener() {
+			@Override
+			public void getSegments(SegmentEvent e) {
+				
+				MyStrings[2] = tx2.getText();
+			}
+		});
 		
 		// required to avoid an error in the System
 		setControl(composite);
 		setPageComplete(false);	
 	}  // end of create Control
 
+	public String[] getMyStrings() {
+		if(MyStrings[0] == null) {   // if the spinner hasn't be touch
+			MyStrings[0] = "1"; // then use the default value
+		}
+		return MyStrings;
+	}
 }

@@ -3,14 +3,8 @@ package com.dspot.menu.wizard;
 
 import java.io.FileWriter;
 import java.io.BufferedWriter;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.io.File;
-import java.lang.Runtime;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -24,6 +18,8 @@ public class DspotWiz extends Wizard{
 	
 	protected DsPa1 one;
 	protected DsPa2 two;
+	// [0] Dspot jar path, [1] proyect path [2] number of iterations i, [3] -t testclass, [4] -a Method
+	private String[] parameters = new String[5];   // this will be the execution parameters
 	
 	public DspotWiz() {
 		super();
@@ -47,11 +43,14 @@ public class DspotWiz extends Wizard{
 	
 	@Override
 	public boolean performFinish() {
-		writeTheFile(one);
-        MessageConsole MyConsole = createConsole("My Console");
+		writeTheFile(one);    // writing the properties file
+        MessageConsole MyConsole = createConsole("My Console");  // obtaining the console of the eclipse application
         MyConsole.activate();
         MessageConsoleStream out = MyConsole.newMessageStream();
-		//executeOrders(out);
+        String[] MyS = two.getMyStrings();
+        parameters[2] = MyS[0]; parameters[3] = MyS[1]; parameters[4] = MyS[2];
+		ExecutionClass doIt = new ExecutionClass(out,parameters);  // the thread class to execute Dspot
+		doIt.start();
 		return true;
 	}
 	
@@ -66,8 +65,9 @@ public class DspotWiz extends Wizard{
 		String[] Keys = {"project","src","testSrc","javaVersion","outputDirectory","filter"};
 		
 		
-			Path p = Paths.get(MyHan.getPro().getProject().getLocation()+"\\dspot.properties");
-			File file = new File(p.toString());
+			String p = MyHan.getPro().getProject().getLocation().toString();
+			parameters[1] = p;  // this will be set when perform finish will use it
+			File file = new File(p+"\\dspot.properties");
 			try {
 			file.createNewFile();
 			BufferedWriter fw = new BufferedWriter(new FileWriter(file));
@@ -76,6 +76,7 @@ public class DspotWiz extends Wizard{
 			if(Values[4] == null || Values[4] == "") {   // use the default output directory
 				Values[4] = "dspot-out/";
 			}
+			Values[4] = p+Values[4];
 			if(Values[5] == null) { Values[5] = ""; } // if there is no filter
 			for(int i = 0; i < Values.length; i++){
 				fw.write(Keys[i]+"="+Values[i]);
@@ -85,27 +86,6 @@ public class DspotWiz extends Wizard{
 			} catch(IOException ioe) {ioe.printStackTrace();}		
 	}    // end of writTheFile
 	
-	private void executeOrders(MessageConsoleStream out) {  // this method executes dspot
-		
-	    String[] Orders = {"cmd","/C","java -jar C:\\Users\\A683946\\PROJECT\\dspot\\dspot\\target\\dspot-1.0.5-jar-with-dependencies.jar -p C:\\Users\\A683946\\PROJECT\\dhell\\dspot.properties -i 1 -t fr.inria.stamp.examples.dhell.HelloAppTest -a MethodAdd"};
-
-		try {
-			Process pro = Runtime.getRuntime().exec(Orders);
-			InputStream inputStream = pro.getInputStream();
-			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-			String line;
-			while((line = bufferedReader.readLine()) != null) {
-				System.out.println(line);
-			}
-			System.out.println(pro.exitValue());
-			inputStreamReader.close();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		
-	} // end of executeOrders
 	
 	private MessageConsole createConsole(String name) {  // this will show the console information in the eclipse application console
 
