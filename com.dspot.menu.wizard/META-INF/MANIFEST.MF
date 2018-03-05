@@ -12,4 +12,7 @@ Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.ui,
  org.junit,
  org.eclipse.ui.console,
- org.eclipse.jdt.launching
+ org.eclipse.jdt.launching,
+ org.eclipse.debug.core
+Bundle-ClassPath: .,
+ lib/dspot-1.0.6-SNAPSHOT-jar-with-dependencies.jar

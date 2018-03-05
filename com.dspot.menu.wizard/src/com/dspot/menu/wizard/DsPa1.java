@@ -10,21 +10,26 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SegmentListener;
+import org.eclipse.swt.events.SegmentEvent;
 
 public class DsPa1 extends WizardPage {    // first page of the Dspot wizard
 	
 	// [0] project, [1] src, [2] testScr, [3] javaVersion, [4] outputDirectory, [5] filter
 	private String[] TheProperties = new String[6];
 	private boolean[] Comp = {true,false,false,true};  // this is to set next page
+	private WizardConf wConf;
 
-	public DsPa1(){
+	public DsPa1(WizardConf wConf){
 		super("First page");
 		setTitle("First page");
 		setDescription("Information about the project");
+		this.wConf = wConf;
 	} // end of the constructor
 	
 	@Override
@@ -43,9 +48,9 @@ public class DsPa1 extends WizardPage {    // first page of the Dspot wizard
 		lb1.setText("Path of the project :        ");
 		
 		// Obtain the path of the project
-		String direction = MyHan.getProjectPath();
-		String[] sour = MyHan.findSour();
-		boolean[] isTest = LookForTest.findTest();  // the packages in sour with test classes
+		String direction = wConf.getProjectPath();
+		String[] sour = wConf.getSources();
+		boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
 
 		
 		Text tx1 = new Text(composite,SWT.BORDER);    // Text in (1,2) for the poject's path
@@ -67,6 +72,16 @@ public class DsPa1 extends WizardPage {    // first page of the Dspot wizard
         		
         	} 
         }); // end of the KeyListener
+        tx1.addSegmentListener(new SegmentListener(){
+			@Override
+			public void getSegments(SegmentEvent event) {
+			 	
+        		TheProperties[0] = tx1.getText();  // Project's path
+        		Comp[0] = !TheProperties[0].isEmpty();
+        		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
+				
+			}	
+        });  // end of the segment listener
 		
 		// second row (2,x)      Source path
 		Label lb2 = new Label(composite,SWT.NONE);   // Label in (2,1)
@@ -160,9 +175,17 @@ public class DsPa1 extends WizardPage {    // first page of the Dspot wizard
 			@Override
 			public void keyReleased(KeyEvent e) {
 				
-				TheProperties[4] = tx4.getText();				
+				TheProperties[4] = tx4.getText();
 			}
-		});  //e end of the KeyListener
+		});  // end of the KeyListener
+		tx4.addSegmentListener(new SegmentListener() {
+			@Override
+			public void getSegments(SegmentEvent event) {
+				
+				TheProperties[4] = tx4.getText();
+				
+			}	
+		});
 		
 		lb2 = new Label(gr,SWT.NONE);    // Label in (2,1)(gr)
 		lb2.setText("Filter :  ");
@@ -174,18 +197,26 @@ public class DsPa1 extends WizardPage {    // first page of the Dspot wizard
 			@Override
 			public void keyPressed(KeyEvent e) {}
 			@Override
-			public void keyReleased(KeyEvent e) {
-				
-				TheProperties[5] = tx5.getText();  // filter
-				
+			public void keyReleased(KeyEvent e) {	
+				TheProperties[5] = tx5.getText();  // filter	
 			}
 		});  // end of the KeyListener
+		
 		
 		
 		// required to avoid an error in the System
 		setControl(composite);
 		setPageComplete(false);	
 	}  // end of create control
+	
+	 @Override
+	 public void performHelp() {
+		 String[] myText = {"The first Text contains the project's path","The first combo the relative path (from the projects folder) to the sources package",
+				 "The second combo the relative path to the test sources","The output folder is the directory where the output files of DSpot will be placed",
+				 "The last parameter is a filter in the name of the classes to test, it's optional",""};
+		 BigDialog info = new BigDialog(new Shell()," This page contains the information to write the properties file for DSpot ",myText);
+		 info.open();
+	 }  
 	
 	public String[] getTheProperties() {
 		return TheProperties;
