@@ -226,6 +226,7 @@ public class WizardConf {
 
 				if (isAnnotationPresent(methods[i], Test.class)) {
 					count = true;
+					System.out.println(qname + " / " + methods[i].getName());
 				}
 			} // end of the i for
 			//cl.close();
@@ -249,6 +250,11 @@ public class WizardConf {
 		
 		return result;
 	}
-
+private String[] findTestCases() {
+	// Annotated methods
+	ArrayList<String> testCases = new ArrayList<String>(1);
+	
+	return testCases.toArray(new String[testCases.size()]);
+}
 }   
 

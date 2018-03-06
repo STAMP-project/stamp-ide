@@ -1,4 +1,4 @@
-package com.dspot.menu.wizard;
+package eu.stamp.wp4.dspot.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -11,12 +11,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-public class AmplifiersDialog extends Dialog{
-	
+public class CheckingDialog extends Dialog {
+
 	private String[] selection;
+	private String[] checkList;
 	
-	public AmplifiersDialog(Shell parent) {
+	public CheckingDialog(Shell parent,String[] checkList) {
 		super(parent);
+		this.checkList = checkList;
 	}
 	
 	@Override
@@ -27,11 +29,7 @@ public class AmplifiersDialog extends Dialog{
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		
-		String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
-				"BooleanLiteralAmplifier","AllLiteralAmplifier","MethodAdd","MethodRemove","TestDataMutator",
-				"StatementAdd",""};  // the possible amplifiers
-		
-		int n = amplifiers.length;
+		int n = checkList.length;
 		selection = new String[n];
 		for(int i = 0; i < n; i++) {
 			selection[i] = "";  // initialize selection
@@ -42,25 +40,20 @@ public class AmplifiersDialog extends Dialog{
 		for(int i = 0; i < n; i++) {
 			final int I = i;
 			labels[i] = new Label(container,SWT.NONE);  // create a column of labels and check buttons
-			labels[i].setText(amplifiers[i]);
+			labels[i].setText(checkList[i]);
 			buttons[i] = new Button(container,SWT.CHECK);
 			buttons[i].addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-                selection[I] = amplifiers[I];
+                selection[I] = checkList[I];
 				}
 			});
 		}
 		
 		return container;
 	}
-	
-	@Override
-	protected void okPressed() {
-		super.okPressed();
-	}
-	
-	public String getAmplifiers() {
+
+	public String getSelection() {
 		String ampl = "";
 		for(String sr : selection) {
 			if(ampl == "") { ampl = sr; } 
@@ -70,4 +63,5 @@ public class AmplifiersDialog extends Dialog{
 		return ampl;
 	}
 
+	
 }

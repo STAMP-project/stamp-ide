@@ -1,4 +1,4 @@
-package com.dspot.menu.wizard;
+package eu.stamp.wp4.dspot.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;

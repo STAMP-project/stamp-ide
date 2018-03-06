@@ -18,6 +18,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SegmentEvent;
 
+import eu.stamp.wp4.dspot.dialogs.BigDialog;
+
 public class DsPa1 extends WizardPage {    // first page of the Dspot wizard
 	
 	// [0] project, [1] src, [2] testScr, [3] javaVersion, [4] outputDirectory, [5] filter

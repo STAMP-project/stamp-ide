@@ -19,10 +19,11 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SegmentEvent;
+import org.eclipse.core.runtime.Path;
 
 import java.io.File;
 
-import org.eclipse.core.runtime.Path;
+import eu.stamp.wp4.dspot.dialogs.*;
 
 public class DsPa2 extends WizardPage {
 	
@@ -38,7 +39,7 @@ public class DsPa2 extends WizardPage {
 	// Dialogs
 	private AdvancedDialog adv;
 	private FileDialog fd = new FileDialog(new Shell()); // this is to adding test classes ([1])
-	private AmplifiersDialog amplDiag = new AmplifiersDialog(new Shell());
+	private CheckingDialog chDiag;
 	
 	public DsPa2(WizardConf wConf) {
 		super("Second page");
@@ -160,16 +161,18 @@ public class DsPa2 extends WizardPage {
 		Label lb3 = new Label(composite,SWT.NONE);   // A label in (3,1)
 		lb3.setText("Amplifier :  ");
 		
+		String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
+				"BooleanLiteralAmplifier","AllLiteralAmplifier","MethodAdd","MethodRemove","TestDataMutator",
+				"StatementAdd",""};  // the possible amplifiers
+		
 		Combo combo = new Combo(composite,SWT.BORDER);
 		gd = new GridData(SWT.FILL,SWT.FILL,true,false);
 		gd.horizontalSpan = n-1;
 		combo.setLayoutData(gd);
-		combo.add("StringLiteralAmplifier"); // setting the possible methods in the combo
-		combo.add("NumberLiteralAmplifier"); combo.add("CharLiteralAmplifier");
-		combo.add("BooleanLiteralAmplifier"); combo.add("AllLiteralAmplifier");
-		combo.add("MethodAdd"); combo.add("MethodRemove"); combo.add("TestDataMutator");
-		combo.add("StatementAdd");
-	    
+		for(int i = 0; i < amplifiers.length -1; i++) {
+			combo.add(amplifiers[i]);
+		}
+
 	    // fourth row
 	    Label lb4 = new Label(composite,SWT.NONE);
 	    lb4.setText("use several amplifiers : ");
@@ -191,13 +194,15 @@ public class DsPa2 extends WizardPage {
 	    	}
 	    }); // end of the selection listener
 	    
-	    Button addAmplBt = new Button(composite,SWT.PUSH);
+	    chDiag = new CheckingDialog(new Shell(),amplifiers);  // preparing the dialog to select the amplifiers
+	    
+	    Button addAmplBt = new Button(composite,SWT.PUSH); 
 	    addAmplBt.setText("Add");
 	    addAmplBt.addSelectionListener(new SelectionAdapter(){
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
-	    		amplDiag.open();
-	    		String sr = amplDiag.getAmplifiers();
+	    		chDiag.open();
+	    		String sr = chDiag.getSelection();
 	    		if(sr != "") {
 	    			amplText.setText(sr);
 	    			MyStrings[2] =sr;

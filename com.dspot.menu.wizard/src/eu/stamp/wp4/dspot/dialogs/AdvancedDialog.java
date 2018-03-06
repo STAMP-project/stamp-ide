@@ -1,4 +1,4 @@
-package com.dspot.menu.wizard;
+package eu.stamp.wp4.dspot.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -90,9 +90,15 @@ public class AdvancedDialog extends Dialog {
 		lb2.setText("test cases to amplify : ");
 		lb2.setLayoutData(gd2);
 		
+		Button casesButton = new Button(composite,SWT.PUSH);
+		casesButton.setText("Select");
+		GridData casesBtData = new GridData(SWT.NONE,SWT.NONE,false,false);
+		casesBtData.verticalIndent = 8;
+		casesButton.setLayoutData(casesBtData);
+		
 		gd = new GridData(SWT.FILL,SWT.NONE,true,false);  // text for the test cases
 		gd.verticalIndent = 8;
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 1;
 		Text tx0 = new Text(composite,SWT.BORDER);   
 		tx0.setLayoutData(gd);
 		tx0.addKeyListener(new KeyListener() {
