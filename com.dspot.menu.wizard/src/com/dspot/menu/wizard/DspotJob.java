@@ -41,7 +41,7 @@ protected IStatus run(IProgressMonitor monitor) {
 	out.println(" DSpot is beeing executed ");  // console
 	out.println();
 	
-	// the String to give the order like a command line order using the exec() method of the java's Runtime class
+	// String with the parameters
     String Orders = " -p " +parameters[1]+"/dspot.properties -i "+parameters[2]+" -t "+parameters[3]+
     		" -a "+parameters[4]+" -s "+parameters[5]+" -g "+parameters[6];
        

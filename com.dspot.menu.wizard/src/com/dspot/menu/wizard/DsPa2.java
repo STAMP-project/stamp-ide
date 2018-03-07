@@ -41,12 +41,18 @@ public class DsPa2 extends WizardPage {
 	private FileDialog fd = new FileDialog(new Shell()); // this is to adding test classes ([1])
 	private CheckingDialog chDiag;
 	
+	// this is for the advanced dialog
+	private String[] testCases;
+	private String[] testMethods;
+	
 	public DsPa2(WizardConf wConf) {
 		super("Second page");
 		setTitle("Second page");
 		setDescription("Information about the execution");
 		this.wConf = wConf;
-		adv = new AdvancedDialog(new Shell(),pitSelected,wConf.getProjectPath());
+		testCases = wConf.getTestCases();
+		testMethods = wConf.getTestMethods();
+		adv = new AdvancedDialog(new Shell(),pitSelected,wConf.getProjectPath(),testCases,testMethods);
 	} // end of the constructor
 	
 	@Override
@@ -65,7 +71,7 @@ public class DsPa2 extends WizardPage {
 		
 		GridData gd = new GridData(SWT.FILL,SWT.FILL,true,false);
 		gd.heightHint = 20;
-		gd.horizontalSpan = n-2;
+		gd.horizontalSpan = 2;
 		
 		Spinner spin = new Spinner(composite,SWT.NONE); // A spinner in  (1,2)
 		spin.setMinimum(1);                             // for the number of iterations i
@@ -149,7 +155,7 @@ public class DsPa2 extends WizardPage {
     		 if(MyStrings[1] == null || MyStrings[1] == "") {
     		 MyStrings[1] =  theString;
     		 tx1.setText(MyStrings[1]);} else {  // in this case we need ":"
-    			 MyStrings[1] = MyStrings[1] +":"+ theString;
+    			 MyStrings[1] = MyStrings[1] +";"+ theString;
     			 tx1.setText(MyStrings[1]);
     		 }
     		 
@@ -194,7 +200,7 @@ public class DsPa2 extends WizardPage {
 	    	}
 	    }); // end of the selection listener
 	    
-	    chDiag = new CheckingDialog(new Shell(),amplifiers);  // preparing the dialog to select the amplifiers
+	    chDiag = new CheckingDialog(new Shell(),amplifiers," Select amplifiers ");  // preparing the dialog to select the amplifiers
 	    
 	    Button addAmplBt = new Button(composite,SWT.PUSH); 
 	    addAmplBt.setText("Add");
@@ -270,7 +276,7 @@ public class DsPa2 extends WizardPage {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 	    		pitSelected = combo1.getText() == "" || combo1.getText().contains("PitMutantScoreSelector");
-	    		adv = new AdvancedDialog(new Shell(),pitSelected,wConf.getProjectPath());
+	    		adv = new AdvancedDialog(new Shell(),pitSelected,wConf.getProjectPath(),testCases,testMethods);
 	    		adv.open();
 	    	}
 	    }); // end of the selection listener

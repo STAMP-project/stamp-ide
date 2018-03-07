@@ -33,10 +33,15 @@ public class AdvancedDialog extends Dialog {
 	private boolean pitSelected;  // [3] will be only available if the user selected PitMutantScoreSelector
 	                              // as test criterion in page 2
 	private String direction;
-	public AdvancedDialog(Shell parentSh,boolean pitSelected,String direction) {
+	private CheckingDialog chDiag;
+	private String[] testMethods;
+	
+	public AdvancedDialog(Shell parentSh,boolean pitSelected,String direction,String[] testCases,String[] testMethods) {
 		super(parentSh);
 		this.pitSelected = pitSelected;
 		this.direction = direction;
+		this.testMethods = testMethods;
+		chDiag = new CheckingDialog(new Shell(),testCases," Select test cases ");
 	}
 
 	@Override
@@ -120,6 +125,19 @@ public class AdvancedDialog extends Dialog {
 			}		
 		});  // end of the segment listener
 		
+		casesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				chDiag.open();
+				int[] selection = chDiag.getSelectionIndex();
+				String sr = "";
+				for(int i = 0; i < selection.length - 1; i++) {
+					sr = sr + testMethods[selection[i]] + ";";
+				}
+				sr = sr + testMethods[selection[selection.length - 1]];
+				tx0.setText(sr);
+			}
+		}); 
 		
 		// fourth row (4,x) path pit result
 		Label lb3 = new Label(composite,SWT.NONE);  // A label in (4,1)

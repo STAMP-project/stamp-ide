@@ -26,19 +26,21 @@ import org.eclipse.ui.internal.Workbench;
 import org.junit.Test;
 
 @SuppressWarnings("restriction")
+/**
+ *  This class contains the information about the project that the other classes need
+ *  This information is obtained and kept when the object of this class is generated with new
+ *  The wizard generates only one object of this class when it is called, (at the begin of the method execute in the handler)
+ *   and the WizardConf object is given to the other objects : Wizard and Wizard pages in their constructors
+ */
 public class WizardConf {
 	
-	/*
-	 *  This class contains the information about the project that the other classes need
-	 *  This information is obtained and kept when the object of this class is generated with new
-	 *  The wizard generates only one object of this class when it is called, (at the begin of the method execute in the handler)
-	 *   and the WizardConf object is given to the other objects : Wizard and Wizard pages in their constructors
-	 */
 	
 	private IJavaProject jproject;  // the project to test
 	private String projectPath;
 	private String[] sources;    // the files with code in the project to test
 	private boolean[] isTest;   // true for that source files containing @Test
+	private ArrayList<String> testCases = new ArrayList<String>(1);
+	private ArrayList<String> testMethods = new ArrayList<String>(1);
 	
 	public WizardConf(){
 		
@@ -73,11 +75,23 @@ public class WizardConf {
 		return isTest;
 	}
 	
+	public String[] getTestCases() {
+		return testCases.toArray(new String[testCases.size()]);
+	}
+	
+	public String[] getTestMethods() {
+		return testMethods.toArray(new String[testMethods.size()]);
+	}
+	
 	/*
 	 *  The following private methods are only called by the constructor to obtain all the information
 	 */
 	
-    private IJavaProject obtainProject() {  // it returns the java project that has been used to open the wizard
+	/**
+	 * this method finds the selected project
+	 * @return The IJavaProject object describing the selected project
+	 */
+    private IJavaProject obtainProject() {
 
 
 		ISelection selection = Workbench.getInstance().getActiveWorkbenchWindow().getSelectionService().getSelection();
@@ -91,9 +105,13 @@ public class WizardConf {
             }    
         }  
         return jproject;
-      }  // end of the method
+      } 
     
-    private String[] findSour() { // this method finds the source folders
+    /**
+     * this method finds the source folders
+     * @return an String array with the paths of the source files (relatives to the project)
+     */ 
+    private String[] findSour() {
   	  
   	  ArrayList<String> MyS = new ArrayList<String>(1);
   	  IPackageFragmentRoot[] packs;
@@ -116,13 +134,15 @@ public class WizardConf {
   	  
     } 
     
-    private  IJavaElement[] getFinalChildren(IParent p) {  
-	    /* 
-	     *  this method obtains the list of the files (not folders) in a folder
-	     *  these files may will be into a system of sub-folders/packages
-	     *  the method obtains an array with all the final files without taking into consideration the sub-folder/s they belong to 
-         *  if you want this information use getParent() method on the files in the array                                 
-	     */    	
+    
+    /**
+     *  this method obtains the list of the files (not folders) in a folder
+     *  these files may will be into a system of sub-folders/packages
+     *  
+     *  @param IParent p, a folder containing a system of files and folders
+     *  @return an array with all the final files without taking into consideration the sub-folder/s they belong to                                
+     */
+    private  IJavaElement[] getFinalChildren(IParent p) {      	
 	  ArrayList <IJavaElement> myJEList  = new ArrayList<IJavaElement>(1); 
 	try {
 		IJavaElement[] ProvisionalArray = p.getChildren();
@@ -140,9 +160,14 @@ public class WizardConf {
 	  
 	return myJEList.toArray(new IJavaElement[myJEList.size()]); 
 	  
-  } // end of the method
+  }
     
-	private boolean[] findTest(){ // This method returns a boolean array saying the source folders that contains test classes
+    /**
+     * this method looks in the sources looking for the Test annotation
+     * @return a boolean array saying the source folders that contains test classes
+     * @throws JavaModelException, MalformedURLException, CoreException
+     */
+	private boolean[] findTest(){
 		
 		 // @Test sources
 		ArrayList<Boolean> testList = new ArrayList<Boolean>(1);
@@ -157,6 +182,7 @@ public class WizardConf {
 			for (int i = 0; i < packs.length; i++) { // we look the compilation units in each package
 				p = packs[i];
 				boolean HasTest = false; // if a compilation unit in this package has @Test this will become true
+				boolean allowed = true;
 				IJavaElement[] Com = p.getCompilationUnits(); // the array with the compilation units in the package p
 				String pName = p.getElementName(); // name = Package.Class
 				for (IJavaElement myJ : Com) { // we look all the sources in the package p
@@ -166,12 +192,14 @@ public class WizardConf {
 						TheSource = TheSource.substring(0, In);
 					}
 					String qname = pName + "." + TheSource;
-					HasTest = analisis(qname, classLoader); // calling analysis to know if this source has the @Test  
+					HasTest = analisis(qname, classLoader); // calling analysis to know if this source has the @Test 
+					if(allowed) {
 					testList.add(new Boolean(HasTest));
-					break; // this package contains a compilation unit with @Test
+					allowed = false;
+					}
 				} // end of the compilation units for
 
-			} // end of the packs for
+			} 
 			
 						
 			try {
@@ -196,6 +224,12 @@ public class WizardConf {
 		return isTest;
 	}
 
+	/**
+	 * getProjectClassLoader
+	 * @param jproject
+	 * @return the URLClassLoader of the given project
+	 * @throws MalformedURLException, CoreException
+	 */
 	private URLClassLoader getProjectClassLoader(IJavaProject jproject)
 			throws CoreException, MalformedURLException {
 		// Retrieve the class loader of the Java Project
@@ -214,8 +248,13 @@ public class WizardConf {
 		return classLoader;
 	}
 	
+	/**
+	 * this method looks for the Test annotation
+	 * @param qname : qualified name of the java class to inspect
+	 * @param cl : classLoader of the class project
+	 * @return boolean, true if the source has a Test annotation else false
+	 */
 	private boolean analisis(String qname, URLClassLoader cl) {
-		// this method returns true if the source has an @Test annotation
 		// name : Package.Class path : path of the .class file
 		try {
 			Class<?> cls = cl.loadClass(qname); // loading the name class
@@ -226,7 +265,8 @@ public class WizardConf {
 
 				if (isAnnotationPresent(methods[i], Test.class)) {
 					count = true;
-					System.out.println(qname + " / " + methods[i].getName());
+					this.testCases.add(qname + "/" + methods[i].getName());
+					this.testMethods.add(methods[i].getName());
 				}
 			} // end of the i for
 			//cl.close();
@@ -238,6 +278,12 @@ public class WizardConf {
 		}
 	}
 	
+	/**
+	 * isAnnotationPresent
+	 * @param m : Method to inspect
+	 * @param annotation : annotation we are looking for
+	 * @return boolean, true if the annotation is present
+	 */
 	private boolean isAnnotationPresent(Method m, Class <? extends Annotation> annotation) {
 		// customized isAnnotation present to detect correctly @Test
 		boolean result = false;
@@ -250,11 +296,5 @@ public class WizardConf {
 		
 		return result;
 	}
-private String[] findTestCases() {
-	// Annotated methods
-	ArrayList<String> testCases = new ArrayList<String>(1);
-	
-	return testCases.toArray(new String[testCases.size()]);
-}
 }   
 
