@@ -13,14 +13,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * this is a dialog to perform the help of the wizard pages
+ * the constructor requires a string with the general description of the page
+ * and an string array with the text to display (each string of the array is a line)
+ */
 public class BigDialog extends Dialog {
-	
-	/*
-	 *  this is a dialog to perform the help of the wizard pages
-	 *  the constructor requires a string with the general description of the page
-	 *  and an string array with the text to display (each string of the array is a line)
-	 */
-	
+
 	private String description;
 	private String[] myText;
 	

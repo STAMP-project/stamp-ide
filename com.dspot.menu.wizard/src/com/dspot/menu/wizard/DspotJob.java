@@ -6,28 +6,23 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.console.MessageConsoleStream;
 
 import eu.stamp.wp4.dspot.execution.handlers.DSpotExecutionHandler;
 
-
+/**
+ *  This class describes the background invocation of Dspot 
+ *  that starts when the user click the finish button of the wizard
+ */
 public class DspotJob extends Job {
 	
-	/*
-	 *  This class describes the background invocation of Dspot 
-	 *  that starts when the user click the finish button of the wizard
-	 */
-	
-private	MessageConsoleStream out;       // this will be the Dspot console in the eclipse application
 private String[] parameters;            // execution information given by the user
 private String[] advParameters;
 private boolean verbose;
 private boolean clean;
 private WizardConf conf;
 	
-public DspotJob(String name,MessageConsoleStream out,String[] parameters,String[] advParameters,boolean verbose,boolean clean,WizardConf conf) {
-	super(name);
-	this.out = out;
+public DspotJob(String[] parameters,String[] advParameters,boolean verbose,boolean clean,WizardConf conf) {
+   super("DSpot working");
 	this.parameters = parameters;
 	this.advParameters = advParameters;
 	this.verbose = verbose;
@@ -37,9 +32,6 @@ public DspotJob(String name,MessageConsoleStream out,String[] parameters,String[
 
 @Override
 protected IStatus run(IProgressMonitor monitor) {
-
-	out.println(" DSpot is beeing executed ");  // console
-	out.println();
 	
 	// String with the parameters
     String Orders = " -p " +parameters[1]+"/dspot.properties -i "+parameters[2]+" -t "+parameters[3]+

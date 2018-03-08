@@ -8,15 +8,13 @@ import java.io.File;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleManager;
-import org.eclipse.ui.console.MessageConsole;
-import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
-
+/**
+ * this class describes the Eclipse wizard for DSpot
+ *
+ */
 public class DspotWiz extends Wizard{
 	
 	protected DsPa1 one;
@@ -34,7 +32,8 @@ public class DspotWiz extends Wizard{
 		setHelpAvailable(true);
 		this.wConf = wConf;
 		if(System.getenv("MAVEN_HOME") == null) { // this is a warning if MAVEN_HOME is not set
-			MessageDialog.openWarning(new Shell(), "Maven Home not set", "The enviroment variable MAVEN_HOME is not set, please set it in your computer or set it in the text in advanced options in page 2");
+			MessageDialog.openWarning(new Shell(), "Maven Home not set", 
+					"The enviroment variable MAVEN_HOME is not set, please set it in your computer or set it in the text in advanced options in page 2");
 		}
 	} // end of the constructor
 	
@@ -58,30 +57,28 @@ public class DspotWiz extends Wizard{
 		if(System.getenv("MAVEN_HOME") == null && (advParameters[4] == null || advParameters[4] == "")) { // an error message if MAVEN_HOME is not set
 			MessageDialog.openError(new Shell(),"Maven Home not set","Error the enviroment variable MAVEN_HOME is required, please set it in your computer or in the text in advanced options in page 2");
 		}else {  // if MAVEN_HOME is set
-		writeTheFile(one);    // writing the properties file
-        MessageConsole MyConsole = createConsole("Dspot Console");  // obtaining the console of the eclipse application
-        MyConsole.activate();  // activate the console of the eclipse application
-        MessageConsoleStream out = MyConsole.newMessageStream();
+		writeTheFile();    // writing the properties file
+       // MessageConsole MyConsole = createConsole("Dspot Console");  // obtaining the console of the eclipse application
+       // MyConsole.activate();  // activate the console of the eclipse application
         String[] MyS = two.getMyStrings(); // obtain the user information from page 2
         for(int i = 0; i < MyS.length; i++) {
         	parameters[i+2] = MyS[i];
         } // end of the for
         boolean verbose = two.getVerbose(); // more user information
         boolean clean = two.getClean();
-        Job job = new DspotJob("Dspot Working",out,parameters,advParameters,verbose,clean,wConf); // execute Dspot in background
+        Job job = new DspotJob(parameters,advParameters,verbose,clean,wConf); // execute Dspot in background
         job.schedule();  // background invocation of Dspot
 		}
 		return true;
 	}
 	
-	
-	private void writeTheFile(DsPa1 Pa) {   
-		
-		
-		
-		// this is the method to write the dspot.properties                        
-    // it uses the information in page 1 and it is called by performFinish
-		String[] Values = Pa.getTheProperties();
+	/**
+	 * this is the method to write the dspot.properties, it is called by performFinish
+	 * it uses the information in page 1 and it is called by performFinish
+	 */
+	private void writeTheFile() {   	                       
+
+		String[] Values = one.getTheProperties();
 		String[] Keys = {"project","src","testSrc","javaVersion","outputDirectory","filter"};
 		
 		    
@@ -105,17 +102,6 @@ public class DspotWiz extends Wizard{
 			fw.close();
 			} catch(IOException ioe) {ioe.printStackTrace();}		
 	}    // end of writTheFile
-	
-	
-	private MessageConsole createConsole(String name) {  // this will show the console information in the eclipse application console
-
-	      ConsolePlugin plugin = ConsolePlugin.getDefault(); // obtaining the plugin console and it's manager
-	      IConsoleManager conMan = plugin.getConsoleManager();
-	       MessageConsole myConsole = new MessageConsole(name,null); // generating the new console
-	      conMan.addConsoles(new IConsole[] {myConsole});
-	      return myConsole;
-		
-	}  // end of the method create console
 }
 	
 

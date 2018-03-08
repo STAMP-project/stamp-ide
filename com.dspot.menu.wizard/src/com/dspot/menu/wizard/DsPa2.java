@@ -25,6 +25,10 @@ import java.io.File;
 
 import eu.stamp.wp4.dspot.dialogs.*;
 
+/**
+ * this class describes the second page of the DSpot wizard
+ *
+ */
 public class DsPa2 extends WizardPage {
 	
 	private boolean[] Comp = {true,false};  // this is to set page complete
@@ -297,7 +301,32 @@ public class DsPa2 extends WizardPage {
 		setControl(composite);
 		setPageComplete(false);	
 	}  // end of create Control
+	
+	/**
+	 * this is a method to go to the end of the package with the class
+	 * @param file : a File object describing a directory
+	 * @return a file inside the directory, it maybe is inside several sub-directories 
+	 */
+	private File goInto(File file) { 
+	     if(file.isDirectory()) {
+	    	 if(file.list()[0].isEmpty()) {  // it's an empty folder
+	    		 return file;
+	    	 }else {
+	    	 file = file.listFiles()[0]; 
+	    	 file = goInto(file);   // this works like a goto
+	    	 }
+	     }
+	     return file;
+	}
+	
+	/*
+	 *  public methods to return the information set by the user
+	 */
 
+	/**
+	 * getMyStrings
+	 * @return a String array with the information set by the user
+	 */
 	public String[] getMyStrings() {
 		if(MyStrings[0] == null) {   // if the spinner hasn't be touch
 			MyStrings[0] = "1"; // then use the default value
@@ -314,24 +343,26 @@ public class DsPa2 extends WizardPage {
 		return MyStrings;
 	}
 	
-	private File goInto(File file) {  // this is a method to go to the end of the package with the class
-	     if(file.isDirectory()) {
-	    	 if(file.list()[0].isEmpty()) {  // it's an empty folder
-	    		 return file;
-	    	 }else {
-	    	 file = file.listFiles()[0]; 
-	    	 file = goInto(file);   // this works like a goto
-	    	 }
-	     }
-	     return file;
-	}
-	
+	/**
+	 * getVerbose
+	 * @return a boolean true if the verbose check button is selected
+	 */
 	public boolean getVerbose() {
 		return verbose;
 	}
+	
+	/**
+	 * getClean
+	 * @return a boolean true if the clean check button is selected
+	 */
 	public boolean getClean() {
 		return clean;
 	}
+	
+	/**
+	 * getAdvparameters
+	 * @return a string array with the information set in the advanced options dialog
+	 */
 	public String[] getAdvparameters() {
 		return adv.getAdvParameters();
 	}

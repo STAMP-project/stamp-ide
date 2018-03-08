@@ -6,7 +6,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-
+/**
+ * handler of the Eclipse wizard for DSpot
+ *
+ */
 public class MyHan extends AbstractHandler {
 	
 	private WizardConf wConf;  // instance of the class with the project's information

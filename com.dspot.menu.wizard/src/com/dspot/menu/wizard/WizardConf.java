@@ -138,7 +138,6 @@ public class WizardConf {
     /**
      *  this method obtains the list of the files (not folders) in a folder
      *  these files may will be into a system of sub-folders/packages
-     *  
      *  @param IParent p, a folder containing a system of files and folders
      *  @return an array with all the final files without taking into consideration the sub-folder/s they belong to                                
      */

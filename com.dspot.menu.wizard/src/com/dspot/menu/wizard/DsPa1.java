@@ -20,7 +20,11 @@ import org.eclipse.swt.events.SegmentEvent;
 
 import eu.stamp.wp4.dspot.dialogs.BigDialog;
 
-public class DsPa1 extends WizardPage {    // first page of the Dspot wizard
+/**
+ * this class describes the first page of the DSpot wizard
+ * 
+ */
+public class DsPa1 extends WizardPage { 
 	
 	// [0] project, [1] src, [2] testScr, [3] javaVersion, [4] outputDirectory, [5] filter
 	private String[] TheProperties = new String[6];
@@ -34,6 +38,7 @@ public class DsPa1 extends WizardPage {    // first page of the Dspot wizard
 		this.wConf = wConf;
 	} // end of the constructor
 	
+ 
 	@Override
 	public void createControl(Composite parent) {
 		
@@ -220,6 +225,9 @@ public class DsPa1 extends WizardPage {    // first page of the Dspot wizard
 		 info.open();
 	 }  
 	
+	 /**
+	  * @return an String array with the information set by the user in this page
+	  */
 	public String[] getTheProperties() {
 		return TheProperties;
 	}

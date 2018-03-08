@@ -13,6 +13,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * this class describes a dialog composed by a column of labels and check button
+ * each row has a label and a check button
+ */
 public class CheckingDialog extends Dialog {
 
 	private String[] selection;
@@ -66,6 +70,15 @@ public class CheckingDialog extends Dialog {
 		shell.setText(title);
 	}
 	
+	
+	/*
+	 *  public methods to return the information set by the user
+	 */
+	
+	/**
+	 * getSelection
+	 * @return a String with the user's selection (; as separator)
+	 */
 	public String getSelection() {
 		String ampl = "";
 		for(String sr : selection) {
@@ -76,6 +89,10 @@ public class CheckingDialog extends Dialog {
 		return ampl;
 	}
 	
+	/**
+	 * getSelectionIndex
+	 * @return an int array with the index of the buttons selected by the user
+	 */
    public int[] getSelectionIndex() {
 	   int[] myIndex = new int[indexOfSelection.size()];
 	   for(int i = 0; i < indexOfSelection.size(); i++) {

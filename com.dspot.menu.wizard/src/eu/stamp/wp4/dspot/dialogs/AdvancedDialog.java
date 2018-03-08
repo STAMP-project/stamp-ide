@@ -20,12 +20,11 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.swt.events.SegmentListener;
 
+/**
+ *  This class describes a dialog to set the advanced options of Dspot execution,
+ *  it will be open by a link called advanced options in page 2
+ */
 public class AdvancedDialog extends Dialog {
-	
-	/*
-	 *  This class is a dialog to set the advanced options of Dspot execution,  it will be open
-	 *  by a link called advanced options in page 2
-	 */
 	
 	// [0] randomSeed, [1] timeOut (ms),[2] test cases, [3] path pit result,[4] MAVEN_HOME
 	private String[] advParameters = new String[5];                   // this is for the user information
@@ -251,8 +250,11 @@ public class AdvancedDialog extends Dialog {
         return new Point(600, 300);
     }
 	
-	
-	public String[] getAdvParameters() {  // return the user information
+	/**
+	 * getAdvParameters
+	 * @return an String array with the user information
+	 */
+	public String[] getAdvParameters() {
 		for(int i = 0; i < advParameters.length; i++) {
 			if(advParameters[i] == null) { advParameters[i] = ""; }
 		}
