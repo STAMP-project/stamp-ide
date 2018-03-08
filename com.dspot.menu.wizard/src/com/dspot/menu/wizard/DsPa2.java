@@ -172,7 +172,7 @@ public class DsPa2 extends WizardPage {
 		lb3.setText("Amplifier :  ");
 		
 		String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
-				"BooleanLiteralAmplifier","AllLiteralAmplifier","MethodAdd","MethodRemove","TestDataMutator",
+				"BooleanLiteralAmplifier","AllLiteralAmplifiers","MethodAdd","MethodRemove","TestDataMutator",
 				"StatementAdd",""};  // the possible amplifiers
 		
 		Combo combo = new Combo(composite,SWT.BORDER);
