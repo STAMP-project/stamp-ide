@@ -19,9 +19,11 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IParent;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.junit.Test;
 
@@ -37,6 +39,7 @@ public class WizardConf {
 	
 	private IJavaProject jproject;  // the project to test
 	private String projectPath;
+	private IWorkbenchWindow activeWindow;
 	private String[] sources;    // the files with code in the project to test
 	private boolean[] isTest;   // true for that source files containing @Test
 	private ArrayList<String> testCases = new ArrayList<String>(1);
@@ -44,8 +47,7 @@ public class WizardConf {
 	
 	public WizardConf(){
 		
-		jproject = obtainProject();  // obtain the project
-		
+		 jproject = obtainProject();  // obtain the project
 		// obtain project's path
         IProject project = jproject.getProject(); // Convert to project
         IPath pa = project.getLocation();         // get it's absolute path
@@ -83,6 +85,38 @@ public class WizardConf {
 		return testMethods.toArray(new String[testMethods.size()]);
 	}
 	
+	public IWorkbenchWindow getTheWindow() {
+		return activeWindow;
+	}
+	
+	public boolean lookForTest(String qname) {
+		try {
+			return analisis(qname,getProjectClassLoader(jproject));
+		} catch (MalformedURLException | CoreException e) {
+			e.printStackTrace(); return false;
+		}
+	}
+	
+   public String getqName(String partOfTheName) throws JavaModelException {
+		IPackageFragment[] packs = jproject.getPackageFragments(); // An array with the packages in the project
+		IPackageFragment p;
+		for (int i = 0; i < packs.length; i++) { // we look the compilation units in each package
+			p = packs[i];
+			IJavaElement[] Com = p.getCompilationUnits(); // the array with the compilation units in the package p
+			String pName = p.getElementName(); // name = Package.Class
+			for (IJavaElement myJ : Com) { // we look all the sources in the package p
+				String TheSource = myJ.getElementName();
+				if(partOfTheName.contains(TheSource) || TheSource.contains(partOfTheName)) { // if true this is the class we are looking for
+				int In = TheSource.indexOf('.'); // we remove the .Java
+				if (In > 0) {
+					TheSource = TheSource.substring(0, In);
+				}
+				String qname = pName + "." + TheSource;
+				return qname; }
+   }}
+		return null;
+   }
+	
 	/*
 	 *  The following private methods are only called by the constructor to obtain all the information
 	 */
@@ -93,18 +127,26 @@ public class WizardConf {
 	 */
     private IJavaProject obtainProject() {
 
-
-		ISelection selection = Workbench.getInstance().getActiveWorkbenchWindow().getSelectionService().getSelection();
-        IJavaProject jproject = null;    
+        activeWindow =  Workbench.getInstance().getActiveWorkbenchWindow();
+		ISelection selection = activeWindow.getSelectionService().getSelection();
+        IJavaProject jproject = null;  
+      
         if(selection instanceof IStructuredSelection) {    
             Object element = ((IStructuredSelection)selection).getFirstElement();    
 
-              if (element instanceof IJavaElement) {    
+             if (element instanceof IJavaElement) {    
                 jproject= ((IJavaElement)element).getJavaProject();
-                //project = jProject.getProject();    
-            }    
+                  return jproject;
+           }  
+             if(element instanceof IProject) {
+            
+                IProject pro = (IProject)element;
+                jproject = new JavaProject(pro,null);
+                 return jproject;
+                 
+            	 }
         }  
-        return jproject;
+        return null;
       } 
     
     /**

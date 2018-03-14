@@ -21,14 +21,34 @@ import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.core.internal.resources.Folder;
 import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
+import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
+import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
+import org.eclipse.jdt.ui.JavaElementComparator;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 
 import eu.stamp.wp4.dspot.dialogs.*;
 
@@ -51,7 +71,7 @@ public class DsPa2 extends WizardPage {
 	// Dialogs
 	private AdvancedDialog adv;
 	private CheckingDialog chDiag;
-	private ElementTreeSelectionDialog selDiag;
+	//private ElementTreeSelectionDialog selDiag;
 	
 	// this is for the advanced dialog
 	private String[] testCases;
@@ -135,6 +155,7 @@ public class DsPa2 extends WizardPage {
      });  // end of the segment listener
      
      // preparing the file dialog
+     /*
      String[] directions = wConf.getSources();
      boolean[] theTest = wConf.getIsTest();
      String testDirection = wConf.getProjectPath();
@@ -143,7 +164,7 @@ public class DsPa2 extends WizardPage {
      testDirection = testDirection+"/"+directions[i]; 
      break;  // very important
      }} // end of the for 
-     final String testDirectionf = testDirection;
+     final String testDirectionf = testDirection;*/
      
 	 
      Button fileButton = new Button(composite,SWT.PUSH); // A button in (2,3), it opens the file dialog
@@ -152,24 +173,15 @@ public class DsPa2 extends WizardPage {
     	 @Override
     	 public void widgetSelected(SelectionEvent e) {
     		 
-    		createTreeDialog();	
-    		if(selDiag.open() == ElementTreeSelectionDialog.OK) {
-    			Object[] selection = selDiag.getResult();
-    			for(Object O: selection) {
-    				if(O instanceof IResource) { IResource resource = (IResource)O;
-    				String selected = resource.getLocation().toString();
-    	    		 selected = new Path(selected).makeRelativeTo(new Path(testDirectionf)).toString();
-    	    		 selected = selected.replaceAll(".java", "");
-    	    		 selected = selected.replaceAll("/", ".");
-    	    		 if(MyStrings[1] == null || MyStrings[1] == "") {
-    	        		 MyStrings[1] =  selected;
-    	        		 tx1.setText(MyStrings[1]);} else {  // in this case we need ":"
-    	        			 MyStrings[1] = MyStrings[1] +";"+ selected;
-    	        			 tx1.setText(MyStrings[1]);
-    	        		 }
-                     
-    			}
-    		}}
+ 			try {
+				String selection = showElementTreeSelectionDialog2(wConf.getPro(),wConf.getTheWindow());
+				if(tx1.getText()==null||tx1.getText()=="") {
+					tx1.setText(selection);
+				}else { tx1.setText(tx1.getText()+";"+selection); }
+			} catch (JavaModelException e1) {
+				e1.printStackTrace();
+			} 
+    		 
 
     	 }
      }); // end of the selection listener
@@ -310,6 +322,7 @@ public class DsPa2 extends WizardPage {
 		setPageComplete(false);	
 	}  // end of create Control
 	
+	/*
 	private void createTreeDialog() {
 		  
 		LabelProvider myLabelProvider = new LabelProvider() {
@@ -345,6 +358,93 @@ public class DsPa2 extends WizardPage {
 		selDiag.setTitle("Select a test");
 		selDiag.setAllowMultiple(true);
 	}
+	*/
+    private String showElementTreeSelectionDialog2(IJavaProject jProject, IWorkbenchWindow window) throws JavaModelException {
+        Class<?>[] acceptedClasses= new Class[] { IPackageFragmentRoot.class, IJavaProject.class, IJavaElement.class };
+        TypedElementSelectionValidator validator= new TypedElementSelectionValidator(acceptedClasses, true) {
+            @Override
+            public boolean isSelectedValid(Object element) {
+                
+                    if (element instanceof ICompilationUnit) {
+                        return true;
+                    }
+                    return false;
+                
+            }
+        };
+
+        acceptedClasses= new Class[] { IJavaModel.class, IPackageFragmentRoot.class, IJavaProject.class, IJavaElement.class, ICompilationUnit.class };
+        ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
+            @Override
+            public boolean select(Viewer viewer, Object parent, Object element) {
+                if (element instanceof IJavaProject) {
+                    if (!((IJavaProject) element).getElementName().equals(jProject.getElementName())) {
+                        return false;
+                    }
+                }
+                if (element instanceof IPackageFragment) {
+                    try {
+                        return containsTestClasses ((IPackageFragment)element);
+                    } catch (JavaModelException e) {
+                        JavaPlugin.log(e.getStatus()); // just log, no UI in validation
+                        return false;
+                    }
+                }
+                if (element instanceof JarPackageFragmentRoot) {
+                    return false;
+                }
+                return super.select(viewer, parent, element);
+            }
+
+            private boolean containsTestClasses(IPackageFragment element) throws JavaModelException {
+                boolean result = false;
+                if (!(element instanceof JarPackageFragmentRoot)) {
+                    for (IJavaElement child:element.getChildren()) {
+                        if (child instanceof ICompilationUnit && isTestClass (child)) {
+                            result = true;
+                            break;
+                        }
+                    }
+                }
+                return result;
+            }
+
+            private boolean isTestClass(IJavaElement child) {
+                // Detect test class by inspecting JUnit annotations
+            	try {
+					return wConf.lookForTest(wConf.getqName(child.getElementName()));
+				} catch (JavaModelException e) {
+					e.printStackTrace(); return child.getElementName().toLowerCase().contains("test");
+				}
+            }
+        };
+        
+        IWorkspaceRoot fWorkspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
+        IJavaElement initElement = jProject.getPackageFragmentRoots()[0];
+        
+        StandardJavaElementContentProvider provider= new StandardJavaElementContentProvider();
+        ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
+        ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(window.getShell(), labelProvider, provider);
+        dialog.setValidator(validator);
+        dialog.setComparator(new JavaElementComparator());
+        dialog.setTitle(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_title);
+        dialog.setMessage(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_description);
+        dialog.addFilter(filter);
+        dialog.setInput(JavaCore.create(fWorkspaceRoot));
+        dialog.setInitialSelection(initElement);
+        dialog.setHelpAvailable(false);
+    
+        if (dialog.open() == Window.OK) {
+            Object element= dialog.getFirstResult();
+            Object[] results = dialog.getResult();
+            for(Object ob : results) {
+            	if(ob instanceof ICompilationUnit) { 
+             return wConf.getqName(((ICompilationUnit)ob).getElementName()); }
+            }
+        }
+        return "";
+    }
+
 	
 	/*
 	 *  public methods to return the information set by the user
