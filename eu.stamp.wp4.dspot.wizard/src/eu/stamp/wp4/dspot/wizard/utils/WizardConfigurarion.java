@@ -21,10 +21,12 @@ import org.eclipse.jdt.core.IParent;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.swt.widgets.Shell;
 
 import org.junit.Test;
 
@@ -45,10 +47,25 @@ public class WizardConfigurarion {
 	private boolean[] isTest;   // true for that source files containing @Test
 	private ArrayList<String> testCases = new ArrayList<String>(1);
 	private ArrayList<String> testMethods = new ArrayList<String>(1);
+	private boolean projectSelected = false;
 	
-	public WizardConfigurarion(){
+	public WizardConfigurarion() throws CoreException{
 		
 		 jproject = obtainProject();  // obtain the project
+		 
+			if (jproject == null) {
+				 MessageDialog.openInformation(
+				new Shell(),
+				 "Execute DSpot",
+				 "Please, select a Java Project in the Package Explorer");
+			} else if(!jproject.getProject().hasNature("org.eclipse.m2e.core.maven2Nature")){ 
+				 MessageDialog.openError(
+				new Shell(),
+				 "Execute DSpot",
+				 "The selected project must be a maven project");
+			}else {
+		 projectSelected = true;
+				
 		// obtain project's path
         IProject project = jproject.getProject(); // Convert to project
         IPath pa = project.getLocation();         // get it's absolute path
@@ -57,11 +74,14 @@ public class WizardConfigurarion {
 	    sources = findSour();  // obtain the sources
 	    
 	    isTest = findTest(); // obtain the boolean array (value true for the sources that contain @Test)
-	    
+			}
 	} 
 	
 	// getter methods
 	
+	public boolean projectSelected() {
+		return projectSelected;
+	}
 	/**
 	 * @return the selected project
 	 */

@@ -36,7 +36,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.jdt.ui.JavaElementComparator;
@@ -378,8 +377,8 @@ public class DSpotWizardPage2 extends WizardPage {
         ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(window.getShell(), labelProvider, provider);
         dialog.setValidator(validator);
         dialog.setComparator(new JavaElementComparator());
-        dialog.setTitle(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_title);
-        dialog.setMessage(NewWizardMessages.NewContainerWizardPage_ChooseSourceContainerDialog_description);
+        dialog.setTitle(" Select a test-class ");
+        dialog.setMessage(" Select a class file ");
         dialog.addFilter(filter);
         dialog.setInput(JavaCore.create(fWorkspaceRoot));
         dialog.setInitialSelection(initElement);

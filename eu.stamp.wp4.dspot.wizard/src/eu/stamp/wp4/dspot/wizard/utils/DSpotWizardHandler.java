@@ -3,6 +3,7 @@ package eu.stamp.wp4.dspot.wizard.utils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -18,10 +19,16 @@ public class DSpotWizardHandler extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-    	wConf = new WizardConfigurarion();   // creating the object with the project's information
+    	try {
+			wConf = new WizardConfigurarion();
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}   // creating the object with the project's information
+    	if(wConf.projectSelected()) {
         WizardDialog wizDiag = new WizardDialog(HandlerUtil.getActiveShell(event),new DSpotWizard(wConf));
         wizDiag.open();   // open the wizard
-        return null;
+    	}
+    	return null;
     }
 
 }

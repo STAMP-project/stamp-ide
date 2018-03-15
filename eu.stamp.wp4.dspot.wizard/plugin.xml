@@ -14,40 +14,60 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
-         <command
-               commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
-               label="Dspot Wizard"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false"
-                     operator="or">
-                  <reference
-                        definitionId="com.dspot.menu.wizard.hasNature">
-                  </reference>
-               </iterate>
-            </visibleWhen>
-         </command>
+         <menu
+               id="DSpot.menu1"
+               label="STAMP">
+            <command
+                  commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
+                  label="DSpot"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <reference
+                           definitionId="com.dspot.menu.wizard.hasNature">
+                     </reference>
+                  </iterate>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
-         <command
-               commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
-               label="Dspot Wizard"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate
-                     ifEmpty="false"
-                     operator="or">
-                  <reference
-                        definitionId="com.dspot.menu.wizard.hasNature">
-                  </reference>
-               </iterate>
-            </visibleWhen>
-         </command>
+         <menu
+               id="DSpot.menu2"
+               label="STAMP">
+            <command
+                  commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
+                  label="DSpot"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <reference
+                           definitionId="com.dspot.menu.wizard.hasNature">
+                     </reference>
+                  </iterate>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="DSpot.menu3"
+               label="DSpot">
+            <command
+                  commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
+                  label="DSpot"
+                  style="push">
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension
