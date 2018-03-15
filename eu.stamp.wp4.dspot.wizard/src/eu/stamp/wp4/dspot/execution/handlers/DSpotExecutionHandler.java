@@ -12,14 +12,11 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
-import eu.stamp.wp4.dspot.wizard.WizardConf;
+import eu.stamp.wp4.dspot.wizard.utils.WizardConfigurarion;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
@@ -29,10 +26,10 @@ import eu.stamp.wp4.dspot.wizard.WizardConf;
  */
 public class DSpotExecutionHandler extends AbstractHandler {
 	
-	private WizardConf conf;
+	private WizardConfigurarion conf;
 	private static String arguments;
 	
-	public DSpotExecutionHandler(WizardConf conf,String arguments) {
+	public DSpotExecutionHandler(WizardConfigurarion conf,String arguments) {
 		super();
 		this.conf = conf;
 		DSpotExecutionHandler.arguments = arguments;

@@ -4,8 +4,8 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="eu.stamp.wp4.dspot.wizard.MyHan"
-            id="com.dspot.menu.wizard.command1"
+            defaultHandler="eu.stamp.wp4.dspot.wizard.utils.DSpotWizardHandler"
+            id="eu.stamp.wp4.dspot.menu.wizard.command1"
             name="Open Dspot Wizard">
       </command>
    </extension>
@@ -15,7 +15,7 @@
             allPopups="false"
             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
          <command
-               commandId="com.dspot.menu.wizard.command1"
+               commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
                label="Dspot Wizard"
                style="push">
             <visibleWhen
@@ -34,7 +34,7 @@
             allPopups="false"
             locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
          <command
-               commandId="com.dspot.menu.wizard.command1"
+               commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
                label="Dspot Wizard"
                style="push">
             <visibleWhen

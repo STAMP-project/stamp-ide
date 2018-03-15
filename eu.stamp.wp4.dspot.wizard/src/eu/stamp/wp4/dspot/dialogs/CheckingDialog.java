@@ -13,6 +13,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import eu.stamp.wp4.dspot.wizard.utils.WizardConfigurarion;
+
+
 /**
  * this class describes a dialog composed by a column of labels and check button
  * each row has a label and a check button
@@ -84,7 +87,7 @@ public class CheckingDialog extends Dialog {
 		for(String sr : selection) {
 			if(ampl == "") { ampl = sr; } 
 			else if(sr != "") {
-			ampl = ampl + ";" + sr; }
+			ampl = ampl + WizardConfigurarion.getSeparator() + sr; }
 		}
 		return ampl;
 	}
