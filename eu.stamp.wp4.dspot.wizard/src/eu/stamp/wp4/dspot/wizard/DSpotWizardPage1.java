@@ -19,10 +19,10 @@ import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SegmentEvent;
 
 import eu.stamp.wp4.dspot.dialogs.DspotWizardHelpDialog;
-import eu.stamp.wp4.dspot.wizard.utils.WizardConfigurarion;
+import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
- * this class describes the first page of the DSpot wizard
+ * this class describes the first page of the DSpot wizard 
  * 
  */
 public class DSpotWizardPage1 extends WizardPage { 
@@ -30,9 +30,9 @@ public class DSpotWizardPage1 extends WizardPage {
 	// [0] project, [1] src, [2] testScr, [3] javaVersion, [4] outputDirectory, [5] filter
 	private String[] TheProperties = new String[6];
 	private boolean[] Comp = {true,false,false,true};  // this is to set next page
-	private WizardConfigurarion wConf;
+	private WizardConfiguration wConf;
 
-	public DSpotWizardPage1(WizardConfigurarion wConf){
+	public DSpotWizardPage1(WizardConfiguration wConf){
 		super("First page");
 		setTitle("First page");
 		setDescription("Information about the project");

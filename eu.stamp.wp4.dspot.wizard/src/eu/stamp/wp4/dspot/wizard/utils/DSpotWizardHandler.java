@@ -15,12 +15,12 @@ import eu.stamp.wp4.dspot.wizard.DSpotWizard;
  */
 public class DSpotWizardHandler extends AbstractHandler {
 	
-	private WizardConfigurarion wConf;  // instance of the class with the project's information
+	private WizardConfiguration wConf;  // instance of the class with the project's information 
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
     	try {
-			wConf = new WizardConfigurarion();
+			wConf = new WizardConfiguration();
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}   // creating the object with the project's information

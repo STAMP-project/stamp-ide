@@ -16,20 +16,20 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
-import eu.stamp.wp4.dspot.wizard.utils.WizardConfigurarion;
+import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
- * Our sample handler extends AbstractHandler, an IHandler base class.
+ * Our sample handler extends AbstractHandler, an IHandler base class. 
  * 
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
 public class DSpotExecutionHandler extends AbstractHandler {
 	
-	private WizardConfigurarion conf;
+	private WizardConfiguration conf;
 	private static String arguments;
 	
-	public DSpotExecutionHandler(WizardConfigurarion conf,String arguments) {
+	public DSpotExecutionHandler(WizardConfiguration conf,String arguments) {
 		super();
 		this.conf = conf;
 		DSpotExecutionHandler.arguments = arguments;
@@ -41,7 +41,6 @@ public class DSpotExecutionHandler extends AbstractHandler {
 		try {
 			executeDSpotInJDTLauncher(conf.getPro(), event);
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

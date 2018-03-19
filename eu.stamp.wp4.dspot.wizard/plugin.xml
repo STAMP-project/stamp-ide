@@ -109,5 +109,23 @@
          </adapt>
       </definition>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="eu.stamp.wp4.dspot.execution.launch.DSpotLaunchConfigurationDelegate"
+            id="eu.stamp.launchConfigurationDSpot"
+            modes="run, debug"
+            name="DSpot Launch Configuration">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+6">
+      </key>
+   </extension>
 
 </plugin>

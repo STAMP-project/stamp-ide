@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import eu.stamp.wp4.dspot.wizard.utils.WizardConfigurarion;
+import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 
 /**
@@ -25,7 +25,7 @@ public class CheckingDialog extends Dialog {
 	private String[] selection;
 	private String[] checkList;
 	private String title;
-	private ArrayList<Integer> indexOfSelection = new ArrayList<Integer>(1);
+	private ArrayList<Integer> indexOfSelection;
 	
 	public CheckingDialog(Shell parent,String[] checkList,String title) {
 		super(parent);
@@ -35,6 +35,8 @@ public class CheckingDialog extends Dialog {
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
+		
+		indexOfSelection = new ArrayList<Integer>(1);
 		
 		Composite container = (Composite) super.createDialogArea(parent);
 		GridLayout layout = new GridLayout();
@@ -59,7 +61,10 @@ public class CheckingDialog extends Dialog {
 				public void widgetSelected(SelectionEvent e) {
                 selection[I] = checkList[I];
                 indexOfSelection.add(new Integer(I));
-                
+                if(!buttons[I].getSelection()) { selection[I] = ""; 
+                for(int j = 0; j < indexOfSelection.size(); j++) {
+                if(indexOfSelection.get(j).intValue() == I) indexOfSelection.remove(j); }
+                }
 				}
 			});
 		}
@@ -75,7 +80,7 @@ public class CheckingDialog extends Dialog {
 	
 	
 	/*
-	 *  public methods to return the information set by the user
+	 *  public methods to return the information set by the user 
 	 */
 	
 	/**
@@ -87,7 +92,7 @@ public class CheckingDialog extends Dialog {
 		for(String sr : selection) {
 			if(ampl == "") { ampl = sr; } 
 			else if(sr != "") {
-			ampl = ampl + WizardConfigurarion.getSeparator() + sr; }
+			ampl = ampl + WizardConfiguration.getSeparator() + sr; }
 		}
 		return ampl;
 	}

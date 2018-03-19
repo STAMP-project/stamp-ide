@@ -1,6 +1,7 @@
 package eu.stamp.wp4.dspot.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,7 +21,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.swt.events.SegmentListener;
 
-import eu.stamp.wp4.dspot.wizard.utils.WizardConfigurarion;
+import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
  *  This class describes a dialog to set the advanced options of Dspot execution,
@@ -28,7 +29,7 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfigurarion;
  */
 public class DspotAdvancedOptionsDialog extends Dialog {
 	
-	// [0] randomSeed, [1] timeOut (ms),[2] test cases, [3] path pit result,[4] MAVEN_HOME
+	// [0] randomSeed, [1] timeOut (ms),[2] test cases, [3] path pit result,[4] MAVEN_HOME 
 	private String[] advParameters = new String[5];                   // this is for the user information
 	private DirectoryDialog dd = new DirectoryDialog(new Shell());    // this is to set [3]
 	private boolean pitSelected;  // [3] will be only available if the user selected PitMutantScoreSelector
@@ -129,14 +130,15 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		casesButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				chDiag.open();
-				int[] selection = chDiag.getSelectionIndex();
-				String sr = "";
-				for(int i = 0; i < selection.length - 1; i++) {
-					sr = sr + testMethods[selection[i]] + WizardConfigurarion.getSeparator();
+				if(chDiag.open() == Window.OK) {
+				String selection = chDiag.getSelection();
+				String text = "";
+				for(String sr : testMethods) {
+					if(selection.contains(sr))text = text+sr+WizardConfiguration.getSeparator();
 				}
-				sr = sr + testMethods[selection[selection.length - 1]];
-				tx0.setText(sr);
+                if(text.endsWith(WizardConfiguration.getSeparator())&&text.length()>0)text = text.substring(0, text.length()-1);
+                tx0.setText(text);
+                }
 			}
 		}); 
 		

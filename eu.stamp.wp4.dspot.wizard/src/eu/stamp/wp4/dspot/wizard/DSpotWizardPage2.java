@@ -43,10 +43,10 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 
 import eu.stamp.wp4.dspot.dialogs.*;
-import eu.stamp.wp4.dspot.wizard.utils.WizardConfigurarion;
+import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
- * this class describes the second page of the DSpot wizard
+ * this class describes the second page of the DSpot wizard 
  *
  */
 @SuppressWarnings("restriction")
@@ -59,7 +59,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private boolean verbose = false;  // boolean to activate or not verbose
 	private boolean clean = false;
 	private boolean pitSelected = false;
-	private WizardConfigurarion wConf;
+	private WizardConfiguration wConf;
 	
 	// Dialogs
 	private DspotAdvancedOptionsDialog adv;
@@ -70,7 +70,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private String[] testCases;
 	private String[] testMethods;
 	
-	public DSpotWizardPage2(WizardConfigurarion wConf) {
+	public DSpotWizardPage2(WizardConfiguration wConf) {
 		super("Second page");
 		setTitle("Second page");
 		setDescription("Information about the execution");
@@ -158,7 +158,8 @@ public class DSpotWizardPage2 extends WizardPage {
 				String selection = showElementTreeSelectionDialog2(wConf.getPro(),wConf.getTheWindow());
 				if(tx1.getText()==null||tx1.getText()=="") {
 					tx1.setText(selection);
-				}else { tx1.setText(tx1.getText()+WizardConfigurarion.getSeparator()+selection); }
+				}else if(selection != null || selection != "") { 
+					tx1.setText(tx1.getText()+WizardConfiguration.getSeparator()+selection); }
 			} catch (JavaModelException e1) {
 				e1.printStackTrace();
 			} 

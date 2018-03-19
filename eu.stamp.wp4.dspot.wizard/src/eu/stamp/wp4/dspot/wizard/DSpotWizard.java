@@ -4,32 +4,38 @@ package eu.stamp.wp4.dspot.wizard;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.io.File;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
 import eu.stamp.wp4.dspot.wizard.utils.DSpotEclipseJob;
-import eu.stamp.wp4.dspot.wizard.utils.WizardConfigurarion;
+import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
  * this class describes the Eclipse wizard for DSpot
- *
+ * 
  */
 public class DSpotWizard extends Wizard{
 	
 	protected DSpotWizardPage1 one;
 	protected DSpotWizardPage2 two;
-	private WizardConfigurarion wConf;
+	private WizardConfiguration wConf;
 	
 	// [0] Dspot jar path, [1] project path, [2] number of iterations i, [3] -t test class, [4] -a Method
 	// [5] test criterion, [6] max Test Amplified
 	private String[] parameters = new String[7];   // this will be the execution parameters
 
 	
-	public DSpotWizard(WizardConfigurarion wConf) {
+	public DSpotWizard(WizardConfiguration wConf) {
 		super();
 		setNeedsProgressMonitor(true);
 		setHelpAvailable(true);
@@ -44,8 +50,12 @@ public class DSpotWizard extends Wizard{
 	public String getWindowTitle() { 
 		return "Dspot Wizard";
 	}
-	
-	
+	@Override
+	public Image getDefaultPageImage() {
+	final URL iconStampURL = FileLocator.find(Platform.getBundle("eu.stamp.wp4.dspot.wizard"),new Path("images/Stamp.png"),null);
+	ImageDescriptor descriptor = ImageDescriptor.createFromURL(iconStampURL);
+	return descriptor.createImage();
+	}
 	@Override
 	public void addPages() {
 		one = new DSpotWizardPage1(wConf);

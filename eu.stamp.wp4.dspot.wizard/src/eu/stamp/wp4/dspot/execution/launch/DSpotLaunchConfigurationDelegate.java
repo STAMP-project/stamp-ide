@@ -39,7 +39,7 @@ public class DSpotLaunchConfigurationDelegate extends JavaLaunchDelegate {
 			return;
 		}
 		try {
-			monitor.subTask("Executing DSpot: verifying launch attributes");
+			monitor.subTask("Executing DSpot: verifying launch attributes"); 
 
 			String mainTypeName = verifyMainTypeName(configuration);
 			IVMRunner runner = getVMRunner(configuration, mode);
@@ -75,7 +75,7 @@ public class DSpotLaunchConfigurationDelegate extends JavaLaunchDelegate {
 			}
 			
 			//Add DSpot library
-			URL url = new URL("platform:/plugin/eu.stamp.wp4.dspot.execution/lib/dspot-1.0.6-SNAPSHOT-jar-with-dependencies.jar");
+			URL url = new URL("platform:/plugin/eu.stamp.wp4.dspot.wizard/lib/dspot-1.0.6-SNAPSHOT-jar-with-dependencies.jar");
 			collection.add (FileLocator.toFileURL(url).getPath());
 			
 			classpath = new String[collection.size()];

@@ -37,19 +37,19 @@ import org.junit.Test;
  *  The wizard generates only one object of this class when it is called, (at the begin of the method execute in the handler)
  *   and the WizardConf object is given to the other objects : Wizard and Wizard pages in their constructors
  */
-public class WizardConfigurarion {
+public class WizardConfiguration {
 	
 	
 	private IJavaProject jproject;  // the project to test
 	private String projectPath;
 	private IWorkbenchWindow activeWindow;
-	private String[] sources;    // the files with code in the project to test
+	private String[] sources;    // the files with code in the project to test 
 	private boolean[] isTest;   // true for that source files containing @Test
 	private ArrayList<String> testCases = new ArrayList<String>(1);
 	private ArrayList<String> testMethods = new ArrayList<String>(1);
 	private boolean projectSelected = false;
 	
-	public WizardConfigurarion() throws CoreException{
+	public WizardConfiguration() throws CoreException{
 		
 		 jproject = obtainProject();  // obtain the project
 		 
@@ -65,7 +65,7 @@ public class WizardConfigurarion {
 				 "The selected project must be a maven project");
 			}else {
 		 projectSelected = true;
-				
+	
 		// obtain project's path
         IProject project = jproject.getProject(); // Convert to project
         IPath pa = project.getLocation();         // get it's absolute path

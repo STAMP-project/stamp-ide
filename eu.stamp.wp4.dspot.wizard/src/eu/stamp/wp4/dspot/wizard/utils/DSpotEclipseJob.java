@@ -11,7 +11,7 @@ import eu.stamp.wp4.dspot.execution.handlers.DSpotExecutionHandler;
 
 /**
  *  This class describes the background invocation of Dspot 
- *  that starts when the user click the finish button of the wizard
+ *  that starts when the user click the finish button of the wizard 
  */
 public class DSpotEclipseJob extends Job {
 	
@@ -19,9 +19,9 @@ private String[] parameters;            // execution information given by the us
 private String[] advParameters;
 private boolean verbose;
 private boolean clean;
-private WizardConfigurarion conf;
+private WizardConfiguration conf;
 	
-public DSpotEclipseJob(String[] parameters,String[] advParameters,boolean verbose,boolean clean,WizardConfigurarion conf) {
+public DSpotEclipseJob(String[] parameters,String[] advParameters,boolean verbose,boolean clean,WizardConfiguration conf) {
    super("DSpot working");
 	this.parameters = parameters;
 	this.advParameters = advParameters;
