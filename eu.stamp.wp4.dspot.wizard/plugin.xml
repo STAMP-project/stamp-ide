@@ -61,7 +61,7 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
                id="DSpot.menu3"
-               label="DSpot">
+               label="Stamp">
             <command
                   commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
                   label="DSpot"
@@ -126,6 +126,14 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+6">
       </key>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="eu.stamp.wp4.dspot.execution.launch.ui.DSpotLaunchConfigurationTabGroup"
+            id="eu.stamp.wp4.dspot.wizard.launchConfigurationTabGroup"
+            type="eu.stamp.launchConfigurationDSpot">
+      </launchConfigurationTabGroup>
    </extension>
 
 </plugin>
