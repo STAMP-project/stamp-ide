@@ -1,11 +1,13 @@
 package eu.stamp.wp4.dspot.wizard;
 
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Combo;
@@ -31,12 +33,14 @@ public class DSpotWizardPage1 extends WizardPage {
 	private String[] TheProperties = new String[6];
 	private boolean[] Comp = {true,false,false,true};  // this is to set next page
 	private WizardConfiguration wConf;
+	private DSpotWizard wizard;
 
-	public DSpotWizardPage1(WizardConfiguration wConf){
+	public DSpotWizardPage1(WizardConfiguration wConf,DSpotWizard wizard){
 		super("First page");
 		setTitle("First page");
 		setDescription("Information about the project");
 		this.wConf = wConf;
+		this.wizard = wizard;
 	} // end of the constructor
 	
  
@@ -51,9 +55,21 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		int VS = 8;   // this will be the verticalIndent between rows in composite
 		
+		Label lb0 = new Label(composite,SWT.NONE);
+		lb0.setText("Use saved configuration : ");
+	    
+		Combo configCombo = new Combo(composite,SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(configCombo);
+		ILaunchConfiguration[] configurations = wConf.getLaunchConfigurations();
+		for(ILaunchConfiguration laun : configurations) {
+			configCombo.add(laun.getName());
+		}
+		configCombo.add("");
+		
 		// first row  (1,x)     Project's path
 		Label lb1 = new Label(composite,SWT.NONE);     // Label in (1,1)
 		lb1.setText("Path of the project :        ");
+		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb1);
 		
 		// Obtain the path of the project
 		String direction = wConf.getProjectPath();
@@ -63,10 +79,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		Text tx1 = new Text(composite,SWT.BORDER);    // Text in (1,2) for the poject's path
 		tx1.setText(direction);
-		GridData gd = new GridData(SWT.FILL,SWT.FILL,true,false);  // data for texts they fill horizontal
-        gd.verticalIndent = VS;
-        gd.horizontalSpan = 2;
-        tx1.setLayoutData(gd);
+		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(tx1);
         TheProperties[0] = direction;
         tx1.addKeyListener(new KeyListener() {  // add a keyListener
         	@Override
@@ -94,12 +107,10 @@ public class DSpotWizardPage1 extends WizardPage {
 		// second row (2,x)      Source path
 		Label lb2 = new Label(composite,SWT.NONE);   // Label in (2,1)
 		lb2.setText("Path of the source : ");
-		GridData gd2 = new GridData(SWT.FILL,SWT.FILL,false,false);
-        gd2.verticalIndent = VS;
-        lb2.setLayoutData(gd2);
+		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb2);
         
         Combo combo0 = new Combo(composite,SWT.BORDER);  // Combo in (2,2) for the source's path
-        combo0.setLayoutData(gd);
+        GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo0);
         combo0.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -115,10 +126,10 @@ public class DSpotWizardPage1 extends WizardPage {
 		// third row (3,x)   SourceTest path
 		Label lb3 = new Label(composite,SWT.NONE);   // Label in (3,1)
 		lb3.setText("Path of the source test : ");
-        lb3.setLayoutData(gd2);
+		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb3);
         
         Combo combo2 = new Combo(composite,SWT.BORDER);
-        combo2.setLayoutData(gd);
+        GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo2);
         for(int i = 0; i < sour.length; i++) {  // add the sources to the combo
         	if(isTest[i]) {  // if it is not a test package
         	combo2.add(sour[i]);} else { combo0.add(sour[i]); }
@@ -138,12 +149,12 @@ public class DSpotWizardPage1 extends WizardPage {
 		// fourth row (4,x) Java version
 		Label lb4 = new Label(composite,SWT.NONE);  // Label in (4,1)
 		lb4.setText("Java version : ");
-        lb4.setLayoutData(gd2);
+		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb4);
 		
 		Combo combo1 = new Combo(composite,SWT.NONE);  // Combo in (4,2) for the version
 		combo1.add("8"); combo1.add("7"); combo1.add("6"); combo1.add("5");
 		combo1.setText("8");
-        combo1.setLayoutData(gd);
+        GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo1);
         TheProperties[3] = "8";
         combo1.addSelectionListener(new SelectionAdapter() {  // Use a SelectionAdapter
         	@Override
@@ -159,12 +170,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		// (5,1 and 2) group with optional information
 		Group gr = new Group(composite,SWT.NONE);
 		gr.setText("Optional information");
-		gd.horizontalSpan = 2;   // the group takes all the row
-		gd = new GridData(SWT.FILL,SWT.FILL,true,false);
-		gd.verticalSpan = 3;
-		gd.horizontalSpan = 3;
-		gd.verticalIndent = 2*VS;
-		gr.setLayoutData(gd);
+		GridDataFactory.fillDefaults().grab(true,false).span(3,3).indent(0,2*VS).applyTo(gr);
 		GridLayout layout2 = new GridLayout();
 		layout2.numColumns = 2;
 		gr.setLayout(layout2);
@@ -175,8 +181,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		Text tx4 = new Text(gr,SWT.BORDER);     // Text in (1,2)(gr) for the output's folder path
 		tx4.setText("dspot-out/");
-		gd = new GridData(SWT.FILL,SWT.FILL,true,false);
-		tx4.setLayoutData(gd);
+		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx4);
 		tx4.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -200,7 +205,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		Text tx5 = new Text(gr,SWT.BORDER);    // Text in (2,2)(gr) for the filter
 		tx5.setText("");
-		tx5.setLayoutData(gd);
+		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx5);
 		tx5.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -210,7 +215,26 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 		});  // end of the KeyListener
 		
-		
+		configCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(!configCombo.getText().isEmpty()) {
+				try {
+					wConf.setIndexOfCurrentConfiguration(configCombo.getSelectionIndex());
+					
+				String myArguments = wConf.getCurrentConfiguration()
+					.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
+				String myS = myArguments.substring(
+						myArguments.indexOf("-p ")+3,myArguments.indexOf(" -i "));
+				myS = myS.substring(0,myS.indexOf("/dspot.properties"));
+				tx1.setText(myS);
+				wizard.refreshPageTwo();
+				} catch (CoreException e1) {
+					e1.printStackTrace();
+				} 
+				}
+			}
+		});
 		
 		// required to avoid an error in the System
 		setControl(composite);
@@ -232,4 +256,5 @@ public class DSpotWizardPage1 extends WizardPage {
 	public String[] getTheProperties() {
 		return TheProperties;
 	}
+	
 }

@@ -21,6 +21,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.swt.events.SegmentListener;
 
+import eu.stamp.wp4.dspot.wizard.DSpotWizardPage2;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
@@ -38,11 +39,23 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	private CheckingDialog chDiag;
 	private String[] testMethods;
 	
-	public DspotAdvancedOptionsDialog(Shell parentSh,boolean pitSelected,String direction,String[] testCases,String[] testMethods) {
+	// widgets
+	//private Spinner spin0;
+	private int r;
+	//private Spinner spin1;
+	private int timeOut = 10000;
+	//private Text tx0;
+	private String testCases = "";
+	//private Text tx1;
+	private String pathPitResult = "";
+
+	
+	public DspotAdvancedOptionsDialog(Shell parentSh,boolean pitSelected,String direction,String[] testCases,String[] testMethods, DSpotWizardPage2 page) {
 		super(parentSh);
 		this.pitSelected = pitSelected;
 		this.direction = direction;
 		this.testMethods = testMethods;
+		this.r = page.r;
 		chDiag = new CheckingDialog(new Shell(),testCases," Select test cases ");
 	}
 
@@ -68,7 +81,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		lb0.setLayoutData(gd2);
 		
 		Spinner spin0 = new Spinner(composite,SWT.BORDER); // A spinner in (1,2) for randomSeed
-		spin0.setSelection(23); spin0.setMinimum(1);
+		spin0.setSelection(r); spin0.setMinimum(1);
 		spin0.setLayoutData(gd);
 		spin0.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -84,6 +97,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		
 		Spinner spin1 = new Spinner(composite,SWT.BORDER); // A spinner in (2,2) for timeOut
 		spin1.setMaximum(100000); spin1.setMinimum(500); spin1.setIncrement(100); spin1.setSelection(10000);
+		spin1.setSelection(timeOut);
 		spin1.setLayoutData(gd);
 		spin1.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -108,6 +122,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		gd.horizontalSpan = 1;
 		Text tx0 = new Text(composite,SWT.BORDER);   
 		tx0.setLayoutData(gd);
+		tx0.setText(testCases);
 		tx0.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -161,6 +176,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		gdTx1.verticalIndent = 12;
         tx1.setLayoutData(gdTx1);
 		tx1.setEnabled(pitSelected);
+		tx1.setText(pathPitResult);
 		tx1.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -238,7 +254,6 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 			  }
 		  });
 		  
-		  
 		
 		return composite;
 	}
@@ -263,5 +278,20 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 			if(advParameters[i] == null) { advParameters[i] = ""; }
 		}
 		return advParameters;
+	}
+	/*
+	 *  setter methods
+	 */
+	public void setRandomSeed(int r) {
+		this.r = r;
+	}
+	public void setTimeOut(int timeOut) {
+	    this.timeOut = timeOut;
+	}
+	public void setTestCases(String testCases) {
+		this.testCases = testCases;
+	}
+	public void setPathpitResult(String pathPitResult) {
+		this.pathPitResult = pathPitResult;
 	}
 }

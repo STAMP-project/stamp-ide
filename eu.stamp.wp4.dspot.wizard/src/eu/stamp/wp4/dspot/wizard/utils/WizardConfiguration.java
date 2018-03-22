@@ -13,6 +13,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -48,6 +51,8 @@ public class WizardConfiguration {
 	private ArrayList<String> testCases = new ArrayList<String>(1);
 	private ArrayList<String> testMethods = new ArrayList<String>(1);
 	private boolean projectSelected = false;
+	private ILaunchConfiguration[] configurations;
+	private int indexOfCurrentConfiguration = 0;
 	
 	public WizardConfiguration() throws CoreException{
 		
@@ -74,6 +79,8 @@ public class WizardConfiguration {
 	    sources = findSour();  // obtain the sources
 	    
 	    isTest = findTest(); // obtain the boolean array (value true for the sources that contain @Test)
+	    
+	    this.configurations = obtainLaunchConfigurations();
 			}
 	} 
 	
@@ -129,6 +136,12 @@ public class WizardConfiguration {
 		return activeWindow;
 	}
 	/**
+	 * @return an array with the DSpot launch configurations
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations() {
+		return configurations;
+	}
+	/**
 	 * @return ":" in Mac,Linux or others, ";" in windows
 	 */
 	public static String getSeparator() {
@@ -173,7 +186,19 @@ public class WizardConfiguration {
    }}
 		return null;
    }
-	
+   /**
+    * @return the ILaunchConfiguration to use
+    */
+   public ILaunchConfiguration getCurrentConfiguration() {
+	   return configurations[indexOfCurrentConfiguration];
+   }
+   /**
+    * @param indexOfCurrentConfiguration the position in the array given by getLaunchConfigurations
+    *  of the launch configuration to be used (default 0)
+    */
+   public void setIndexOfCurrentConfiguration(int indexOfCurrentConfiguration) {
+	   this.indexOfCurrentConfiguration = indexOfCurrentConfiguration;
+   }
 	/*
 	 *  The following private methods are only called by the constructor to obtain all the information
 	 */
@@ -384,15 +409,22 @@ public class WizardConfiguration {
 	 */
 	private boolean isAnnotationPresent(Method m, Class <? extends Annotation> annotation) {
 		// customized isAnnotation present to detect correctly @Test
-		boolean result = false;
 		Annotation[] annot = m.getDeclaredAnnotations();
 		for (Annotation a: annot) {
 			if ( a.annotationType().getName().equals(annotation.getName())) {
-				result = true; break;
+				return true;
 			}
 		}
 		
-		return result;
+		return false;
+	}
+	/**
+	 * @return an array with DSpot launchConfigurations
+	 * @throws CoreException
+	 */
+	private ILaunchConfiguration[] obtainLaunchConfigurations() throws CoreException{
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		return manager.getLaunchConfigurations(manager.getLaunchConfigurationType("eu.stamp.launchConfigurationDSpot"));
 	}
 }   
 

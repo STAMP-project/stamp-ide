@@ -58,7 +58,7 @@ public class DSpotWizard extends Wizard{
 	}
 	@Override
 	public void addPages() {
-		one = new DSpotWizardPage1(wConf);
+		one = new DSpotWizardPage1(wConf,this);
 		addPage(one);
 		two = new DSpotWizardPage2(wConf);
 		addPage(two);
@@ -84,7 +84,6 @@ public class DSpotWizard extends Wizard{
 		}
 		return true;
 	}
-	
 	/**
 	 * this is the method to write the dspot.properties, it is called by performFinish
 	 * it uses the information in page 1 and it is called by performFinish
@@ -115,6 +114,10 @@ public class DSpotWizard extends Wizard{
 			fw.close();
 			} catch(IOException ioe) {ioe.printStackTrace();}		
 	}    // end of writTheFile
+	
+	public void refreshPageTwo() {
+		two.refresh();
+	}
 }
 	
 

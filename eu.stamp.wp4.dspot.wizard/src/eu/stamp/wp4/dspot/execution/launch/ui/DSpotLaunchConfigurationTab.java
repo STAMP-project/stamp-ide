@@ -1,5 +1,7 @@
 package eu.stamp.wp4.dspot.execution.launch.ui;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -7,10 +9,20 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
+import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.ui.JavaElementComparator;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -19,6 +31,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.swt.widgets.Shell;
 
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 
@@ -49,7 +63,7 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		projectButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
+				showProjectDialog();
 			}
 		});  // end of the selection listener
 		
@@ -69,23 +83,19 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {	
-		
+		/*
 		String arguments = parametersText.getText();  // obtain the string with DSpot arguments
-		
-		DebugPlugin plugin = DebugPlugin.getDefault();
-	      ILaunchManager lm = plugin.getLaunchManager();
+
 	      try {
 	      configuration.setAttribute(
 	        IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, 
 	        javaProject.getElementName());
 	      configuration.setAttribute(
-	        IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, DSpotProperties.MAIN_CLASS);
-	      configuration.setAttribute(
 	  	        IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
-	      ILaunchConfiguration config = configuration.doSave();  
+	      configuration.doSave();  
 	      } catch(CoreException e) {
 	    	  e.printStackTrace();}
-	      
+	      */
 	}
 
 	@Override
@@ -95,6 +105,40 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		
+	}
+	
+	@SuppressWarnings("restriction")
+	private void showProjectDialog() {
+		
+		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class};
+		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,true) {
+			@Override
+			public boolean isSelectedValid(Object element) {
+				if(element instanceof IJavaProject) {
+					return true;
+				}
+				return false;
+			}
+		};
+		
+		ViewerFilter filter= new TypedViewerFilter(acceptedClasses);	
+		
+		  IWorkspaceRoot fWorkspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
+	        
+	        StandardJavaElementContentProvider provider= new StandardJavaElementContentProvider();
+	        ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
+	        ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(new Shell(), labelProvider, provider);
+	        dialog.setValidator(validator);
+	        dialog.setComparator(new JavaElementComparator());
+	        dialog.setTitle(" Select a project ");
+	        dialog.setMessage(" Select a project ");
+	        dialog.setInput(JavaCore.create(fWorkspaceRoot));
+	        dialog.addFilter(filter);
+	        dialog.setHelpAvailable(false);
+	        
+
+	        if(dialog.open() == Window.OK);
 		
 	}
 

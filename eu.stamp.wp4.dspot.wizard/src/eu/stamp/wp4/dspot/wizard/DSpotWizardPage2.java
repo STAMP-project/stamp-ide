@@ -17,8 +17,11 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SegmentEvent;
+
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
@@ -38,6 +41,7 @@ import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
@@ -60,15 +64,24 @@ public class DSpotWizardPage2 extends WizardPage {
 	private boolean clean = false;
 	private boolean pitSelected = false;
 	private WizardConfiguration wConf;
+	private DSpotWizardPage2 page;
+	
+	// widgets
+	private Text tx1;
+	private Spinner spin;
+	private Text amplText; 
+	private Combo combo1;
+	private Button button;
+	private Button button2;
 	
 	// Dialogs
 	private DspotAdvancedOptionsDialog adv;
 	private CheckingDialog chDiag;
-	//private ElementTreeSelectionDialog selDiag;
 	
 	// this is for the advanced dialog
 	private String[] testCases;
 	private String[] testMethods;
+	public int r;
 	
 	public DSpotWizardPage2(WizardConfiguration wConf) {
 		super("Second page");
@@ -77,7 +90,8 @@ public class DSpotWizardPage2 extends WizardPage {
 		this.wConf = wConf;
 		testCases = wConf.getTestCases();
 		testMethods = wConf.getTestMethods();
-		adv = new DspotAdvancedOptionsDialog(new Shell(),pitSelected,wConf.getProjectPath(),testCases,testMethods);
+		page = this;
+		adv = new DspotAdvancedOptionsDialog(new Shell(),pitSelected,wConf.getProjectPath(),testCases,testMethods,this);
 	} // end of the constructor
 	
 	@Override
@@ -98,7 +112,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		gd.heightHint = 20;
 		gd.horizontalSpan = 2;
 		
-		Spinner spin = new Spinner(composite,SWT.NONE); // A spinner in  (1,2)
+		spin = new Spinner(composite,SWT.NONE); // A spinner in  (1,2)
 		spin.setMinimum(1);                             // for the number of iterations i
 		spin.setLayoutData(gd);
 		spin.addSelectionListener(new SelectionAdapter() {
@@ -121,7 +135,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		Label lb2 = new Label(composite,SWT.NONE);   // A label in (2,1)
 		lb2.setText("Execution classes :  ");
 				
-		Text tx1 = new Text(composite,SWT.BORDER);  // A text in (2,2) for the execution classes
+		tx1 = new Text(composite,SWT.BORDER);  // A text in (2,2) for the execution classes
 		tx1.setText("");
 		gd = new GridData(SWT.FILL,SWT.FILL,true,false);
 		gd.verticalIndent = 8;
@@ -189,7 +203,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    Label lb4 = new Label(composite,SWT.NONE);
 	    lb4.setText("use several amplifiers : ");
 	    
-	    Text amplText = new Text(composite,SWT.BORDER);
+	    amplText = new Text(composite,SWT.BORDER);
 	    amplText.setText("");
 	    GridData amplTextData = new GridData(SWT.FILL,SWT.NONE,true,false);
 	    amplTextData.horizontalSpan = n-2;
@@ -228,7 +242,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    Label lb5 = new Label(composite,SWT.NONE); // A label in (5,1)
 	    lb5.setText("Test Criterion : ");
 	    
-	    Combo combo1 = new Combo(composite,SWT.BORDER);  // combo for the test criterion in (4,2)
+	    combo1 = new Combo(composite,SWT.BORDER);  // combo for the test criterion in (4,2)
 	    combo1.setLayoutData(gd);  // setting the criterions in the combo
 	    combo1.add("PitMutantScoreSelector"); combo1.add("ExecutedMutantSelector");
 	    combo1.add("CloverCoverageSelector"); combo1.add("BranchCoverageTestSelector");
@@ -264,7 +278,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    Label lb7 = new Label(composite,SWT.NONE); // A label in (6,1)
 	    lb7.setText("Verbose ");
 	    
-	    Button button = new Button(composite,SWT.CHECK);  // check button in (6,2)
+	    button = new Button(composite,SWT.CHECK);  // check button in (6,2)
 	    button.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
@@ -282,7 +296,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 	    		pitSelected = combo1.getText() == "" || combo1.getText().contains("PitMutantScoreSelector");
-	    		adv = new DspotAdvancedOptionsDialog(new Shell(),pitSelected,wConf.getProjectPath(),testCases,testMethods);
+	    		adv = new DspotAdvancedOptionsDialog(new Shell(),pitSelected,wConf.getProjectPath(),testCases,testMethods,page);
 	    		adv.open();
 	    	}
 	    }); // end of the selection listener
@@ -291,14 +305,14 @@ public class DSpotWizardPage2 extends WizardPage {
 	    Label lb8 = new Label(composite,SWT.NONE); // A label in (6,1)
 	    lb8.setText("clean ");
 	    
-	    Button button2 = new Button(composite,SWT.CHECK);  // check button in (6,2)
+	    button2 = new Button(composite,SWT.CHECK);  // check button in (6,2)
 	    button2.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 	    		clean = button.getSelection();
 	    	}
 	    }); // end of the selection listener
-		
+	    
 		// required to avoid an error in the System
 		setControl(composite);
 		setPageComplete(false);	
@@ -395,6 +409,54 @@ public class DSpotWizardPage2 extends WizardPage {
         return "";
     }
 
+    public void refresh() {
+	 ILaunchConfiguration config = wConf.getCurrentConfiguration();
+	 String argument = null;
+	 try {
+	 argument = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
+	} catch (CoreException e) {
+		e.printStackTrace();
+	}
+   if(!argument.isEmpty()) {
+   	System.out.println(argument);
+   	String myFragment = argument
+   			.substring(argument.indexOf("-i ")+3,argument.indexOf(" -t"));
+   	spin.setSelection(Integer.parseInt(myFragment));
+   	myFragment = argument
+   			.substring(argument.indexOf("-t ")+3,argument.indexOf(" -a"));
+   	tx1.setText(myFragment);
+   	myFragment = argument
+   			.substring(argument.indexOf("-a ")+3,argument.indexOf(" -s"));
+   	amplText.setText(myFragment);
+   	myFragment = argument
+   			.substring(argument.indexOf("-s ")+3,argument.indexOf(" -g"));
+   	combo1.setText(myFragment);
+   	if(argument.contains("-r ")) {
+      myFragment = argument.substring(argument.indexOf("-r ")+3);
+      myFragment = myFragment.substring(0,myFragment.indexOf("-"));
+      myFragment = myFragment.replaceAll(" ", "");
+      this.r = Integer.parseInt(myFragment);
+   	}
+   	if(argument.contains("-v ")) {
+        myFragment = argument.substring(argument.indexOf("-v ")+3);
+        myFragment = myFragment.substring(0,myFragment.indexOf("-"));
+        myFragment = myFragment.replaceAll(" ", "");
+        adv.setTimeOut(Integer.parseInt(myFragment));
+     	}
+   	if(argument.contains("-c ")) {
+        myFragment = argument.substring(argument.indexOf("-c ")+3);
+        myFragment = myFragment.substring(0,myFragment.indexOf("-"));
+        adv.setTestCases(myFragment);
+     	}
+   	if(argument.contains("-m ")) {
+        myFragment = argument.substring(argument.indexOf("-m ")+3);
+        myFragment = myFragment.substring(0,myFragment.indexOf("-"));
+        adv.setPathpitResult(myFragment);
+     	}
+   	button.setSelection(argument.contains("--verbose"));
+   	button2.setSelection(argument.contains("--clean"));
+   }
+    }
 	
 	/*
 	 *  public methods to return the information set by the user
@@ -452,6 +514,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		"and the path to the .csv of the original result of Pit test, (this only avaiable if the test criterion is PitMutantScoreSelector)",""};
 		 DspotWizardHelpDialog info = new DspotWizardHelpDialog(new Shell()," This page contains the information to execute DSpot ",myText);
 		 info.open();
+	    
 	 }
 	 
 }
