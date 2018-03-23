@@ -10,6 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
@@ -34,6 +35,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	private boolean[] Comp = {true,false,false,true};  // this is to set next page
 	private WizardConfiguration wConf;
 	private DSpotWizard wizard;
+	
 
 	public DSpotWizardPage1(WizardConfiguration wConf,DSpotWizard wizard){
 		super("First page");
@@ -55,6 +57,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		int VS = 8;   // this will be the verticalIndent between rows in composite
 		
+		// use saved configuration
 		Label lb0 = new Label(composite,SWT.NONE);
 		lb0.setText("Use saved configuration : ");
 	    
@@ -64,7 +67,52 @@ public class DSpotWizardPage1 extends WizardPage {
 		for(ILaunchConfiguration laun : configurations) {
 			configCombo.add(laun.getName());
 		}
-		configCombo.add("");
+		configCombo.setEnabled(false);
+		
+		// New Configuration
+		Label lbNewConfig = new Label(composite,SWT.NONE);
+		GridDataFactory.swtDefaults().indent(0, VS).applyTo(lbNewConfig);
+		lbNewConfig.setText("New Configuration : ");
+		
+		Button btNewConfig = new Button(composite,SWT.CHECK);
+		GridDataFactory.swtDefaults().indent(0, VS).applyTo(btNewConfig);
+		btNewConfig.setSelection(true);
+		
+		Text txNewConfig = new Text(composite,SWT.BORDER);
+		txNewConfig.setText(" Type configuration name ");
+		txNewConfig.setEnabled(true);
+		GridDataFactory.fillDefaults().grab(false, true).indent(0, VS).applyTo(txNewConfig);
+		txNewConfig.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				wizard.setConfigurationName(txNewConfig.getText());
+			}
+		});
+		txNewConfig.addSegmentListener(new SegmentListener() {
+			@Override
+			public void getSegments(SegmentEvent event) {
+				wizard.setConfigurationName(txNewConfig.getText());
+			}	
+		});
+		
+		btNewConfig.addSelectionListener(new SelectionAdapter() { // selection listener of the 
+	        @Override                                    // new configuration check button
+	        public void widgetSelected(SelectionEvent e) {
+	        	if(btNewConfig.getSelection()) {
+	        		txNewConfig.setText(" Type configuration name ");
+	        		txNewConfig.setEnabled(true);
+	        		configCombo.setText("");
+	        		configCombo.setEnabled(false);
+	        	} else {
+	        		txNewConfig.setText("");
+	        		txNewConfig.setEnabled(false);
+	        		configCombo.setEnabled(true);
+	        	}
+	        }
+});
 		
 		// first row  (1,x)     Project's path
 		Label lb1 = new Label(composite,SWT.NONE);     // Label in (1,1)
@@ -108,7 +156,6 @@ public class DSpotWizardPage1 extends WizardPage {
 		Label lb2 = new Label(composite,SWT.NONE);   // Label in (2,1)
 		lb2.setText("Path of the source : ");
 		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb2);
-        
         Combo combo0 = new Combo(composite,SWT.BORDER);  // Combo in (2,2) for the source's path
         GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo0);
         combo0.addSelectionListener(new SelectionAdapter() {
@@ -215,8 +262,8 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 		});  // end of the KeyListener
 		
-		configCombo.addSelectionListener(new SelectionAdapter() {
-			@Override
+		configCombo.addSelectionListener(new SelectionAdapter() { // selection listener of the 
+			@Override                                            // configurations combo
 			public void widgetSelected(SelectionEvent e) {
 				if(!configCombo.getText().isEmpty()) {
 				try {
@@ -229,6 +276,7 @@ public class DSpotWizardPage1 extends WizardPage {
 				myS = myS.substring(0,myS.indexOf("/dspot.properties"));
 				tx1.setText(myS);
 				wizard.refreshPageTwo();
+				wizard.setConfigurationName(configCombo.getText());
 				} catch (CoreException e1) {
 					e1.printStackTrace();
 				} 

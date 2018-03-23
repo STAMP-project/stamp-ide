@@ -17,6 +17,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
+import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotEclipseJob;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
@@ -29,6 +30,7 @@ public class DSpotWizard extends Wizard{
 	protected DSpotWizardPage1 one;
 	protected DSpotWizardPage2 two;
 	private WizardConfiguration wConf;
+	private String configurationName = "DSpot";
 	
 	// [0] Dspot jar path, [1] project path, [2] number of iterations i, [3] -t test class, [4] -a Method
 	// [5] test criterion, [6] max Test Amplified
@@ -66,6 +68,7 @@ public class DSpotWizard extends Wizard{
 	
 	@Override
 	public boolean performFinish() {
+		DSpotProperties.LAUNCH_CONF_NAME = configurationName;
 		String[] advParameters = two.getAdvparameters();
 		if(System.getenv("MAVEN_HOME") == null && (advParameters[4] == null || advParameters[4] == "")) { // an error message if MAVEN_HOME is not set
 			MessageDialog.openError(new Shell(),"Maven Home not set","Error the enviroment variable MAVEN_HOME is required, please set it in your computer or in the text in advanced options in page 2");
@@ -83,6 +86,9 @@ public class DSpotWizard extends Wizard{
         job.schedule();  // background invocation of Dspot
 		}
 		return true;
+	}
+	public void setConfigurationName(String configurationName) {
+		this.configurationName = configurationName;
 	}
 	/**
 	 * this is the method to write the dspot.properties, it is called by performFinish

@@ -69,6 +69,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	// widgets
 	private Text tx1;
 	private Spinner spin;
+	private Spinner spin1;
 	private Text amplText; 
 	private Combo combo1;
 	private Button button;
@@ -81,7 +82,10 @@ public class DSpotWizardPage2 extends WizardPage {
 	// this is for the advanced dialog
 	private String[] testCases;
 	private String[] testMethods;
-	public int r;
+	private int r = 23;
+	private int timeOut = 10000;
+	private String casesToTest = "";
+	private String pathPitResult = "";
 	
 	public DSpotWizardPage2(WizardConfiguration wConf) {
 		super("Second page");
@@ -262,7 +266,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    Label lb6 = new Label(composite,SWT.NONE);  // A label in (5,1)
 	    lb6.setText("Max test amplified : ");
 	    
-	    Spinner spin1 = new Spinner(composite,SWT.BORDER);
+	    spin1 = new Spinner(composite,SWT.BORDER);
 	    spin1.setMinimum(50); spin1.setIncrement(50); spin1.setMaximum(4000); spin1.setSelection(200);
 	    spin1.setLayoutData(gd);
 	    spin1.addSelectionListener(new SelectionAdapter() {
@@ -431,27 +435,31 @@ public class DSpotWizardPage2 extends WizardPage {
    	myFragment = argument
    			.substring(argument.indexOf("-s ")+3,argument.indexOf(" -g"));
    	combo1.setText(myFragment);
+   	myFragment = argument.substring(argument.indexOf("-g ")+3);
+   	myFragment = myFragment.substring(0,myFragment.indexOf("-"));
+   	myFragment = myFragment.replaceAll(" ", "");
+   	spin1.setSelection(Integer.parseInt(myFragment));
    	if(argument.contains("-r ")) {
       myFragment = argument.substring(argument.indexOf("-r ")+3);
       myFragment = myFragment.substring(0,myFragment.indexOf("-"));
       myFragment = myFragment.replaceAll(" ", "");
-      this.r = Integer.parseInt(myFragment);
+      r = Integer.parseInt(myFragment);
    	}
    	if(argument.contains("-v ")) {
         myFragment = argument.substring(argument.indexOf("-v ")+3);
         myFragment = myFragment.substring(0,myFragment.indexOf("-"));
         myFragment = myFragment.replaceAll(" ", "");
-        adv.setTimeOut(Integer.parseInt(myFragment));
+        timeOut = Integer.parseInt(myFragment);
      	}
    	if(argument.contains("-c ")) {
         myFragment = argument.substring(argument.indexOf("-c ")+3);
         myFragment = myFragment.substring(0,myFragment.indexOf("-"));
-        adv.setTestCases(myFragment);
+        casesToTest = myFragment;
      	}
    	if(argument.contains("-m ")) {
         myFragment = argument.substring(argument.indexOf("-m ")+3);
         myFragment = myFragment.substring(0,myFragment.indexOf("-"));
-        adv.setPathpitResult(myFragment);
+        pathPitResult = myFragment;
      	}
    	button.setSelection(argument.contains("--verbose"));
    	button2.setSelection(argument.contains("--clean"));
@@ -504,6 +512,18 @@ public class DSpotWizardPage2 extends WizardPage {
 	 */
 	public String[] getAdvparameters() {
 		return adv.getAdvParameters();
+	}
+	public int getRandomSeed() {
+		return r;
+	}
+	public int getTimeOut() {
+		return timeOut;
+	}
+	public String getCases() {
+		return casesToTest;
+	}
+	public String getPathPitResult() {
+		return pathPitResult;
 	}
 	 @Override
 	 public void performHelp() {
