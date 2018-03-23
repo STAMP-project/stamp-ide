@@ -422,7 +422,6 @@ public class DSpotWizardPage2 extends WizardPage {
 		e.printStackTrace();
 	}
    if(!argument.isEmpty()) {
-   	System.out.println(argument);
    	String myFragment = argument
    			.substring(argument.indexOf("-i ")+3,argument.indexOf(" -t"));
    	spin.setSelection(Integer.parseInt(myFragment));
@@ -436,7 +435,9 @@ public class DSpotWizardPage2 extends WizardPage {
    			.substring(argument.indexOf("-s ")+3,argument.indexOf(" -g"));
    	combo1.setText(myFragment);
    	myFragment = argument.substring(argument.indexOf("-g ")+3);
+   	if(myFragment.contains("-")) {
    	myFragment = myFragment.substring(0,myFragment.indexOf("-"));
+   	} 
    	myFragment = myFragment.replaceAll(" ", "");
    	spin1.setSelection(Integer.parseInt(myFragment));
    	if(argument.contains("-r ")) {
