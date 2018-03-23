@@ -9,6 +9,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -26,6 +27,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SegmentListener;
+import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -39,6 +44,8 @@ import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
 	private IJavaProject javaProject;
+	private String parameters;
+	private Text projectText;
 	private Text parametersText;
 	
 	@Override
@@ -53,8 +60,22 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		projectLabel.setText("Project : ");
 		GridDataFactory.swtDefaults().applyTo(projectLabel);
 		
-		Text projectText = new Text(container,SWT.BORDER);
-		
+		projectText = new Text(container,SWT.BORDER);
+		projectText.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				parameters = projectText.getText();
+			}	
+		});
+		projectText.addSegmentListener(new SegmentListener() {
+			@Override
+			public void getSegments(SegmentEvent event) {
+				parameters = projectText.getText();
+			}	
+		});
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(projectText);
 		
 		Button projectButton = new Button(container,SWT.PUSH);
@@ -71,9 +92,14 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		parametersLabel.setText("Dspot execution parameters : ");
         GridDataFactory.swtDefaults().applyTo(parametersLabel);
 		
-        parametersText = new Text(container,SWT.BORDER);
-        		
+        parametersText = new Text(container,SWT.BORDER);		
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(parametersText);
+		parametersText.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+			}
+		});
 	}
 
 	@Override
@@ -95,7 +121,7 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 	      configuration.doSave();  
 	      } catch(CoreException e) {
 	    	  e.printStackTrace();}
-	      */
+	     */ 
 	}
 
 	@Override
@@ -138,7 +164,14 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 	        dialog.setHelpAvailable(false);
 	        
 
-	        if(dialog.open() == Window.OK);
+	        if(dialog.open() == Window.OK) {
+	            Object[] results = dialog.getResult();
+	            for(Object ob : results) {
+	            	if(ob instanceof IJavaProject) { 
+	             javaProject =  (IJavaProject) ob;
+	             projectText.setText(javaProject.getElementName());}
+	            }
+	        }
 		
 	}
 
