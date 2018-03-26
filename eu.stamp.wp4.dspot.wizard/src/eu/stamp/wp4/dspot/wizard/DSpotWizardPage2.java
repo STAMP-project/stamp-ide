@@ -1,15 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2018 Atos
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- * 	Ricardo Jose Tejada Garcia (Atos) - main developer
- * 	Jesús Gorroñogoitia (Atos) - architect
- * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
- *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard;
 
 import org.eclipse.swt.SWT;
@@ -29,6 +17,9 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SegmentEvent;
+import org.eclipse.swt.widgets.List;
+
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -43,7 +34,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -78,19 +68,23 @@ public class DSpotWizardPage2 extends WizardPage {
 	private boolean pitSelected = false;
 	private WizardConfiguration wConf;
 	private DSpotWizardPage2 page;
+	private String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
+			"BooleanLiteralAmplifier","AllLiteralAmplifiers","MethodAdd","MethodRemove","TestDataMutator",
+			"StatementAdd",""};  // the possible amplifiers;
 	
 	// widgets
 	private Text tx1;
 	private Spinner spin;
 	private Spinner spin1;
-	private Text amplText; 
+	//private Text amplText; 
+	private List amplifiersList;
 	private Combo combo1;
 	private Button button;
 	private Button button2;
 	
 	// Dialogs
 	private DspotAdvancedOptionsDialog adv;
-	private CheckingDialog chDiag;
+	//private CheckingDialog chDiag;
 	
 	// this is for the advanced dialog
 	private String[] testCases;
@@ -108,8 +102,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		testCases = wConf.getTestCases();
 		testMethods = wConf.getTestMethods();
 		page = this;
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		adv = new DspotAdvancedOptionsDialog(shell, pitSelected,wConf.getProjectPath(),testCases,testMethods,this);
+		adv = new DspotAdvancedOptionsDialog(new Shell(),pitSelected,wConf.getProjectPath(),testCases,testMethods,this);
 	} // end of the constructor
 	
 	@Override
@@ -189,9 +182,11 @@ public class DSpotWizardPage2 extends WizardPage {
  			try {
 				String selection = showElementTreeSelectionDialog2(wConf.getPro(),wConf.getTheWindow());
 				if(tx1.getText()==null||tx1.getText().isEmpty()) {
-					tx1.setText(selection);
-				}else{ 
-					tx1.setText(tx1.getText()+WizardConfiguration.getSeparator()+selection); }
+					if(!tx1.getText().contains(selection)||!selection.contains(tx1.getText())) tx1.setText(selection);  // this if is to avoid repetitions
+				}else if(!selection.isEmpty()) { // if !selection.isEmpty() to avoid put ; or : while the dialog is canceled
+					if(!tx1.getText().contains(selection)||!selection.contains(tx1.getText())) {
+						tx1.setText(tx1.getText()+WizardConfiguration.getSeparator()+selection); }
+					}
 			} catch (JavaModelException e1) {
 				e1.printStackTrace();
 			} 
@@ -205,54 +200,23 @@ public class DSpotWizardPage2 extends WizardPage {
 		Label lb3 = new Label(composite,SWT.NONE);   // A label in (3,1)
 		lb3.setText("Amplifier :  ");
 		
-		String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
-				"BooleanLiteralAmplifier","AllLiteralAmplifiers","MethodAdd","MethodRemove","TestDataMutator",
-				"StatementAdd",""};  // the possible amplifiers
-		
-		Combo combo = new Combo(composite,SWT.BORDER);
+		amplifiersList = new List(composite,SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		gd = new GridData(SWT.FILL,SWT.FILL,true,false);
+	    gd.grabExcessVerticalSpace = true;
 		gd.horizontalSpan = n-1;
-		combo.setLayoutData(gd);
+		amplifiersList.setLayoutData(gd);
 		for(int i = 0; i < amplifiers.length -1; i++) {
-			combo.add(amplifiers[i]);
+			amplifiersList.add(amplifiers[i]);
 		}
-
-	    // fourth row
-	    Label lb4 = new Label(composite,SWT.NONE);
-	    lb4.setText("use several amplifiers : ");
-	    
-	    amplText = new Text(composite,SWT.BORDER);
-	    amplText.setText("");
-	    GridData amplTextData = new GridData(SWT.FILL,SWT.NONE,true,false);
-	    amplTextData.horizontalSpan = n-2;
-	    amplText.setLayoutData(amplTextData);
-	    amplText.setEnabled(false);
-	    
-	    combo.addSelectionListener(new SelectionAdapter() {
+		
+		
+	    amplifiersList.addSelectionListener(new SelectionAdapter(){
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
-	    		
-	    		MyStrings[2] = combo.getText();
-	    		amplText.setText("");
-	    		amplText.setEnabled(false);
-	    	}
-	    }); // end of the selection listener
-	    
-	    Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-	    chDiag = new CheckingDialog(shell, amplifiers," Select amplifiers ");  // preparing the dialog to select the amplifiers
-	    
-	    Button addAmplBt = new Button(composite,SWT.PUSH); 
-	    addAmplBt.setText("Add");
-	    addAmplBt.addSelectionListener(new SelectionAdapter(){
-	    	@Override
-	    	public void widgetSelected(SelectionEvent e) {
-	    		chDiag.open();
-	    		String sr = chDiag.getSelection();
-	    		if(sr != "") {
-	    			amplText.setText(sr);
-	    			MyStrings[2] =sr;
-	    			combo.setText("");
-	    			amplText.setEnabled(true);
+	    		String[] selection = amplifiersList.getSelection();
+	    		MyStrings[2] = selection[0];
+	    		for(int i = 1; i < selection.length; i++) {
+	    			MyStrings[2] = MyStrings[2] + WizardConfiguration.getSeparator() + selection[i];
 	    		}
 	    	}
 	    });
@@ -262,6 +226,8 @@ public class DSpotWizardPage2 extends WizardPage {
 	    lb5.setText("Test Criterion : ");
 	    
 	    combo1 = new Combo(composite,SWT.BORDER);  // combo for the test criterion in (4,2)
+	    gd = new GridData(SWT.FILL,SWT.FILL,true,false);
+	    gd.horizontalSpan = n-1;
 	    combo1.setLayoutData(gd);  // setting the criterions in the combo
 	    combo1.add("PitMutantScoreSelector"); combo1.add("ExecutedMutantSelector");
 	    combo1.add("CloverCoverageSelector"); combo1.add("BranchCoverageTestSelector");
@@ -315,8 +281,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 	    		pitSelected = combo1.getText() == "" || combo1.getText().contains("PitMutantScoreSelector");
-	    		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-	    		adv = new DspotAdvancedOptionsDialog(shell, pitSelected,wConf.getProjectPath(),testCases,testMethods,page);
+	    		adv = new DspotAdvancedOptionsDialog(new Shell(),pitSelected,wConf.getProjectPath(),testCases,testMethods,page);
 	    		adv.open();
 	    	}
 	    }); // end of the selection listener
@@ -418,15 +383,18 @@ public class DSpotWizardPage2 extends WizardPage {
         dialog.setInput(JavaCore.create(fWorkspaceRoot));
         dialog.setInitialSelection(initElement);
         dialog.setHelpAvailable(false);
-    
+        String selection = "";
         if (dialog.open() == Window.OK) {
             Object[] results = dialog.getResult();
             for(Object ob : results) {
             	if(ob instanceof ICompilationUnit) { 
-             return wConf.getqName(((ICompilationUnit)ob).getElementName()); }
+            		if(!selection.isEmpty()) {
+             selection = selection + WizardConfiguration
+            		 .getSeparator() + wConf.getqName(((ICompilationUnit)ob).getElementName());}
+            		else{ selection = wConf.getqName(((ICompilationUnit)ob).getElementName()); }}
             }
         }
-        return "";
+        return selection;
     }
 
     public void refresh() {
@@ -446,7 +414,18 @@ public class DSpotWizardPage2 extends WizardPage {
    	tx1.setText(myFragment);
    	myFragment = argument
    			.substring(argument.indexOf("-a ")+3,argument.indexOf(" -s"));
-   	amplText.setText(myFragment);
+   	ArrayList<Integer> indices = new ArrayList<Integer>(1);
+   	for(int i = 0; i < amplifiers.length; i++) {
+   		if(myFragment.contains(amplifiers[i])) {
+   			indices.add(new Integer(i));
+   		}
+   	}
+   	int[] theIndices = new int[indices.size()];
+   	for(int i = 0; i < indices.size(); i++) {
+   		theIndices[i] = indices.get(i).intValue();
+   	}
+   	amplifiersList.setSelection(theIndices);;
+   	//amplText.setText(myFragment);
    	myFragment = argument
    			.substring(argument.indexOf("-s ")+3,argument.indexOf(" -g"));
    	combo1.setText(myFragment);
@@ -549,8 +528,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		"the option clean removes the out dirctory if exists, else it will append the results to the exist files",
 		"","The link DSpot advanced options opens a dialog to set the time value of degenerated test (ms), the randomSeed, the MAVEN_HOME ",
 		"and the path to the .csv of the original result of Pit test, (this only avaiable if the test criterion is PitMutantScoreSelector)",""};
-		 Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		 DspotWizardHelpDialog info = new DspotWizardHelpDialog(shell, " This page contains the information to execute DSpot ",myText);
+		 DspotWizardHelpDialog info = new DspotWizardHelpDialog(new Shell()," This page contains the information to execute DSpot ",myText);
 		 info.open();
 	    
 	 }

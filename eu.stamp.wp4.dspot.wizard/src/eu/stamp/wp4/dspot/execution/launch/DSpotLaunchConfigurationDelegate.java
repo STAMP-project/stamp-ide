@@ -1,15 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2018 Atos
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- * 	Ricardo Jose Tejada Garcia (Atos) - main developer
- * 	Jesús Gorroñogoitia (Atos) - architect
- * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
- *******************************************************************************/
 package eu.stamp.wp4.dspot.execution.launch;
 
 import java.io.File;
@@ -35,8 +23,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
-
-import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 
 public class DSpotLaunchConfigurationDelegate extends JavaLaunchDelegate {
 
@@ -89,7 +75,7 @@ public class DSpotLaunchConfigurationDelegate extends JavaLaunchDelegate {
 			}
 			
 			//Add DSpot library
-			URL url = new URL(DSpotWizardConstants.DSPOT_JAR);
+			URL url = new URL("platform:/plugin/eu.stamp.wp4.dspot.wizard/lib/dspot-1.0.6-SNAPSHOT-jar-with-dependencies.jar");
 			collection.add (FileLocator.toFileURL(url).getPath());
 			
 			classpath = new String[collection.size()];

@@ -1,15 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2018 Atos
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- * 	Ricardo Jose Tejada Garcia (Atos) - main developer
- * 	Jesús Gorroñogoitia (Atos) - architect
- * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
- *******************************************************************************/
 package eu.stamp.wp4.dspot.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -22,10 +10,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -45,7 +33,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	
 	// [0] randomSeed, [1] timeOut (ms),[2] test cases, [3] path pit result,[4] MAVEN_HOME 
 	private String[] advParameters = new String[5];                   // this is for the user information
-	private DirectoryDialog ddialog; 
+	private DirectoryDialog dd = new DirectoryDialog(new Shell());    // this is to set [3]
 	private boolean pitSelected;  // [3] will be only available if the user selected PitMutantScoreSelector
 	                              // as test criterion in page 2
 	private String direction;
@@ -61,8 +49,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		this.direction = direction;
 		this.testMethods = testMethods;
 		this.page = page;
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		chDiag = new CheckingDialog(shell,testCases," Select test cases ");
+		chDiag = new CheckingDialog(new Shell(),testCases," Select test cases ");
 	}
 
 	@Override
@@ -117,6 +104,28 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		lb2.setText("test cases to amplify : ");
 		lb2.setLayoutData(gd2);
 		
+		List casesList = new List(composite,SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+		gd = new GridData(SWT.FILL,SWT.FILL,false,false);  // text for the test cases
+		gd.verticalIndent = 8;
+		gd.horizontalSpan = 2;
+		gd.heightHint = 150;
+		casesList.setLayoutData(gd);
+		for(String sr : testMethods) {
+			casesList.add(sr);
+		}
+		casesList.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String[] selection = casesList.getSelection();
+				advParameters[2] = " -c " + selection[0];
+				for(int i = 1; i < selection.length; i++) {
+					advParameters[2] = advParameters[2] + WizardConfiguration
+							.getSeparator() + selection[i];
+				}
+			}
+		});
+		
+		/*
 		Button casesButton = new Button(composite,SWT.PUSH);
 		casesButton.setText("Select");
 		GridData casesBtData = new GridData(SWT.NONE,SWT.NONE,false,false);
@@ -161,7 +170,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
                 tx0.setText(text);
                 }
 			}
-		}); 
+		}); */
 		
 		// fourth row (4,x) path pit result
 		Label lb3 = new Label(composite,SWT.NONE);  // A label in (4,1)
@@ -202,15 +211,13 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 			
 		}); // end of the segment listener
 		
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		ddialog = new DirectoryDialog(shell);    // this is to set [3]
-		ddialog.setText("Select folder"); // this is the directory dialog opened by the push button in (3,2)
-		ddialog.setFilterPath(direction);  // the initial point is the project's folder
+		dd.setText("Select folder"); // this is the directory dialog opened by the push button in (3,2)
+		dd.setFilterPath(direction);  // the initial point is the project's folder
 		
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String theString = ddialog.open();
+				String theString = dd.open();
 				if(theString == null) { theString = ""; }
 				tx1.setText(theString);  // put the path of the selected directory into the text in (3,3)
 			}
@@ -274,7 +281,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	
     @Override
     protected Point getInitialSize() { // default size of the dialog
-        return new Point(600, 300);
+        return new Point(600, 400);
     }
 	
 	/**

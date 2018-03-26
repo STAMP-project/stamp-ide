@@ -1,15 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2018 Atos
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- * 	Ricardo Jose Tejada Garcia (Atos) - main developer
- * 	Jesús Gorroñogoitia (Atos) - architect
- * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
- *******************************************************************************/
 package eu.stamp.wp4.dspot.execution.launch.ui;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -46,7 +34,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -170,8 +157,7 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 	        
 	        StandardJavaElementContentProvider provider= new StandardJavaElementContentProvider();
 	        ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
-	        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-	        ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(shell, labelProvider, provider);
+	        ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(new Shell(), labelProvider, provider);
 	        dialog.setValidator(validator);
 	        dialog.setComparator(new JavaElementComparator());
 	        dialog.setTitle(" Select a project ");
