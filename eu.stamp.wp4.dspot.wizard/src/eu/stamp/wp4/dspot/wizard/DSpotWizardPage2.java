@@ -188,9 +188,9 @@ public class DSpotWizardPage2 extends WizardPage {
     		 
  			try {
 				String selection = showElementTreeSelectionDialog2(wConf.getPro(),wConf.getTheWindow());
-				if(tx1.getText()==null||tx1.getText()=="") {
+				if(tx1.getText()==null||tx1.getText().isEmpty()) {
 					tx1.setText(selection);
-				}else if(selection != null || selection != "") { 
+				}else{ 
 					tx1.setText(tx1.getText()+WizardConfiguration.getSeparator()+selection); }
 			} catch (JavaModelException e1) {
 				e1.printStackTrace();

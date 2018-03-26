@@ -36,6 +36,8 @@ import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
+import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
+
 public class DSpotLaunchConfigurationDelegate extends JavaLaunchDelegate {
 
 	@Override
@@ -87,7 +89,7 @@ public class DSpotLaunchConfigurationDelegate extends JavaLaunchDelegate {
 			}
 			
 			//Add DSpot library
-			URL url = new URL("platform:/plugin/eu.stamp.wp4.dspot.wizard/lib/dspot-1.0.6-SNAPSHOT-jar-with-dependencies.jar");
+			URL url = new URL(DSpotWizardConstants.DSPOT_JAR);
 			collection.add (FileLocator.toFileURL(url).getPath());
 			
 			classpath = new String[collection.size()];
