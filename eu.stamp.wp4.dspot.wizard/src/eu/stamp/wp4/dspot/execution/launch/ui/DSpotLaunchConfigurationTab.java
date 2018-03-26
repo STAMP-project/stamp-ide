@@ -9,8 +9,6 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
@@ -41,6 +39,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 
+@SuppressWarnings("restriction")
 public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
 	private IJavaProject javaProject;
@@ -109,19 +108,24 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {	
-		/*
+		
 		String arguments = parametersText.getText();  // obtain the string with DSpot arguments
 
 	      try {
+	    	  
+	    	  if(javaProject != null) {
 	      configuration.setAttribute(
 	        IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, 
 	        javaProject.getElementName());
+	    	  }
+	    	  if(parameters != null && parameters != "") {
 	      configuration.setAttribute(
-	  	        IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
+	  	        IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, parameters);
 	      configuration.doSave();  
+	    	  }
 	      } catch(CoreException e) {
 	    	  e.printStackTrace();}
-	     */ 
+	      
 	}
 
 	@Override
@@ -131,10 +135,9 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
-		
+
 	}
 	
-	@SuppressWarnings("restriction")
 	private void showProjectDialog() {
 		
 		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class};

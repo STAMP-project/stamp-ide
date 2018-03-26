@@ -70,6 +70,7 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	        IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, DSpotProperties.MAIN_CLASS);
 	      wc.setAttribute(
 	  	        IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
+	      System.out.println(arguments);
 	      ILaunchConfiguration config = wc.doSave();   
 	      config.launch(ILaunchManager.RUN_MODE, null);
 	}
