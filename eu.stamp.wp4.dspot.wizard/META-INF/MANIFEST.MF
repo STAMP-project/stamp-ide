@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Wizard
-Bundle-SymbolicName: eu.stamp.wp4.dspot.wizard;singleton:=true
+Bundle-Name: DSpot Wizard for Eclipse
+Bundle-SymbolicName: eu.stamp.eclipse.dspot.wizard;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: DSPOT
+Bundle-Vendor: Atos Spain S.A.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.core.runtime,

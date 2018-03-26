@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo Jose Tejada Garcia (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard;
 
 import org.eclipse.core.runtime.CoreException;
@@ -10,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Group;
@@ -294,7 +307,8 @@ public class DSpotWizardPage1 extends WizardPage {
 		 String[] myText = {"The first Text contains the project's path","The first combo the relative path (from the projects folder) to the sources package",
 				 "The second combo the relative path to the test sources","The output folder is the directory where the output files of DSpot will be placed",
 				 "The last parameter is a filter in the name of the classes to test, it's optional",""};
-		 DspotWizardHelpDialog info = new DspotWizardHelpDialog(new Shell()," This page contains the information to write the properties file for DSpot ",myText);
+		 Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		 DspotWizardHelpDialog info = new DspotWizardHelpDialog(shell," This page contains the information to write the properties file for DSpot ",myText);
 		 info.open();
 	 }  
 	
