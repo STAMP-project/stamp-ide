@@ -214,10 +214,12 @@ public class DSpotWizardPage2 extends WizardPage {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 	    		String[] selection = amplifiersList.getSelection();
+	    		if(selection != null && selection.length > 0) {
 	    		MyStrings[2] = selection[0];
 	    		for(int i = 1; i < selection.length; i++) {
 	    			MyStrings[2] = MyStrings[2] + WizardConfiguration.getSeparator() + selection[i];
 	    		}
+	    	}
 	    	}
 	    });
 	    
