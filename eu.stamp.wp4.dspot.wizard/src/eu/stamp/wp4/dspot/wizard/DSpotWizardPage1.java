@@ -15,6 +15,7 @@ package eu.stamp.wp4.dspot.wizard;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -47,7 +48,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	
 	// [0] project, [1] src, [2] testScr, [3] javaVersion, [4] outputDirectory, [5] filter
 	private String[] TheProperties = new String[6];
-	private boolean[] Comp = {true,false,false,true};  // this is to set next page
+	private boolean[] Comp = {true,true,true,true};  // this is to set next page
 	private WizardConfiguration wConf;
 	private DSpotWizard wizard;
 	
@@ -104,12 +105,14 @@ public class DSpotWizardPage1 extends WizardPage {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				wizard.setConfigurationName(txNewConfig.getText());
+				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
 			}
 		});
 		txNewConfig.addSegmentListener(new SegmentListener() {
 			@Override
 			public void getSegments(SegmentEvent event) {
 				wizard.setConfigurationName(txNewConfig.getText());
+				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
 			}	
 		});
 		
@@ -196,6 +199,21 @@ public class DSpotWizardPage1 extends WizardPage {
         	if(isTest[i]) {  // if it is not a test package
         	combo2.add(sour[i]);} else { combo0.add(sour[i]); }
         } // end of the for
+        
+        if(combo0.getItems().length == 1) { // if there is only one option
+        	combo0.setText(combo0.getItem(0));
+    		TheProperties[1] = combo0.getText();  // the path of the source
+    		Comp[1] = TheProperties[1] != null;    // look at the !
+    		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
+        }
+        if(combo2.getItems().length == 1) {
+        	combo2.setText(combo2.getItem(0));
+    		TheProperties[2] = combo2.getText();    //  testSrc
+    		Comp[2] = TheProperties[2] != null;  // look at the "!"
+    		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
+        }
+        
+        
         combo2.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -288,10 +306,11 @@ public class DSpotWizardPage1 extends WizardPage {
 					.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
 				String myS = myArguments.substring(
 						myArguments.indexOf("-p ")+3,myArguments.indexOf(" -i "));
-				myS = myS.substring(0,myS.indexOf("/dspot.properties"));
+				myS = myS.substring(0,myS.indexOf((new Path(myS)).lastSegment())-1); // -1 because of the last /
 				tx1.setText(myS);
 				wizard.refreshPageTwo();
 				wizard.setConfigurationName(configCombo.getText());
+				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
 				} catch (CoreException e1) {
 					e1.printStackTrace();
 				} 

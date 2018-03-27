@@ -47,23 +47,28 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	// [0] randomSeed, [1] timeOut (ms),[2] test cases, [3] path pit result,[4] MAVEN_HOME 
 	private String[] advParameters = new String[5];                   // this is for the user information
 	private DirectoryDialog ddialog;    // this is to set [3]
+	private String[] selectedCases = {""};
 	private boolean pitSelected;  // [3] will be only available if the user selected PitMutantScoreSelector
 	                              // as test criterion in page 2
 	private String direction;
-	private CheckingDialog chDiag;
 	private String[] testMethods;
 	private DSpotWizardPage2 page;
 	private Shell shell;
+	private List casesList;
 
 	
-	public DspotAdvancedOptionsDialog(Shell parentSh,boolean pitSelected,String direction,String[] testCases,String[] testMethods, DSpotWizardPage2 page) {
+	public DspotAdvancedOptionsDialog(Shell parentSh,boolean pitSelected,String direction,String[] testCases,String[] testMethods, DSpotWizardPage2 page,String[] selectedCases) {
 		super(parentSh);
 		this.pitSelected = pitSelected;
 		this.direction = direction;
 		this.testMethods = testMethods;
 		this.page = page;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		chDiag = new CheckingDialog(shell, testCases," Select test cases ");
+		this.selectedCases = selectedCases;
+		advParameters[2] = " -c " + selectedCases[0];
+		for(int i = 1; i < selectedCases.length; i++) {
+			advParameters[2] = advParameters[2] + WizardConfiguration
+					.getSeparator() + selectedCases[i];}
 	}
 
 	@Override
@@ -118,7 +123,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		lb2.setText("test cases to amplify : ");
 		lb2.setLayoutData(gd2);
 		
-		List casesList = new List(composite,SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+		casesList = new List(composite,SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		gd = new GridData(SWT.FILL,SWT.FILL,false,false);  // text for the test cases
 		gd.verticalIndent = 8;
 		gd.horizontalSpan = 2;
@@ -138,53 +143,8 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 				}
 			}
 		});
+			casesList.setSelection(selectedCases);
 		
-		/*
-		Button casesButton = new Button(composite,SWT.PUSH);
-		casesButton.setText("Select");
-		GridData casesBtData = new GridData(SWT.NONE,SWT.NONE,false,false);
-		casesBtData.verticalIndent = 8;
-		casesButton.setLayoutData(casesBtData);
-		
-		gd = new GridData(SWT.FILL,SWT.NONE,true,false);  // text for the test cases
-		gd.verticalIndent = 8;
-		gd.horizontalSpan = 1;
-		Text tx0 = new Text(composite,SWT.BORDER);   
-		tx0.setLayoutData(gd);
-		tx0.setText(page.getCases());
-		tx0.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent e) {}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				advParameters[2] = " -c " + tx0.getText();
-				if (tx0.getText() == null || tx0.getText() == "") { advParameters[2] = ""; }
-			}
-			
-		});  // end of the Keylistener
-		tx0.addSegmentListener(new SegmentListener() {  // a segment listener for detecting if the user
-			@Override                                     // copy - pastes
-			public void getSegments(SegmentEvent event) {
-				advParameters[2] = " -c " + tx0.getText();
-				if (tx0.getText() == null || tx0.getText() == "") { advParameters[2] = ""; }
-			}		
-		});  // end of the segment listener
-		
-		casesButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(chDiag.open() == Window.OK) {
-				String selection = chDiag.getSelection();
-				String text = "";
-				for(String sr : testMethods) {
-					if(selection.contains(sr))text = text+sr+WizardConfiguration.getSeparator();
-				}
-                if(text.endsWith(WizardConfiguration.getSeparator())&&text.length()>0)text = text.substring(0, text.length()-1);
-                tx0.setText(text);
-                }
-			}
-		}); */
 		
 		// fourth row (4,x) path pit result
 		Label lb3 = new Label(composite,SWT.NONE);  // A label in (4,1)
@@ -308,7 +268,4 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		}
 		return advParameters;
 	}
-	/*
-	 *  setter methods
-	 */
 }

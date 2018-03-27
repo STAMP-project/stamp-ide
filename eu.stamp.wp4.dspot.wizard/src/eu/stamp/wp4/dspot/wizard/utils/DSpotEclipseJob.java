@@ -46,7 +46,7 @@ public DSpotEclipseJob(String[] parameters,String[] advParameters,boolean verbos
 protected IStatus run(IProgressMonitor monitor) {
 	
 	// String with the parameters
-    String Orders = " -p " +parameters[1]+"/dspot.properties -i "+parameters[2]+" -t "+parameters[3]+
+    String Orders = " -p " +parameters[1]+" -i "+parameters[2]+" -t "+parameters[3]+
     		" -a "+parameters[4]+" -s "+parameters[5]+" -g "+parameters[6];
        
     for(String s : advParameters) {

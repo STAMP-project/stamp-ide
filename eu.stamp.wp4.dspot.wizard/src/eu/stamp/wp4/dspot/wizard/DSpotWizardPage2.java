@@ -107,6 +107,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private String casesToTest = "";
 	private String pathPitResult = "";
 	private Shell shell;
+	private String[] selectedCases = {""};
 	
 	public DSpotWizardPage2(WizardConfiguration wConf) {
 		super("Second page");
@@ -117,7 +118,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		testMethods = wConf.getTestMethods();
 		page = this;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		adv = new DspotAdvancedOptionsDialog(shell, pitSelected,wConf.getProjectPath(),testCases,testMethods,this);
+		adv = new DspotAdvancedOptionsDialog(shell, pitSelected,wConf.getProjectPath(),testCases,testMethods,this,selectedCases);
 	} // end of the constructor
 	
 	@Override
@@ -298,7 +299,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 	    		pitSelected = combo1.getText() == "" || combo1.getText().contains("PitMutantScoreSelector");
-	    		adv = new DspotAdvancedOptionsDialog(shell, pitSelected,wConf.getProjectPath(),testCases,testMethods,page);
+	    		adv = new DspotAdvancedOptionsDialog(shell, pitSelected,wConf.getProjectPath(),testCases,testMethods,page,selectedCases);
 	    		adv.open();
 	    	}
 	    }); // end of the selection listener
@@ -441,7 +442,7 @@ public class DSpotWizardPage2 extends WizardPage {
    	for(int i = 0; i < indices.size(); i++) {
    		theIndices[i] = indices.get(i).intValue();
    	}
-   	amplifiersList.setSelection(theIndices);;
+   	amplifiersList.setSelection(theIndices);
    	//amplText.setText(myFragment);
    	myFragment = argument
    			.substring(argument.indexOf("-s ")+3,argument.indexOf(" -g"));
@@ -468,6 +469,12 @@ public class DSpotWizardPage2 extends WizardPage {
         myFragment = argument.substring(argument.indexOf("-c ")+3);
         myFragment = myFragment.substring(0,myFragment.indexOf("-"));
         casesToTest = myFragment;
+        String[] allCases = wConf.getTestMethods();
+        ArrayList<String> casesList = new ArrayList<String>(1);
+        for(String sr : allCases) {
+        	if(myFragment.contains(sr)) casesList.add(sr);
+        }
+       selectedCases =  casesList.toArray(new String[casesList.size()]);
      	}
    	if(argument.contains("-m ")) {
         myFragment = argument.substring(argument.indexOf("-m ")+3);

@@ -20,6 +20,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -114,31 +115,30 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		});
 	}
 
+
+
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		
 	}
-
+    @Override
+    public boolean canSave() {
+    	return true;
+    }
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {	
 		
 		String arguments = parametersText.getText();  // obtain the string with DSpot arguments
 
-	      try {
-	    	  
-	    	  if(javaProject != null) {
-	      configuration.setAttribute(
-	        IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, 
-	        javaProject.getElementName());
-	    	  }
-	    	  if(parameters != null && parameters != "") {
-	      configuration.setAttribute(
-	  	        IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, parameters);
-	      configuration.doSave();  
-	    	  }
-	      } catch(CoreException e) {
-	    	  e.printStackTrace();}
-	      
+	      if(javaProject != null) {
+     configuration.setAttribute(
+		IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, 
+		javaProject.getElementName());
+		  }
+		  if(parameters != null && !parameters.isEmpty()) {
+     configuration.setAttribute(
+		    IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
+		  }
 	}
 
 	@Override
@@ -148,7 +148,12 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
-
+		try {
+			projectText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""));
+			parametersText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""));
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void showProjectDialog() {
