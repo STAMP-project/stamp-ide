@@ -1,5 +1,7 @@
 package eu.stamp.wp4.dspot.wizard;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -63,7 +65,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	    
 		Combo configCombo = new Combo(composite,SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(configCombo);
-		ILaunchConfiguration[] configurations = wConf.getLaunchConfigurations();
+		List<ILaunchConfiguration> configurations = wConf.getLaunchConfigurations();
 		for(ILaunchConfiguration laun : configurations) {
 			configCombo.add(laun.getName());
 		}
@@ -79,7 +81,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		btNewConfig.setSelection(true);
 		
 		Text txNewConfig = new Text(composite,SWT.BORDER);
-		txNewConfig.setText(" Type configuration name ");
+		txNewConfig.setText("<Type configuration name>");
 		txNewConfig.setEnabled(true);
 		GridDataFactory.fillDefaults().grab(false, true).indent(0, VS).applyTo(txNewConfig);
 		txNewConfig.addKeyListener(new KeyListener() {
