@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo Jose Tejada Garcia (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard;
 
 import org.eclipse.swt.SWT;
@@ -34,6 +46,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -93,6 +106,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private int timeOut = 10000;
 	private String casesToTest = "";
 	private String pathPitResult = "";
+	private Shell shell;
 	
 	public DSpotWizardPage2(WizardConfiguration wConf) {
 		super("Second page");
@@ -102,7 +116,8 @@ public class DSpotWizardPage2 extends WizardPage {
 		testCases = wConf.getTestCases();
 		testMethods = wConf.getTestMethods();
 		page = this;
-		adv = new DspotAdvancedOptionsDialog(new Shell(),pitSelected,wConf.getProjectPath(),testCases,testMethods,this);
+		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		adv = new DspotAdvancedOptionsDialog(shell, pitSelected,wConf.getProjectPath(),testCases,testMethods,this);
 	} // end of the constructor
 	
 	@Override
@@ -283,7 +298,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 	    		pitSelected = combo1.getText() == "" || combo1.getText().contains("PitMutantScoreSelector");
-	    		adv = new DspotAdvancedOptionsDialog(new Shell(),pitSelected,wConf.getProjectPath(),testCases,testMethods,page);
+	    		adv = new DspotAdvancedOptionsDialog(shell, pitSelected,wConf.getProjectPath(),testCases,testMethods,page);
 	    		adv.open();
 	    	}
 	    }); // end of the selection listener
@@ -530,7 +545,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		"the option clean removes the out dirctory if exists, else it will append the results to the exist files",
 		"","The link DSpot advanced options opens a dialog to set the time value of degenerated test (ms), the randomSeed, the MAVEN_HOME ",
 		"and the path to the .csv of the original result of Pit test, (this only avaiable if the test criterion is PitMutantScoreSelector)",""};
-		 DspotWizardHelpDialog info = new DspotWizardHelpDialog(new Shell()," This page contains the information to execute DSpot ",myText);
+		 DspotWizardHelpDialog info = new DspotWizardHelpDialog(shell," This page contains the information to execute DSpot ",myText);
 		 info.open();
 	    
 	 }

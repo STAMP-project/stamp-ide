@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo Jose Tejada Garcia (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard.utils;
 
 import java.io.IOException;
@@ -30,6 +42,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.swt.widgets.Shell;
 
@@ -61,15 +74,16 @@ public class WizardConfiguration {
 	public WizardConfiguration() throws CoreException{
 		
 		 jproject = obtainProject();  // obtain the project
+		 Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		 
 			if (jproject == null) {
 				 MessageDialog.openInformation(
-				new Shell(),
+				shell,
 				 "Execute DSpot",
 				 "Please, select a Java Project in the Package Explorer");
 			} else if(!jproject.getProject().hasNature("org.eclipse.m2e.core.maven2Nature")){ 
 				 MessageDialog.openError(
-				new Shell(),
+				shell,
 				 "Execute DSpot",
 				 "The selected project must be a maven project");
 			}else {

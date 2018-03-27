@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo Jose Tejada Garcia (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard;
 
 
@@ -16,6 +28,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotEclipseJob;
@@ -35,15 +48,16 @@ public class DSpotWizard extends Wizard{
 	// [0] Dspot jar path, [1] project path, [2] number of iterations i, [3] -t test class, [4] -a Method
 	// [5] test criterion, [6] max Test Amplified
 	private String[] parameters = new String[7];   // this will be the execution parameters
-
+	private Shell shell;
 	
 	public DSpotWizard(WizardConfiguration wConf) {
 		super();
 		setNeedsProgressMonitor(true);
 		setHelpAvailable(true);
 		this.wConf = wConf;
+		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		if(System.getenv("MAVEN_HOME") == null) { // this is a warning if MAVEN_HOME is not set
-			MessageDialog.openWarning(new Shell(), "Maven Home not set", 
+			MessageDialog.openWarning(shell, "Maven Home not set", 
 					"The enviroment variable MAVEN_HOME is not set, please set it in your computer or set it in the text in advanced options in page 2");
 		}
 	} // end of the constructor
@@ -71,7 +85,7 @@ public class DSpotWizard extends Wizard{
 		DSpotProperties.LAUNCH_CONF_NAME = configurationName;
 		String[] advParameters = two.getAdvparameters();
 		if(System.getenv("MAVEN_HOME") == null && (advParameters[4] == null || advParameters[4] == "")) { // an error message if MAVEN_HOME is not set
-			MessageDialog.openError(new Shell(),"Maven Home not set","Error the enviroment variable MAVEN_HOME is required, please set it in your computer or in the text in advanced options in page 2");
+			MessageDialog.openError(shell, "Maven Home not set","Error the enviroment variable MAVEN_HOME is required, please set it in your computer or in the text in advanced options in page 2");
 		}else {  // if MAVEN_HOME is set
 		writeTheFile();    // writing the properties file
        // MessageConsole MyConsole = createConsole("Dspot Console");  // obtaining the console of the eclipse application
