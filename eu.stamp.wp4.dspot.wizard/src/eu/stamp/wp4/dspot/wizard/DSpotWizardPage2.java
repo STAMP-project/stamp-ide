@@ -88,8 +88,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	// widgets
 	private Text tx1;
 	private Spinner spin;
-	private Spinner spin1;
-	//private Text amplText; 
+	private Spinner spin1; 
 	private List amplifiersList;
 	private Combo combo1;
 	private Button button;
@@ -214,7 +213,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		Label lb3 = new Label(composite,SWT.NONE);   // A label in (3,1)
 		lb3.setText("Amplifier :  ");
 		
-		amplifiersList = new List(composite,SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+		amplifiersList = new List(composite,SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);  // list to select the amplifiers
 		gd = new GridData(SWT.FILL,SWT.FILL,true,false);
 	    gd.grabExcessVerticalSpace = true;
 		gd.horizontalSpan = n-1;
@@ -329,7 +328,7 @@ public class DSpotWizardPage2 extends WizardPage {
         Class<?>[] acceptedClasses= new Class[] { IPackageFragmentRoot.class, IJavaProject.class, IJavaElement.class };
         TypedElementSelectionValidator validator= new TypedElementSelectionValidator(acceptedClasses, true) {
             @Override
-            public boolean isSelectedValid(Object element) {
+            public boolean isSelectedValid(Object element) { // this method is override to specify what objects can be selected
                 
                     if (element instanceof ICompilationUnit) {
                         return true;
@@ -412,7 +411,9 @@ public class DSpotWizardPage2 extends WizardPage {
         }
         return selection;
     }
-
+/**
+ * this method updates the information in the page when a configuration has been selected in page one
+ */
     public void refresh() {
 	 ILaunchConfiguration config = wConf.getCurrentConfiguration();
 	 String argument = null;
@@ -517,7 +518,6 @@ public class DSpotWizardPage2 extends WizardPage {
 	}
 	
 	/**
-	 * getVerbose
 	 * @return a boolean true if the verbose check button is selected
 	 */
 	public boolean getVerbose() {
@@ -525,7 +525,6 @@ public class DSpotWizardPage2 extends WizardPage {
 	}
 	
 	/**
-	 * getClean
 	 * @return a boolean true if the clean check button is selected
 	 */
 	public boolean getClean() {
@@ -533,21 +532,32 @@ public class DSpotWizardPage2 extends WizardPage {
 	}
 	
 	/**
-	 * getAdvparameters
 	 * @return a string array with the information set in the advanced options dialog
 	 */
 	public String[] getAdvparameters() {
 		return adv.getAdvParameters();
 	}
+    /**
+     * @return the int value of the random seed DSpot parameter
+     */
 	public int getRandomSeed() {
 		return r;
 	}
+	/**
+	 * @return the int value of timeOut DSpot parameter
+	 */
 	public int getTimeOut() {
 		return timeOut;
 	}
+	/**
+	 * @return the test methods that DSpot will use in a String
+	 */
 	public String getCases() {
 		return casesToTest;
 	}
+	/**
+	 * @return String value of the DSpot pathPitResult parameter
+	 */
 	public String getPathPitResult() {
 		return pathPitResult;
 	}

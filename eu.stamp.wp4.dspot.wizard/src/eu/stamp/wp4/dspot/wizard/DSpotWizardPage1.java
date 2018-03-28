@@ -73,11 +73,11 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		int VS = 8;   // this will be the verticalIndent between rows in composite
 		
-		// use saved configuration
-		Label lb0 = new Label(composite,SWT.NONE);
+		// 	first row (1,x) use saved configuration
+		Label lb0 = new Label(composite,SWT.NONE);  // label in (1,0)
 		lb0.setText("Use saved configuration : ");
 	    
-		Combo configCombo = new Combo(composite,SWT.BORDER);
+		Combo configCombo = new Combo(composite,SWT.BORDER); // combo in (1,1) to select a configuration
 		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(configCombo);
 		List<ILaunchConfiguration> configurations = wConf.getLaunchConfigurations();
 		for(ILaunchConfiguration laun : configurations) {
@@ -85,19 +85,19 @@ public class DSpotWizardPage1 extends WizardPage {
 		}
 		configCombo.setEnabled(false);
 		
-		// New Configuration
-		Label lbNewConfig = new Label(composite,SWT.NONE);
+		// second row (2,x) New Configuration
+		Label lbNewConfig = new Label(composite,SWT.NONE); // label in (2,1)
 		GridDataFactory.swtDefaults().indent(0, VS).applyTo(lbNewConfig);
 		lbNewConfig.setText("New Configuration : ");
 		
-		Button btNewConfig = new Button(composite,SWT.CHECK);
+		Button btNewConfig = new Button(composite,SWT.CHECK); // button in (2,1) to enable the new dialog text
 		GridDataFactory.swtDefaults().indent(0, VS).applyTo(btNewConfig);
 		btNewConfig.setSelection(true);
 		
-		Text txNewConfig = new Text(composite,SWT.BORDER);
+		Text txNewConfig = new Text(composite,SWT.BORDER); // text in (2,2) for the name of a new configuration
 		txNewConfig.setText("<Type configuration name>");
 		txNewConfig.setEnabled(true);
-		GridDataFactory.fillDefaults().grab(false, true).indent(0, VS).applyTo(txNewConfig);
+		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(txNewConfig);
 		txNewConfig.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -132,8 +132,8 @@ public class DSpotWizardPage1 extends WizardPage {
 	        }
 });
 		
-		// first row  (1,x)     Project's path
-		Label lb1 = new Label(composite,SWT.NONE);     // Label in (1,1)
+		// third row  (3,x)     Project's path
+		Label lb1 = new Label(composite,SWT.NONE);     // Label in (3,1)
 		lb1.setText("Path of the project :        ");
 		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb1);
 		
@@ -143,7 +143,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
 
 		
-		Text tx1 = new Text(composite,SWT.BORDER);    // Text in (1,2) for the poject's path
+		Text tx1 = new Text(composite,SWT.BORDER);    // Text in (3,2) for the poject's path
 		tx1.setText(direction);
 		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(tx1);
         TheProperties[0] = direction;
@@ -170,11 +170,11 @@ public class DSpotWizardPage1 extends WizardPage {
 			}	
         });  // end of the segment listener
 		
-		// second row (2,x)      Source path
-		Label lb2 = new Label(composite,SWT.NONE);   // Label in (2,1)
+		// fourth row (4,x)      Source path
+		Label lb2 = new Label(composite,SWT.NONE);   // Label in (4,1)
 		lb2.setText("Path of the source : ");
 		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb2);
-        Combo combo0 = new Combo(composite,SWT.BORDER);  // Combo in (2,2) for the source's path
+        Combo combo0 = new Combo(composite,SWT.BORDER);  // Combo in (4,2) for the source's path
         GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo0);
         combo0.addSelectionListener(new SelectionAdapter() {
         	@Override
@@ -188,8 +188,8 @@ public class DSpotWizardPage1 extends WizardPage {
         }); // end of the selection listener
 		
         
-		// third row (3,x)   SourceTest path
-		Label lb3 = new Label(composite,SWT.NONE);   // Label in (3,1)
+		// fifth row (5,x)   SourceTest path
+		Label lb3 = new Label(composite,SWT.NONE);   // Label in (5,1)
 		lb3.setText("Path of the source test : ");
 		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb3);
         
@@ -226,12 +226,12 @@ public class DSpotWizardPage1 extends WizardPage {
         });
 		
         
-		// fourth row (4,x) Java version
-		Label lb4 = new Label(composite,SWT.NONE);  // Label in (4,1)
+		// sixth row (6,x) Java version
+		Label lb4 = new Label(composite,SWT.NONE);  // Label in (6,1)
 		lb4.setText("Java version : ");
 		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb4);
 		
-		Combo combo1 = new Combo(composite,SWT.NONE);  // Combo in (4,2) for the version
+		Combo combo1 = new Combo(composite,SWT.NONE);  // Combo in (6,2) for the version
 		combo1.add("8"); combo1.add("7"); combo1.add("6"); combo1.add("5");
 		combo1.setText("8");
         GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo1);
@@ -247,7 +247,7 @@ public class DSpotWizardPage1 extends WizardPage {
         	}
         });  // end of the SelectionListener
 		
-		// (5,1 and 2) group with optional information
+		// (7,1 and 2) group with optional information
 		Group gr = new Group(composite,SWT.NONE);
 		gr.setText("Optional information");
 		GridDataFactory.fillDefaults().grab(true,false).span(3,3).indent(0,2*VS).applyTo(gr);

@@ -15,14 +15,11 @@ package eu.stamp.wp4.dspot.execution.launch.ui;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
@@ -51,7 +48,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
+import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 
 @SuppressWarnings("restriction")
 public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
@@ -155,15 +152,28 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * this method creates and opens the project selection dialog and handles the user selection
+	 */
 	private void showProjectDialog() {
 		
-		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class};
+		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class,IProject.class};
 		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,true) {
 			@Override
 			public boolean isSelectedValid(Object element) {
+				if(element instanceof IProject) {
+					try {
+						return ((IProject)element).hasNature(DSpotWizardConstants.MAVEN_NATURE);
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
+				}
 				if(element instanceof IJavaProject) {
-					return true;
+					try {
+						return ((IJavaProject)element).getProject().hasNature(DSpotWizardConstants.MAVEN_NATURE);
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
 				}
 				return false;
 			}

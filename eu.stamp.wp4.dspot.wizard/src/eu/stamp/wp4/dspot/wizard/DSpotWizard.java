@@ -88,8 +88,6 @@ public class DSpotWizard extends Wizard{
 			MessageDialog.openError(shell, "Maven Home not set","Error the enviroment variable MAVEN_HOME is required, please set it in your computer or in the text in advanced options in page 2");
 		}else {  // if MAVEN_HOME is set
 		writeTheFile();    // writing the properties file
-       // MessageConsole MyConsole = createConsole("Dspot Console");  // obtaining the console of the eclipse application
-       // MyConsole.activate();  // activate the console of the eclipse application
         String[] MyS = two.getMyStrings(); // obtain the user information from page 2
         for(int i = 0; i < MyS.length; i++) {
         	parameters[i+2] = MyS[i];
@@ -101,6 +99,9 @@ public class DSpotWizard extends Wizard{
 		}
 		return true;
 	}
+	/**
+	 * @param configurationName : the name to save the configuration
+	 */
 	public void setConfigurationName(String configurationName) {
 		this.configurationName = configurationName;
 	}
@@ -135,7 +136,9 @@ public class DSpotWizard extends Wizard{
 			fw.close();
 			} catch(IOException ioe) {ioe.printStackTrace();}		
 	}    // end of writTheFile
-	
+	/**
+	 * this method updates the information in page two when a configuration is loaded
+	 */
 	public void refreshPageTwo() {
 		two.refresh();
 	}

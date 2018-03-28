@@ -13,7 +13,6 @@
 package eu.stamp.wp4.dspot.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
