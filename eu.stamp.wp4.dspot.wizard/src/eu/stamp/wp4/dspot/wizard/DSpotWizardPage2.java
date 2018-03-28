@@ -97,7 +97,6 @@ public class DSpotWizardPage2 extends WizardPage {
 	
 	// Dialogs
 	private DspotAdvancedOptionsDialog adv;
-	//private CheckingDialog chDiag;
 	
 	// this is for the advanced dialog
 	private String[] testCases;
@@ -130,7 +129,6 @@ public class DSpotWizardPage2 extends WizardPage {
 		int n = 4;
 		layout.numColumns = n;
 		composite.setLayout(layout);
-		
 		// First row (1,x) number of iterations
 		Label lb1 = new Label(composite,SWT.NONE);  // A label in (1,1)
 		lb1.setText("Number of iterations :  ");
@@ -443,10 +441,18 @@ public class DSpotWizardPage2 extends WizardPage {
    		theIndices[i] = indices.get(i).intValue();
    	}
    	amplifiersList.setSelection(theIndices);
-   	//amplText.setText(myFragment);
+	String[] selection = amplifiersList.getSelection();
+	if(selection != null && selection.length > 0) {
+	MyStrings[2] = selection[0];
+	for(int i = 1; i < selection.length; i++) {
+		MyStrings[2] = MyStrings[2] + WizardConfiguration.getSeparator() + selection[i];
+	}
+}
    	myFragment = argument
    			.substring(argument.indexOf("-s ")+3,argument.indexOf(" -g"));
    	combo1.setText(myFragment);
+   	MyStrings[3] = combo1.getText();
+   	
    	myFragment = argument.substring(argument.indexOf("-g ")+3);
    	if(myFragment.contains("-")) {
    	myFragment = myFragment.substring(0,myFragment.indexOf("-"));

@@ -52,6 +52,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	                              // as test criterion in page 2
 	private String direction;
 	private String[] testMethods;
+	private String[] testCases;
 	private DSpotWizardPage2 page;
 	private Shell shell;
 	private List casesList;
@@ -62,6 +63,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		this.pitSelected = pitSelected;
 		this.direction = direction;
 		this.testMethods = testMethods;
+		this.testCases = testCases;
 		this.page = page;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		if(selectedCases.length > 0) {
@@ -131,17 +133,28 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		gd.horizontalSpan = 2;
 		gd.heightHint = 150;
 		casesList.setLayoutData(gd);
-		for(String sr : testMethods) {
+		for(String sr : testCases) {
 			casesList.add(sr);
 		}
 		casesList.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String[] selection = casesList.getSelection();
-				advParameters[2] = " -c " + selection[0];
+				String methodSelected = "";
+				for(String sr : testMethods) {
+					if(selection[0].contains(sr)) {
+						methodSelected = sr; break;
+					}
+				}
+				advParameters[2] = " -c " + methodSelected;
 				for(int i = 1; i < selection.length; i++) {
+					for(String sr : testMethods) {
+						if(selection[i].contains(sr)) {
+							methodSelected = sr; break;
+						}
+					}
 					advParameters[2] = advParameters[2] + WizardConfiguration
-							.getSeparator() + selection[i];
+							.getSeparator() + methodSelected;
 				}
 			}
 		});
