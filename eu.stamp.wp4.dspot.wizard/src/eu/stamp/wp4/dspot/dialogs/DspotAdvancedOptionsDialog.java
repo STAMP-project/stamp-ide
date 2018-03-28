@@ -173,6 +173,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		button.setLayoutData(gdButton);
 		button.setText("Add");
 		button.setEnabled(pitSelected);
+		button.setEnabled(true);
 		
 		Text tx1 = new Text(composite,SWT.BORDER);  // the text in (4,3) for the path pit result
 		GridData gdTx1 = new GridData(SWT.FILL,SWT.NONE,true,false);

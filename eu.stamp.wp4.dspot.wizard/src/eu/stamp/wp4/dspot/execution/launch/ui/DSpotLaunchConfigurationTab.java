@@ -30,6 +30,7 @@ import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -158,9 +159,10 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 	private void showProjectDialog() {
 		
 		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class,IProject.class};
-		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,true) {
+		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,true);
+		ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
 			@Override
-			public boolean isSelectedValid(Object element) {
+			public boolean select(Viewer viewer,Object parentElement, Object element) {
 				if(element instanceof IProject) {
 					try {
 						return ((IProject)element).hasNature(DSpotWizardConstants.MAVEN_NATURE);
@@ -177,9 +179,7 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 				}
 				return false;
 			}
-		};
-		
-		ViewerFilter filter= new TypedViewerFilter(acceptedClasses);	
+		};	
 		
 		  IWorkspaceRoot fWorkspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
 	        
