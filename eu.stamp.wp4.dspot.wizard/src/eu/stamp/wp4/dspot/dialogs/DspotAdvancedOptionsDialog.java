@@ -64,11 +64,13 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		this.testMethods = testMethods;
 		this.page = page;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		this.selectedCases = selectedCases;
+		if(selectedCases.length > 0) {
+			this.selectedCases = selectedCases;
+			if(selectedCases[0] != null && !selectedCases[0].isEmpty()) { // if the [0] element is empty there is not selection
 		advParameters[2] = " -c " + selectedCases[0];
 		for(int i = 1; i < selectedCases.length; i++) {
 			advParameters[2] = advParameters[2] + WizardConfiguration
-					.getSeparator() + selectedCases[i];}
+					.getSeparator() + selectedCases[i];}}}
 	}
 
 	@Override
