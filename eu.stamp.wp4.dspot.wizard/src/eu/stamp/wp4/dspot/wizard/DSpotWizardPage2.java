@@ -496,9 +496,12 @@ public class DSpotWizardPage2 extends WizardPage {
    }
     }
     private void refreshAdvancedOptions() {
-   r =  adv.getRand();
-   timeOut = adv.getTime();
-   selectedCases = adv.getSelectedCases();
+    	 boolean[] changes = adv.getChanges();
+         if(changes[0]) r =  adv.getRand();
+         if(changes[1]) timeOut = adv.getTime();
+         if(changes[2]) selectedCases = adv.getSelectedCases();
+         pathPitResult = adv.getAdvParameters()[3];
+          if(pathPitResult.contains("-m")) pathPitResult = pathPitResult.substring(pathPitResult.indexOf("-m ")+3);
     }
 	/*
 	 *  public methods to return the information set by the user

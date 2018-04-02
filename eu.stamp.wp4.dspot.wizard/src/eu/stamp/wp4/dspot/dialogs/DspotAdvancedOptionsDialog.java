@@ -12,8 +12,6 @@
  *******************************************************************************/
 package eu.stamp.wp4.dspot.dialogs;
 
-import java.util.ArrayList;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -59,6 +57,8 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	private List casesList;
 	private int rand;
 	private int time;
+	
+	private boolean[] changes = new boolean[3];
 
 	
 	public DspotAdvancedOptionsDialog(Shell parentSh,boolean pitSelected,String direction,String[] testCases,String[] testMethods, DSpotWizardPage2 page,String[] selectedCases) {
@@ -93,6 +93,10 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		
         GridData gd2 = new GridData(SWT.FILL,SWT.NONE,true,false); // for labels
         gd2.verticalIndent = 8;
+        
+        for(int i = 0; i < changes.length; i++) {
+        	changes[i] = false;                     // initialize the changes boolean array
+        }
 		
 		// first row (1,x)  randomSeed
 		Label lb0 = new Label(composite,SWT.NONE);  // A label in (1,1)
@@ -108,6 +112,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				advParameters[0] = " -r "+(new Integer(spin0.getSelection())).toString();
 				rand = spin0.getSelection();
+				changes[0] = true;
 			}
 		}); // end of the selection listener
 		
@@ -125,6 +130,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				advParameters[1] = " -v "+(new Integer(spin1.getSelection())).toString();
 				time = spin1.getSelection();
+				changes[1] = true;
 			}
 		}); // end of the selection listener
 		
@@ -133,7 +139,6 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		lb2.setText("test cases to amplify : ");
 		lb2.setLayoutData(gd2);
 		
-		ArrayList<String> theSelection = new ArrayList<String>(1);
 		casesList = new List(composite,SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		gd = new GridData(SWT.FILL,SWT.FILL,false,false);  // text for the test cases
 		gd.verticalIndent = 8;
@@ -163,6 +168,8 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 					advParameters[2] = advParameters[2] + WizardConfiguration
 							.getSeparator() + methodSelected;
 				}
+				selectedCases = casesList.getSelection();
+				changes[2] = true;
 			}
 		});
 			casesList.setSelection(page.getSelectedCases());
@@ -299,5 +306,8 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	}
 	public String[] getSelectedCases() {
 		return selectedCases;
+	}
+	public boolean[] getChanges() {
+		return changes;
 	}
 }
