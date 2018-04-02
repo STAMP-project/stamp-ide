@@ -106,6 +106,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private String pathPitResult = "";
 	private Shell shell;
 	private String[] selectedCases = {""};
+	private boolean opened = false;
 	
 	public DSpotWizardPage2(WizardConfiguration wConf) {
 		super("Second page");
@@ -290,14 +291,16 @@ public class DSpotWizardPage2 extends WizardPage {
 	    space.setText("");
 	    
 	    
+	    
 	    Link link = new Link(composite,SWT.NONE);  // this link in (6,4) open the dialog with the advanced options
 	    link.setText("<A>Dspot advanced options</A>");
 	    link.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
+	    		if(opened) refreshAdvancedOptions();
 	    		pitSelected = combo1.getText() == "" || combo1.getText().contains("PitMutantScoreSelector");
-	    		adv = new DspotAdvancedOptionsDialog(shell, pitSelected,wConf.getProjectPath(),testCases,testMethods,page,selectedCases);
 	    		adv.open();
+	    		opened = true;
 	    	}
 	    }); // end of the selection listener
 	    
@@ -492,7 +495,11 @@ public class DSpotWizardPage2 extends WizardPage {
    	button2.setSelection(argument.contains("--clean"));
    }
     }
-	
+    private void refreshAdvancedOptions() {
+   r =  adv.getRand();
+   timeOut = adv.getTime();
+   selectedCases = adv.getSelectedCases();
+    }
 	/*
 	 *  public methods to return the information set by the user
 	 */
@@ -548,6 +555,9 @@ public class DSpotWizardPage2 extends WizardPage {
 	 */
 	public int getTimeOut() {
 		return timeOut;
+	}
+	public String[] getSelectedCases() {
+		return selectedCases;
 	}
 	/**
 	 * @return the test methods that DSpot will use in a String

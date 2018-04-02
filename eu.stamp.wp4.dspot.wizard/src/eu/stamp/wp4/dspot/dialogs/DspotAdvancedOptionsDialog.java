@@ -12,6 +12,8 @@
  *******************************************************************************/
 package eu.stamp.wp4.dspot.dialogs;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -55,6 +57,8 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	private DSpotWizardPage2 page;
 	private Shell shell;
 	private List casesList;
+	private int rand;
+	private int time;
 
 	
 	public DspotAdvancedOptionsDialog(Shell parentSh,boolean pitSelected,String direction,String[] testCases,String[] testMethods, DSpotWizardPage2 page,String[] selectedCases) {
@@ -97,11 +101,13 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		
 		Spinner spin0 = new Spinner(composite,SWT.BORDER); // A spinner in (1,2) for randomSeed
 		spin0.setSelection(page.getRandomSeed()); spin0.setMinimum(1);
+		System.out.println(page.getRandomSeed());
 		spin0.setLayoutData(gd);
 		spin0.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				advParameters[0] = " -r "+(new Integer(spin0.getSelection())).toString();
+				rand = spin0.getSelection();
 			}
 		}); // end of the selection listener
 		
@@ -111,13 +117,14 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		lb1.setLayoutData(gd2);
 		
 		Spinner spin1 = new Spinner(composite,SWT.BORDER); // A spinner in (2,2) for timeOut
-		spin1.setMaximum(100000); spin1.setMinimum(500); spin1.setIncrement(100); spin1.setSelection(10000);
+		spin1.setMaximum(100000); spin1.setMinimum(500); spin1.setIncrement(100); spin1.setSelection(page.getTimeOut());
 		spin1.setSelection(page.getTimeOut());
 		spin1.setLayoutData(gd);
 		spin1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				advParameters[1] = " -v "+(new Integer(spin1.getSelection())).toString();
+				time = spin1.getSelection();
 			}
 		}); // end of the selection listener
 		
@@ -126,6 +133,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		lb2.setText("test cases to amplify : ");
 		lb2.setLayoutData(gd2);
 		
+		ArrayList<String> theSelection = new ArrayList<String>(1);
 		casesList = new List(composite,SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 		gd = new GridData(SWT.FILL,SWT.FILL,false,false);  // text for the test cases
 		gd.verticalIndent = 8;
@@ -157,7 +165,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 				}
 			}
 		});
-			casesList.setSelection(selectedCases);
+			casesList.setSelection(page.getSelectedCases());
 		
 		
 		// fourth row (4,x) path pit result
@@ -282,5 +290,14 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 			if(advParameters[i] == null) { advParameters[i] = ""; }
 		}
 		return advParameters;
+	}
+	public int getRand(){
+		return rand;
+	}
+	public int getTime() {
+		return time;
+	}
+	public String[] getSelectedCases() {
+		return selectedCases;
 	}
 }
