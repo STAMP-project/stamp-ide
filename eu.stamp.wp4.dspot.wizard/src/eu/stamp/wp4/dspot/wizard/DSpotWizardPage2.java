@@ -418,7 +418,8 @@ public class DSpotWizardPage2 extends WizardPage {
  * this method updates the information in the page when a configuration has been selected in page one
  */
     public void refresh() {
-	 ILaunchConfiguration config = wConf.getCurrentConfiguration();
+
+    ILaunchConfiguration config = wConf.getCurrentConfiguration();
 	 String argument = null;
 	 try {
 	 argument = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");

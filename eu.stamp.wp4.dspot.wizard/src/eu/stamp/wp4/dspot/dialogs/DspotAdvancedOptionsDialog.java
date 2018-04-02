@@ -172,7 +172,14 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 				changes[2] = true;
 			}
 		});
-			casesList.setSelection(page.getSelectedCases());
+		String[] myCases = page.getSelectedCases();
+		String[] myMethods = new String[myCases.length];
+		for(int i = 0; i < myCases.length; i++) {
+        for(int j = 0; j < testCases.length; j++) {
+          if(testMethods[j].contains(myCases[i])) myMethods[i] = testCases[j];
+        }
+		}
+		casesList.setSelection(myMethods);
 		
 		
 		// fourth row (4,x) path pit result
@@ -203,14 +210,14 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				advParameters[3] = " -m " + tx1.getText();  // including the -m in the string
-				if(tx1.getText() == null || tx1.getText() == "") { advParameters[3] =""; } // if there is no text put an empty string 
+				if(tx1.getText() == null || tx1.getText().isEmpty()) { advParameters[3] =""; } // if there is no text put an empty string 
 			}			
 		}); // end of the key listener
 		tx1.addSegmentListener(new SegmentListener() {
 			@Override
 			public void getSegments(SegmentEvent event) {
 			advParameters[3] = " -m " + tx1.getText();	
-			if(tx1.getText() == null || tx1.getText() == "") { advParameters[3] =""; }
+			if(tx1.getText() == null || tx1.getText().isEmpty()) { advParameters[3] =""; }
 			}
 			
 		}); // end of the segment listener
@@ -296,6 +303,8 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		for(int i = 0; i < advParameters.length; i++) {
 			if(advParameters[i] == null) { advParameters[i] = ""; }
 		}
+		if(advParameters[3].contains("-m")) {
+		if(advParameters[3].replaceAll(" ", "").replaceAll("-m","").isEmpty()) advParameters[3] = "";}
 		return advParameters;
 	}
 	public int getRand(){
