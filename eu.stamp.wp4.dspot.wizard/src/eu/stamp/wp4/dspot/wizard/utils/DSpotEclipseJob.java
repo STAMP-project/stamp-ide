@@ -66,7 +66,6 @@ protected IStatus run(IProgressMonitor monitor) {
     if(clean) {
     	Orders = Orders + " --clean";
     }
-    
 	DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders);
 	try {
 		executor.execute(new ExecutionEvent());

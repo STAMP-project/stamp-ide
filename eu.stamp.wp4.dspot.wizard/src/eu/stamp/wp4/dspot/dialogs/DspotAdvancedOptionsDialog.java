@@ -185,6 +185,9 @@ public class DspotAdvancedOptionsDialog extends Dialog {
         for(int j = 0; j < testCases.length; j++) {
           if(testMethods[j].contains(myCases[i])) myMethods[i] = testCases[j];
         }
+        if(myMethods[i] == null || myMethods[i].isEmpty()) { // this happens when the dialog is opened several time
+        	myMethods[i] = myCases[i];
+        }
 		}
 		casesList.setSelection(myMethods);
 		
@@ -299,7 +302,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	
     @Override
     protected Point getInitialSize() { // default size of the dialog
-        return new Point(600, 400);
+        return new Point(600, 600);
     }
     @Override
     public void okPressed() {
@@ -326,6 +329,8 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		}
 		if(advParameters[3].contains("-m")) {
 		if(advParameters[3].replaceAll(" ", "").replaceAll("-m","").isEmpty()) advParameters[3] = "";}
+		if(advParameters[4].contains("-j")) {
+		if(advParameters[4].replaceAll(" ", "").replaceAll("-j", "").isEmpty()) advParameters[4] = "";}
 		return advParameters;
 	}
 	public int getRand(){
