@@ -46,7 +46,10 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	// [0] randomSeed, [1] timeOut (ms),[2] test cases, [3] path pit result,[4] MAVEN_HOME 
 	private String[] advParameters = new String[5];                   // this is for the user information
 	private DirectoryDialog ddialog;    // this is to set [3]
+	
+	private String[] temporalSelectedCases;
 	private String[] selectedCases = {""};
+	
 	private boolean pitSelected;  // [3] will be only available if the user selected PitMutantScoreSelector
 	                              // as test criterion in page 2
 	private String direction;
@@ -55,7 +58,11 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	private DSpotWizardPage2 page;
 	private Shell shell;
 	private List casesList;
+	
+	private int temporalRand;
 	private int rand;
+	
+	private int temporalTime;
 	private int time;
 	
 	private boolean[] changes = new boolean[3];
@@ -110,8 +117,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		spin0.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				advParameters[0] = " -r "+(new Integer(spin0.getSelection())).toString();
-				rand = spin0.getSelection();
+				temporalRand = spin0.getSelection();
 				changes[0] = true;
 			}
 		}); // end of the selection listener
@@ -129,7 +135,8 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				advParameters[1] = " -v "+(new Integer(spin1.getSelection())).toString();
-				time = spin1.getSelection();
+				temporalTime = spin1.getSelection();
+				advParameters[1] = " -v "+(new Integer(temporalTime)).toString();
 				changes[1] = true;
 			}
 		}); // end of the selection listener
@@ -168,7 +175,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 					advParameters[2] = advParameters[2] + WizardConfiguration
 							.getSeparator() + methodSelected;
 				}
-				selectedCases = casesList.getSelection();
+				temporalSelectedCases = casesList.getSelection();
 				changes[2] = true;
 			}
 		});
@@ -293,6 +300,20 @@ public class DspotAdvancedOptionsDialog extends Dialog {
     @Override
     protected Point getInitialSize() { // default size of the dialog
         return new Point(600, 400);
+    }
+    @Override
+    public void okPressed() {
+    	if(changes[0]) {rand = temporalRand;
+    	advParameters[0] = " -r "+(new Integer(temporalRand)).toString();}
+    	if(changes[1]) {time = temporalTime;
+    		advParameters[1] = " -v "+(new Integer(temporalTime)).toString();}
+    	if(changes[2]) {
+    		selectedCases = new String[temporalSelectedCases.length];
+    		for(int i = 0; i < temporalSelectedCases.length; i++) {
+    			selectedCases[i] = temporalSelectedCases[i];
+    		}
+    	}
+    	super.okPressed();
     }
 	
 	/**

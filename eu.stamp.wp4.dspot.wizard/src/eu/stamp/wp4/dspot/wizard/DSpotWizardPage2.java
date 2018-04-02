@@ -519,7 +519,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		if(MyStrings[2] == null) {
 			MyStrings[2] = "None";
 		}
-		if(MyStrings[3] == null || MyStrings[3] == "") {
+		if(MyStrings[3] == null || MyStrings[3].isEmpty()) {
 			MyStrings[3] = "PitMutantScoreSelector"; // default
 		}
 		if(MyStrings[4] == null) {
