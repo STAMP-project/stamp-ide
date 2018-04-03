@@ -17,6 +17,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -42,6 +43,10 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	private WizardConfiguration conf;
 	private static String arguments;
 	
+	private boolean hasStarted = false;
+	private boolean hasFinished = false;
+	private ILaunch myLaunch;
+	
 	public DSpotExecutionHandler(WizardConfiguration conf,String arguments) {
 		super();
 		this.conf = conf;
@@ -61,7 +66,7 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	}
 
 
-	private static void executeDSpotInJDTLauncher(IJavaProject javaProject, ExecutionEvent event) throws CoreException, ExecutionException {
+	private void executeDSpotInJDTLauncher(IJavaProject javaProject, ExecutionEvent event) throws CoreException, ExecutionException {
 
 						
 		DebugPlugin plugin = DebugPlugin.getDefault();
@@ -78,7 +83,14 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	  	        IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
 	      System.out.println(arguments);
 	      ILaunchConfiguration config = wc.doSave();   
-	      config.launch(ILaunchManager.RUN_MODE, null);
+	      myLaunch = config.launch(ILaunchManager.RUN_MODE, null);
+	      hasStarted = true;
+	     
+	}
+	
+	public boolean isFinished() {
+		if(hasStarted) return myLaunch.isTerminated();
+		return false;
 	}
 
 }

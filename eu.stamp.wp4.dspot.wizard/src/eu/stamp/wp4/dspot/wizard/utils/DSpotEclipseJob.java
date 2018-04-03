@@ -45,7 +45,6 @@ public DSpotEclipseJob(String[] parameters,String[] advParameters,boolean verbos
 @Override
 protected IStatus run(IProgressMonitor monitor) {
 	
-	// String with the parameters
     String Orders = " -p " +parameters[1]+" -i "+parameters[2]+" -t "+parameters[3];
     if(parameters[4] != null && !parameters[4].isEmpty()) {
     	Orders = Orders + " -a "+parameters[4] ;
@@ -66,14 +65,15 @@ protected IStatus run(IProgressMonitor monitor) {
     if(clean) {
     	Orders = Orders + " --clean";
     }
-	DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders);
-	try {
-		executor.execute(new ExecutionEvent());
-	} catch (ExecutionException e) {
-		e.printStackTrace();
-	}
-	
+     
+     DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders);
+ 	try {	
+ 		executor.execute(new ExecutionEvent());
+ 	 while(!executor.isFinished());
+ 	} catch (ExecutionException e) {
+ 		e.printStackTrace();
+ 	}
+     
 	return Status.OK_STATUS;
 } // end of run
-
 }
