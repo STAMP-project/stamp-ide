@@ -317,7 +317,7 @@ public class WizardConfiguration {
 	 * @return an array with all the final files without taking into consideration
 	 *         the sub-folder/s they belong to
 	 */
-	private IJavaElement[] getFinalChildren(IParent p) {
+	public IJavaElement[] getFinalChildren(IParent p) {
 		ArrayList<IJavaElement> myJEList = new ArrayList<IJavaElement>(1);
 		try {
 			IJavaElement[] ProvisionalArray = p.getChildren();

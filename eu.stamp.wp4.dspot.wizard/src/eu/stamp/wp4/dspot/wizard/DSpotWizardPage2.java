@@ -31,6 +31,7 @@ import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.swt.widgets.List;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -96,7 +97,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	
 	// Dialogs
 	private DspotAdvancedOptionsDialog adv;
-	
+	private ArrayList<Object> testSelection = new ArrayList<Object>(1);
 	// this is for the advanced dialog
 	private String[] testCases;
 	private String[] testMethods;
@@ -194,13 +195,7 @@ public class DSpotWizardPage2 extends WizardPage {
     	 public void widgetSelected(SelectionEvent e) {
     		 
  			try {
-				String selection = showElementTreeSelectionDialog2(wConf.getPro(),wConf.getTheWindow());
-				if(tx1.getText()==null||tx1.getText().isEmpty()) {
-					if(!tx1.getText().contains(selection)||!selection.contains(tx1.getText())) tx1.setText(selection);  // this if is to avoid repetitions
-				}else if(!selection.isEmpty()) { // if !selection.isEmpty() to avoid put ; or : while the dialog is canceled
-					if(!tx1.getText().contains(selection)||!selection.contains(tx1.getText())) {
-						tx1.setText(tx1.getText()+WizardConfiguration.getSeparator()+selection); }
-					}
+			showElementTreeSelectionDialog2(wConf.getPro(),wConf.getTheWindow());
 			} catch (JavaModelException e1) {
 				e1.printStackTrace();
 			} 
@@ -401,9 +396,17 @@ public class DSpotWizardPage2 extends WizardPage {
         dialog.setInput(JavaCore.create(fWorkspaceRoot));
         dialog.setInitialSelection(initElement);
         dialog.setHelpAvailable(false);
+        if(!testSelection.isEmpty()) {
+        	dialog.setInitialSelections(testSelection.toArray());
+        }  
+        
         String selection = "";
         if (dialog.open() == Window.OK) {
             Object[] results = dialog.getResult();
+            testSelection = new ArrayList<Object>(1);
+            for(Object ob : results) {
+            	testSelection.add(ob);
+            }
             for(Object ob : results) {
             	if(ob instanceof ICompilationUnit) { 
             		if(!selection.isEmpty()) {
@@ -412,6 +415,7 @@ public class DSpotWizardPage2 extends WizardPage {
             		else{ selection = wConf.getqName(((ICompilationUnit)ob).getElementName()); }}
             }
         }
+        tx1.setText(selection);
         return selection;
     }
 /**
@@ -431,10 +435,17 @@ public class DSpotWizardPage2 extends WizardPage {
    			.substring(argument.indexOf("-i ")+3,argument.indexOf(" -t"));
    	spin.setSelection(Integer.parseInt(myFragment));
    	myFragment = argument
-   			.substring(argument.indexOf("-t ")+3,argument.indexOf(" -a"));
+   			.substring(argument.indexOf("-t ")+3);
+   	myFragment = myFragment.substring(0,myFragment.indexOf("-"));
    	tx1.setText(myFragment);
+   	IJavaElement[] children = wConf.getFinalChildren(wConf.getPro());
+   	testSelection = new ArrayList<Object>(1);
+   	for(IJavaElement child : children) {
+   		if(myFragment.contains(child.getElementName().replaceAll(".java", ""))) testSelection.add(child);
+   	}
    	myFragment = argument
-   			.substring(argument.indexOf("-a ")+3,argument.indexOf(" -s"));
+   			.substring(argument.indexOf("-a ")+3);
+   	myFragment = myFragment.substring(0,myFragment.indexOf("-"));
    	ArrayList<Integer> indices = new ArrayList<Integer>(1);
    	for(int i = 0; i < amplifiers.length; i++) {
    		if(myFragment.contains(amplifiers[i])) {
@@ -453,11 +464,12 @@ public class DSpotWizardPage2 extends WizardPage {
 		MyStrings[2] = MyStrings[2] + WizardConfiguration.getSeparator() + selection[i];
 	}
 }
+	if(argument.contains("-s")) {
    	myFragment = argument
    			.substring(argument.indexOf("-s ")+3,argument.indexOf(" -g"));
    	combo1.setText(myFragment);
    	MyStrings[3] = combo1.getText();
-   	
+	}
    	myFragment = argument.substring(argument.indexOf("-g ")+3);
    	if(myFragment.contains("-")) {
    	myFragment = myFragment.substring(0,myFragment.indexOf("-"));
@@ -518,9 +530,6 @@ public class DSpotWizardPage2 extends WizardPage {
 		}
 		if(MyStrings[2] == null) {
 			MyStrings[2] = "None";
-		}
-		if(MyStrings[3] == null || MyStrings[3].isEmpty()) {
-			MyStrings[3] = "PitMutantScoreSelector"; // default
 		}
 		if(MyStrings[4] == null) {
 			MyStrings[4] = "200";

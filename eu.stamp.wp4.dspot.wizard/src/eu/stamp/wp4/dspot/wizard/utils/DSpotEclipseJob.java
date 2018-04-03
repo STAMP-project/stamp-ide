@@ -69,7 +69,7 @@ protected IStatus run(IProgressMonitor monitor) {
      DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders);
  	try {	
  		executor.execute(new ExecutionEvent());
- 	 while(!executor.isFinished());
+ 	 while(!executor.isFinished());  // wait until DSpod finish
  	} catch (ExecutionException e) {
  		e.printStackTrace();
  	}
