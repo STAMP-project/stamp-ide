@@ -31,7 +31,6 @@ import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.swt.widgets.List;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IWorkspaceRoot;

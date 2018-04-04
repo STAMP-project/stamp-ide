@@ -50,6 +50,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	private DirectoryDialog ddialog;    // this is to set [3]
 	
 	private String[] temporalSelectedCases;
+	private String[] oldSelection;
 	private String[] selectedCases = {""};
 	
 	private boolean pitSelected;  // [3] will be only available if the user selected PitMutantScoreSelector
@@ -184,6 +185,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		
 		myCases = page.getSelectedCases();
 		if(myCases.length > 0) {
+			if(myCases[0] == "") myCases = oldSelection;
 			if(myCases[0].contains("/"))casesList.setSelection(myCases);
 			else if(myCases[0] != "") {
 				ArrayList<String> tests = new ArrayList<String>(1);
@@ -192,6 +194,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 					if(completeCase.contains(aCase))tests.add(completeCase);
 				}}
 				casesList.setSelection(tests.toArray(new String[tests.size()]));
+				oldSelection = tests.toArray(new String[tests.size()]);
 			}
 			}
 	
@@ -340,7 +343,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	public int getRand(){
 		return rand;
 	}
-	public int getTime() {
+	public int getTime(){
 		return time;
 	}
 	public String[] getSelectedCases() {
