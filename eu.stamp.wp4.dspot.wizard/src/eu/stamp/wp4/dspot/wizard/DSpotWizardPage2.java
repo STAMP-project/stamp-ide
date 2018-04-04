@@ -414,8 +414,8 @@ public class DSpotWizardPage2 extends WizardPage {
             		 .getSeparator() + wConf.getqName(((ICompilationUnit)ob).getElementName());}
             		else{ selection = wConf.getqName(((ICompilationUnit)ob).getElementName()); }}
             }
+            tx1.setText(selection);
         }
-        tx1.setText(selection);
         return selection;
     }
 /**
