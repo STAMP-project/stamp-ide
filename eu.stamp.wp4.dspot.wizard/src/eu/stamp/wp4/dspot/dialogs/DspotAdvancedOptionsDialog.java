@@ -12,6 +12,8 @@
  *******************************************************************************/
 package eu.stamp.wp4.dspot.dialogs;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -64,6 +66,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	
 	private int temporalTime;
 	private int time;
+	private String[] myCases;
 	
 	private boolean[] changes = new boolean[3];
 
@@ -112,7 +115,6 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		
 		Spinner spin0 = new Spinner(composite,SWT.BORDER); // A spinner in (1,2) for randomSeed
 		spin0.setSelection(page.getRandomSeed()); spin0.setMinimum(1);
-		System.out.println(page.getRandomSeed());
 		spin0.setLayoutData(gd);
 		spin0.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -179,18 +181,20 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 				changes[2] = true;
 			}
 		});
-		String[] myCases = page.getSelectedCases();
-		String[] myMethods = new String[myCases.length];
-		for(int i = 0; i < myCases.length; i++) {
-        for(int j = 0; j < testCases.length; j++) {
-          if(testMethods[j].contains(myCases[i])) myMethods[i] = testCases[j];
-        }
-        if(myMethods[i] == null || myMethods[i].isEmpty()) { // this happens when the dialog is opened several time
-        	myMethods[i] = myCases[i];
-        }
-		}
-		casesList.setSelection(myMethods);
 		
+		myCases = page.getSelectedCases();
+		if(myCases.length > 0) {
+			if(myCases[0].contains("/"))casesList.setSelection(myCases);
+			else {
+				ArrayList<String> tests = new ArrayList<String>(1);
+				for(String aCase : myCases) {
+				for(String completeCase : testCases) {
+					if(completeCase.contains(aCase))tests.add(completeCase);
+				}}
+				casesList.setSelection(tests.toArray(new String[tests.size()]));
+			}
+			}
+	
 		
 		// fourth row (4,x) path pit result
 		Label lb3 = new Label(composite,SWT.NONE);  // A label in (4,1)
@@ -345,4 +349,5 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 	public boolean[] getChanges() {
 		return changes;
 	}
-}
+	}
+	
