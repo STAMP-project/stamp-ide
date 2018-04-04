@@ -185,7 +185,7 @@ public class DspotAdvancedOptionsDialog extends Dialog {
 		myCases = page.getSelectedCases();
 		if(myCases.length > 0) {
 			if(myCases[0].contains("/"))casesList.setSelection(myCases);
-			else {
+			else if(myCases[0] != "") {
 				ArrayList<String> tests = new ArrayList<String>(1);
 				for(String aCase : myCases) {
 				for(String completeCase : testCases) {
