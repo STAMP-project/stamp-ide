@@ -19,7 +19,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -116,7 +115,6 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 				LaunchConfigurationDialog.getCurrentlyVisibleLaunchConfigurationDialog().updateButtons();
 			}	
         });
-		//LaunchConfigurationDialog.getCurrentlyVisibleLaunchConfigurationDialog().updateButtons();
 	}
 
 

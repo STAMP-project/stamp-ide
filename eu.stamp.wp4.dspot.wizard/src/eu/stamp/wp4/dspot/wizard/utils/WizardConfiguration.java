@@ -29,6 +29,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -41,6 +44,9 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
@@ -252,11 +258,14 @@ public class WizardConfiguration {
 	private IJavaProject obtainProject() {
 
 		activeWindow = Workbench.getInstance().getActiveWorkbenchWindow();
-		ISelection selection = activeWindow.getSelectionService().getSelection();
+		
+		ISelectionService selectionService  = activeWindow.getSelectionService();
+		ISelection selection = selectionService.getSelection();
 		IJavaProject jproject = null;
+		Object element;
 
 		if (selection instanceof IStructuredSelection) {
-			Object element = ((IStructuredSelection) selection).getFirstElement();
+			element = ((IStructuredSelection) selection).getFirstElement();
 
 			if (element instanceof IJavaElement) {
 				jproject = ((IJavaElement) element).getJavaProject();
@@ -269,6 +278,30 @@ public class WizardConfiguration {
 				return jproject;
 
 			}
+		}
+		if(jproject == null) {
+		
+			selection = selectionService.getSelection("org.eclipse.jdt.ui.PackageExplorer");
+			
+			if (selection instanceof IStructuredSelection) {
+				element = ((IStructuredSelection) selection).getFirstElement();
+
+				if (element instanceof IJavaElement) {
+					jproject = ((IJavaElement) element).getJavaProject();
+					return jproject;
+				}}
+			/*
+			selection = selectionService.getSelection("org.eclipse.ui.navigator.ProjectExplorer#PopupMenu");
+			if (selection instanceof IStructuredSelection) {
+				element = ((IStructuredSelection) selection).getFirstElement();
+				if (element instanceof IProject) {
+
+					IProject pro = (IProject) element;
+					jproject = new JavaProject(pro, null);
+					return jproject;
+
+				}
+		}*/
 		}
 		return null;
 	}
