@@ -17,7 +17,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -105,12 +107,16 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 		
         parametersText = new Text(container,SWT.BORDER);		
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(parametersText);
-		parametersText.addSelectionListener(new SelectionAdapter() {
+        parametersText.addKeyListener(new KeyListener() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				
+			public void keyPressed(KeyEvent e) {		
 			}
-		});
+			@Override
+			public void keyReleased(KeyEvent e) {	
+				LaunchConfigurationDialog.getCurrentlyVisibleLaunchConfigurationDialog().updateButtons();
+			}	
+        });
+		//LaunchConfigurationDialog.getCurrentlyVisibleLaunchConfigurationDialog().updateButtons();
 	}
 
 
@@ -121,6 +127,10 @@ public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab 
 	}
     @Override
     public boolean canSave() {
+    	return true;
+    }
+    @Override
+    public boolean isDirty() {
     	return true;
     }
 	@Override
