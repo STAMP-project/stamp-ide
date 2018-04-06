@@ -290,18 +290,16 @@ public class WizardConfiguration {
 					jproject = ((IJavaElement) element).getJavaProject();
 					return jproject;
 				}}
-			/*
-			selection = selectionService.getSelection("org.eclipse.ui.navigator.ProjectExplorer#PopupMenu");
+            selection = selectionService.getSelection("org.eclipse.ui.navigator.ProjectExplorer");
+			
 			if (selection instanceof IStructuredSelection) {
 				element = ((IStructuredSelection) selection).getFirstElement();
-				if (element instanceof IProject) {
 
+				if (element instanceof IProject) {
 					IProject pro = (IProject) element;
 					jproject = new JavaProject(pro, null);
 					return jproject;
-
-				}
-		}*/
+				}}
 		}
 		return null;
 	}
