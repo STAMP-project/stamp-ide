@@ -51,6 +51,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
+import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 @SuppressWarnings("restriction")
 public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab {

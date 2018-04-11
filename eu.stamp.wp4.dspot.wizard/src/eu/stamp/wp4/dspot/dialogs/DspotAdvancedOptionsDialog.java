@@ -325,6 +325,12 @@ public class DspotAdvancedOptionsDialog extends Dialog {
     	}
     	super.okPressed();
     }
+    /*
+    @Override
+    public int open() {
+    	
+    	return super.open();
+    }*/
 	
 	/**
 	 * getAdvParameters

@@ -14,11 +14,25 @@ package eu.stamp.wp4.dspot.wizard;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
+import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.ui.JavaElementComparator;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
@@ -26,6 +40,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Group;
@@ -37,6 +52,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SegmentEvent;
 
+import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.dialogs.DspotWizardHelpDialog;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
@@ -90,14 +106,10 @@ public class DSpotWizardPage1 extends WizardPage {
 		GridDataFactory.swtDefaults().indent(0, VS).applyTo(lbNewConfig);
 		lbNewConfig.setText("New Configuration : ");
 		
-		Button btNewConfig = new Button(composite,SWT.CHECK); // button in (2,1) to enable the new dialog text
-		GridDataFactory.swtDefaults().indent(0, VS).applyTo(btNewConfig);
-		btNewConfig.setSelection(true);
-		
 		Text txNewConfig = new Text(composite,SWT.BORDER); // text in (2,2) for the name of a new configuration
 		txNewConfig.setText("<Type configuration name>");
 		txNewConfig.setEnabled(true);
-		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(txNewConfig);
+		GridDataFactory.fillDefaults().grab(true, false).indent(0, VS).applyTo(txNewConfig);
 		txNewConfig.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -115,6 +127,10 @@ public class DSpotWizardPage1 extends WizardPage {
 				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
 			}	
 		});
+		
+		Button btNewConfig = new Button(composite,SWT.CHECK); // button in (2,1) to enable the new dialog text
+		GridDataFactory.swtDefaults().indent(0, VS).applyTo(btNewConfig);
+		btNewConfig.setSelection(true);
 		
 		btNewConfig.addSelectionListener(new SelectionAdapter() { // selection listener of the 
 	        @Override                                    // new configuration check button
@@ -145,7 +161,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		Text tx1 = new Text(composite,SWT.BORDER);    // Text in (3,2) for the poject's path
 		tx1.setText(direction);
-		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(tx1);
+		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx1);
         TheProperties[0] = direction;
         tx1.addKeyListener(new KeyListener() {  // add a keyListener
         	@Override
@@ -169,13 +185,17 @@ public class DSpotWizardPage1 extends WizardPage {
 				
 			}	
         });  // end of the segment listener
+        
+        Button projectSelectionbt = new Button(composite,SWT.PUSH);
+        GridDataFactory.swtDefaults().indent(0, VS).applyTo(projectSelectionbt);
+		projectSelectionbt.setText("Select a Project");
 		
 		// fourth row (4,x)      Source path
 		Label lb2 = new Label(composite,SWT.NONE);   // Label in (4,1)
 		lb2.setText("Path of the source : ");
 		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb2);
         Combo combo0 = new Combo(composite,SWT.BORDER);  // Combo in (4,2) for the source's path
-        GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo0);
+        GridDataFactory.fillDefaults().grab(true,false).span(2,1).indent(0, VS).applyTo(combo0);
         combo0.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -186,7 +206,6 @@ public class DSpotWizardPage1 extends WizardPage {
         		
         	}
         }); // end of the selection listener
-		
         
 		// fifth row (5,x)   SourceTest path
 		Label lb3 = new Label(composite,SWT.NONE);   // Label in (5,1)
@@ -308,8 +327,8 @@ public class DSpotWizardPage1 extends WizardPage {
 						myArguments.indexOf("-p ")+3,myArguments.indexOf(" -i "));
 				myS = myS.substring(0,myS.indexOf((new Path(myS)).lastSegment())-1); // -1 because of the last /
 				tx1.setText(myS);
-				wizard.refreshPageTwo();
 				wizard.setConfigurationName(configCombo.getText());
+				wizard.refreshPageTwo();
 				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
 				} catch (CoreException e1) {
 					e1.printStackTrace();
@@ -317,6 +336,30 @@ public class DSpotWizardPage1 extends WizardPage {
 				}
 			}
 		});
+		
+		
+		projectSelectionbt.addSelectionListener(new SelectionAdapter() {
+		    @Override
+		    public void widgetSelected(SelectionEvent e) {
+		    	IJavaProject jPro = showProjectDialog();
+		        try {
+					wConf = new WizardConfiguration(jPro);
+				} catch (CoreException e1) {
+					e1.printStackTrace();
+				}
+		        if(wConf.getPro() != null) { // to avoid problems if selection is cancelled
+		    	tx1.setText(wConf.getProjectPath());
+		    	TheProperties[0] = wConf.getProjectPath();
+                combo0.removeAll(); combo2.removeAll();
+		        for(int i = 0; i < wConf.getSources().length; i++) {  // add the sources to the combo
+		        	if(wConf.getIsTest()[i]) {  // if it is not a test package
+		        	combo2.add( wConf.getSources()[i]);} else { combo0.add( wConf.getSources()[i]); }
+		        } // end of the for
+		    	wizard.refreshConf(wConf);
+		        }
+		    }
+			});
+		
 		
 		// required to avoid an error in the System
 		setControl(composite);
@@ -338,6 +381,59 @@ public class DSpotWizardPage1 extends WizardPage {
 	  */
 	public String[] getTheProperties() {
 		return TheProperties;
+	}
+	
+	@SuppressWarnings("restriction")
+	private IJavaProject showProjectDialog() {
+		
+		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class,IProject.class};
+		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,true);
+		ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
+			@Override
+			public boolean select(Viewer viewer,Object parentElement, Object element) {
+				if(element instanceof IProject) {
+					try {
+						return ((IProject)element).hasNature(DSpotWizardConstants.MAVEN_NATURE);
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
+				}
+				if(element instanceof IJavaProject) {
+					try {
+						return ((IJavaProject)element).getProject().hasNature(DSpotWizardConstants.MAVEN_NATURE);
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
+				}
+				return false;
+			}
+		};	
+		
+		  IWorkspaceRoot fWorkspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
+	        
+	        StandardJavaElementContentProvider provider= new StandardJavaElementContentProvider();
+	        ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
+	        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+	        ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(shell, labelProvider, provider);
+	        dialog.setValidator(validator);
+	        dialog.setComparator(new JavaElementComparator());
+	        dialog.setTitle(" Select a project ");
+	        dialog.setMessage(" Select a project ");
+	        dialog.setInput(JavaCore.create(fWorkspaceRoot));
+	        dialog.addFilter(filter);
+	        dialog.setHelpAvailable(false);
+	        
+
+	        if(dialog.open() == Window.OK) {
+	            Object[] results = dialog.getResult();
+	            for(Object ob : results) {
+	            	if(ob instanceof IJavaProject) { 
+	            		IJavaProject jProject = (IJavaProject)ob;
+	            		return jProject;
+	             }
+	            }
+	        }
+	        return null;
 	}
 	
 }

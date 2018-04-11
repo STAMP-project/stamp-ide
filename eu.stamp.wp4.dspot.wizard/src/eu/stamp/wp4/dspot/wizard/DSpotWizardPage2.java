@@ -80,12 +80,12 @@ public class DSpotWizardPage2 extends WizardPage {
 	private boolean clean = false;
 	private boolean pitSelected = false;
 	private WizardConfiguration wConf;
-	private DSpotWizardPage2 page;
+	private DSpotWizardPage2 page;   
 	private String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
 			"BooleanLiteralAmplifier","AllLiteralAmplifiers","MethodAdd","MethodRemove","TestDataMutator",
 			"StatementAdd",""};  // the possible amplifiers;
 	
-	// widgets
+	// widgets 
 	private Text tx1;
 	private Spinner spin;
 	private Spinner spin1; 
@@ -107,6 +107,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private Shell shell;
 	private String[] selectedCases = {""};
 	private boolean opened = false;
+	private ExperimentalDialog expDiag;
 	
 	public DSpotWizardPage2(WizardConfiguration wConf) {
 		super("Second page");
@@ -118,6 +119,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		page = this;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		adv = new DspotAdvancedOptionsDialog(shell, pitSelected,wConf.getProjectPath(),testCases,testMethods,this,selectedCases);
+		expDiag = new ExperimentalDialog(shell, wConf);
 	} // end of the constructor
 	
 	@Override
@@ -291,10 +293,16 @@ public class DSpotWizardPage2 extends WizardPage {
 	    link.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
-	    		if(opened) refreshAdvancedOptions();
+	    		/*
+	    		if(opened) refreshAdvancedOptions(adv);
 	    		pitSelected = combo1.getText() == "" || combo1.getText().contains("PitMutantScoreSelector");
 	    		adv.open();
+	    		opened = true;*/
+	    		//expDiag.refreshDialogArea(wConf,opened);
+	    		expDiag.setConfiguration(wConf);
+	    		expDiag.open();
 	    		opened = true;
+	    		
 	    	}
 	    }); // end of the selection listener
 	    
@@ -306,7 +314,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    button2.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
-	    		clean = button.getSelection();
+	    		clean = button2.getSelection();
 	    	}
 	    }); // end of the selection listener
 	    
@@ -475,14 +483,14 @@ public class DSpotWizardPage2 extends WizardPage {
    	} 
    	myFragment = myFragment.replaceAll(" ", "");
    	spin1.setSelection(Integer.parseInt(myFragment));
-   	if(argument.contains("-r ")) {
-      myFragment = argument.substring(argument.indexOf("-r ")+3);
+   	if(argument.contains("--randomSeed ")) {
+      myFragment = argument.substring(argument.indexOf("--randomSeed ")+13);
       myFragment = myFragment.substring(0,myFragment.indexOf("-"));
       myFragment = myFragment.replaceAll(" ", "");
       r = Integer.parseInt(myFragment);
    	}
-   	if(argument.contains("-v ")) {
-        myFragment = argument.substring(argument.indexOf("-v ")+3);
+   	if(argument.contains("--timeOut ")) {
+        myFragment = argument.substring(argument.indexOf("--timeOut ")+10);
         myFragment = myFragment.substring(0,myFragment.indexOf("-"));
         myFragment = myFragment.replaceAll(" ", "");
         timeOut = Integer.parseInt(myFragment);
@@ -505,15 +513,10 @@ public class DSpotWizardPage2 extends WizardPage {
      	}
    	button.setSelection(argument.contains("--verbose"));
    	button2.setSelection(argument.contains("--clean"));
+   	verbose = button.getSelection();
+   	clean = button2.getSelection();
+   	expDiag.reset(wConf, r, timeOut, selectedCases, pathPitResult);
    }
-    }
-    private void refreshAdvancedOptions() {
-    	 boolean[] changes = adv.getChanges();
-         if(changes[0]) r =  adv.getRand();
-         if(changes[1]) timeOut = adv.getTime();
-         if(changes[2]) selectedCases = adv.getSelectedCases();
-         pathPitResult = adv.getAdvParameters()[3];
-          if(pathPitResult.contains("-m")) pathPitResult = pathPitResult.substring(pathPitResult.indexOf("-m ")+3);
     }
 	/*
 	 *  public methods to return the information set by the user
@@ -554,7 +557,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	 * @return a string array with the information set in the advanced options dialog
 	 */
 	public String[] getAdvparameters() {
-		return adv.getAdvParameters();
+		return expDiag.getAdvancedParameters();
 	}
     /**
      * @return the int value of the random seed DSpot parameter
@@ -582,6 +585,10 @@ public class DSpotWizardPage2 extends WizardPage {
 	 */
 	public String getPathPitResult() {
 		return pathPitResult;
+	}
+	public void refreshPageConfiguration(WizardConfiguration wConf) {
+		this.wConf = wConf;
+		
 	}
 	 @Override
 	 public void performHelp() {

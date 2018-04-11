@@ -78,6 +78,7 @@ public class DSpotWizard extends Wizard{
 		addPage(one);
 		two = new DSpotWizardPage2(wConf);
 		addPage(two);
+		
 	}
 	
 	@Override
@@ -141,6 +142,9 @@ public class DSpotWizard extends Wizard{
 	 */
 	public void refreshPageTwo() {
 		two.refresh();
+	}
+	public void refreshConf(WizardConfiguration wConf) {
+		two.refreshPageConfiguration(wConf);
 	}
 }
 	

@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -37,22 +39,35 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IParent;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.JavaProject;
+import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
+import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.JavaElementComparator;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.swt.widgets.Shell;
 
 import org.junit.Test;
+
+import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 
 @SuppressWarnings("restriction")
 /**
@@ -108,6 +123,36 @@ public class WizardConfiguration {
 			}
 	} 
 	
+	public WizardConfiguration(IJavaProject jPro) throws CoreException {
+		
+		 jproject = jPro;  // obtain the project
+		 Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		 
+			if (jproject == null) {
+				 MessageDialog.openInformation(
+				shell,
+				 "Execute DSpot",
+				 "Please, select a Java Project in the Package Explorer");
+			} else if(!jproject.getProject().hasNature("org.eclipse.m2e.core.maven2Nature")){ 
+				 MessageDialog.openError(
+				shell,
+				 "Execute DSpot",
+				 "The selected project must be a maven project");
+			}else {
+		 projectSelected = true;
+	
+		// obtain project's path
+       IProject project = jproject.getProject(); // Convert to project
+       IPath pa = project.getLocation();         // get it's absolute path
+	    projectPath = pa.toString();      // put it into a string
+	    
+	    sources = findSour();  // obtain the sources
+	    
+	    isTest = findTest(); // obtain the boolean array (value true for the sources that contain @Test)
+	    
+	    this.configurations = obtainLaunchConfigurations();
+			}
+	}
 	// getter methods
 
 	public boolean projectSelected() {
@@ -163,6 +208,8 @@ public class WizardConfiguration {
 	 * @return the active workbench window
 	 */
 	public IWorkbenchWindow getTheWindow() {
+		if(activeWindow != null) return activeWindow;
+		activeWindow = Workbench.getInstance().getActiveWorkbenchWindow();
 		return activeWindow;
 	}
 
@@ -526,4 +573,5 @@ public class WizardConfiguration {
 		
 		return result;
 	}
+	
 }
