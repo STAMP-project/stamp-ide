@@ -78,7 +78,6 @@ public class DSpotWizardPage2 extends WizardPage {
 	private String[] MyStrings = new String[5];
 	private boolean verbose = false;  // boolean to activate or not verbose
 	private boolean clean = false;
-	private boolean pitSelected = false;
 	private WizardConfiguration wConf;
 	private DSpotWizardPage2 page;   
 	private String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
@@ -95,7 +94,6 @@ public class DSpotWizardPage2 extends WizardPage {
 	private Button button2;
 	
 	// Dialogs
-	private DspotAdvancedOptionsDialog adv;
 	private ArrayList<Object> testSelection = new ArrayList<Object>(1);
 	// this is for the advanced dialog
 	private String[] testCases;
@@ -106,7 +104,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private String pathPitResult = "";
 	private Shell shell;
 	private String[] selectedCases = {""};
-	private boolean opened = false;
+	//private boolean opened = false;
 	private ExperimentalDialog expDiag;
 	
 	public DSpotWizardPage2(WizardConfiguration wConf) {
@@ -118,7 +116,6 @@ public class DSpotWizardPage2 extends WizardPage {
 		testMethods = wConf.getTestMethods();
 		page = this;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		adv = new DspotAdvancedOptionsDialog(shell, pitSelected,wConf.getProjectPath(),testCases,testMethods,this,selectedCases);
 		expDiag = new ExperimentalDialog(shell, wConf);
 	} // end of the constructor
 	
@@ -295,8 +292,9 @@ public class DSpotWizardPage2 extends WizardPage {
 	    	public void widgetSelected(SelectionEvent e) {
 
 	    		expDiag.setConfiguration(wConf);
+	    		expDiag.setPitSelected(combo1.getText().contains("PitMutantScoreSelector"));
 	    		expDiag.open();
-	    		opened = true;
+	    		//opened = true;
 	    		
 	    	}
 	    }); // end of the selection listener

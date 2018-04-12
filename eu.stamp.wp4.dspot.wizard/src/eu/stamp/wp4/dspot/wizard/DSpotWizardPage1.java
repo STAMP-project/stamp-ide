@@ -20,14 +20,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -45,7 +42,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Group;
@@ -65,6 +61,7 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
  * this class describes the first page of the DSpot wizard 
  * 
  */
+@SuppressWarnings("restriction")
 public class DSpotWizardPage1 extends WizardPage { 
 	
 	// [0] project, [1] src, [2] testScr, [3] javaVersion, [4] outputDirectory, [5] filter
@@ -398,7 +395,6 @@ public class DSpotWizardPage1 extends WizardPage {
 		return TheProperties;
 	}
 	
-	@SuppressWarnings("restriction")
 	private IJavaProject showProjectDialog() {
 		
 		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class,IProject.class};
