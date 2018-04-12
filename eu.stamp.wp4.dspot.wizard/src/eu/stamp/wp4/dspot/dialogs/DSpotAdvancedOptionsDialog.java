@@ -39,7 +39,7 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
  *  This class describes a dialog to set the advanced options of Dspot execution,
  *  it will be open by a link called advanced options in page 2
  */
-public class ExperimentalDialog extends Dialog{
+public class DSpotAdvancedOptionsDialog extends Dialog{
 	
 	private WizardConfiguration wConf;  // to obtain the possible test cases
 	
@@ -60,7 +60,7 @@ public class ExperimentalDialog extends Dialog{
 	private Text mavenHomeText;
 	
 
-	public ExperimentalDialog(Shell parentShell, WizardConfiguration wConf) {
+	public DSpotAdvancedOptionsDialog(Shell parentShell, WizardConfiguration wConf) {
 		super(parentShell);
 		this.wConf = wConf;
 	}

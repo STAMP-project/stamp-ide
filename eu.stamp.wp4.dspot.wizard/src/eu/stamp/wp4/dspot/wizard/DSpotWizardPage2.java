@@ -105,7 +105,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private Shell shell;
 	private String[] selectedCases = {""};
 	//private boolean opened = false;
-	private ExperimentalDialog expDiag;
+	private DSpotAdvancedOptionsDialog expDiag;
 	
 	public DSpotWizardPage2(WizardConfiguration wConf) {
 		super("Second page");
@@ -116,7 +116,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		testMethods = wConf.getTestMethods();
 		page = this;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		expDiag = new ExperimentalDialog(shell, wConf);
+		expDiag = new DSpotAdvancedOptionsDialog(shell, wConf);
 	} // end of the constructor
 	
 	@Override
@@ -291,7 +291,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 
-	    		expDiag.setConfiguration(wConf);
+	    		expDiag.reset(wConf, r, timeOut, selectedCases, pathPitResult);
 	    		expDiag.setPitSelected(combo1.getText().contains("PitMutantScoreSelector"));
 	    		expDiag.open();
 	    		//opened = true;
@@ -508,7 +508,6 @@ public class DSpotWizardPage2 extends WizardPage {
    	button2.setSelection(argument.contains("--clean"));
    	verbose = button.getSelection();
    	clean = button2.getSelection();
-   	expDiag.reset(wConf, r, timeOut, selectedCases, pathPitResult);
    }
     }
 	/*
