@@ -20,10 +20,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -41,6 +45,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Group;
@@ -327,8 +332,17 @@ public class DSpotWizardPage1 extends WizardPage {
 						myArguments.indexOf("-p ")+3,myArguments.indexOf(" -i "));
 				myS = myS.substring(0,myS.indexOf((new Path(myS)).lastSegment())-1); // -1 because of the last /
 				tx1.setText(myS);
+				
+				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+				IJavaProject theProject = null;
+				for(IProject pro : projects) {
+				if(pro.getLocation().toString().contains(myS)) theProject = new JavaProject(pro,null);
+		}
+				if(theProject != null) wConf = new WizardConfiguration(theProject);
 				wizard.setConfigurationName(configCombo.getText());
 				wizard.refreshPageTwo();
+				wizard.refreshConf(wConf);
+				wizard.setDefaultValuesInPage2();
 				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
 				} catch (CoreException e1) {
 					e1.printStackTrace();
@@ -356,6 +370,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		        	combo2.add( wConf.getSources()[i]);} else { combo0.add( wConf.getSources()[i]); }
 		        } // end of the for
 		    	wizard.refreshConf(wConf);
+		    	wizard.setDefaultValuesInPage2();
 		        }
 		    }
 			});
@@ -423,6 +438,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	        dialog.addFilter(filter);
 	        dialog.setHelpAvailable(false);
 	        
+	      
 
 	        if(dialog.open() == Window.OK) {
 	            Object[] results = dialog.getResult();

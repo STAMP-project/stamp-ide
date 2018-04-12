@@ -1,6 +1,8 @@
 package eu.stamp.wp4.dspot.dialogs;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -13,6 +15,9 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -72,6 +77,8 @@ public class ExperimentalDialog extends Dialog{
     	 
     	 list = new List(composite,SWT.MULTI);
     	 String[] cases = wConf.getTestCases();
+    	 HashSet<String> casesSet = new HashSet<String>(Arrays.asList(cases));
+    	 cases = casesSet.toArray(new String[casesSet.size()]);
     	 for(String sr : cases) list.add(sr);
     	 GridDataFactory.fillDefaults().grab(true, false).span(2,1).applyTo(list);
     	 if(selection != null) {
@@ -152,13 +159,14 @@ public class ExperimentalDialog extends Dialog{
     	 this.timeOut= timeOut;
     	 this.pathPitResult = pathPitResult;
     	 String[] cases = wConf.getTestCases();
+    	 if(selection != null) {
     	 ArrayList<String> mySelection = new ArrayList<String>(1);
     	 for(String aCase : cases) {
     		 for(String sel : selection) {
     			 if(aCase.contains(sel)) mySelection.add(aCase);
     		 }
     	 }
-    	 this.selection = mySelection.toArray(new String[mySelection.size()]);
+    	 this.selection = mySelection.toArray(new String[mySelection.size()]);}
      }
      
      public String[] getAdvancedParameters() {

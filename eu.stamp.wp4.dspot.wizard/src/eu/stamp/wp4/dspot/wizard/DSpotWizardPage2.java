@@ -293,12 +293,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    link.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
-	    		/*
-	    		if(opened) refreshAdvancedOptions(adv);
-	    		pitSelected = combo1.getText() == "" || combo1.getText().contains("PitMutantScoreSelector");
-	    		adv.open();
-	    		opened = true;*/
-	    		//expDiag.refreshDialogArea(wConf,opened);
+
 	    		expDiag.setConfiguration(wConf);
 	    		expDiag.open();
 	    		opened = true;
@@ -588,6 +583,15 @@ public class DSpotWizardPage2 extends WizardPage {
 	}
 	public void refreshPageConfiguration(WizardConfiguration wConf) {
 		this.wConf = wConf;
+		
+	}
+	public void setDefaultValues() {
+		tx1.setText("");
+		spin.setSelection(1);
+		spin1.setSelection(200);
+		amplifiersList.deselectAll();
+		combo1.setText("");
+		expDiag.reset(wConf, 23, 10000, null , "");
 		
 	}
 	 @Override
