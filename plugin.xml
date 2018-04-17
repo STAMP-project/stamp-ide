@@ -34,6 +34,42 @@
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
+         <menu
+               id="DSpot.menu2"
+               label="STAMP">
+            <command
+                  commandId="eu.stamp.wp4.descartes.wizard.command"
+                  label="Descartes"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <reference
+                           definitionId="eu.stamp.wp4.descartes.wizard.definition">
+                     </reference>
+                  </iterate>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="DSpot.menu3"
+               label="STAMP">
+            <command
+                  commandId="eu.stamp.wp4.descartes.wizard.command"
+                  label="Descartes"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -47,6 +83,15 @@
             </test>
          </adapt>
       </definition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="eu.stamp.wp4.descartes.wizard.command"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+8">
+      </key>
    </extension>
 
 </plugin>

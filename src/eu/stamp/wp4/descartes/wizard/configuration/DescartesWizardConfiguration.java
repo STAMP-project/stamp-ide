@@ -1,9 +1,10 @@
 package eu.stamp.wp4.descartes.wizard.configuration;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.w3c.dom.Node;
 
-import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardStaticUtils;
+import eu.stamp.wp4.descartes.wizard.utils.*;
 
 public class DescartesWizardConfiguration {
 
@@ -15,8 +16,15 @@ public class DescartesWizardConfiguration {
 	
 	public DescartesWizardConfiguration(){
 		jProject = DescartesWizardStaticUtils.obtainProject();
-		mutators = DescartesWizardStaticUtils.obtainMutators(jProject);
-		projectPath = jProject.getProject().getLocation().toString();
+		if(jProject != null) { 
+			try {
+				if(jProject.getProject().hasNature(DescartesWizardConstants.MAVEN_NATURE_ID)) {
+mutators = DescartesWizardStaticUtils.obtainMutators(jProject);
+projectPath = jProject.getProject().getLocation().toString();} 
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	
