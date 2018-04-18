@@ -91,12 +91,11 @@ public abstract class DescartesWizardStaticUtils {
 						myNode = aNode; break;
 					}
 				}
-			
-			rootNodes = ((Element)myNode).getElementsByTagName("mutator");
+				if(myNode != null) {
+					rootNodes = ((Element)myNode).getElementsByTagName("mutator");
 			Node[] mutators = new Node[rootNodes.getLength()];
 			for(int i = 0; i < rootNodes.getLength(); i++) mutators[i] = rootNodes.item(i);
-			
-			return mutators;
+			return mutators;}				
 			
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();

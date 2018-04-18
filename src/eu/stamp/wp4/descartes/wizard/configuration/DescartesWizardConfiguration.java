@@ -27,6 +27,11 @@ projectPath = jProject.getProject().getLocation().toString();}
 		}
 	}
 	
+	public DescartesWizardConfiguration(IJavaProject jProject) {
+		this.jProject = jProject;
+		mutators = DescartesWizardStaticUtils.obtainMutators(jProject);
+		projectPath = jProject.getProject().getLocation().toString();
+	}
 	
 	/*
 	 *  getter methods
@@ -41,13 +46,17 @@ projectPath = jProject.getProject().getLocation().toString();}
 		return mutators;
 	}
 	public String[] getMutatorsNames() {
-		String[] names = new String[mutators.length];
-		for(int i = 0; i < mutators.length; i++) names[i] = mutators[i].getNodeName();
+		String[] names = {""};
+		if(mutators != null) {
+	    names = new String[mutators.length];
+		for(int i = 0; i < mutators.length; i++) names[i] = mutators[i].getNodeName();}
 		return names;
 	}
 	public String[] getMutatorsTexts() {
-		String[] texts = new String[mutators.length];
-		for(int i = 0; i < mutators.length; i++) texts[i] = mutators[i].getTextContent();
+		String[] texts = {""};
+		if(mutators != null) {
+		texts = new String[mutators.length];
+		for(int i = 0; i < mutators.length; i++) texts[i] = mutators[i].getTextContent();}
 		return texts;
 	}
 	/*

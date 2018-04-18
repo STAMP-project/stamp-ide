@@ -58,4 +58,8 @@ public class DescartesWizard extends Wizard {
 	public void updateWizardParts() {
 		for(int i = 0; i < partsList.size(); i++) partsList.get(i).updateDescartesWizardPart(wConf);
 	}
+	public void setWizardConfiguration(DescartesWizardConfiguration wConf) {
+		this.wConf = wConf;
+		updateWizardParts();
+	}
 }
