@@ -1,8 +1,13 @@
 package eu.stamp.wp4.descartes.wizard.configuration;
 
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import eu.stamp.wp4.descartes.wizard.utils.*;
 
@@ -12,16 +17,22 @@ public class DescartesWizardConfiguration {
 	
 	private String projectPath;
 	
-	private Node[] mutators;
+	private DescartesWizardPomParser descartesParser;
 	
 	public DescartesWizardConfiguration(){
-		jProject = DescartesWizardStaticUtils.obtainProject();
+		jProject = DescartesWizardPomParser.obtainProject();
 		if(jProject != null) { 
 			try {
 				if(jProject.getProject().hasNature(DescartesWizardConstants.MAVEN_NATURE_ID)) {
-mutators = DescartesWizardStaticUtils.obtainMutators(jProject);
-projectPath = jProject.getProject().getLocation().toString();} 
+         try {
+			descartesParser = new DescartesWizardPomParser(jProject);
+		} catch (SAXException | IOException e) {
+			e.printStackTrace();
+		}
+         projectPath = jProject.getProject().getLocation().toString();} 
 			} catch (CoreException e) {
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			}
 		}
@@ -29,7 +40,11 @@ projectPath = jProject.getProject().getLocation().toString();}
 	
 	public DescartesWizardConfiguration(IJavaProject jProject) {
 		this.jProject = jProject;
-		mutators = DescartesWizardStaticUtils.obtainMutators(jProject);
+		try {
+			descartesParser = new DescartesWizardPomParser(jProject);
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			e.printStackTrace();
+		}
 		projectPath = jProject.getProject().getLocation().toString();
 	}
 	
@@ -43,10 +58,11 @@ projectPath = jProject.getProject().getLocation().toString();}
 		return projectPath;
 	}
 	public Node[] getMutators() {
-		return mutators;
+		return descartesParser.getMutators();
 	}
 	public String[] getMutatorsNames() {
 		String[] names = {""};
+		Node[] mutators = descartesParser.getMutators();
 		if(mutators != null) {
 	    names = new String[mutators.length];
 		for(int i = 0; i < mutators.length; i++) names[i] = mutators[i].getNodeName();}
@@ -54,21 +70,26 @@ projectPath = jProject.getProject().getLocation().toString();}
 	}
 	public String[] getMutatorsTexts() {
 		String[] texts = {""};
+		Node[] mutators = descartesParser.getMutators();
 		if(mutators != null) {
 		texts = new String[mutators.length];
 		for(int i = 0; i < mutators.length; i++) texts[i] = mutators[i].getTextContent();}
 		return texts;
+	}
+	public DescartesWizardPomParser getDescartesParser() {
+		return descartesParser;
 	}
 	/*
 	 *  setter methods
 	 */
 	public void setProject(IJavaProject jProject) {
 		this.jProject = jProject;
-		mutators = DescartesWizardStaticUtils.obtainMutators(jProject);
+		try {
+			descartesParser = new DescartesWizardPomParser(jProject);
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			e.printStackTrace();
+		}
 		projectPath = jProject.getProject().getLocation().toString();	
-	}
-	public void setMutators(Node[] mutators) {
-		this.mutators = mutators;
 	}
 	
 }

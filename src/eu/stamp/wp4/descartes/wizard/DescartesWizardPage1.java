@@ -23,7 +23,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -95,7 +94,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		mutatorsTree = new Tree(composite,SWT.V_SCROLL | SWT.CHECK);
         GridData gd = new GridData(SWT.FILL,SWT.FILL,true,true);
         gd.horizontalSpan = 2;
-        gd.verticalSpan = 5;
+        gd.verticalSpan = 6;
         gd.minimumWidth = 250;
         mutatorsTree.setLayoutData(gd);
         mutatorsTree.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
@@ -113,20 +112,23 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 
         Button removeMutatorButton = new Button(composite,SWT.PUSH);
         removeMutatorButton.setText("Remove selected mutators");
-        GridDataFactory.swtDefaults().applyTo(removeMutatorButton);
+        GridDataFactory.fillDefaults().applyTo(removeMutatorButton);
         
         Button addMutatorButton = new Button(composite,SWT.PUSH);
-        addMutatorButton.setText("     Add mutator                 ");
-        GridDataFactory.swtDefaults().applyTo(removeMutatorButton);
+        addMutatorButton.setText("Add mutator");
+        GridDataFactory.fillDefaults().applyTo(addMutatorButton);
         
         Button removeAllButton = new Button(composite,SWT.PUSH);
-        removeAllButton.setText("     Remove all                    ");
-        GridDataFactory.swtDefaults().applyTo(removeAllButton);
+        removeAllButton.setText("Remove all");
+        GridDataFactory.fillDefaults().applyTo(removeAllButton);
         
         Button initialListButton = new Button(composite,SWT.PUSH);
-        initialListButton.setText("     Set initial mutators       ");
-        GridDataFactory.swtDefaults().applyTo(initialListButton);
+        initialListButton.setText("Set initial mutators");
+        GridDataFactory.fillDefaults().applyTo(initialListButton);
         
+        Button defaultMutatorsButton = new Button(composite,SWT.PUSH);
+        defaultMutatorsButton.setText("Set default mutators");
+        GridDataFactory.fillDefaults().applyTo(defaultMutatorsButton);
         
         // listeners
         projectButton.addSelectionListener(new SelectionAdapter() {
@@ -174,7 +176,20 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         		items.add(it);}
         	}
         });
-        
+        String[] defaultMutators = {"void","null","true","false","empty","0","1",
+    			"(byte)0","(byte)1","(short)1","(short)2","0L","1L","0.0","1.0","0.0f","1.0f",
+    			"'\\40'","'A'","\"\"","\"A\""};
+        defaultMutatorsButton.addSelectionListener(new SelectionAdapter(){
+        	@Override
+        	public void widgetSelected(SelectionEvent e) {
+        		for(int i = items.size()-1; i >= 0; i--) items.remove(i);
+        		mutatorsTree.removeAll();
+        		for(int i = 0; i < defaultMutators.length; i++) {
+        		TreeItem it = new TreeItem(mutatorsTree,SWT.NONE);
+        		it.setText(defaultMutators[i]);
+        		items.add(it);}
+        	}
+        });
 		// required to avoid an error in the System
 		setControl(composite);
 		setPageComplete(true);	
@@ -205,6 +220,12 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	@Override
 	public void updateWizardReference(DescartesWizard wizard) {
 		this.wizard = wizard;
+	}
+	
+	public String[] getMutatorsSelection() {
+		String[] texts = new String[items.size()];
+		for(int i = 0; i < items.size(); i++) texts[i] = items.get(i).getText();
+		return texts;
 	}
 	
 	private String showInputDialog () {

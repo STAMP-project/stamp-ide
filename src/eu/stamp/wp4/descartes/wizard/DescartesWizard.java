@@ -51,6 +51,8 @@ public class DescartesWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		DescartesEclipseJob job = new DescartesEclipseJob(wConf.getProjectPath());
+		String[] texts = one.getMutatorsSelection();
+		wConf.getDescartesParser().preparePom(texts);
 		job.schedule();
 		return true;
 	}
