@@ -34,6 +34,7 @@ import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotEclipseJob;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
+
 /**
  * this class describes the Eclipse wizard for DSpot
  * 
@@ -148,6 +149,9 @@ public class DSpotWizard extends Wizard{
 	}
 	public void refreshConf(WizardConfiguration wConf) {
 		two.refreshPageConfiguration(wConf);
+	}
+	public void setResetadv() {
+		two.setResetAdvancedOptions(true);
 	}
 }
 	

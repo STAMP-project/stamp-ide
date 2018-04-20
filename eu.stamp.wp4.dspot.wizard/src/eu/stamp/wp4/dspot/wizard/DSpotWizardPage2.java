@@ -49,6 +49,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -96,27 +97,26 @@ public class DSpotWizardPage2 extends WizardPage {
 	// Dialogs
 	private ArrayList<Object> testSelection = new ArrayList<Object>(1);
 	// this is for the advanced dialog
-	private String[] testCases;
-	private String[] testMethods;
 	private int r = 23;
 	private int timeOut = 10000;
 	private String casesToTest = "";
 	private String pathPitResult = "";
 	private Shell shell;
 	private String[] selectedCases = {""};
+	DSpotAdvancedOptionsDialogMemory memory = new DSpotAdvancedOptionsDialogMemory();
 	//private boolean opened = false;
 	private DSpotAdvancedOptionsDialog expDiag;
+	private boolean resetAdvancedOptions = false;
 	
 	public DSpotWizardPage2(WizardConfiguration wConf) {
 		super("Second page");
 		setTitle("Second page");
 		setDescription("Information about the execution");
 		this.wConf = wConf;
-		testCases = wConf.getTestCases();
-		testMethods = wConf.getTestMethods();
 		page = this;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		expDiag = new DSpotAdvancedOptionsDialog(shell, wConf);
+		expDiag.setMemory(memory);
 	} // end of the constructor
 	
 	@Override
@@ -291,10 +291,12 @@ public class DSpotWizardPage2 extends WizardPage {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 
-	    		expDiag.reset(wConf, r, timeOut, selectedCases, pathPitResult);
+	    		if(resetAdvancedOptions) {
+	    			expDiag.reset(wConf, r, timeOut, selectedCases, pathPitResult);
+	    			resetAdvancedOptions = false;
+	    		} else expDiag.setMemory(memory);
 	    		expDiag.setPitSelected(combo1.getText().contains("PitMutantScoreSelector"));
-	    		expDiag.open();
-	    		//opened = true;
+	    		if(expDiag.open() == Dialog.OK) memory = expDiag.getMemory();
 	    		
 	    	}
 	    }); // end of the selection listener
@@ -368,7 +370,7 @@ public class DSpotWizardPage2 extends WizardPage {
                             break;
                         }
                     }
-                }
+                } 
                 return result;
             }
 
@@ -602,5 +604,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		 info.open();
 	    
 	 }
-	 
+	 public void setResetAdvancedOptions(boolean resetAdvancedOptions) {
+		 this.resetAdvancedOptions = resetAdvancedOptions;
+	 }
 }

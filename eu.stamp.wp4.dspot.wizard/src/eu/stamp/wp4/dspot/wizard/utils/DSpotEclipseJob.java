@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+
 import eu.stamp.wp4.dspot.execution.handlers.DSpotExecutionHandler;
 
 /**
@@ -76,4 +77,5 @@ protected IStatus run(IProgressMonitor monitor) {
      
 	return Status.OK_STATUS;
 } // end of run
+
 }

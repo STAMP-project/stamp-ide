@@ -61,7 +61,7 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
                id="DSpot.menu3"
-               label="Stamp">
+               label="STAMP">
             <command
                   commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
                   label="DSpot"

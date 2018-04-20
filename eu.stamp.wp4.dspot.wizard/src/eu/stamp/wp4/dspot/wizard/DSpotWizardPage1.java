@@ -340,6 +340,7 @@ public class DSpotWizardPage1 extends WizardPage {
 				wizard.refreshPageTwo();
 				wizard.refreshConf(wConf);
 				wizard.setDefaultValuesInPage2();
+				wizard.setResetadv();
 				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
 				} catch (CoreException e1) {
 					e1.printStackTrace();
