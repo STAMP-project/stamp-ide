@@ -41,7 +41,9 @@ public class DescartesEclipseJob extends Job {
 			}
 			inputStreamReader.close();
 			if(!process.isAlive()) {
-			 Orders[2] = "mvn org.pitest:pitest-maven:mutationCoverage -DmutationEngine=descartes";
+			 Orders[2] = "mvn org.pitest:pitest-maven:mutationCoverage -DmutationEngine=descartes"
+			 		+ " -f "+projectPath+"/descartes_pom.xml";
+			 System.out.println(Orders[2]);
 			 process = Runtime.getRuntime().exec(Orders,null,new File(projectPath));
 				inputStream = process.getInputStream();
 				inputStreamReader = new InputStreamReader(inputStream);

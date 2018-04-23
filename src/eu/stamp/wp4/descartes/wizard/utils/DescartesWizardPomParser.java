@@ -37,18 +37,14 @@ import org.w3c.dom.Text;
 public class DescartesWizardPomParser {
 	
 	private Document pomDocument;
-	private String pomFilePath;
+	private String projectPath;
 	private Node[] mutators;
-	private final String[] defaultMutators = {"void","null","true","false","empty","0","1",
-			"(byte)0","(byte)1","(short)1","(short)2","0L","1L","0.0","1.0","0.0f","1.0f",
-			"'\\40'","'A'","\"\"","\"A\""};
-	
 	
 	public DescartesWizardPomParser(IJavaProject jProject) 
 			throws ParserConfigurationException, SAXException, IOException {
 		
-		pomFilePath = jProject.getProject().getLocation().toString() + "/pom.xml";
-		File pomFile = new File(pomFilePath);
+		projectPath = jProject.getProject().getLocation().toString();
+		File pomFile = new File(projectPath + "/pom.xml");
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	    pomDocument = builder.parse(pomFile);	
 	    NodeList mutatorsList = findMutators();
@@ -61,8 +57,9 @@ public class DescartesWizardPomParser {
 	}
 	
 	public void preparePom(String[] texts) {
-		removeMutators(texts);
-		addMutators(texts);
+		Node parent = mutators[0].getParentNode();
+		if(mutators.length > 0) removeMutators(texts,parent);
+		addMutators(texts,parent);
 		savePom();
 	}
 	
@@ -132,7 +129,7 @@ public class DescartesWizardPomParser {
 			return null;
 	}
 	
-	private void removeMutators(String[] texts) {
+	private void removeMutators(String[] texts,Node parent) {
 		ArrayList<Node> mutatorsList = new ArrayList<Node>(Arrays.asList(mutators));
 		boolean removeThis = true;
 		for(int i = 0; i < mutatorsList.size(); i++) {
@@ -140,16 +137,17 @@ public class DescartesWizardPomParser {
 				removeThis = false; break;
 			}
 			if(removeThis) {
-				mutatorsList.get(0).getParentNode().removeChild(mutatorsList.get(i));
+				parent.removeChild(mutatorsList.get(i));
 			}
 			removeThis = true;
 		}
 	}
-	private void addMutators(String[] texts) {
-		ArrayList<Node> mutatorsList = new ArrayList<Node>(Arrays.asList(mutators));
+	private void addMutators(String[] texts,Node parent) {
+		ArrayList<Node> mutatorsList = new ArrayList<Node>(1);
+		if(mutators.length > 0) mutatorsList = new ArrayList<Node>(Arrays.asList(mutators));
 		boolean addThis = true;
 		for(int i = 0; i < texts.length; i++) {
-			for(int j = 0; j < mutatorsList.size(); j++) if(texts[i]
+			if(mutators.length > 0) for(int j = 0; j < mutatorsList.size(); j++) if(texts[i]
 					.equalsIgnoreCase(mutatorsList.get(j).getTextContent())) { 
 				addThis = false; break;
 			}
@@ -157,7 +155,7 @@ public class DescartesWizardPomParser {
 				Element element = pomDocument.createElement("mutator");
 				Text elementText = pomDocument.createTextNode(texts[i]);
 				element.appendChild(elementText);
-			    mutators[0].getParentNode().appendChild(element);
+			   parent.appendChild(element);
 			}
 			addThis = true;
 		}
@@ -166,7 +164,7 @@ public class DescartesWizardPomParser {
 	    try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "no");
-			StreamResult result = new StreamResult(new FileWriter(pomFilePath));
+			StreamResult result = new StreamResult(new FileWriter(projectPath+"/descartes_pom.xml"));
 			DOMSource source = new DOMSource(pomDocument);
 			transformer.transform(source, result);
 		} catch (TransformerFactoryConfigurationError |IOException |
