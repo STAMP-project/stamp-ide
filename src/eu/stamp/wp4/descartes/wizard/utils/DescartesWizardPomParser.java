@@ -46,10 +46,12 @@ public class DescartesWizardPomParser {
 		projectPath = jProject.getProject().getLocation().toString();
 		File pomFile = new File(projectPath + "/pom.xml");
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-	    pomDocument = builder.parse(pomFile);	
-	    NodeList mutatorsList = findMutators();
+	    pomDocument = builder.parse(pomFile);
+	    NodeList mutatorsList = findNodeList("mutator",findBaseNode());
+	    if(mutatorsList != null) { 
 	    mutators = new Node[mutatorsList.getLength()];
 		for(int i = 0; i < mutatorsList.getLength(); i++) mutators[i] = mutatorsList.item(i);
+	    } 
 	}
 	
 	public Node[] getMutators() {
@@ -57,6 +59,7 @@ public class DescartesWizardPomParser {
 	}
 	
 	public void preparePom(String[] texts) {
+		if(mutators.length < 1)createPomDescartesStructure();
 		Node parent = mutators[0].getParentNode();
 		if(mutators.length > 0) removeMutators(texts,parent);
 		addMutators(texts,parent);
@@ -110,21 +113,24 @@ public class DescartesWizardPomParser {
 		}
 		return null;
 	}
-	private NodeList findMutators() {
+    private Node findBaseNode() {
 		Element theRoot = pomDocument.getDocumentElement();
 		NodeList rootNodes = theRoot.getChildNodes();
-		
-		Node myNode = null;
+
 		
 		for(int i = 0; i < rootNodes.getLength(); i++) {
 	           Node aNode = rootNodes.item(i);
 				if(aNode.getNodeType() == Node.ELEMENT_NODE && aNode.getNodeName().equalsIgnoreCase("build")) {
-					myNode = aNode; break;
+					return aNode;
 				}
 			}
-			if(myNode != null) {
-				rootNodes = ((Element)myNode).getElementsByTagName("mutator");
-				return rootNodes;
+		return (Node)theRoot;
+    }
+	private NodeList findNodeList(String name, Node node) {
+
+			if(node != null) {
+				return ((Element)node).getElementsByTagName(name);
+
 	}
 			return null;
 	}
@@ -155,7 +161,7 @@ public class DescartesWizardPomParser {
 				Element element = pomDocument.createElement("mutator");
 				Text elementText = pomDocument.createTextNode(texts[i]);
 				element.appendChild(elementText);
-			   parent.appendChild(element);
+			    parent.appendChild(element);
 			}
 			addThis = true;
 		}
@@ -171,5 +177,96 @@ public class DescartesWizardPomParser {
 				TransformerException e) {
 			e.printStackTrace();
 		}
+	}
+	private void createPomDescartesStructure () {
+		Node node = findBaseNode();
+		NodeList nodeList = findNodeList("mutators",node);
+		if(nodeList.item(0) == null) {
+	      nodeList = findNodeList("configuration",node);
+	       if(nodeList.item(0) == null) {
+	    	   nodeList = findNodeList("plugin",node);
+	    	   if(nodeList.item(0) == null) {
+	    		   nodeList = findNodeList("plugins",node);
+	    		   if(nodeList.item(0) == null) {
+	    			   nodeList = findNodeList("build",node);
+	    			   if(nodeList.item(0) == null) {
+	    				   structureFrom("build",node);
+	    			   } else structureFrom("plugins",nodeList.item(0));
+	    		   } else structureFrom("plugin",nodeList.item(0));
+	    	   } else {    		   
+	    		   if(lookForPitestPlugin(nodeList))structureFrom("configuration",nodeList.item(0));
+	    		   else structureFrom("plugin",nodeList.item(0).getParentNode());
+	    	   }
+	        } else{
+	        	if(thisPluginIsPitest(nodeList.item(0))) structureFrom("mutators",nodeList.item(0));
+	        	else structureFrom("plugin",nodeList.item(0).getParentNode().getParentNode());
+	        }
+	       } else {
+               Node element = pomDocument.createElement("mutator");
+	    	   node.appendChild(element);
+	    	   mutators = new Node[1];
+	    	   mutators[0] = element;
+	       }
+	} // end of createPomDescartesStructure
+	private void structureFrom(String name,Node parentNode) {
+		String[] names = {"build","plugins","plugin","configuration","mutators"};
+		ArrayList<String> fragment = new ArrayList<String>(1);
+		boolean start = false;
+		for(String sr : names) { 
+			if(name.equalsIgnoreCase(sr)) start = true;
+			if(start)fragment.add(sr);
+		}
+		Element[] elements = new Element[fragment.size()];
+		for(int i = 0; i < elements.length; i++) {
+			elements[i] = pomDocument.createElement(fragment.get(i));
+		}
+		for(int i = 0; i < elements.length - 1; i++) {
+			elements[i].appendChild(elements[i+1]);
+			if((((Node)elements[i]).getNodeName()).equalsIgnoreCase("plugin")){
+				putNodeWithText("groupId",DescartesWizardConstants.PITEST_PLUGIN_ID,elements[i]);
+                putNodeWithText("artifactId",DescartesWizardConstants.PITEST_ARTIFACT_ID,elements[i]);
+				putNodeWithText("version","1.2.0",elements[i]);
+				putNodeWithText("mutationEngine","descartes",elements[i]
+						.getElementsByTagName("configuration").item(0));
+				Node node = pomDocument.createElement("dependencies");
+				Node child = pomDocument.createElement("dependency");
+				putNodeWithText("groupId",DescartesWizardConstants.PITEST_DEPENDENCY_ID,child);
+				putNodeWithText("artifactId",DescartesWizardConstants.PITEST_DEPENDENCY_ARTIFACT,child);
+				putNodeWithText("version",DescartesWizardConstants.PITEST_DEPENDENCY_VERSION,child);
+				node.appendChild(child);
+				elements[i].appendChild(node);		
+			}
+		}
+		Node mutator = pomDocument.createElement("mutator");
+		elements[elements.length-1].appendChild(mutator);
+		parentNode.appendChild(elements[0]);
+		mutators = new Node[1];
+		mutators[0] = mutator;
+	}
+	private boolean lookForPitestPlugin(NodeList pluginList) {
+		for(int i = 0; i < pluginList.getLength(); i++) {
+			 Node node = ((Element)pluginList.item(i)).getElementsByTagName("groupId").item(0);
+			 Node node2 = ((Element)pluginList.item(i)).getElementsByTagName("artifactId").item(0);
+			 if(node != null) if(node.getTextContent().equalsIgnoreCase("org.pitest")) {
+				 if(node2.getTextContent().equalsIgnoreCase("pitest-maven")) return true;
+			 }
+		}
+		return false;
+	}
+	private boolean thisPluginIsPitest(Node configurationNode) {
+		NodeList nodeList = configurationNode.getParentNode().getChildNodes();
+		for(int i = 0; i < nodeList.getLength(); i++) {
+			if(nodeList.item(i).getNodeName().equalsIgnoreCase("artifactId")) {
+				if(nodeList.item(i).getTextContent()
+						.equalsIgnoreCase(DescartesWizardConstants.PITEST_ARTIFACT_ID)) return true;	
+			}
+		}
+		return false;
+	}
+	private void putNodeWithText(String name,String text, Node parent) {
+		Node node = pomDocument.createElement(name);
+		Node textNode = pomDocument.createTextNode(text);
+		node.appendChild(textNode);
+		parent.appendChild(node);
 	}
 }
