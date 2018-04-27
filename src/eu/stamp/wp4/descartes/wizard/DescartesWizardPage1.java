@@ -43,8 +43,23 @@ import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 @SuppressWarnings("restriction")
 public class DescartesWizardPage1 extends WizardPage implements IDescartesWizardPart{
 	
+	/**
+	 *  An instance for the wizard to call the update method 
+	 *  and get access to the only DescartesWizardConfiguration object
+	 */
 	private DescartesWizard wizard;
+	
+	/**
+	 *  This array contains the information of the mutator operators
+	 *  each mutator is defined by a string and will be declared in descartes_pom.xml
+	 *  as <mutator>string<mutator>
+	 */
 	private String[] mutatorsTexts;
+	
+	/**
+	 *  this is the list with the items of the mutators list, initially 
+	 *  it will contain the mutators declared in pom.xml
+	 */
 	private ArrayList<TreeItem> items = new ArrayList<TreeItem>(1);
 	private String[] initialNames;
 	private  Tree mutatorsTree;
@@ -69,7 +84,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 		/*
-		 *   ROW 1
+		 *   ROW 1 : path of the selected project
 		 */
 		Label projectLabel = new Label(composite,SWT.NONE);
 		projectLabel.setText("path of the project : ");
@@ -89,7 +104,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		mutatorsLabel.setText("Mutators");
 		GridDataFactory.fillDefaults().span(3, 1).applyTo(mutatorsLabel);
 		/*
-		 *   ROW 3
+		 *   ROW 3 : list with the mutators and buttons to add,remove ...
 		 */
 		mutatorsTree = new Tree(composite,SWT.V_SCROLL | SWT.CHECK);
         GridData gd = new GridData(SWT.FILL,SWT.FILL,true,true);
@@ -109,23 +124,32 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 
          initialNames = new String[items.size()];
          for(int i = 0; i < items.size(); i++) initialNames[i] = items.get(i).getText();
-
+         
+         /*
+          *  Buttons to manipulate the mutators list and their listeners (at the end)
+          */
+         
+        // a button to remove the selected mutators
         Button removeMutatorButton = new Button(composite,SWT.PUSH);
         removeMutatorButton.setText("Remove selected mutators");
         GridDataFactory.fillDefaults().applyTo(removeMutatorButton);
         
+        // a button to add a new mutator to the list (it opens a dialog with a text)
         Button addMutatorButton = new Button(composite,SWT.PUSH);
         addMutatorButton.setText("Add mutator");
         GridDataFactory.fillDefaults().applyTo(addMutatorButton);
         
+        // a button to remove all the mutators in the list
         Button removeAllButton = new Button(composite,SWT.PUSH);
         removeAllButton.setText("Remove all");
         GridDataFactory.fillDefaults().applyTo(removeAllButton);
         
+        // a button to revert the changes in the mutator list
         Button initialListButton = new Button(composite,SWT.PUSH);
         initialListButton.setText("Set initial mutators");
         GridDataFactory.fillDefaults().applyTo(initialListButton);
         
+        // a button to set a default mutator list
         Button defaultMutatorsButton = new Button(composite,SWT.PUSH);
         defaultMutatorsButton.setText("Set default mutators");
         GridDataFactory.fillDefaults().applyTo(defaultMutatorsButton);
@@ -221,13 +245,18 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	public void updateWizardReference(DescartesWizard wizard) {
 		this.wizard = wizard;
 	}
-	
+    /**
+     * @return an string array with the mutators contents
+     */
 	public String[] getMutatorsSelection() {
 		String[] texts = new String[items.size()];
 		for(int i = 0; i < items.size(); i++) texts[i] = items.get(i).getText();
 		return texts;
 	}
-	
+	/**
+	 *  This method opens a dialog with a text to set the content of a new mutator
+	 *  it is called by the add mutator button listener
+	 */
 	private String showInputDialog () {
 		InputDialog dialog = new InputDialog(
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),"Add mutator",
@@ -235,7 +264,11 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		if(dialog.open() == Window.OK) return dialog.getValue();
 		return null;
 	}
-	
+	/**
+	 * This method opens a dialog to select a project, 
+	 * it is called by the listener of the select project button
+	 * @return the new project
+	 */
 	private IJavaProject showProjectDialog() {
 		
 		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class,IProject.class};

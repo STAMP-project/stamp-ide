@@ -17,10 +17,19 @@ import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
 public class DescartesWizard extends Wizard {
 	
+	/**
+	 *  Instance of the information container class
+	 */
 	private DescartesWizardConfiguration wConf;
-
+	
+    /**
+     *   List with the updatable parts of the wizard
+     */
 	private ArrayList<IDescartesWizardPart> partsList = new ArrayList<IDescartesWizardPart>(1);
 	
+	/**
+	 *  Page 1
+	 */
 	protected DescartesWizardPage1 one;
 	
 	public DescartesWizard(DescartesWizardConfiguration wConf) {
@@ -56,10 +65,18 @@ public class DescartesWizard extends Wizard {
 		job.schedule();
 		return true;
 	}
-	
+	/**
+	 *  This method updates the wizard taking the updatable parts list and calling the 
+	 *  update method of each element in the list, this method is used 
+	 *  when the user changes of project
+	 */
 	public void updateWizardParts() {
 		for(int i = 0; i < partsList.size(); i++) partsList.get(i).updateDescartesWizardPart(wConf);
 	}
+	/**
+	 * This method allows to change the information container class and refresh the wizard
+	 * @param wConf : the new configuration
+	 */
 	public void setWizardConfiguration(DescartesWizardConfiguration wConf) {
 		this.wConf = wConf;
 		updateWizardParts();

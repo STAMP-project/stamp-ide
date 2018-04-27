@@ -1,21 +1,22 @@
 package eu.stamp.wp4.descartes.wizard.execution;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleManager;
-import org.eclipse.ui.console.MessageConsole;
-import org.eclipse.ui.console.MessageConsoleStream;
 
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+
+import org.eclipse.m2e.actions.MavenLaunchConstants;
+
+import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
+
+@SuppressWarnings("restriction")
 public class DescartesEclipseJob extends Job {
 	
 	private String projectPath;
@@ -27,40 +28,25 @@ public class DescartesEclipseJob extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		String[] Orders = {"cmd","/C","mvn clean package"};
-		try {
-			Process process = Runtime.getRuntime().exec(Orders,null,new File(projectPath));
-			InputStream inputStream = process.getInputStream();
-			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-			String line;
-			MessageConsole console = createConsole("Descartes console");
-			MessageConsoleStream out = console.newMessageStream();
-			while((line = bufferedReader.readLine()) != null) {
-				out.println(line);   
-			}
-			inputStreamReader.close();
-			if(!process.isAlive()) {
-			 Orders[2] = "mvn org.pitest:pitest-maven:mutationCoverage -DmutationEngine=descartes"
-			 		+ " -f "+projectPath+"/descartes_pom.xml";
-			 System.out.println(Orders[2]);
-			 process = Runtime.getRuntime().exec(Orders,null,new File(projectPath));
-				inputStream = process.getInputStream();
-				inputStreamReader = new InputStreamReader(inputStream);
-				bufferedReader = new BufferedReader(inputStreamReader);
-				while((line = bufferedReader.readLine()) != null) {
-					  out.println(line);
-				}
-				inputStreamReader.close();}
-		} catch (IOException e) {
+
+		DebugPlugin plugin = DebugPlugin.getDefault();
+		ILaunchManager lm = plugin.getLaunchManager();
+		ILaunchConfigurationType t = lm.getLaunchConfigurationType(
+				DescartesWizardConstants.LAUNCH_CONFIGURATION_DESCARTES_ID);
+		 try {
+			ILaunchConfigurationWorkingCopy wc = t.newInstance(
+				        null, "Descartes Launch");
+            wc.setAttribute(MavenLaunchConstants.ATTR_POM_DIR,projectPath);
+            wc.setAttribute(MavenLaunchConstants.ATTR_GOALS, "clean package org.pitest:pitest-maven:mutationCoverage -f descartes_pom.xml");
+            wc.setAttribute(MavenLaunchConstants.PLUGIN_ID, DescartesWizardConstants.DESCARTES_PLUGIN_ID);
+            
+            ILaunchConfiguration config = wc.doSave();   
+  	        config.launch(ILaunchManager.RUN_MODE, null);
+			
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
+		
 		return Status.OK_STATUS;
-	}
-	private MessageConsole createConsole(String name) {
-		IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
-		MessageConsole myConsole = new MessageConsole(name,null);
-		consoleManager.addConsoles(new IConsole[] {myConsole});
-		return myConsole;
 	}
 }
