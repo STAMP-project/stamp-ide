@@ -104,5 +104,13 @@
             sourcePathComputerId="org.eclipse.m2e.launching.MavenSourceComputer">
       </launchConfigurationType>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="eu.stamp.wp4.descartes.wizard.launch.ui.DescartesLaunchConfigurationTabGroup"
+            id="eu.stamp.wp4.descartes.wizard.launchConfigurationTabGroup"
+            type="eu.stamp.wp4.descartes.wizard.launchConfigurationType">
+      </launchConfigurationTabGroup>
+   </extension>
 
 </plugin>

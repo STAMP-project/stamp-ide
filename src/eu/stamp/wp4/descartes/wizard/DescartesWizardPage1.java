@@ -21,6 +21,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -63,6 +65,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	private ArrayList<TreeItem> items = new ArrayList<TreeItem>(1);
 	private String[] initialNames;
 	private  Tree mutatorsTree;
+	private String pomName;
 
 	public DescartesWizardPage1(DescartesWizard wizard) {
 		super("First page");
@@ -91,7 +94,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		GridDataFactory.swtDefaults().grab(false, false).applyTo(projectLabel);
 		
 		projectText = new Text(composite,SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(projectLabel);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(projectText);
 		projectText.setText(projectPath);
 		
 		Button projectButton = new Button(composite,SWT.PUSH);
@@ -104,12 +107,12 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		mutatorsLabel.setText("Mutators");
 		GridDataFactory.fillDefaults().span(3, 1).applyTo(mutatorsLabel);
 		/*
-		 *   ROW 3 : list with the mutators and buttons to add,remove ...
+		 *   ROW 3 (multiple row) : list with the mutators and buttons to add,remove ...
 		 */
 		mutatorsTree = new Tree(composite,SWT.V_SCROLL | SWT.CHECK);
         GridData gd = new GridData(SWT.FILL,SWT.FILL,true,true);
         gd.horizontalSpan = 2;
-        gd.verticalSpan = 6;
+        gd.verticalSpan = 5;
         gd.minimumWidth = 250;
         mutatorsTree.setLayoutData(gd);
         mutatorsTree.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
@@ -154,12 +157,24 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         defaultMutatorsButton.setText("Set default mutators");
         GridDataFactory.fillDefaults().applyTo(defaultMutatorsButton);
         
+        /*
+         *   ROW 4 : Pom file
+         */
+        Label pomLabel = new Label(composite,SWT.NONE);
+        pomLabel.setText("name of the POM file : ");
+        GridDataFactory.swtDefaults().grab(false, false).applyTo(pomLabel);
+        
+        Text pomText = new Text(composite,SWT.BORDER);
+        pomText.setText("descartes_pom.xml");
+        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(pomText);
+        
         // listeners
         projectButton.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
         		IJavaProject jProject = showProjectDialog();
-        		wizard.setWizardConfiguration(new DescartesWizardConfiguration(jProject));
+        		if(jProject != null) wizard
+        		.setWizardConfiguration(new DescartesWizardConfiguration(jProject));
         	}
         });
         removeMutatorButton.addSelectionListener(new SelectionAdapter() {
@@ -214,10 +229,19 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         		items.add(it);}
         	}
         });
+        
+        pomText.addKeyListener(new KeyListener() {
+        	@Override
+        	public void keyPressed(KeyEvent e) {}
+        	@Override
+        	public void keyReleased(KeyEvent e) {
+        		if(!pomText.getText().isEmpty())pomName = pomText.getText();
+        	}
+        });
+        
 		// required to avoid an error in the System
 		setControl(composite);
-		setPageComplete(true);	
-	    
+		setPageComplete(true);	  
 		}
 
 	@Override
@@ -252,6 +276,12 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		String[] texts = new String[items.size()];
 		for(int i = 0; i < items.size(); i++) texts[i] = items.get(i).getText();
 		return texts;
+	}
+	/**
+	 * @return the name of the POM file to write
+	 */
+	public String getPomName() {
+		return pomName;
 	}
 	/**
 	 *  This method opens a dialog with a text to set the content of a new mutator

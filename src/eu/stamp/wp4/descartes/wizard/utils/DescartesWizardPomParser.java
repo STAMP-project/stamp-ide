@@ -58,12 +58,12 @@ public class DescartesWizardPomParser {
 		return mutators;
 	}
 	
-	public void preparePom(String[] texts) {
+	public void preparePom(String[] texts,String pomName) {
 		if(mutators.length < 1)createPomDescartesStructure();
 		Node parent = mutators[0].getParentNode();
 		if(mutators.length > 0) removeMutators(texts,parent);
 		addMutators(texts,parent);
-		savePom();
+		savePom(pomName);
 	}
 	
 	public static IJavaProject obtainProject() {
@@ -166,11 +166,11 @@ public class DescartesWizardPomParser {
 			addThis = true;
 		}
 	}
-	private void savePom() {
+	private void savePom(String pomName) {
 	    try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "no");
-			StreamResult result = new StreamResult(new FileWriter(projectPath+"/descartes_pom.xml"));
+			StreamResult result = new StreamResult(new FileWriter(projectPath+"/"+pomName));
 			DOMSource source = new DOMSource(pomDocument);
 			transformer.transform(source, result);
 		} catch (TransformerFactoryConfigurationError |IOException |

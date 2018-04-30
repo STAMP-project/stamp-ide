@@ -20,10 +20,12 @@ import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 public class DescartesEclipseJob extends Job {
 	
 	private String projectPath;
+	private String pomName;
 
-	public DescartesEclipseJob(String projectPath) {
+	public DescartesEclipseJob(String projectPath,String pomName) {
 		super("Descartes working");
 		this.projectPath = projectPath;
+		this.pomName = pomName;
 	}
 
 	@Override
@@ -37,7 +39,7 @@ public class DescartesEclipseJob extends Job {
 			ILaunchConfigurationWorkingCopy wc = t.newInstance(
 				        null, "Descartes Launch");
             wc.setAttribute(MavenLaunchConstants.ATTR_POM_DIR,projectPath);
-            wc.setAttribute(MavenLaunchConstants.ATTR_GOALS, "clean package org.pitest:pitest-maven:mutationCoverage -f descartes_pom.xml");
+            wc.setAttribute(MavenLaunchConstants.ATTR_GOALS, "clean package org.pitest:pitest-maven:mutationCoverage -f "+pomName);
             wc.setAttribute(MavenLaunchConstants.PLUGIN_ID, DescartesWizardConstants.DESCARTES_PLUGIN_ID);
             
             ILaunchConfiguration config = wc.doSave();   
