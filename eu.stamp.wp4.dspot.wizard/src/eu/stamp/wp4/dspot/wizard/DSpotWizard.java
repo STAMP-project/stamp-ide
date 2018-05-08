@@ -17,20 +17,29 @@ import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.URL;
+
+import javax.inject.Inject;
+
 import java.io.File;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
+import eu.stamp.wp4.dspot.view.DSpotView;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotEclipseJob;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
@@ -45,6 +54,8 @@ public class DSpotWizard extends Wizard{
 	protected DSpotWizardPage2 two;
 	private WizardConfiguration wConf;
 	private String configurationName = "DSpot";
+	private DSpotView viw;
+	
 	
 	// [0] Dspot jar path, [1] project path, [2] number of iterations i, [3] -t test class, [4] -a Method
 	// [5] test criterion, [6] max Test Amplified
@@ -61,15 +72,24 @@ public class DSpotWizard extends Wizard{
 			MessageDialog.openWarning(shell, "Maven Home not set", 
 					"The enviroment variable MAVEN_HOME is not set, please set it in your computer or set it in the text in advanced options in page 2");
 		}
+
+		try {
+			viw = (DSpotView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("eu.stamp.wp4.dspot.wizard.view");
+		} catch (PartInitException e) {
+			e.printStackTrace();
+		}
+		
 	} // end of the constructor
 	
+
 	@Override
 	public String getWindowTitle() { 
 		return "Dspot Wizard";
 	}
 	@Override
 	public Image getDefaultPageImage() {
-	final URL iconStampURL = FileLocator.find(Platform.getBundle("eu.stamp.wp4.dspot.wizard"),new Path("images/Stamp.png"),null);
+	final URL iconStampURL = FileLocator.find(Platform.getBundle(DSpotWizardConstants.PLUGIN_NAME)
+			,new Path("images/Stamp.png"),null);
 	ImageDescriptor descriptor = ImageDescriptor.createFromURL(iconStampURL);
 	return descriptor.createImage();
 	}
@@ -83,7 +103,7 @@ public class DSpotWizard extends Wizard{
 	}
 	
 	@Override
-	public boolean performFinish() {
+	public boolean performFinish() {	
 		DSpotProperties.LAUNCH_CONF_NAME = configurationName;
 		String[] advParameters = two.getAdvparameters();
 		if(System.getenv("MAVEN_HOME") == null && (advParameters[4] == null || advParameters[4] == "")) { // an error message if MAVEN_HOME is not set
@@ -96,7 +116,7 @@ public class DSpotWizard extends Wizard{
         } // end of the for
         boolean verbose = two.getVerbose(); // more user information
         boolean clean = two.getClean();
-        Job job = new DSpotEclipseJob(parameters,advParameters,verbose,clean,wConf); // execute Dspot in background
+        Job job = new DSpotEclipseJob(parameters,advParameters,verbose,clean,wConf,one.getTheProperties()[4],viw); // execute Dspot in background
         job.schedule();  // background invocation of Dspot
 		}
 		return true;

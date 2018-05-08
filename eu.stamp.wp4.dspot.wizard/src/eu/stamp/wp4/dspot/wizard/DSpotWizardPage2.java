@@ -492,7 +492,7 @@ public class DSpotWizardPage2 extends WizardPage {
      	}
    	if(argument.contains("-c ")) {
         myFragment = argument.substring(argument.indexOf("-c ")+3);
-        myFragment = myFragment.substring(0,myFragment.indexOf("-"));
+        if(myFragment.contains("-")) myFragment = myFragment.substring(0,myFragment.indexOf("-"));
         casesToTest = myFragment;
         String[] allCases = wConf.getTestMethods();
         ArrayList<String> casesList = new ArrayList<String>(1);
