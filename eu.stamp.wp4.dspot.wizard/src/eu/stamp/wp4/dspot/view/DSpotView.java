@@ -205,7 +205,6 @@ public class DSpotView extends ViewPart {
 		public void addTime(int time) {
 			timeInMs = timeInMs + ", "+ String.valueOf(time);
 		}
-		// public String getTimesString() { return timeInMs; }
 	}
 	
 	}
