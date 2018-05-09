@@ -29,22 +29,17 @@ import eu.stamp.wp4.dspot.view.DSpotView;
  *  that starts when the user click the finish button of the wizard 
  */
 public class DSpotEclipseJob extends Job {
-	
-private String[] parameters;            // execution information given by the user
-private String[] advParameters;
-private boolean verbose;
-private boolean clean;
+
 private WizardConfiguration conf;
 private String outputDirectory;
 private DSpotView view;
+private String Orders;
 	
-public DSpotEclipseJob(String[] parameters,String[] advParameters,boolean verbose,boolean clean,
+public DSpotEclipseJob(String path,
 		WizardConfiguration conf,String outputDirectory,DSpotView view) {
    super("DSpot working");
-	this.parameters = parameters;
-	this.advParameters = advParameters;
-	this.verbose = verbose;
-	this.clean = clean;
+
+    this.Orders = " -p " + path +" "+ conf.getDSpotMemory().getAsString();
 	this.conf = conf;
 	this.outputDirectory = outputDirectory;
 	this.view = view;
@@ -52,27 +47,6 @@ public DSpotEclipseJob(String[] parameters,String[] advParameters,boolean verbos
 
 @Override
 protected IStatus run(IProgressMonitor monitor) {
-	
-    String Orders = " -p " +parameters[1]+" -i "+parameters[2]+" -t "+parameters[3];
-    if(parameters[4] != null && !parameters[4].isEmpty()) {
-    	Orders = Orders + " -a "+parameters[4] ;
-    }
-    if(parameters[5]!= null && !parameters[5].isEmpty()) {
-    	Orders = Orders +" -s "+parameters[5];
-    }
-    if(parameters[6] != null && !parameters[6].isEmpty()) {
-    	Orders = Orders +" -g "+parameters[6];
-    }
-       
-    for(String s : advParameters) {
-    	Orders = Orders + s;   // put the extra options in the string
-    }
-    if(verbose) {
-    	Orders = Orders + " --verbose";
-    }
-    if(clean) {
-    	Orders = Orders + " --clean";
-    }
      
      DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders);
  	try {	

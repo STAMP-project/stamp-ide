@@ -64,7 +64,9 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 
 import eu.stamp.wp4.dspot.dialogs.*;
+import eu.stamp.wp4.dspot.wizard.utils.DSpotMemory;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
+import fr.inria.diversify.dspot.DSpot;
 
 /**
  * this class describes the second page of the DSpot wizard 
@@ -76,7 +78,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private boolean[] Comp = {true,false};  // this is to set page complete
 	// [0] i : number of iterations, [1] execution test class, [2] Method, [3] test criterion,
 	// [4] max test amplified
-	private String[] MyStrings = new String[5];
+	//private String[] MyStrings = new String[5];
 	private boolean verbose = false;  // boolean to activate or not verbose
 	private boolean clean = false;
 	private WizardConfiguration wConf;
@@ -103,7 +105,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private String pathPitResult = "";
 	private Shell shell;
 	private String[] selectedCases = {""};
-	DSpotAdvancedOptionsDialogMemory memory = new DSpotAdvancedOptionsDialogMemory();
+	//DSpotAdvancedOptionsDialogMemory memory = new DSpotAdvancedOptionsDialogMemory();
 	//private boolean opened = false;
 	private DSpotAdvancedOptionsDialog expDiag;
 	private boolean resetAdvancedOptions = false;
@@ -116,11 +118,13 @@ public class DSpotWizardPage2 extends WizardPage {
 		page = this;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		expDiag = new DSpotAdvancedOptionsDialog(shell, wConf);
-		expDiag.setMemory(memory);
+		expDiag.setMemory(wConf.getDSpotMemory());
 	} // end of the constructor
 	
 	@Override
 	public void createControl(Composite parent) {
+		
+		DSpotMemory dSpotMemory = wConf.getDSpotMemory();
 		
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
@@ -144,7 +148,8 @@ public class DSpotWizardPage2 extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				
 				Comp[0] = spin.getSelection() > 0;  // we need a positive number of iterations
-				MyStrings[0] = (new Integer(spin.getSelection())).toString();
+				dSpotMemory.setDSpotValue(DSpotMemory.ITERATIONS_KEY, String.valueOf(spin.getSelection()));
+				wConf.setDSpotMemory(dSpotMemory);
 				setPageComplete(Comp[0] && Comp[1]);				
 				
 			}
@@ -171,7 +176,8 @@ public class DSpotWizardPage2 extends WizardPage {
 			@Override
 			public void keyReleased(KeyEvent e) {
 			Comp[1] = !tx1.getText().isEmpty();	  // look at the "!"
-			MyStrings[1] = tx1.getText();
+			dSpotMemory.setDSpotValue(DSpotMemory.TEST_CLASSES_KEY, tx1.getText());
+			wConf.setDSpotMemory(dSpotMemory);
 			setPageComplete(Comp[0] && Comp[1]);
 			}
 		});   // end of the Key listener
@@ -180,7 +186,8 @@ public class DSpotWizardPage2 extends WizardPage {
     	 @Override
     	 public void getSegments(SegmentEvent e) {
  			Comp[1] = !tx1.getText().isEmpty();	  // look at the "!"
- 			MyStrings[1] = tx1.getText();
+ 			dSpotMemory.setDSpotValue(DSpotMemory.TEST_CLASSES_KEY, tx1.getText());
+ 			wConf.setDSpotMemory(dSpotMemory);
  			setPageComplete(Comp[0] && Comp[1]); 
     	 }
      });  // end of the segment listener
@@ -222,10 +229,12 @@ public class DSpotWizardPage2 extends WizardPage {
 	    	public void widgetSelected(SelectionEvent e) {
 	    		String[] selection = amplifiersList.getSelection();
 	    		if(selection != null && selection.length > 0) {
-	    		MyStrings[2] = selection[0];
+	    			String amplList = selection[0];
 	    		for(int i = 1; i < selection.length; i++) {
-	    			MyStrings[2] = MyStrings[2] + WizardConfiguration.getSeparator() + selection[i];
+	    			amplList = amplList + WizardConfiguration.getSeparator() + selection[i];	
 	    		}
+	    		dSpotMemory.setDSpotValue(DSpotMemory.AMPLIFIERS_KEY,amplList);
+	    		wConf.setDSpotMemory(dSpotMemory);
 	    	}
 	    	}
 	    });
@@ -246,8 +255,8 @@ public class DSpotWizardPage2 extends WizardPage {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 	    		
-	    		MyStrings[3] = combo1.getText();
-	   
+	    		dSpotMemory.setDSpotValue(DSpotMemory.CRITERION_KEY, combo1.getText());
+	    		wConf.setDSpotMemory(dSpotMemory);
 	    		
 	    	}
 	    }); // end of the selection listener
@@ -263,8 +272,8 @@ public class DSpotWizardPage2 extends WizardPage {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 	    		
-	    		MyStrings[4] = (new Integer(spin1.getSelection())).toString();
-	    		
+	    		dSpotMemory.setDSpotValue(DSpotMemory.MAX_TEST_KEY, String.valueOf(spin1.getSelection()));
+	    		wConf.setDSpotMemory(dSpotMemory);
 	    	}
 	    }); // end of the selection listener
 
@@ -294,9 +303,9 @@ public class DSpotWizardPage2 extends WizardPage {
 	    		if(resetAdvancedOptions) {
 	    			expDiag.reset(wConf, r, timeOut, selectedCases, pathPitResult);
 	    			resetAdvancedOptions = false;
-	    		} else expDiag.setMemory(memory);
+	    		} else expDiag.setMemory(wConf.getDSpotMemory());
 	    		expDiag.setPitSelected(combo1.getText().contains("PitMutantScoreSelector"));
-	    		if(expDiag.open() == Dialog.OK) memory = expDiag.getMemory();
+	    		if(expDiag.open() == Dialog.OK) wConf.setDSpotMemory(expDiag.getMemory());
 	    		
 	    	}
 	    }); // end of the selection listener
@@ -427,31 +436,29 @@ public class DSpotWizardPage2 extends WizardPage {
 
     ILaunchConfiguration config = wConf.getCurrentConfiguration();
 	 String argument = null;
+	 DSpotMemory dSpotMemory = wConf.getDSpotMemory();
 	 try {
 	 argument = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
 	 System.out.println(argument);
+	 dSpotMemory = wConf.getDSpotMemory().resetFromString(argument);
 	} catch (CoreException e) {
 		e.printStackTrace();
 	}
    if(!argument.isEmpty()) {
-   	String myFragment = argument
-   			.substring(argument.indexOf("-i ")+3,argument.indexOf(" -t"));
-   	spin.setSelection(Integer.parseInt(myFragment));
-   	myFragment = argument
-   			.substring(argument.indexOf("-t ")+3);
-   	myFragment = myFragment.substring(0,myFragment.indexOf("-"));
-   	tx1.setText(myFragment);
+   	spin.setSelection(Integer.parseInt(dSpotMemory.getDSpotValue(DSpotMemory.ITERATIONS_KEY)));
+    
+   	if(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY) != null) {
+   		tx1.setText(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY));
    	IJavaElement[] children = wConf.getFinalChildren(wConf.getPro());
    	testSelection = new ArrayList<Object>(1);
    	for(IJavaElement child : children) {
-   		if(myFragment.contains(child.getElementName().replaceAll(".java", ""))) testSelection.add(child);
-   	}
-   	myFragment = argument
-   			.substring(argument.indexOf("-a ")+3);
-   	myFragment = myFragment.substring(0,myFragment.indexOf("-"));
+   		if(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY)
+   				.contains(child.getElementName().replaceAll(".java", ""))) testSelection.add(child);
+   	}}
+
    	ArrayList<Integer> indices = new ArrayList<Integer>(1);
    	for(int i = 0; i < amplifiers.length; i++) {
-   		if(myFragment.contains(amplifiers[i])) {
+   		if(dSpotMemory.getDSpotValue(DSpotMemory.AMPLIFIERS_KEY).contains(amplifiers[i])) {
    			indices.add(new Integer(i));
    		}
    	}
@@ -460,71 +467,50 @@ public class DSpotWizardPage2 extends WizardPage {
    		theIndices[i] = indices.get(i).intValue();
    	}
    	amplifiersList.setSelection(theIndices);
-	String[] selection = amplifiersList.getSelection();
-	if(selection != null && selection.length > 0) {
-	MyStrings[2] = selection[0];
-	for(int i = 1; i < selection.length; i++) {
-		MyStrings[2] = MyStrings[2] + WizardConfiguration.getSeparator() + selection[i];
+
+	if(argument.contains(DSpotMemory.CRITERION_KEY)) {
+   	combo1.setText(dSpotMemory.getDSpotValue(DSpotMemory.CRITERION_KEY));
 	}
-}
-	if(argument.contains("-s")) {
-   	myFragment = argument
-   			.substring(argument.indexOf("-s ")+3,argument.indexOf(" -g"));
-   	combo1.setText(myFragment);
-   	MyStrings[3] = combo1.getText();
-	}
-   	myFragment = argument.substring(argument.indexOf("-g ")+3);
-   	if(myFragment.contains("-")) {
-   	myFragment = myFragment.substring(0,myFragment.indexOf("-"));
-   	} 
-   	myFragment = myFragment.replaceAll(" ", "");
-   	spin1.setSelection(Integer.parseInt(myFragment));
-   	if(argument.contains("--randomSeed ")) {
-      myFragment = argument.substring(argument.indexOf("--randomSeed ")+13);
-      myFragment = myFragment.substring(0,myFragment.indexOf("-"));
-      myFragment = myFragment.replaceAll(" ", "");
-      r = Integer.parseInt(myFragment);
-   	}
-   	if(argument.contains("--timeOut ")) {
-        myFragment = argument.substring(argument.indexOf("--timeOut ")+10);
-        if(myFragment.contains("-"))myFragment = myFragment.substring(0,myFragment.indexOf("-"));
-        myFragment = myFragment.replaceAll(" ", "");
-        timeOut = Integer.parseInt(myFragment);
-     	}
-   	if(argument.contains("-c ")) {
-        myFragment = argument.substring(argument.indexOf("-c ")+3);
-        if(myFragment.contains("-")) myFragment = myFragment.substring(0,myFragment.indexOf("-"));
-        casesToTest = myFragment;
+
+   	if(argument.contains(DSpotMemory.MAX_TEST_KEY))
+   	spin1.setSelection(Integer.parseInt(dSpotMemory.getDSpotValue(DSpotMemory.MAX_TEST_KEY)));
+   	
+   	if(argument.contains(DSpotMemory.RANDOMSEED_KEY))
+   		r = Integer.parseInt(dSpotMemory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY));
+   	
+   	if(argument.contains(DSpotMemory.TIMEOUT_KEY))
+   		timeOut = Integer.parseInt(dSpotMemory.getDSpotValue(DSpotMemory.TIMEOUT_KEY));
+   	
+   	if(argument.contains(DSpotMemory.TEST_CASES_KEY)) {
+        casesToTest = dSpotMemory.getDSpotValue(DSpotMemory.TEST_CASES_KEY);
         String[] allCases = wConf.getTestMethods();
         ArrayList<String> casesList = new ArrayList<String>(1);
         for(String sr : allCases) {
-        	if(myFragment.contains(sr)) casesList.add(sr);
+        	if(casesToTest.contains(sr)) casesList.add(sr);
         }
        selectedCases =  casesList.toArray(new String[casesList.size()]);
      	}
+   	
    	if(argument.contains("-m ")) {
-        myFragment = argument.substring(argument.indexOf("-m ")+3);
-        myFragment = myFragment.substring(0,myFragment.indexOf("-"));
-        pathPitResult = myFragment;
-     	}
+        pathPitResult = dSpotMemory.getDSpotValue(DSpotMemory.PATH_PIT_RESULT_KEY);
+     	} else pathPitResult = "";
    	button.setSelection(argument.contains("--verbose"));
    	button2.setSelection(argument.contains("--clean"));
    	verbose = button.getSelection();
    	clean = button2.getSelection();
-   	memory = new DSpotAdvancedOptionsDialogMemory();
-   	memory.setData(timeOut, r, selectedCases, myFragment);
-   	expDiag.setMemory(memory);
+   	expDiag.setMemory(dSpotMemory);
    	expDiag.resetFromMemory();
+   	wConf.setDSpotMemory(dSpotMemory);
    }
     }
 	/*
 	 *  public methods to return the information set by the user
 	 */
 
-	/**
-	 * getMyStrings
-	 * @return a String array with the information set by the user
-	 */
+     public WizardConfiguration getConfiguration() {
+    	 return wConf;
+     }
+    /*
 	public String[] getMyStrings() {
 		if(MyStrings[0] == null) {   // if the spinner hasn't be touch
 			MyStrings[0] = "1"; // then use the default value
@@ -536,7 +522,7 @@ public class DSpotWizardPage2 extends WizardPage {
 			MyStrings[4] = "200";
 		}
 		return MyStrings;
-	}
+	}*/
 	
 	/**
 	 * @return a boolean true if the verbose check button is selected
@@ -557,12 +543,6 @@ public class DSpotWizardPage2 extends WizardPage {
 	 */
 	public String[] getAdvparameters() {
 		return expDiag.getAdvancedParameters();
-	}
-    /**
-     * @return the int value of the random seed DSpot parameter
-     */
-	public int getRandomSeed() {
-		return r;
 	}
 	/**
 	 * @return the int value of timeOut DSpot parameter

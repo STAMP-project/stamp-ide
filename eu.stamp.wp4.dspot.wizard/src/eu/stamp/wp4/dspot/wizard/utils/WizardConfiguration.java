@@ -90,6 +90,9 @@ public class WizardConfiguration {
 	private boolean projectSelected = false;
 	private List<ILaunchConfiguration> configurations;
 	private int indexOfCurrentConfiguration = 0;
+	
+	
+	private DSpotMemory dSpotMemory = new DSpotMemory(getSeparator());
 
 	
 	public WizardConfiguration() throws CoreException{
@@ -416,6 +419,14 @@ public class WizardConfiguration {
 
 		return myJEList.toArray(new IJavaElement[myJEList.size()]);
 
+	}
+	
+	public DSpotMemory getDSpotMemory() {
+		return dSpotMemory;
+	}
+	
+	public void setDSpotMemory(DSpotMemory dSpotMemory) {
+		this.dSpotMemory = dSpotMemory;
 	}
 
 	/**

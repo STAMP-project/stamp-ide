@@ -326,7 +326,8 @@ public class DSpotWizardPage1 extends WizardPage {
 				String myArguments = wConf.getCurrentConfiguration()
 					.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
 				String myS = myArguments.substring(
-						myArguments.indexOf("-p ")+3,myArguments.indexOf(" -i "));
+						myArguments.indexOf("-p ")+3);
+				if(myS.contains("-"))myS.substring(0,myS.indexOf("-"));
 				myS = myS.substring(0,myS.indexOf((new Path(myS)).lastSegment())-1); // -1 because of the last /
 				tx1.setText(myS);
 				

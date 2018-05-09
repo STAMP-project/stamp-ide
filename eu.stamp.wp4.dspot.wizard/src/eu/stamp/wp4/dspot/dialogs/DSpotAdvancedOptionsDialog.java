@@ -34,6 +34,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 
+import eu.stamp.wp4.dspot.wizard.utils.DSpotMemory;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
@@ -47,14 +48,14 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
 	// parameters  
 	private int randomSeed = 23;
 	private int timeOut = 10000;
-	private String[] selection;
+	private String[] selection = {""};
 	private String pathPitResult = "";
 	private String mavenHome;
 	
 	
 	private boolean pitSelected = false;
 	
-	private DSpotAdvancedOptionsDialogMemory memory;
+	private DSpotMemory memory;
 	
 	// widgets
 	private Spinner timeOutSpinner;
@@ -87,12 +88,12 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
  		 timeOutSpinner = new Spinner(composite,SWT.BORDER);
  		 GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(0, vSpace).applyTo(timeOutSpinner);
  		 timeOutSpinner.setMaximum(100000); timeOutSpinner.setMinimum(500); timeOutSpinner.setIncrement(100);
- 		 timeOutSpinner.setSelection(memory.getTimeOut());
+ 		 timeOutSpinner.setSelection(Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY)));
  		 
  		 /*
  		  *  Row 2 : randomSeed
  		  */
- 		 int randomSeed = memory.getRandomseed();
+ 		 int randomSeed = Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY));
  		 Label randomSeedLabel = new Label(composite,SWT.NONE);
  		 randomSeedLabel.setText("random seed : ");
  		 GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(randomSeedLabel);
@@ -199,8 +200,12 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 randomSeed = randomSeedSpinner.getSelection();
     	 pathPitResult = pathPitResultText.getText();
     	 mavenHome = mavenHomeText.getText();
-    	 memory.setData(timeOutSpinner.getSelection(),randomSeedSpinner.getSelection()
-    			 , selection, pathPitResultText.getText());
+    	 String[] mySelection = new String[selection.length];
+    	 for(int i = 0; i < selection.length; i++) {
+    		 mySelection[i] = selection[i].substring(0,selection[i].indexOf("/"));
+    	 }
+    	 setMemoryData(timeOutSpinner.getSelection(),randomSeedSpinner.getSelection(),
+    			 pathPitResultText.getText(), mySelection);
     	 super.okPressed();
      }
      
@@ -239,7 +244,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
      public void reset(WizardConfiguration wConf,int randomSeed, int timeOut,String[] selection,String pathPitResult) {
     	 this.wConf = wConf;
     	// this.randomSeed = randomSeed;
-    	 memory.setData(timeOut, randomSeed, selection, pathPitResult);
+    	 setMemoryData(timeOut, randomSeed, pathPitResult, selection);
     	 this.pathPitResult = pathPitResult;
     	 String[] cases = wConf.getTestCases();
     	 if(selection != null) {
@@ -273,15 +278,27 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	    return advParameters;
      }
      public void resetFromMemory() {
-    	 this.randomSeed = memory.getRandomseed();
-    	 this.timeOut = memory.getTimeOut();
-    	 this.selection = memory.getSelection();
-    	 this.pathPitResult = memory.getPathPitResult();
+    	 this.randomSeed = Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY));
+    	 this.timeOut = Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY));
+    	 this.selection = memory.getSelectedCasesAsArray();
+    	 this.pathPitResult = memory.getDSpotValue(DSpotMemory.PATH_PIT_RESULT_KEY);
      }
-     public void setMemory(DSpotAdvancedOptionsDialogMemory memory) {
+     public void setMemory(DSpotMemory memory) {
     	 this.memory = memory;
      }
-     public DSpotAdvancedOptionsDialogMemory getMemory() {
+     public DSpotMemory getMemory() {
     	 return memory;
+     }
+     private void setMemoryData(int timeOut,int randomSeed,String pathPitResult,String[] selection) {
+    	 memory.setDSpotValue(DSpotMemory.TIMEOUT_KEY, String.valueOf(timeOut));
+    	 memory.setDSpotValue(DSpotMemory.RANDOMSEED_KEY, String.valueOf(randomSeed));
+    	 memory.setDSpotValue(DSpotMemory.PATH_PIT_RESULT_KEY, pathPitResult);
+    	 String cases = "";
+    	 if(selection != null)if(selection.length > 0) {
+    		 cases = selection[0];
+    	 for(int i = 1; i < selection.length; i++) {
+    		 cases = cases + memory.separator + selection[i];
+    	 }}
+    	 memory.setDSpotValue(DSpotMemory.TEST_CASES_KEY, cases);
      }
 }
