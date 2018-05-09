@@ -429,6 +429,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	 String argument = null;
 	 try {
 	 argument = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
+	 System.out.println(argument);
 	} catch (CoreException e) {
 		e.printStackTrace();
 	}
@@ -486,7 +487,7 @@ public class DSpotWizardPage2 extends WizardPage {
    	}
    	if(argument.contains("--timeOut ")) {
         myFragment = argument.substring(argument.indexOf("--timeOut ")+10);
-        myFragment = myFragment.substring(0,myFragment.indexOf("-"));
+        if(myFragment.contains("-"))myFragment = myFragment.substring(0,myFragment.indexOf("-"));
         myFragment = myFragment.replaceAll(" ", "");
         timeOut = Integer.parseInt(myFragment);
      	}
@@ -510,6 +511,10 @@ public class DSpotWizardPage2 extends WizardPage {
    	button2.setSelection(argument.contains("--clean"));
    	verbose = button.getSelection();
    	clean = button2.getSelection();
+   	memory = new DSpotAdvancedOptionsDialogMemory();
+   	memory.setData(timeOut, r, selectedCases, myFragment);
+   	expDiag.setMemory(memory);
+   	expDiag.resetFromMemory();
    }
     }
 	/*

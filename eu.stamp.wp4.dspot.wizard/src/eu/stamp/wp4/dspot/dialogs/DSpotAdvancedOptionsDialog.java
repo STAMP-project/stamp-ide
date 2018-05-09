@@ -45,10 +45,12 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
 	private WizardConfiguration wConf;  // to obtain the possible test cases
 	
 	// parameters  
-	//private int randomSeed = 23;
+	private int randomSeed = 23;
+	private int timeOut = 10000;
 	private String[] selection;
 	private String pathPitResult = "";
 	private String mavenHome;
+	
 	
 	private boolean pitSelected = false;
 	
@@ -193,8 +195,8 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
      @Override
      public void okPressed() {
     	 selection = list.getSelection();
-    	 //timeOut = timeOutSpinner.getSelection();
-    	 //randomSeed = randomSeedSpinner.getSelection();
+    	 timeOut = timeOutSpinner.getSelection();
+    	 randomSeed = randomSeedSpinner.getSelection();
     	 pathPitResult = pathPitResultText.getText();
     	 mavenHome = mavenHomeText.getText();
     	 memory.setData(timeOutSpinner.getSelection(),randomSeedSpinner.getSelection()
@@ -256,11 +258,9 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
      public String[] getAdvancedParameters() {
     	 
     	    String[] advParameters = new String[5];                   // this is for the user information
-    	    int timeOut = memory.getTimeOut();
-    	    int randomSeed = memory.getRandomseed();
     	    if(randomSeed > 0) advParameters[0] = " --randomSeed " + randomSeed; else advParameters[0] = "";
     	    if(timeOut > 0) advParameters[1] = " --timeOut " + timeOut; else advParameters[1] = "";
-    	    if(selection.length > 0) {
+    	    if(selection != null)if(selection.length > 0) {
     	    if(selection[0] != null && !selection[0].isEmpty()) advParameters[2] = " -c " + selection[0].substring(selection[0].indexOf("/")+1);
     	    for(int i = 1; i < selection.length; i++) {
     	    	if(advParameters[i] != null && !advParameters[i].isEmpty()) advParameters[2] = advParameters[2] + 
@@ -273,8 +273,8 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	    return advParameters;
      }
      public void resetFromMemory() {
-    	 //this.randomSeed = memory.getRandomseed();
-    	 //this.timeOut = memory.getTimeOut();
+    	 this.randomSeed = memory.getRandomseed();
+    	 this.timeOut = memory.getTimeOut();
     	 this.selection = memory.getSelection();
     	 this.pathPitResult = memory.getPathPitResult();
      }
