@@ -9,16 +9,16 @@ public class DSpotMemory {
 	
 	private boolean[] booleanParameters = {false,false}; // [0] verbose [1] clean
 	
-	public static final String ITERATIONS_KEY = "-i";
-	public static final String RANDOMSEED_KEY = "--randomSeed";
-	public static final String AMPLIFIERS_KEY = "-a";
-	public static final String TIMEOUT_KEY = "--timeOut";
-	public static final String TEST_CASES_KEY = "-c";
-	public static final String MAX_TEST_KEY = "-g";
-	public static final String TEST_CLASSES_KEY = "-t";
-	public static final String CRITERION_KEY = "-s";
-	public static final String PATH_PIT_RESULT_KEY = "-m";
-	public static final String MAVEN_HOME_KEY = "--maven-home";
+	public static final String ITERATIONS_KEY = " -i ";
+	public static final String RANDOMSEED_KEY = " --randomSeed ";
+	public static final String AMPLIFIERS_KEY = " -a ";
+	public static final String TIMEOUT_KEY = " --timeOut ";
+	public static final String TEST_CASES_KEY = " -c ";
+	public static final String MAX_TEST_KEY = " -g ";
+	public static final String TEST_CLASSES_KEY = " -t ";
+	public static final String CRITERION_KEY = " -s ";
+	public static final String PATH_PIT_RESULT_KEY = " -m ";
+	public static final String MAVEN_HOME_KEY = " --maven-home ";
 	
 	public String separator;
 	
@@ -39,9 +39,13 @@ public class DSpotMemory {
 	public String getAsString() {
 		String information = "";
 		String[] keys = DSpotMap.keySet().toArray(new String[DSpotMap.keySet().size()]);
-		for(String key : keys)if(DSpotMap.get(key) != null)
-			if(DSpotMap.get(key).replaceAll(" ", "").length() > 1)
-			information = information + key + " " + DSpotMap.get(key) + " ";
+		String value;
+		for(String key : keys) {
+			value = DSpotMap.get(key);
+			if(value != null && !value.isEmpty()) {
+		
+			information = information + key + value;
+             }}
 		if(booleanParameters[0])information = information + "--verbose ";
 		if(booleanParameters[1])information = information +"--clean ";
 		return information;
@@ -72,8 +76,9 @@ public class DSpotMemory {
 		}
 		if(key.contains("clean")) {
 			booleanParameters[1] = value.contains("true");
+			return;
 		}
-		DSpotMap.put(key, value);
+		if(DSpotMap.containsKey(key)) DSpotMap.put(key, value);
 	}
 	public String[] getSelectedCasesAsArray() {
 		ArrayList<String> list = new ArrayList<String>(1);

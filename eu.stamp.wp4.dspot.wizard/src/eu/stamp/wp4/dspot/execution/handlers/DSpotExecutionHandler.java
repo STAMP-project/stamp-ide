@@ -40,7 +40,6 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	private static String arguments;
 	
 	private boolean hasStarted = false;
-	private boolean hasFinished = false;
 	private ILaunch myLaunch;
 	
 	public DSpotExecutionHandler(WizardConfiguration conf,String arguments) {

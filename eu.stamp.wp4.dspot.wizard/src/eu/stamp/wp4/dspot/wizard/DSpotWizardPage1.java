@@ -327,7 +327,9 @@ public class DSpotWizardPage1 extends WizardPage {
 					.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
 				String myS = myArguments.substring(
 						myArguments.indexOf("-p ")+3);
-				if(myS.contains("-"))myS.substring(0,myS.indexOf("-"));
+				if(myS.contains("-")) {
+					myS = myS.substring(0,myS.indexOf("-"));
+				}
 				myS = myS.substring(0,myS.indexOf((new Path(myS)).lastSegment())-1); // -1 because of the last /
 				tx1.setText(myS);
 				
@@ -340,7 +342,6 @@ public class DSpotWizardPage1 extends WizardPage {
 				wizard.setConfigurationName(configCombo.getText());
 				wizard.refreshPageTwo();
 				wizard.refreshConf(wConf);
-				wizard.setDefaultValuesInPage2();
 				wizard.setResetadv();
 				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
 				} catch (CoreException e1) {

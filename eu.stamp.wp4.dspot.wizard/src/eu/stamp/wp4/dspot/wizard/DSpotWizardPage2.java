@@ -66,7 +66,6 @@ import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import eu.stamp.wp4.dspot.dialogs.*;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotMemory;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
-import fr.inria.diversify.dspot.DSpot;
 
 /**
  * this class describes the second page of the DSpot wizard 
@@ -79,10 +78,9 @@ public class DSpotWizardPage2 extends WizardPage {
 	// [0] i : number of iterations, [1] execution test class, [2] Method, [3] test criterion,
 	// [4] max test amplified
 	//private String[] MyStrings = new String[5];
-	private boolean verbose = false;  // boolean to activate or not verbose
-	private boolean clean = false;
-	private WizardConfiguration wConf;
-	private DSpotWizardPage2 page;   
+	//private boolean verbose = false;  // boolean to activate or not verbose
+	//private boolean clean = false;
+	private WizardConfiguration wConf;   
 	private String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
 			"BooleanLiteralAmplifier","AllLiteralAmplifiers","MethodAdd","MethodRemove","TestDataMutator",
 			"StatementAdd",""};  // the possible amplifiers;
@@ -105,6 +103,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private String pathPitResult = "";
 	private Shell shell;
 	private String[] selectedCases = {""};
+	//private Composite theParent;
 	//DSpotAdvancedOptionsDialogMemory memory = new DSpotAdvancedOptionsDialogMemory();
 	//private boolean opened = false;
 	private DSpotAdvancedOptionsDialog expDiag;
@@ -115,7 +114,6 @@ public class DSpotWizardPage2 extends WizardPage {
 		setTitle("Second page");
 		setDescription("Information about the execution");
 		this.wConf = wConf;
-		page = this;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		expDiag = new DSpotAdvancedOptionsDialog(shell, wConf);
 		expDiag.setMemory(wConf.getDSpotMemory());
@@ -125,6 +123,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	public void createControl(Composite parent) {
 		
 		DSpotMemory dSpotMemory = wConf.getDSpotMemory();
+		//theParent = parent;
 		
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
@@ -150,6 +149,7 @@ public class DSpotWizardPage2 extends WizardPage {
 				Comp[0] = spin.getSelection() > 0;  // we need a positive number of iterations
 				dSpotMemory.setDSpotValue(DSpotMemory.ITERATIONS_KEY, String.valueOf(spin.getSelection()));
 				wConf.setDSpotMemory(dSpotMemory);
+				wConf.getDSpotMemory().getDSpotValue(DSpotMemory.ITERATIONS_KEY);
 				setPageComplete(Comp[0] && Comp[1]);				
 				
 			}
@@ -285,7 +285,9 @@ public class DSpotWizardPage2 extends WizardPage {
 	    button.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
-	    		verbose = button.getSelection();
+	    		//verbose = button.getSelection();
+	    		if(button.getSelection()) { dSpotMemory.setDSpotValue("verbose", "true"); return; }
+	    		dSpotMemory.setDSpotValue("verbose", "false");
 	    	}
 	    }); // end of the selection listener
 	    
@@ -318,7 +320,9 @@ public class DSpotWizardPage2 extends WizardPage {
 	    button2.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
-	    		clean = button2.getSelection();
+	    		//clean = button2.getSelection();
+	    		if(button2.getSelection()) { dSpotMemory.setDSpotValue("clean", "true"); return; }
+	    		dSpotMemory.setDSpotValue("clean", "false");
 	    	}
 	    }); // end of the selection listener
 	    
@@ -425,7 +429,8 @@ public class DSpotWizardPage2 extends WizardPage {
             		 .getSeparator() + wConf.getqName(((ICompilationUnit)ob).getElementName());}
             		else{ selection = wConf.getqName(((ICompilationUnit)ob).getElementName()); }}
             }
-            tx1.setText(selection);
+            if(tx1.getText().isEmpty()) { tx1.setText(selection); return selection;}
+            tx1.setText(tx1.getText() + WizardConfiguration.getSeparator() + selection);
         }
         return selection;
     }
@@ -446,7 +451,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	}
    if(!argument.isEmpty()) {
    	spin.setSelection(Integer.parseInt(dSpotMemory.getDSpotValue(DSpotMemory.ITERATIONS_KEY)));
-    
+   	
    	if(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY) != null) {
    		tx1.setText(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY));
    	IJavaElement[] children = wConf.getFinalChildren(wConf.getPro());
@@ -494,10 +499,12 @@ public class DSpotWizardPage2 extends WizardPage {
    	if(argument.contains("-m ")) {
         pathPitResult = dSpotMemory.getDSpotValue(DSpotMemory.PATH_PIT_RESULT_KEY);
      	} else pathPitResult = "";
-   	button.setSelection(argument.contains("--verbose"));
-   	button2.setSelection(argument.contains("--clean"));
-   	verbose = button.getSelection();
-   	clean = button2.getSelection();
+   	if(argument.contains("verbose")) { button.setSelection(true); dSpotMemory.setDSpotValue("verbose", "true"); }
+   	else { button.setSelection(false); dSpotMemory.setDSpotValue("verbose", "false"); }
+   	if(argument.contains("clean")) {button2.setSelection(true); dSpotMemory.setDSpotValue("clean", "true"); }
+   	else { button2.setSelection(false); dSpotMemory.setDSpotValue("clean", "false"); }
+   	//verbose = button.getSelection();
+   	//clean = button2.getSelection();
    	expDiag.setMemory(dSpotMemory);
    	expDiag.resetFromMemory();
    	wConf.setDSpotMemory(dSpotMemory);
@@ -525,25 +532,12 @@ public class DSpotWizardPage2 extends WizardPage {
 	}*/
 	
 	/**
-	 * @return a boolean true if the verbose check button is selected
-	 */
-	public boolean getVerbose() {
-		return verbose;
-	}
-	
-	/**
-	 * @return a boolean true if the clean check button is selected
-	 */
-	public boolean getClean() {
-		return clean;
-	}
-	
-	/**
 	 * @return a string array with the information set in the advanced options dialog
 	 */
+     /*
 	public String[] getAdvparameters() {
 		return expDiag.getAdvancedParameters();
-	}
+	}*/
 	/**
 	 * @return the int value of timeOut DSpot parameter
 	 */

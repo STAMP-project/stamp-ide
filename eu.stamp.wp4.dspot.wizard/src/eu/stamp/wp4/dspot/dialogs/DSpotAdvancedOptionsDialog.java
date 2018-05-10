@@ -69,7 +69,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
 		super(parentShell);
 		this.wConf = wConf;
 	}
-     @Override
+	@Override
      protected Control createDialogArea(Composite parent) {
     	 
     	 /*
@@ -88,13 +88,13 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
  		 timeOutSpinner = new Spinner(composite,SWT.BORDER);
  		 GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(0, vSpace).applyTo(timeOutSpinner);
  		 timeOutSpinner.setMaximum(100000); timeOutSpinner.setMinimum(500); timeOutSpinner.setIncrement(100);
- 		 timeOutSpinner.setSelection(Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY)));
- 		 
+ 		 if(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY) != null)
+ 			 timeOutSpinner.setSelection(Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY)));
+
  		 /*
  		  *  Row 2 : randomSeed
  		  */
- 		 int randomSeed = Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY));
- 		 Label randomSeedLabel = new Label(composite,SWT.NONE);
+ 		 final Label randomSeedLabel = new Label(composite,SWT.NONE);
  		 randomSeedLabel.setText("random seed : ");
  		 GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(randomSeedLabel);
  		 
@@ -105,16 +105,16 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
  		 /*
  		  *  Row 3 : list for the test cases
  		  */
- 		 Label listLabel = new Label(composite,SWT.NONE);
+ 		 final Label listLabel = new Label(composite,SWT.NONE);
  		 listLabel.setText("test cases : ");
  		 GridDataFactory.fillDefaults().align(SWT.LEFT,SWT.CENTER).indent(0, vSpace).applyTo(listLabel);
     	 
     	 list = new List(composite,SWT.MULTI);
     	 String[] cases = wConf.getTestCases();
-    	 TreeSet<String> casesSet = new TreeSet<String>(Collator.getInstance());
-    	 for(String sr : cases) casesSet.add(sr);
+    	 final TreeSet<String> casesSet = new TreeSet<String>(Collator.getInstance());
+    	 for(final String sr : cases) casesSet.add(sr);
     	 cases = casesSet.toArray(new String[casesSet.size()]);
-    	 for(String sr : cases) list.add(sr);
+    	 for(final String sr : cases) list.add(sr);
     	 GridDataFactory.fillDefaults().grab(true, false).span(2,1).indent(0, vSpace).applyTo(list);
     	 if(selection != null) {
     	 if(selection.length > 0) list.setSelection(selection);}
@@ -122,22 +122,22 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 /*
     	  *  Row 4 : button to clean the test cases list
     	  */
-    	 Label buttonLabel = new Label(composite,SWT.NONE);
+    	 final Label buttonLabel = new Label(composite,SWT.NONE);
     	 buttonLabel.setText(" push to deselect all test cases : ");
     	 GridDataFactory.fillDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(buttonLabel);
     	 
-    	 Button button = new Button(composite,SWT.PUSH);
+    	 final Button button = new Button(composite,SWT.PUSH);
     	 button.setText("clean list");
     	 GridDataFactory.swtDefaults().span(2, 1).align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(button);
     	 
     	 /*
     	  *  Row 5 : pathPitResult
     	  */
-    	 Label pathPitResultLabel = new Label(composite,SWT.NONE);
+    	 final Label pathPitResultLabel = new Label(composite,SWT.NONE);
     	 pathPitResultLabel.setText("path pit result : ");
     	 GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(pathPitResultLabel);
     	 
-    	 Button pathPitResultButton = new Button(composite,SWT.NONE);
+    	 final Button pathPitResultButton = new Button(composite,SWT.NONE);
     	 pathPitResultButton.setText("Select folder");
     	 pathPitResultButton.setEnabled(pitSelected);
     	 GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).indent(0, vSpace).applyTo(pathPitResultButton);
@@ -150,10 +150,10 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 /*
     	  *  Row 6 : MAVEN_HOME
     	  */
-    	 Label mavenLabel = new Label(composite,SWT.NONE);
+    	 final Label mavenLabel = new Label(composite,SWT.NONE);
     	 mavenLabel.setText(" set MAVEN_HOME");
     	 
-    	 Button mavenHomeButton = new Button(composite,SWT.CHECK); 
+    	 final Button mavenHomeButton = new Button(composite,SWT.CHECK); 
     	 GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).indent(0, vSpace).applyTo(mavenHomeButton);
     	 
     	 mavenHomeText = new Text(composite,SWT.BORDER);
@@ -165,17 +165,17 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 // listeners
     	 button.addSelectionListener(new SelectionAdapter() {
     		 @Override
-    		 public void widgetSelected(SelectionEvent e) {
+    		 public void widgetSelected(final SelectionEvent e) {
     			 list.deselectAll();
     		 }
     	 });
     	 pathPitResultButton.addSelectionListener(new SelectionAdapter() {
     		 @Override
-    		 public void widgetSelected(SelectionEvent e) {
-    			 DirectoryDialog dialog = new DirectoryDialog(
+    		 public void widgetSelected(final SelectionEvent e) {
+    			 final DirectoryDialog dialog = new DirectoryDialog(
     					 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),SWT.OK);
     			 dialog.setText("Select a folder");
-    			 String directoryPath = dialog.open();
+    			 final String directoryPath = dialog.open();
     			 if(directoryPath != null && !directoryPath.isEmpty()) {
     				 pathPitResultText.setText(directoryPath);
     				 pathPitResult = directoryPath;
@@ -185,7 +185,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 
     	 mavenHomeButton.addSelectionListener(new SelectionAdapter() {
     		 @Override
-    		 public void widgetSelected(SelectionEvent e) {
+    		 public void widgetSelected(final SelectionEvent e) {
     			 mavenHomeText.setEnabled(mavenHomeButton.getSelection());
     		 }
     	 });
@@ -200,9 +200,10 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 randomSeed = randomSeedSpinner.getSelection();
     	 pathPitResult = pathPitResultText.getText();
     	 mavenHome = mavenHomeText.getText();
+    	 memory.setDSpotValue(DSpotMemory.MAVEN_HOME_KEY, mavenHome);
     	 String[] mySelection = new String[selection.length];
     	 for(int i = 0; i < selection.length; i++) {
-    		 mySelection[i] = selection[i].substring(0,selection[i].indexOf("/"));
+    		 mySelection[i] = selection[i].substring(selection[i].indexOf("/")+1);
     	 }
     	 setMemoryData(timeOutSpinner.getSelection(),randomSeedSpinner.getSelection(),
     			 pathPitResultText.getText(), mySelection);
@@ -260,7 +261,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
       * Method to obtain the information in the dialog
       * @return a string array [0] randomSeed, [1] timeOut (ms),[2] test cases, [3] path pit result,[4] MAVEN_HOME
       */
-     public String[] getAdvancedParameters() {
+   /*  public String[] getAdvancedParameters() {
     	 
     	    String[] advParameters = new String[5];                   // this is for the user information
     	    if(randomSeed > 0) advParameters[0] = " --randomSeed " + randomSeed; else advParameters[0] = "";
@@ -276,10 +277,12 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	    	if(advParameters[i] == null) advParameters[i] = "";
     	    }
     	    return advParameters;
-     }
+     }*/
      public void resetFromMemory() {
-    	 this.randomSeed = Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY));
-    	 this.timeOut = Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY));
+    	 if(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY) != null) 
+    			 this.randomSeed = Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY));
+    	 if(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY) != null)
+    		 this.timeOut = Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY));
     	 this.selection = memory.getSelectedCasesAsArray();
     	 this.pathPitResult = memory.getDSpotValue(DSpotMemory.PATH_PIT_RESULT_KEY);
      }

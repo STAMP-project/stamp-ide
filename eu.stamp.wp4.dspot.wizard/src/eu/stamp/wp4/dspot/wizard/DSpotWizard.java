@@ -41,6 +41,7 @@ import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 import eu.stamp.wp4.dspot.view.DSpotView;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotEclipseJob;
+import eu.stamp.wp4.dspot.wizard.utils.DSpotMemory;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 
@@ -105,8 +106,8 @@ public class DSpotWizard extends Wizard{
 	@Override
 	public boolean performFinish() {	
 		DSpotProperties.LAUNCH_CONF_NAME = configurationName;
-		String[] advParameters = two.getAdvparameters();
-		if(System.getenv("MAVEN_HOME") == null && (advParameters[4] == null || advParameters[4] == "")) { // an error message if MAVEN_HOME is not set
+		//String[] advParameters = two.getAdvparameters();
+		if(System.getenv("MAVEN_HOME") == null) { // an error message if MAVEN_HOME is not set
 			MessageDialog.openError(shell, "Maven Home not set","Error the enviroment variable MAVEN_HOME is required, please set it in your computer or in the text in advanced options in page 2");
 		}else {  // if MAVEN_HOME is set
 		writeTheFile();    // writing the properties file
@@ -116,6 +117,7 @@ public class DSpotWizard extends Wizard{
         } // end of the for*/
         //boolean verbose = two.getVerbose(); // more user information
        // boolean clean = two.getClean();
+        System.out.println(wConf.getDSpotMemory().getDSpotValue(DSpotMemory.ITERATIONS_KEY));
         Job job = new DSpotEclipseJob(parameters[1],wConf,one.getTheProperties()[4],viw); // execute Dspot in background
         job.schedule();  // background invocation of Dspot
 		}
