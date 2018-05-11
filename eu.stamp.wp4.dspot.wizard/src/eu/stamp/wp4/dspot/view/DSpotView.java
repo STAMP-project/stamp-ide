@@ -69,7 +69,7 @@ public class DSpotView extends ViewPart {
 	@Override
 	public void setFocus() {}
     
-	public void parseJSON(String jsonPath) throws IOException {;
+	public void parseJSON(String jsonPath) throws IOException {
 		
 		BufferedReader json = new BufferedReader(new FileReader(jsonPath));
 		Gson gson = new Gson();
@@ -82,6 +82,8 @@ public class DSpotView extends ViewPart {
         	@Override
         	public void run() {
         		
+        		tree.removeAll();
+        		
         		TreeItem item = new TreeItem(tree,SWT.NONE);
         		item.setText("class times");
         		TreeItem subItem;
@@ -89,8 +91,11 @@ public class DSpotView extends ViewPart {
         		for(CompactTime time : timesList) {
         			subItem =  new TreeItem(item,SWT.NONE);
         			subItem.setText(0, time.fullQualifiedName);
-        			subItem.setText(1,time.timeInMs);
+        			subItem.setText(1,time.timeInMs + " ms");
         		}
+        		
+        		item = new TreeItem(tree,SWT.NONE);
+        		item.setText("");
         	}
         });
         
@@ -109,6 +114,7 @@ public class DSpotView extends ViewPart {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
+				
 				TreeItem item = new TreeItem(tree,SWT.NONE);
 				item.setText(0, "name");
 				item.setText(1,dSpotJSON.name);
@@ -162,6 +168,8 @@ public class DSpotView extends ViewPart {
 					
 				}
 				
+				  item = new TreeItem(tree,SWT.NONE);
+				  item.setText(0, "");
 			}
 		});
 		

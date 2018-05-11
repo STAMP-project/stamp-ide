@@ -117,7 +117,6 @@ public class DSpotWizard extends Wizard{
         } // end of the for*/
         //boolean verbose = two.getVerbose(); // more user information
        // boolean clean = two.getClean();
-        System.out.println(wConf.getDSpotMemory().getDSpotValue(DSpotMemory.ITERATIONS_KEY));
         Job job = new DSpotEclipseJob(parameters[1],wConf,one.getTheProperties()[4],viw); // execute Dspot in background
         job.schedule();  // background invocation of Dspot
 		}
