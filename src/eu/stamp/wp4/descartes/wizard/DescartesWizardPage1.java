@@ -63,6 +63,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	 *  it will contain the mutators declared in pom.xml
 	 */
 	private ArrayList<TreeItem> items = new ArrayList<TreeItem>(1);
+	
 	private String[] initialNames;
 	private  Tree mutatorsTree;
 	private String pomName;
@@ -104,15 +105,15 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		 *   ROW 2
 		 */
 		Label mutatorsLabel = new Label(composite,SWT.NONE);
-		mutatorsLabel.setText("Mutators");
-		GridDataFactory.fillDefaults().span(3, 1).applyTo(mutatorsLabel);
+		mutatorsLabel.setText("Mutators : ");
+		GridDataFactory.fillDefaults().span(3, 1).indent(0, 8).applyTo(mutatorsLabel);
 		/*
 		 *   ROW 3 (multiple row) : list with the mutators and buttons to add,remove ...
 		 */
 		mutatorsTree = new Tree(composite,SWT.V_SCROLL | SWT.CHECK);
         GridData gd = new GridData(SWT.FILL,SWT.FILL,true,true);
         gd.horizontalSpan = 2;
-        gd.verticalSpan = 5;
+        gd.verticalSpan = 6;
         gd.minimumWidth = 250;
         mutatorsTree.setLayoutData(gd);
         mutatorsTree.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
@@ -157,16 +158,20 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         defaultMutatorsButton.setText("Set default mutators");
         GridDataFactory.fillDefaults().applyTo(defaultMutatorsButton);
         
+        Label space = new Label(composite,SWT.NONE);
+        space.setText("");
+        
         /*
          *   ROW 4 : Pom file
          */
         Label pomLabel = new Label(composite,SWT.NONE);
         pomLabel.setText("name of the POM file : ");
-        GridDataFactory.swtDefaults().grab(false, false).applyTo(pomLabel);
+        GridDataFactory.swtDefaults().grab(false, false).indent(0, 8).applyTo(pomLabel);
         
         Text pomText = new Text(composite,SWT.BORDER);
         pomText.setText("descartes_pom.xml");
-        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(pomText);
+        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).indent(0, 8)
+        .applyTo(pomText);
         
         // listeners
         projectButton.addSelectionListener(new SelectionAdapter() {

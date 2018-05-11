@@ -1,7 +1,5 @@
 package eu.stamp.wp4.descartes.wizard.launch.ui;
 
-import java.io.File;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -68,23 +66,23 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 		projectText = new Text(container,SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(projectText);
 		
-		Button projectButton = new Button(container,SWT.PUSH);
+		Button projectButton = new Button(container,SWT.PUSH); // a button to select a project
 		projectButton.setText("Select project");
-		GridDataFactory.swtDefaults().applyTo(projectButton);
+		GridDataFactory.fillDefaults().applyTo(projectButton);
 		
 		/*
 		 *   ROW 2 : pom.xml
 		 */
-		Label pomLabel = new Label(container,SWT.NONE);
+		Label pomLabel = new Label(container,SWT.NONE); 
 		pomLabel.setText("Name of the pom file : ");
 		GridDataFactory.swtDefaults().applyTo(pomLabel);
 		
-		pomText = new Text(container,SWT.BORDER);
+		pomText = new Text(container,SWT.BORDER);   // the pom to execute Descartes
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(pomText);
 		
 		Button pomButton = new Button(container,SWT.PUSH);
 		pomButton.setText("Select pom file");	
-		GridDataFactory.swtDefaults().applyTo(pomButton);
+		GridDataFactory.fillDefaults().applyTo(pomButton);
 		
 		// file dialog
 		FileDialog fileDiag = new FileDialog(
@@ -103,13 +101,13 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 		pomButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String myPath = projectText.getText();
-				fileDiag.setFilterPath(myPath);
-				String pomFile = fileDiag.open();
+				String myPath = projectText.getText(); // open the file dialog 
+				fileDiag.setFilterPath(myPath);       // in the project folder
+				String pomFile = fileDiag.open(); // .open() will return the pom's path
 				if(pomFile != null) if(!pomFile.isEmpty()) {
-					if(pomFile.contains("/"))pomFile = pomFile
-							.substring(pomFile.lastIndexOf("/")+1);
-					if(pomFile.contains("\\"))pomFile = pomFile
+					if(pomFile.contains("/"))pomFile = pomFile      // take the name
+							.substring(pomFile.lastIndexOf("/")+1); // of the pom file
+					if(pomFile.contains("\\"))pomFile = pomFile     // from the path
 							.substring(pomFile.lastIndexOf("\\")+1);
 					pomText.setText(pomFile);
 				}
@@ -121,12 +119,12 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 			public void keyPressed(KeyEvent e) {}
 			@Override
 			public void keyReleased(KeyEvent e) {
-				LaunchConfigurationDialog
+				LaunchConfigurationDialog                   // enable the buttons
 				.getCurrentlyVisibleLaunchConfigurationDialog().updateButtons();
 				dirtyTexts = true;
 			}	
 		});
-        projectText.addSegmentListener(new SegmentListener() {
+        projectText.addSegmentListener(new SegmentListener() { // segment listener if the user copy-pastes
 			@Override
 			public void getSegments(SegmentEvent event) {
 				LaunchConfigurationDialog
@@ -134,7 +132,7 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 				dirtyTexts = true;
 			}	
         });
-        pomText.addKeyListener(new KeyListener() {
+        pomText.addKeyListener(new KeyListener() { 
         	@Override
         	public void keyPressed(KeyEvent e) {}
         	@Override
@@ -144,7 +142,7 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 				dirtyTexts = true;
         	}
         });
-       pomText.addSegmentListener(new SegmentListener() {
+       pomText.addSegmentListener(new SegmentListener() { // if the user copy-pastes
     	   @Override
     	   public void getSegments(SegmentEvent e) {
 				LaunchConfigurationDialog
@@ -162,12 +160,14 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
-		try {
+		try {  
 			projectText.setText(configuration.getAttribute(MavenLaunchConstants.ATTR_POM_DIR,""));
-			String pomName = "pom.xml";
+			String pomName = "pom.xml";  // default pom file
+			// theGoals : string with the maven command to invoke Descartes used by this configuration
 			String theGoals = configuration.getAttribute(MavenLaunchConstants.ATTR_GOALS, "");
+			// if the goals define the pom file to use
 			if(theGoals.contains("-f ")) pomName = theGoals.substring(theGoals.indexOf("-f ")+3);
-			pomText.setText(pomName);
+			pomText.setText(pomName);  // 
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -202,7 +202,6 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 	/**
 	 * this method creates and opens the project selection dialog and handles the user selection
 	 */
-
 	private void showProjectDialog() {
 		
 		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class,IProject.class};
