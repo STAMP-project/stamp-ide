@@ -56,6 +56,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
 	private boolean pitSelected = false;
 	
 	private DSpotMemory memory;
+	private TestCasesManager manager;
 	
 	// widgets
 	private Spinner timeOutSpinner;
@@ -68,10 +69,11 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
 	public DSpotAdvancedOptionsDialog(Shell parentShell, WizardConfiguration wConf) {
 		super(parentShell);
 		this.wConf = wConf;
+		manager = new TestCasesManager(wConf.getTestMethods());
 	}
 	@Override
      protected Control createDialogArea(Composite parent) {
-    	 
+    	// manager.showIt();
     	 /*
     	  *  Row 1 : timeOut
     	  */
@@ -116,8 +118,11 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 cases = casesSet.toArray(new String[casesSet.size()]);
     	 for(final String sr : cases) list.add(sr);
     	 GridDataFactory.fillDefaults().grab(true, false).span(2,1).indent(0, vSpace).applyTo(list);
+    	 //selection = wConf.getDSpotMemory().getSelectedCasesAsArray();
     	 if(selection != null) {
-    	 if(selection.length > 0) list.setSelection(selection);}
+    	 if(selection.length > 0) { for(int i = 0; i < selection.length; i++) System.out.println(selection[i]);
+    		 list.setSelection(selection);}
+    	 }
     	 
     	 /*
     	  *  Row 4 : button to clean the test cases list
@@ -196,6 +201,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
      @Override
      public void okPressed() {
     	 selection = list.getSelection();
+    	 manager.updateSelection(selection); //////
     	 //timeOut = timeOutSpinner.getSelection();
     	 randomSeed = randomSeedSpinner.getSelection();
     	 pathPitResult = pathPitResultText.getText();
@@ -248,6 +254,8 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 setMemoryData(timeOut, randomSeed, pathPitResult, selection);
     	 this.pathPitResult = pathPitResult;
     	 String[] cases = wConf.getTestCases();
+    	 manager = new TestCasesManager(wConf.getTestCases());
+    	 manager.updateSelection(memory.getSelectedCasesAsArray());
     	 if(selection != null) {
     	 ArrayList<String> mySelection = new ArrayList<String>(1);
     	 for(String aCase : cases) {
@@ -257,34 +265,16 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 }
     	 this.selection = mySelection.toArray(new String[mySelection.size()]);}
      }
-     /**
-      * Method to obtain the information in the dialog
-      * @return a string array [0] randomSeed, [1] timeOut (ms),[2] test cases, [3] path pit result,[4] MAVEN_HOME
-      */
-   /*  public String[] getAdvancedParameters() {
-    	 
-    	    String[] advParameters = new String[5];                   // this is for the user information
-    	    if(randomSeed > 0) advParameters[0] = " --randomSeed " + randomSeed; else advParameters[0] = "";
-    	    if(timeOut > 0) advParameters[1] = " --timeOut " + timeOut; else advParameters[1] = "";
-    	    if(selection != null)if(selection.length > 0) {
-    	    if(selection[0] != null && !selection[0].isEmpty()) advParameters[2] = " -c " + selection[0].substring(selection[0].indexOf("/")+1);
-    	    for(int i = 1; i < selection.length; i++) {
-    	    	if(advParameters[i] != null && !advParameters[i].isEmpty()) advParameters[2] = advParameters[2] + 
-    	    			WizardConfiguration.getSeparator() + selection[i].substring(selection[i].indexOf("/")+1);}}
-    	    if(pathPitResult != null && !pathPitResult.isEmpty()) advParameters[3] = " -m " + pathPitResult;
-    	    if(mavenHome != null && !mavenHome.isEmpty()) advParameters[4] = " --maven-home " + mavenHome;
-    	    for(int i = 0; i < advParameters.length; i++) {
-    	    	if(advParameters[i] == null) advParameters[i] = "";
-    	    }
-    	    return advParameters;
-     }*/
+
      public void resetFromMemory() {
     	 if(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY) != null) 
     			 this.randomSeed = Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY));
     	 if(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY) != null)
     		 //this.timeOut = Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY));
     	 this.selection = memory.getSelectedCasesAsArray();
+    	 if(this.selection != null) manager.updateSelection(this.selection);
     	 this.pathPitResult = memory.getDSpotValue(DSpotMemory.PATH_PIT_RESULT_KEY);
+    	 
      }
      public void setMemory(DSpotMemory memory) {
     	 this.memory = memory;
@@ -304,4 +294,41 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 }}
     	 memory.setDSpotValue(DSpotMemory.TEST_CASES_KEY, cases);
      }
+     
+     private class TestCasesManager{
+    	 
+    	 ArrayList<CaseDescriptor> casesList;
+    	 
+    	 public TestCasesManager(String[] casesList) {
+    		 this.casesList = new ArrayList<CaseDescriptor>(casesList.length);
+    		 for(String sr : casesList) this.casesList.add(new CaseDescriptor(sr));
+    	 }
+    	 
+    	 public void updateSelection(String[] selection) {
+             for(int i = 0; i < casesList.size(); i++) casesList.get(i).updateDescriptor(selection);
+    	 }
+    	 
+    	 public void showIt() {
+    		 for(int i = 0; i < casesList.size(); i++)if(casesList.get(i).selected)
+    			 System.out.println(casesList.get(i).name);
+    	 }
+    	 
+    	 private class CaseDescriptor {
+    		 public String name;
+    		 public boolean selected = false;
+    		 
+    		 public CaseDescriptor(String name) {
+    			 this.name = name;
+    		 }
+    		 public void updateDescriptor(String[] selectedCases) {
+    			 for(String sr : selectedCases)if(name.contains(sr)) {
+    				selected = true; return; 
+    			 }
+   	             selected = false;
+    		 }
+    		 
+    		 }
+    	 
+     }
+     
 }

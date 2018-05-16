@@ -77,7 +77,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		setDescription("Information about the project");
 		this.wConf = wConf;
 		this.wizard = wizard;
-	} // end of the constructor
+	} 
 	
  
 	@Override
@@ -336,12 +336,16 @@ public class DSpotWizardPage1 extends WizardPage {
 				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 				IJavaProject theProject = null;
 				for(IProject pro : projects) {
-				if(pro.getLocation().toString().contains(myS)) theProject = new JavaProject(pro,null);
+					//System.out.println(pro.getLocation().toString());
+				if(pro.getLocation().toString().contains(myS) ||
+						pro.getLocation().toString().equalsIgnoreCase(myS)) {
+					theProject = new JavaProject(pro,null);
+				}
 		}
 				if(theProject != null) wConf = new WizardConfiguration(theProject);
 				wizard.setConfigurationName(configCombo.getText());
-				wizard.refreshPageTwo();
 				wizard.refreshConf(wConf);
+				wizard.refreshPageTwo();
 				wizard.setResetadv();
 				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
 				} catch (CoreException e1) {

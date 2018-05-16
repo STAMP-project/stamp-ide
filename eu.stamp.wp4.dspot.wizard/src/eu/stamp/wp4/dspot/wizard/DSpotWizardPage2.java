@@ -98,7 +98,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	private String pathPitResult = "";
 	private Shell shell;
 	private String[] selectedCases = {""};
-	private DSpotAdvancedOptionsDialog expDiag;
+	private final DSpotAdvancedOptionsDialog expDiag;
 	private boolean resetAdvancedOptions = false;
 	
 	public DSpotWizardPage2(WizardConfiguration wConf) {
@@ -194,11 +194,10 @@ public class DSpotWizardPage2 extends WizardPage {
 			showElementTreeSelectionDialog2(wConf.getPro(),wConf.getTheWindow());
 			} catch (JavaModelException e1) {
 				e1.printStackTrace();
-			} 
-    		 
+			} 	 
 
     	 }
-     }); // end of the selection listener
+     });
      
      		
 		// Third row (3,x) Method
@@ -266,7 +265,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    		dSpotMemory.setDSpotValue(DSpotMemory.MAX_TEST_KEY, String.valueOf(spin1.getSelection()));
 	    		wConf.setDSpotMemory(dSpotMemory);
 	    	}
-	    }); // end of the selection listener
+	    }); 
 
 	    // sixth row (6,x)
 	    Label lb7 = new Label(composite,SWT.NONE); // A label in (6,1)
@@ -485,6 +484,7 @@ public class DSpotWizardPage2 extends WizardPage {
         	if(casesToTest.contains(sr)) casesList.add(sr);
         }
        selectedCases =  casesList.toArray(new String[casesList.size()]);
+       resetAdvancedOptions = true;
      	}
    	
    	if(argument.contains("-m ")) {
@@ -494,9 +494,9 @@ public class DSpotWizardPage2 extends WizardPage {
    	else { button.setSelection(false); dSpotMemory.setDSpotValue("verbose", "false"); }
    	if(argument.contains("clean")) {button2.setSelection(true); dSpotMemory.setDSpotValue("clean", "true"); }
    	else { button2.setSelection(false); dSpotMemory.setDSpotValue("clean", "false"); }
+	wConf.setDSpotMemory(dSpotMemory);
    	expDiag.setMemory(dSpotMemory);
    	expDiag.resetFromMemory();
-   	wConf.setDSpotMemory(dSpotMemory);
    }
     }
 
