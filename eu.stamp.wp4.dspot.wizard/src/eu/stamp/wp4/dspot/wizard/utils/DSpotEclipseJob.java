@@ -43,7 +43,7 @@ public DSpotEclipseJob(String path,
 	this.conf = conf;
 	this.outputDirectory = outputDirectory;
 	this.view = view;
-} // end of the constructor
+}
 
 @Override
 protected IStatus run(IProgressMonitor monitor) {
@@ -51,22 +51,12 @@ protected IStatus run(IProgressMonitor monitor) {
      DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders,outputDirectory);
  	try {	
  		executor.execute(new ExecutionEvent());
- 	 while(!executor.isFinished());  // wait until DSpod finish
+ 	 while(!executor.isFinished());  // wait until DSpot finish
  	} catch (ExecutionException e) {
  		e.printStackTrace();
  	}
-     
- 	//updateDSpotView();
  	
 	return Status.OK_STATUS;
-} // end of run
-
-private void updateDSpotView() {
-	try {
-		view.parseJSON(outputDirectory+"/"+conf.getPro().getElementName()+".json");
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-}
+} 
 
 }

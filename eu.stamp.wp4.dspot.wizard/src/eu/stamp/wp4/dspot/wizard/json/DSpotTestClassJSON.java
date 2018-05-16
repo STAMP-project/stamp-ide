@@ -1,7 +1,10 @@
 package eu.stamp.wp4.dspot.wizard.json;
 
 import java.util.List;
-
+/**
+ * this is the class to deserialize the test classes DSpot JSONs
+ *
+ */
 public class DSpotTestClassJSON {
 	
 	public int nbMutantKilledOriginally;

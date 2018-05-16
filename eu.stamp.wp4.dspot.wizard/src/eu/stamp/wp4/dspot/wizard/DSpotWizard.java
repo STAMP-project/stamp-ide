@@ -18,17 +18,12 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.inject.Inject;
-
 import java.io.File;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -41,7 +36,6 @@ import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 import eu.stamp.wp4.dspot.view.DSpotView;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotEclipseJob;
-import eu.stamp.wp4.dspot.wizard.utils.DSpotMemory;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 
@@ -110,11 +104,8 @@ public class DSpotWizard extends Wizard{
 		}else {  // if MAVEN_HOME is set
 		writeTheFile();    // writing the properties file
         wConf = two.getConfiguration(); // obtain the user information from page 2
-        /*for(int i = 0; i < MyS.length; i++) {
-        	parameters[i+2] = MyS[i];
-        } // end of the for*/
-        Job job = new DSpotEclipseJob(parameters[1],wConf,one.getTheProperties()[4],viw); // execute Dspot in background
-        job.schedule();  // background invocation of Dspot
+        Job job = new DSpotEclipseJob(parameters[1],wConf,one.getTheProperties()[4],viw); // execute DSpot in background
+        job.schedule();  // background invocation of DSpot
 		}
 		return true;
 	}

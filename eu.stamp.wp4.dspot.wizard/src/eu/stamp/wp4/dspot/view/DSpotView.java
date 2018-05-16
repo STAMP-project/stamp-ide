@@ -29,7 +29,11 @@ import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON.TestCase;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON.TestCase.MutantKilled;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTimeJSON;
-
+/**
+ *  this class describes the DSpot properties view, this view is formed by a tree table to
+ *  display the hierarchy of information in the JSON files produced by DSpot
+ *
+ */
 public class DSpotView extends ViewPart {
 	
 	public static final String ID = "eu.stamp.wp4.dspot.view.DSpotView";
@@ -68,7 +72,12 @@ public class DSpotView extends ViewPart {
 
 	@Override
 	public void setFocus() {}
-    
+    /**
+     * this method takes the DSpot JSON files, read them using gson, process the information 
+     * and display it in the DSpo properties view
+     * @param jsonPath : the path of the DSpot times JSON (the other JSONs are in the same folder)
+     * @throws IOException
+     */
 	public void parseJSON(String jsonPath) throws IOException {
 		
 		BufferedReader json = new BufferedReader(new FileReader(jsonPath));
@@ -174,18 +183,30 @@ public class DSpotView extends ViewPart {
 		});
 		
 	}
-	
+	/**
+	 *  an instance of this class contains and manages the CompactTime objects of the test classes list
+	 *
+	 */
 	private class CompactTimeList {
 		
 		private List<CompactTime> times;
-		
+		/**
+		 * the CompactTimeList object is created from a list of DSpotTime objects
+		 * transforming this list into a list of CompactTime objects	
+		 * @param dSpotTimes : list of DSpotimes objects
+		 */
 		public CompactTimeList(List <DSpotClassTime> dSpotTimes) {
 			times = new ArrayList<CompactTime>(1);
 			times.add(new CompactTime(dSpotTimes.get(0).fullQualifiedName,
 					String.valueOf(dSpotTimes.get(0).timeInMs)));
 			for(int i = 1; i < dSpotTimes.size(); i++) updateList(dSpotTimes.get(i));
 		}
-		
+		/**
+		 * this method add the time of a DSpottTime Object to their corresponding CompactTime object
+		 * in the list, if there is not such object, a new CompactTime is created 
+		 * from the DSpotTime and added to the list
+		 * @param dSpotTime : DSpotTime object
+		 */
 		private void updateList(DSpotClassTime dSpotTime) {
 			for(int i = 0; i < times.size(); i++  ) if(times.get(i).fullQualifiedName
 					.equalsIgnoreCase(dSpotTime.fullQualifiedName)) {
@@ -199,17 +220,29 @@ public class DSpotView extends ViewPart {
 		public List<CompactTime> getTimes() { return times; }	
 		
 	}
-	
+	/**
+	 *  Instances of this class contain the name and the times list corresponding to a test class
+	 *  in  the correct form to be displayed in the DSpotView's tree
+	 *
+	 */
 	private class CompactTime {
-		
+        /**
+         *  the complete name of the test class
+         */
 		private String fullQualifiedName;
+		/**
+		 *  the list of times corresponding to this class in a string, each time is followed by a comma
+		 */
 		private String timeInMs;
-		
+
 		public CompactTime(String fullQualifiedName,String timeInMs) {
 			this.fullQualifiedName = fullQualifiedName;
 			this.timeInMs = timeInMs;
 		}
-		
+		/**
+		 * this method add a time and their comma and space to the time list string
+		 * @param time : the new time to add
+		 */
 		public void addTime(int time) {
 			timeInMs = timeInMs + ", "+ String.valueOf(time);
 		}

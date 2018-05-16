@@ -2,13 +2,23 @@ package eu.stamp.wp4.dspot.wizard.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+/**
+ * an instance of this class contains and manages the map with the DSpot execution parameters
+ *
+ */
 public class DSpotMemory {
-
+    /**
+     *  DSpot execution parameters map the values will be assigned 
+     *  by the user actions a loaded configuration
+     */
 	private HashMap<String,String> DSpotMap = new HashMap<String,String>();
-	
+	/**
+	 *  an array for the boolean DSpor parameters, this parameters will add a constant string 
+	 *  to the command if selected, for example --verbose
+	 */
 	private boolean[] booleanParameters = {false,false}; // [0] verbose [1] clean
 	
+	// static String constants with the map keys to be called by other classes
 	public static final String ITERATIONS_KEY = " -i ";
 	public static final String RANDOMSEED_KEY = " --randomSeed ";
 	public static final String AMPLIFIERS_KEY = " -a ";
@@ -20,8 +30,12 @@ public class DSpotMemory {
 	public static final String PATH_PIT_RESULT_KEY = " -m ";
 	public static final String MAVEN_HOME_KEY = " --maven-home ";
 	
-	public String separator;
+	public String separator;  
 	
+	/**
+	 * when the DSpotMemory is created the keys are put into the map with default values, in general null
+	 * @param separator : for Mac and Linux, ; for windows
+	 */
 	public DSpotMemory(String separator){
 		this.separator = separator;
 		DSpotMap.put(ITERATIONS_KEY, String.valueOf(1));
@@ -35,7 +49,11 @@ public class DSpotMemory {
 		DSpotMap.put(PATH_PIT_RESULT_KEY, null);
 		DSpotMap.put(MAVEN_HOME_KEY, null);
 	}
-	
+	/**
+	 * this method creates the string command equivalent to the parameters map, 
+	 * if the value of a parameter is null it won't appear in the string
+	 * @return : the string command to be used as arguments attribute by a LaunchConfigurationWorkingCopy
+	 */
 	public String getAsString() {
 		String information = "";
 		String[] keys = DSpotMap.keySet().toArray(new String[DSpotMap.keySet().size()]);
@@ -64,11 +82,17 @@ public class DSpotMemory {
 		booleanParameters[1] = information.contains("--clean");
 		return this;
 	}
-	
+	/**
+	 * @param key : the key of a DSpot parameter (one of the String constants declared in this class)
+	 * @return the String value of the required DSpot parameters
+	 */
 	public String getDSpotValue(String key){
 		return DSpotMap.get(key);
 	}
-	
+	/**
+	 * @param key : the key of a DSpot parameter, only existing keys
+	 * @param value : value to set
+	 */
 	public void setDSpotValue(String key,String value) {
 		if(key.contains("verbose")) {
 			booleanParameters[0] = value.contains("true");
@@ -80,6 +104,10 @@ public class DSpotMemory {
 		}
 		if(DSpotMap.containsKey(key)) DSpotMap.put(key, value);
 	}
+	/**
+	 * put the different test cases of the DSpot property test cases into an array and return it
+	 * @return Array with the selected cases names
+	 */
 	public String[] getSelectedCasesAsArray() {
 		ArrayList<String> list = new ArrayList<String>(1);
 		String cases = DSpotMap.get(TEST_CASES_KEY);
