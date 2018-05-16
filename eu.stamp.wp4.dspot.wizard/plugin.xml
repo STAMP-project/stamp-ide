@@ -130,12 +130,6 @@
             modes="run, debug"
             id="eu.stamp.launchConfigurationDSpot">
       </launchConfigurationType>
-      <launchConfigurationType
-            delegate="eu.stamp.wp4.dspot.execution.launch.DSpotLaunchConfigurationTableDelegate"
-            id="eu.stamp.DspotTableLaunch"
-            modes="run, debug"
-            name="DSpot Table Launch Configuration">
-      </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -149,7 +143,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="eu.stamp.DspotTableLaunch"
+            type="eu.stamp.launchConfigurationDSpot"
             class="eu.stamp.wp4.dspot.execution.launch.ui.DSpotLaunchConfigurationTabGroup"
             id="eu.stamp.wp4.dspot.wizard.launchConfigurationTabGroup">
       </launchConfigurationTabGroup>

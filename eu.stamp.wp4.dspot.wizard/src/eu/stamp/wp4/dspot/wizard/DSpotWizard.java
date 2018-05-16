@@ -47,7 +47,6 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
  * this class describes the Eclipse wizard for DSpot
- * 
  */
 public class DSpotWizard extends Wizard{
 	
@@ -106,7 +105,6 @@ public class DSpotWizard extends Wizard{
 	@Override
 	public boolean performFinish() {	
 		DSpotProperties.LAUNCH_CONF_NAME = configurationName;
-		//String[] advParameters = two.getAdvparameters();
 		if(System.getenv("MAVEN_HOME") == null) { // an error message if MAVEN_HOME is not set
 			MessageDialog.openError(shell, "Maven Home not set","Error the enviroment variable MAVEN_HOME is required, please set it in your computer or in the text in advanced options in page 2");
 		}else {  // if MAVEN_HOME is set
@@ -115,8 +113,6 @@ public class DSpotWizard extends Wizard{
         /*for(int i = 0; i < MyS.length; i++) {
         	parameters[i+2] = MyS[i];
         } // end of the for*/
-        //boolean verbose = two.getVerbose(); // more user information
-       // boolean clean = two.getClean();
         Job job = new DSpotEclipseJob(parameters[1],wConf,one.getTheProperties()[4],viw); // execute Dspot in background
         job.schedule();  // background invocation of Dspot
 		}
@@ -171,6 +167,7 @@ public class DSpotWizard extends Wizard{
 	public void refreshConf(WizardConfiguration wConf) {
 		two.refreshPageConfiguration(wConf);
 	}
+	
 	public void setResetadv() {
 		two.setResetAdvancedOptions(true);
 	}

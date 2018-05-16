@@ -47,7 +47,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
 	
 	// parameters  
 	private int randomSeed = 23;
-	private int timeOut = 10000;
+	//private int timeOut = 10000;
 	private String[] selection = {""};
 	private String pathPitResult = "";
 	private String mavenHome;
@@ -196,7 +196,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
      @Override
      public void okPressed() {
     	 selection = list.getSelection();
-    	 timeOut = timeOutSpinner.getSelection();
+    	 //timeOut = timeOutSpinner.getSelection();
     	 randomSeed = randomSeedSpinner.getSelection();
     	 pathPitResult = pathPitResultText.getText();
     	 mavenHome = mavenHomeText.getText();
@@ -282,7 +282,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 if(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY) != null) 
     			 this.randomSeed = Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY));
     	 if(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY) != null)
-    		 this.timeOut = Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY));
+    		 //this.timeOut = Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY));
     	 this.selection = memory.getSelectedCasesAsArray();
     	 this.pathPitResult = memory.getDSpotValue(DSpotMemory.PATH_PIT_RESULT_KEY);
      }

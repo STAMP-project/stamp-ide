@@ -75,11 +75,6 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 public class DSpotWizardPage2 extends WizardPage {
 	
 	private boolean[] Comp = {true,false};  // this is to set page complete
-	// [0] i : number of iterations, [1] execution test class, [2] Method, [3] test criterion,
-	// [4] max test amplified
-	//private String[] MyStrings = new String[5];
-	//private boolean verbose = false;  // boolean to activate or not verbose
-	//private boolean clean = false;
 	private WizardConfiguration wConf;   
 	private String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
 			"BooleanLiteralAmplifier","AllLiteralAmplifiers","MethodAdd","MethodRemove","TestDataMutator",
@@ -103,9 +98,6 @@ public class DSpotWizardPage2 extends WizardPage {
 	private String pathPitResult = "";
 	private Shell shell;
 	private String[] selectedCases = {""};
-	//private Composite theParent;
-	//DSpotAdvancedOptionsDialogMemory memory = new DSpotAdvancedOptionsDialogMemory();
-	//private boolean opened = false;
 	private DSpotAdvancedOptionsDialog expDiag;
 	private boolean resetAdvancedOptions = false;
 	
@@ -117,13 +109,12 @@ public class DSpotWizardPage2 extends WizardPage {
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		expDiag = new DSpotAdvancedOptionsDialog(shell, wConf);
 		expDiag.setMemory(wConf.getDSpotMemory());
-	} // end of the constructor
+	} 
 	
 	@Override
 	public void createControl(Composite parent) {
 		
 		DSpotMemory dSpotMemory = wConf.getDSpotMemory();
-		//theParent = parent;
 		
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
@@ -503,66 +494,26 @@ public class DSpotWizardPage2 extends WizardPage {
    	else { button.setSelection(false); dSpotMemory.setDSpotValue("verbose", "false"); }
    	if(argument.contains("clean")) {button2.setSelection(true); dSpotMemory.setDSpotValue("clean", "true"); }
    	else { button2.setSelection(false); dSpotMemory.setDSpotValue("clean", "false"); }
-   	//verbose = button.getSelection();
-   	//clean = button2.getSelection();
    	expDiag.setMemory(dSpotMemory);
    	expDiag.resetFromMemory();
    	wConf.setDSpotMemory(dSpotMemory);
    }
     }
-	/*
-	 *  public methods to return the information set by the user
-	 */
 
      public WizardConfiguration getConfiguration() {
     	 return wConf;
      }
-    /*
-	public String[] getMyStrings() {
-		if(MyStrings[0] == null) {   // if the spinner hasn't be touch
-			MyStrings[0] = "1"; // then use the default value
-		}
-		if(MyStrings[2] == null) {
-			MyStrings[2] = "None";
-		}
-		if(MyStrings[4] == null) {
-			MyStrings[4] = "200";
-		}
-		return MyStrings;
-	}*/
-	
-	/**
-	 * @return a string array with the information set in the advanced options dialog
-	 */
-     /*
-	public String[] getAdvparameters() {
-		return expDiag.getAdvancedParameters();
-	}*/
-	/**
-	 * @return the int value of timeOut DSpot parameter
-	 */
-	public int getTimeOut() {
-		return timeOut;
-	}
-	public String[] getSelectedCases() {
-		return selectedCases;
-	}
-	/**
-	 * @return the test methods that DSpot will use in a String
-	 */
-	public String getCases() {
-		return casesToTest;
-	}
-	/**
-	 * @return String value of the DSpot pathPitResult parameter
-	 */
-	public String getPathPitResult() {
-		return pathPitResult;
-	}
+/**
+ * this method is called when the project is changed
+ * @param wConf : the new configuration
+ */
 	public void refreshPageConfiguration(WizardConfiguration wConf) {
 		this.wConf = wConf;
 		
 	}
+	/**
+	 *  set default DSpot execution values
+	 */
 	public void setDefaultValues() {
 		tx1.setText("");
 		spin.setSelection(1);
@@ -583,6 +534,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		 info.open();
 	    
 	 }
+	 
 	 public void setResetAdvancedOptions(boolean resetAdvancedOptions) {
 		 this.resetAdvancedOptions = resetAdvancedOptions;
 	 }

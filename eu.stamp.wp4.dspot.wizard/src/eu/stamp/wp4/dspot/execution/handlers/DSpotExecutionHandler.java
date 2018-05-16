@@ -41,10 +41,12 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	
 	private boolean hasStarted = false;
 	private ILaunch myLaunch;
+	private String outputDirectory;
 	
-	public DSpotExecutionHandler(WizardConfiguration conf,String arguments) {
+	public DSpotExecutionHandler(WizardConfiguration conf,String arguments,String outputDirectory) {
 		super();
 		this.conf = conf;
+		this.outputDirectory = outputDirectory;
 		DSpotExecutionHandler.arguments = arguments;
 	}
 
@@ -76,6 +78,7 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	        IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, DSpotProperties.MAIN_CLASS);
 	      wc.setAttribute(
 	  	        IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
+	      wc.setAttribute("outputDirectory", outputDirectory+"/"+conf.getPro().getElementName()+".json");
 	      System.out.println(arguments);
 	      ILaunchConfiguration config = wc.doSave();   
 	      myLaunch = config.launch(ILaunchManager.RUN_MODE, null);

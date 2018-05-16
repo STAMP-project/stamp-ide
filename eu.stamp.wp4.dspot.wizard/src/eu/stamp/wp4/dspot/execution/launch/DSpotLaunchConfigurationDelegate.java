@@ -34,13 +34,23 @@ import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
+
+import eu.stamp.wp4.dspot.view.DSpotView;
 
 public class DSpotLaunchConfigurationDelegate extends JavaLaunchDelegate {
 
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
+		
+		String outputDirectory = configuration.getAttribute("outputDirectory", "");
+		
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
@@ -155,6 +165,17 @@ public class DSpotLaunchConfigurationDelegate extends JavaLaunchDelegate {
 		}
 		finally {
 			monitor.done();
+			while(!launch.isTerminated());
+			Display.getDefault().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					try {  // getting the DSpotView part
+						final DSpotView viw = (DSpotView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+								.getActivePage().showView("eu.stamp.wp4.dspot.wizard.view");
+						 viw.parseJSON(outputDirectory);
+					} catch (PartInitException | IOException e) { e.printStackTrace(); }
+				}
+			});
 		}
     }
 	

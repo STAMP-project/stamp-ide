@@ -202,7 +202,7 @@ public class DSpotView extends ViewPart {
 	
 	private class CompactTime {
 		
-		public String fullQualifiedName;
+		private String fullQualifiedName;
 		private String timeInMs;
 		
 		public CompactTime(String fullQualifiedName,String timeInMs) {

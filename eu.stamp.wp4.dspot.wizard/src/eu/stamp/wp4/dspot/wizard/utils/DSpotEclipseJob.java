@@ -48,7 +48,7 @@ public DSpotEclipseJob(String path,
 @Override
 protected IStatus run(IProgressMonitor monitor) {
      
-     DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders);
+     DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders,outputDirectory);
  	try {	
  		executor.execute(new ExecutionEvent());
  	 while(!executor.isFinished());  // wait until DSpod finish
@@ -56,7 +56,7 @@ protected IStatus run(IProgressMonitor monitor) {
  		e.printStackTrace();
  	}
      
- 	updateDSpotView();
+ 	//updateDSpotView();
  	
 	return Status.OK_STATUS;
 } // end of run
