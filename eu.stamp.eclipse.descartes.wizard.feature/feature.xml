@@ -3,8 +3,7 @@
       id="eu.stamp.eclipse.descartes.wizard.feature"
       label="STAMP Eclipse plugin for Descartes"
       version="1.0.0.qualifier"
-      provider-name="Atos Spain S.A."
-      os="Linux, Windows">
+      provider-name="Atos Spain S.A.">
 
    <description url="https://www.stamp-project.eu">
       STAMP Descartes evaluates the capability of your test suite to detect bugs using extreme mutation testing.
