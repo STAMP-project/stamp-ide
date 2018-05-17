@@ -47,7 +47,6 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
 	
 	// parameters  
 	private int randomSeed = 23;
-	//private int timeOut = 10000;
 	private String[] selection = {""};
 	private String pathPitResult = "";
 	private String mavenHome;
@@ -56,7 +55,6 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
 	private boolean pitSelected = false;
 	
 	private DSpotMemory memory;
-	private TestCasesManager manager;
 	
 	// widgets
 	private Spinner timeOutSpinner;
@@ -69,12 +67,10 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
 	public DSpotAdvancedOptionsDialog(Shell parentShell, WizardConfiguration wConf) {
 		super(parentShell);
 		this.wConf = wConf;
-		manager = new TestCasesManager(wConf.getTestMethods());
 	}
 	@Override
      protected Control createDialogArea(Composite parent) {
-    	// manager.showIt();
-    	 /*
+		 /*
     	  *  Row 1 : timeOut
     	  */
     	 Composite composite = (Composite)super.createDialogArea(parent);
@@ -201,7 +197,6 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
      @Override
      public void okPressed() {
     	 selection = list.getSelection();
-    	 manager.updateSelection(selection); //////
     	 //timeOut = timeOutSpinner.getSelection();
     	 randomSeed = randomSeedSpinner.getSelection();
     	 pathPitResult = pathPitResultText.getText();
@@ -254,8 +249,6 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 setMemoryData(timeOut, randomSeed, pathPitResult, selection);
     	 this.pathPitResult = pathPitResult;
     	 String[] cases = wConf.getTestCases();
-    	 manager = new TestCasesManager(wConf.getTestCases());
-    	 manager.updateSelection(memory.getSelectedCasesAsArray());
     	 if(selection != null) {
     	 ArrayList<String> mySelection = new ArrayList<String>(1);
     	 for(String aCase : cases) {
@@ -272,7 +265,6 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 if(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY) != null)
     		 //this.timeOut = Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY));
     	 this.selection = memory.getSelectedCasesAsArray();
-    	 if(this.selection != null) manager.updateSelection(this.selection);
     	 this.pathPitResult = memory.getDSpotValue(DSpotMemory.PATH_PIT_RESULT_KEY);
     	 
      }
@@ -294,7 +286,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 }}
     	 memory.setDSpotValue(DSpotMemory.TEST_CASES_KEY, cases);
      }
-     
+     /*
      private class TestCasesManager{
     	 
     	 ArrayList<CaseDescriptor> casesList;
@@ -329,6 +321,6 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     		 
     		 }
     	 
-     }
+     }*/
      
 }

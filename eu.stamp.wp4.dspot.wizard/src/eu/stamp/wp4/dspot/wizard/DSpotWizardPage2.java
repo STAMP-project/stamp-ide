@@ -501,6 +501,22 @@ public class DSpotWizardPage2 extends WizardPage {
     }
 
      public WizardConfiguration getConfiguration() {
+    	 
+    	 wConf.getDSpotMemory().setDSpotValue(DSpotMemory.AMPLIFIERS_KEY, spin.getText());
+    	 wConf.getDSpotMemory().setDSpotValue(DSpotMemory.MAX_TEST_KEY, spin1.getText());
+    	 wConf.getDSpotMemory().setDSpotValue(DSpotMemory.TEST_CLASSES_KEY, tx1.getText());
+    	 wConf.getDSpotMemory().setDSpotValue(DSpotMemory.CRITERION_KEY, combo1.getText());
+    	 if(button.getSelection()) { wConf.getDSpotMemory().setDSpotValue("verbose", "true"); 
+    	 } else { wConf.getDSpotMemory().setDSpotValue("verbose", "false"); }
+    	 if(button2.getSelection()) { wConf.getDSpotMemory().setDSpotValue("clean", "true");
+    	 } else { wConf.getDSpotMemory().setDSpotValue("clean", "false"); }
+    	 String[] selection = amplifiersList.getSelection();
+ 		if(selection != null && selection.length > 0) {
+ 			String amplList = selection[0];
+ 		for(int i = 1; i < selection.length; i++) {
+ 			amplList = amplList + WizardConfiguration.getSeparator() + selection[i];	
+ 		}
+    	 wConf.getDSpotMemory().setDSpotValue(DSpotMemory.AMPLIFIERS_KEY, amplList);}
     	 return wConf;
      }
 /**

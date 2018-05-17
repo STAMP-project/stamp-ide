@@ -336,7 +336,6 @@ public class DSpotWizardPage1 extends WizardPage {
 				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 				IJavaProject theProject = null;
 				for(IProject pro : projects) {
-					//System.out.println(pro.getLocation().toString());
 				if(pro.getLocation().toString().contains(myS) ||
 						pro.getLocation().toString().equalsIgnoreCase(myS)) {
 					theProject = new JavaProject(pro,null);
