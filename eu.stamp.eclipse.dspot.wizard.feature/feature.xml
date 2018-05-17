@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="eu.stamp.wp4.dspot.wizard.feature"
-      label="Feature"
-      version="1.0.0.qualifier">
+      label="STAMP Eclipse plugin for DSpot Feature"
+      version="1.0.0.qualifier"
+      provider-name="Atos Spain S.A.">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
