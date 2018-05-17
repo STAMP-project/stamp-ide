@@ -39,9 +39,8 @@ public DSpotEclipseJob(String path,
 		WizardConfiguration conf,String outputDirectory,DSpotView view) {
    super("DSpot working");
 
-     this.conf = conf;
+    this.conf = conf;
     this.Orders = " -p " + path +" "+ conf.getDSpotMemory().getAsString();
-	//this.conf = conf;
 	this.outputDirectory = outputDirectory;
 	this.view = view;
 }
