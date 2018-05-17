@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Wizard
-Bundle-SymbolicName: eu.stamp.wp4.descartes.wizard;singleton:=true
+Bundle-Name: STAMP Eclipse Plugin for Descartes
+Bundle-SymbolicName: eu.stamp.eclipse.descartes.wizard;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.jdt.core,
@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.jdt.launching,
  org.eclipse.m2e.launching,
  org.eclipse.debug.ui
+Bundle-Vendor: Atos Spain S.A.
