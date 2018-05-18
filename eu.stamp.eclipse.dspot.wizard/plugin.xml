@@ -129,9 +129,9 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             name="DSpot Launch Configuration"
-            delegate="eu.stamp.wp4.dspot.execution.launch.DSpotLaunchConfigurationDelegate"
+            delegate="eu.stamp.wp4.dspot.execution.launch.DSpotEclipseLaunchConfigurationDelegate"
             modes="run, debug"
-            id="eu.stamp.launchConfigurationDSpot">
+            id="eu.stamp.launchEclipseConfigurationDSpot">
       </launchConfigurationType>
    </extension>
    <extension
@@ -146,7 +146,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="eu.stamp.launchConfigurationDSpot"
+            type="eu.stamp.launchEclipseConfigurationDSpot"
             class="eu.stamp.wp4.dspot.execution.launch.ui.DSpotLaunchConfigurationTabGroup"
             id="eu.stamp.wp4.dspot.wizard.launchConfigurationTabGroup">
       </launchConfigurationTabGroup>

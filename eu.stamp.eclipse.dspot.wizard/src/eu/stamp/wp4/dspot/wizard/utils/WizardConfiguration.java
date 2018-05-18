@@ -68,6 +68,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.junit.Test;
 
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
+import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 
 @SuppressWarnings("restriction")
 /**
@@ -577,7 +578,7 @@ public class WizardConfiguration {
 	private List<ILaunchConfiguration> obtainLaunchConfigurations() throws CoreException {
 		List<ILaunchConfiguration> result = new ArrayList<>();
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfiguration[] confs = manager.getLaunchConfigurations(manager.getLaunchConfigurationType("eu.stamp.launchConfigurationDSpot"));
+		ILaunchConfiguration[] confs = manager.getLaunchConfigurations(manager.getLaunchConfigurationType(DSpotProperties.LAUNCH_CONF_ID));
 		for (ILaunchConfiguration conf: confs) {
 			result.add(conf.getWorkingCopy());
 		}

@@ -60,13 +60,13 @@ protected IStatus run(IProgressMonitor monitor) {
  	
 	return Status.OK_STATUS;
 } // end of run
-
+/*
 private void updateDSpotView() {
 	try {
 		view.parseJSON(outputDirectory+"/"+conf.getPro().getElementName()+".json");
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
-}
+}*/
 
 }
