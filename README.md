@@ -31,6 +31,6 @@ This will create a eclipse-ide folder into your local file system
 
 Main contact: Jesús Gorroñogoitia <jesus.gorronogoitia@atos.net>
 
-<center>![Project funded by the European Union](images/european.union.logo.png)</center>
+![Project funded by the European Union](images/european.union.logo.png)
 
 
