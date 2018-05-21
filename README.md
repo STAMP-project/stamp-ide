@@ -13,7 +13,7 @@ The installation of the STAMP Eclipse plugins follows the standard Eclipse plugi
 ### Requirements
 STAMP Eclipse plugins require the following software requirements:
 - Git
-- Java DSK 8 or above
+- Java JDK 8 or above
 - Eclipse Oxygen or above
 
 ### Installation precedure
