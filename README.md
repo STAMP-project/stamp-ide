@@ -24,6 +24,7 @@ This will create a eclipse-ide folder into your local file system
 <center>![STAMP Plugin installation step 2](images/STAMP_Install_1.png)</center>
 3. In Install wizard, select the STAMP Plugins to install, and select next. Follow next steps, acepting the license and finish. Accept new popup windows that may appear to accept the installation. Restart Eclipse when prompted.
 <center>![STAMP Plugin installation step 3](images/STAMP_Install_2.png)</center>
+
 Main contact: Jesús Gorroñogoitia <jesus.gorronogoitia@atos.net>
 
 <center>![Project funded by the European Union](images/european.union.logo.png)</center>
