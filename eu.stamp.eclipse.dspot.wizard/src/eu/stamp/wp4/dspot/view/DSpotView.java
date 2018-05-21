@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -24,6 +25,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.google.gson.Gson;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTimeJSON.DSpotClassTime;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON.TestCase;
@@ -71,11 +73,31 @@ public class DSpotView extends ViewPart {
     
 	public void parseJSON(String jsonPath) throws IOException {
 		
-		BufferedReader json = new BufferedReader(new FileReader(jsonPath));
+		File file = (new File(jsonPath));  // the output folder 
+		
+		// looking for the times JSON
+		@SuppressWarnings("unchecked")
+		List<String> fileList = new LinkedList<String>(Arrays.asList(file.list()));
+		String timeFile = "";
+		for(int i = 0; i < fileList.size(); i++)if(!fileList.get(i).contains(".json")) {
+			fileList.remove(i); i--; }
+		BufferedReader json = null;
+		for(int i = 0; i < fileList.size(); i++) {
+			json = new BufferedReader(new FileReader(new File(jsonPath + fileList.get(i))));
+			json.readLine();
+			if(json.readLine().contains("classTimes")) {
+				timeFile = fileList.get(i);
+				fileList.remove(i);
+				break;
+			}
+		}
+		String[] files = fileList.toArray(new String[fileList.size()]);
+		BufferedReader json2 = new BufferedReader(new FileReader(new File(jsonPath+timeFile)));
 		Gson gson = new Gson();
 		
-        DSpotTimeJSON dSpotTimeJSON = gson.fromJson(json, DSpotTimeJSON.class);
+        DSpotTimeJSON dSpotTimeJSON = gson.fromJson(json2, DSpotTimeJSON.class);
         json.close();
+        json2.close();
         CompactTimeList times = new CompactTimeList(dSpotTimeJSON.classTimes);
         List<CompactTime> timesList = times.getTimes();
         Display.getDefault().syncExec(new Runnable() {
@@ -99,11 +121,9 @@ public class DSpotView extends ViewPart {
         	}
         });
         
-		File file = (new File(jsonPath)).getParentFile();
-		String[] fileList = file.list();
-		for(String sr : fileList) if(sr.contains("mutants_killed.json")) { System.out.println(file.getAbsolutePath()+"/"+sr);
+		for(String sr : files) if(sr.contains("mutants_killed.json")) { System.out.println(jsonPath+sr);
 			parseMutantsKilled(
-				file.getAbsolutePath()+"/"+sr,gson);}
+				jsonPath+sr,gson);}
 
         }
 	

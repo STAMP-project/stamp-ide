@@ -18,30 +18,22 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.inject.Inject;
-
 import java.io.File;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
-import eu.stamp.wp4.dspot.view.DSpotView;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotEclipseJob;
-import eu.stamp.wp4.dspot.wizard.utils.DSpotMemory;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 
@@ -54,7 +46,6 @@ public class DSpotWizard extends Wizard{
 	protected DSpotWizardPage2 two;
 	private WizardConfiguration wConf;
 	private String configurationName = "DSpot";
-	private DSpotView viw;
 	
 	
 	// [0] Dspot jar path, [1] project path, [2] number of iterations i, [3] -t test class, [4] -a Method
@@ -72,14 +63,8 @@ public class DSpotWizard extends Wizard{
 			MessageDialog.openWarning(shell, "Maven Home not set", 
 					"The enviroment variable MAVEN_HOME is not set, please set it in your computer or set it in the text in advanced options in page 2");
 		}
-
-		try {
-			viw = (DSpotView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("eu.stamp.wp4.dspot.wizard.view");
-		} catch (PartInitException e) {
-			e.printStackTrace();
-		}
 		
-	} // end of the constructor
+	}
 	
 
 	@Override
@@ -110,10 +95,7 @@ public class DSpotWizard extends Wizard{
 		}else {  // if MAVEN_HOME is set
 		writeTheFile();    // writing the properties file
         wConf = two.getConfiguration(); // obtain the user information from page 2
-        /*for(int i = 0; i < MyS.length; i++) {
-        	parameters[i+2] = MyS[i];
-        } // end of the for*/
-        Job job = new DSpotEclipseJob(parameters[1],wConf,one.getTheProperties()[4],viw); // execute Dspot in background
+        Job job = new DSpotEclipseJob(parameters[1],wConf,one.getTheProperties()[4]); // execute Dspot in background
         job.schedule();  // background invocation of Dspot
 		}
 		return true;

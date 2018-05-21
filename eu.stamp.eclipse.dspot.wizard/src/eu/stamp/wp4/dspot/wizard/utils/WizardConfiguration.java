@@ -95,14 +95,13 @@ public class WizardConfiguration {
 	
 	private DSpotMemory dSpotMemory = new DSpotMemory(getSeparator());
 
-	
 	public WizardConfiguration() throws CoreException{
 		
 		 jproject = obtainProject();  // obtain the project
 		 Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		 
-			if (jproject == null) {
-				 MessageDialog.openInformation(
+			if (jproject == null) { 
+				MessageDialog.openInformation(
 				shell,
 				 "Execute DSpot",
 				 "Please, select a Java Project in the Package Explorer");

@@ -138,11 +138,7 @@ public class DSpotWizardPage2 extends WizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				
 				Comp[0] = spin.getSelection() > 0;  // we need a positive number of iterations
-				dSpotMemory.setDSpotValue(DSpotMemory.ITERATIONS_KEY, String.valueOf(spin.getSelection()));
-				wConf.setDSpotMemory(dSpotMemory);
-				wConf.getDSpotMemory().getDSpotValue(DSpotMemory.ITERATIONS_KEY);
-				setPageComplete(Comp[0] && Comp[1]);				
-				
+				setPageComplete(Comp[0] && Comp[1]);						
 			}
 		});
 		
@@ -167,8 +163,6 @@ public class DSpotWizardPage2 extends WizardPage {
 			@Override
 			public void keyReleased(KeyEvent e) {
 			Comp[1] = !tx1.getText().isEmpty();	  // look at the "!"
-			dSpotMemory.setDSpotValue(DSpotMemory.TEST_CLASSES_KEY, tx1.getText());
-			wConf.setDSpotMemory(dSpotMemory);
 			setPageComplete(Comp[0] && Comp[1]);
 			}
 		});   // end of the Key listener
@@ -177,8 +171,6 @@ public class DSpotWizardPage2 extends WizardPage {
     	 @Override
     	 public void getSegments(SegmentEvent e) {
  			Comp[1] = !tx1.getText().isEmpty();	  // look at the "!"
- 			dSpotMemory.setDSpotValue(DSpotMemory.TEST_CLASSES_KEY, tx1.getText());
- 			wConf.setDSpotMemory(dSpotMemory);
  			setPageComplete(Comp[0] && Comp[1]); 
     	 }
      });  // end of the segment listener
@@ -195,7 +187,6 @@ public class DSpotWizardPage2 extends WizardPage {
 			} catch (JavaModelException e1) {
 				e1.printStackTrace();
 			} 
-    		 
 
     	 }
      }); // end of the selection listener
@@ -213,23 +204,6 @@ public class DSpotWizardPage2 extends WizardPage {
 		for(int i = 0; i < amplifiers.length -1; i++) {
 			amplifiersList.add(amplifiers[i]);
 		}
-		
-		
-	    amplifiersList.addSelectionListener(new SelectionAdapter(){
-	    	@Override
-	    	public void widgetSelected(SelectionEvent e) {
-	    		String[] selection = amplifiersList.getSelection();
-	    		if(selection != null && selection.length > 0) {
-	    			String amplList = selection[0];
-	    		for(int i = 1; i < selection.length; i++) {
-	    			amplList = amplList + WizardConfiguration.getSeparator() + selection[i];	
-	    		}
-	    		dSpotMemory.setDSpotValue(DSpotMemory.AMPLIFIERS_KEY,amplList);
-	    		wConf.setDSpotMemory(dSpotMemory);
-	    	}
-	    	}
-	    });
-	    
 	    // row five (5,x)
 	    Label lb5 = new Label(composite,SWT.NONE); // A label in (5,1)
 	    lb5.setText("Test Criterion : ");
@@ -242,16 +216,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    combo1.add("CloverCoverageSelector"); combo1.add("BranchCoverageTestSelector");
 	    combo1.add("JacocoCoverageSelector"); combo1.add("TakeAllSelector");
 	    combo1.add("ChangeDetectorSelector"); combo1.add("");
-	    combo1.addSelectionListener(new SelectionAdapter() {
-	    	@Override
-	    	public void widgetSelected(SelectionEvent e) {
-	    		
-	    		dSpotMemory.setDSpotValue(DSpotMemory.CRITERION_KEY, combo1.getText());
-	    		wConf.setDSpotMemory(dSpotMemory);
-	    		
-	    	}
-	    }); // end of the selection listener
-	    
+
 	    // five row (5,x)
 	    Label lb6 = new Label(composite,SWT.NONE);  // A label in (5,1)
 	    lb6.setText("Max test amplified : ");
@@ -259,33 +224,22 @@ public class DSpotWizardPage2 extends WizardPage {
 	    spin1 = new Spinner(composite,SWT.BORDER);
 	    spin1.setMinimum(50); spin1.setIncrement(50); spin1.setMaximum(4000); spin1.setSelection(200);
 	    spin1.setLayoutData(gd);
-	    spin1.addSelectionListener(new SelectionAdapter() {
-	    	@Override
-	    	public void widgetSelected(SelectionEvent e) {
-	    		
-	    		dSpotMemory.setDSpotValue(DSpotMemory.MAX_TEST_KEY, String.valueOf(spin1.getSelection()));
-	    		wConf.setDSpotMemory(dSpotMemory);
-	    	}
-	    }); // end of the selection listener
 
 	    // sixth row (6,x)
 	    Label lb7 = new Label(composite,SWT.NONE); // A label in (6,1)
 	    lb7.setText("Verbose ");
 	    
 	    button = new Button(composite,SWT.CHECK);  // check button in (6,2)
-	    button.addSelectionListener(new SelectionAdapter() {
+	    /*button.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
-	    		//verbose = button.getSelection();
 	    		if(button.getSelection()) { dSpotMemory.setDSpotValue("verbose", "true"); return; }
 	    		dSpotMemory.setDSpotValue("verbose", "false");
 	    	}
-	    }); // end of the selection listener
+	    }); // end of the selection listener*/
 	    
 	    Label space = new Label(composite,SWT.NONE);
 	    space.setText("");
-	    
-	    
 	    
 	    Link link = new Link(composite,SWT.NONE);  // this link in (6,4) open the dialog with the advanced options
 	    link.setText("<A>Dspot advanced options</A>");
@@ -308,14 +262,14 @@ public class DSpotWizardPage2 extends WizardPage {
 	    lb8.setText("clean ");
 	    
 	    button2 = new Button(composite,SWT.CHECK);  // check button in (6,2)
-	    button2.addSelectionListener(new SelectionAdapter() {
+	   /* button2.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
 	    		//clean = button2.getSelection();
 	    		if(button2.getSelection()) { dSpotMemory.setDSpotValue("clean", "true"); return; }
 	    		dSpotMemory.setDSpotValue("clean", "false");
 	    	}
-	    }); // end of the selection listener
+	    }); // end of the selection listener*/
 	    
 		// required to avoid an error in the System
 		setControl(composite);
@@ -515,8 +469,19 @@ public class DSpotWizardPage2 extends WizardPage {
     	 }
     	 memory.setDSpotValue(DSpotMemory.MAX_TEST_KEY, String.valueOf(spin1.getSelection()));
     	 memory.setDSpotValue(DSpotMemory.TEST_CLASSES_KEY, tx1.getText());
-    	 
-    	 
+    	 memory.setDSpotValue(DSpotMemory.ITERATIONS_KEY, String.valueOf(spin.getSelection()));
+    	 memory.setDSpotValue(DSpotMemory.CRITERION_KEY, combo1.getText());
+    	 String[] selection = amplifiersList.getSelection();
+ 		if(selection != null && selection.length > 0) {
+ 			String amplList = selection[0];
+ 		for(int i = 1; i < selection.length; i++) {
+ 			amplList = amplList + WizardConfiguration.getSeparator() + selection[i];	
+ 		}
+ 		memory.setDSpotValue(DSpotMemory.AMPLIFIERS_KEY,amplList);}
+ 		//if(button.getSelection()) memory.setDSpotValue("verbose", "true");
+ 		//else memory.setDSpotValue("verbose", "false");
+ 		 memory.setDSpotValue("verbose", String.valueOf(button.getSelection()));
+ 	     memory.setDSpotValue("clean", String.valueOf(button2.getSelection()));
     	 wConf.setDSpotMemory(memory);	 
     	 return wConf;
      }
@@ -531,6 +496,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	/**
 	 *  set default DSpot execution values
 	 */
+	
 	public void setDefaultValues() {
 		tx1.setText("");
 		spin.setSelection(1);
