@@ -500,6 +500,24 @@ public class DSpotWizardPage2 extends WizardPage {
     }
 
      public WizardConfiguration getConfiguration() {
+    	 DSpotMemory memory = wConf.getDSpotMemory();
+    	 if(expDiag.dialogUnused()) {
+    		 memory.setDSpotValue(DSpotMemory.RANDOMSEED_KEY, String.valueOf(r));
+    		 memory.setDSpotValue(DSpotMemory.TIMEOUT_KEY, String.valueOf(timeOut));
+    		 memory.setDSpotValue(DSpotMemory.PATH_PIT_RESULT_KEY, pathPitResult);
+    		 String selection = "";
+    		 String sep = WizardConfiguration.getSeparator();
+    		 for(int i = 0; i < selectedCases.length -1; i++) {
+    			 selection = selection + selectedCases[i] + sep;
+    		 }
+    		selection = selection + selectedCases[selectedCases.length-1];	 
+    		memory.setDSpotValue(DSpotMemory.TEST_CASES_KEY, selection);
+    	 }
+    	 memory.setDSpotValue(DSpotMemory.MAX_TEST_KEY, String.valueOf(spin1.getSelection()));
+    	 memory.setDSpotValue(DSpotMemory.TEST_CLASSES_KEY, tx1.getText());
+    	 
+    	 
+    	 wConf.setDSpotMemory(memory);	 
     	 return wConf;
      }
 /**

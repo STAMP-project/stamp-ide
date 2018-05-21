@@ -161,9 +161,11 @@ public class DSpotWizard extends Wizard{
 	public void refreshPageTwo() {
 		two.refresh();
 	}
+	
 	public void setDefaultValuesInPage2() {
 		two.setDefaultValues();
 	}
+	
 	public void refreshConf(WizardConfiguration wConf) {
 		two.refreshPageConfiguration(wConf);
 	}
