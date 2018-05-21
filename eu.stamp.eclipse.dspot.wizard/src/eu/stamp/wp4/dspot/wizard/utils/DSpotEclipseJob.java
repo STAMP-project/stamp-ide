@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2018 Atos
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -60,13 +60,13 @@ protected IStatus run(IProgressMonitor monitor) {
  	
 	return Status.OK_STATUS;
 } // end of run
-
+/*
 private void updateDSpotView() {
 	try {
 		view.parseJSON(outputDirectory+"/"+conf.getPro().getElementName()+".json");
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
-}
+}*/
 
 }

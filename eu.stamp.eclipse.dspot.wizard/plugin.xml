@@ -6,7 +6,7 @@
       <command
             defaultHandler="eu.stamp.wp4.dspot.wizard.utils.DSpotWizardHandler"
             name="Open Dspot Wizard"
-            id="eu.stamp.wp4.dspot.menu.wizard.command1">
+            id="eu.stamp.wp4.dspot.menu.wizard.command">
       </command>
    </extension>
    <extension
@@ -15,10 +15,11 @@
             allPopups="false"
             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
          <menu
-               label="STAMP"
-               id="DSpot.menu1">
+               commandId="eu.stamp.wp4.dspot.menu.wizard.command"
+               id="DSpot.menu1"
+               label="STAMP">
             <command
-                  commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
+                  commandId="eu.stamp.wp4.dspot.menu.wizard.command"
                   label="DSpot"
                   style="push">
                <visibleWhen
@@ -38,10 +39,11 @@
             allPopups="false"
             locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
          <menu
-               label="STAMP"
-               id="DSpot.menu2">
+               commandId="eu.stamp.wp4.dspot.menu.wizard.command"
+               id="DSpot.menu2"
+               label="STAMP">
             <command
-                  commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
+                  commandId="eu.stamp.wp4.dspot.menu.wizard.command"
                   label="DSpot"
                   style="push">
                <visibleWhen
@@ -60,10 +62,11 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
-               label="STAMP"
-               id="DSpot.menu3">
+               commandId="eu.stamp.wp4.dspot.menu.wizard.command"
+               id="DSpot.menu"
+               label="STAMP">
             <command
-                  commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
+                  commandId="eu.stamp.wp4.dspot.menu.wizard.command"
                   label="DSpot"
                   style="push">
             </command>
@@ -126,15 +129,15 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             name="DSpot Launch Configuration"
-            delegate="eu.stamp.wp4.dspot.execution.launch.DSpotLaunchConfigurationDelegate"
+            delegate="eu.stamp.wp4.dspot.execution.launch.DSpotEclipseLaunchConfigurationDelegate"
             modes="run, debug"
-            id="eu.stamp.launchConfigurationDSpot">
+            id="eu.stamp.launchEclipseConfigurationDSpot">
       </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="eu.stamp.wp4.dspot.menu.wizard.command1"
+            commandId="eu.stamp.wp4.dspot.menu.wizard.command"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+6">
@@ -143,7 +146,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            type="eu.stamp.launchConfigurationDSpot"
+            type="eu.stamp.launchEclipseConfigurationDSpot"
             class="eu.stamp.wp4.dspot.execution.launch.ui.DSpotLaunchConfigurationTabGroup"
             id="eu.stamp.wp4.dspot.wizard.launchConfigurationTabGroup">
       </launchConfigurationTabGroup>
