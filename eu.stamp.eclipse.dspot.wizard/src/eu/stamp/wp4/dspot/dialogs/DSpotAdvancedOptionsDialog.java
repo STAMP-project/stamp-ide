@@ -51,7 +51,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
 	private String[] selection = {""};
 	private String pathPitResult = "";
 	private String mavenHome;
-	
+	private boolean unusedDialog = true;
 	
 	private boolean pitSelected = false;
 	
@@ -207,6 +207,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 }
     	 setMemoryData(timeOutSpinner.getSelection(),randomSeedSpinner.getSelection(),
     			 pathPitResultText.getText(), mySelection);
+    	 unusedDialog = false;
     	 super.okPressed();
      }
      
@@ -257,27 +258,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	 }
     	 this.selection = mySelection.toArray(new String[mySelection.size()]);}
      }
-     /**
-      * Method to obtain the information in the dialog
-      * @return a string array [0] randomSeed, [1] timeOut (ms),[2] test cases, [3] path pit result,[4] MAVEN_HOME
-      */
-   /*  public String[] getAdvancedParameters() {
-    	 
-    	    String[] advParameters = new String[5];                   // this is for the user information
-    	    if(randomSeed > 0) advParameters[0] = " --randomSeed " + randomSeed; else advParameters[0] = "";
-    	    if(timeOut > 0) advParameters[1] = " --timeOut " + timeOut; else advParameters[1] = "";
-    	    if(selection != null)if(selection.length > 0) {
-    	    if(selection[0] != null && !selection[0].isEmpty()) advParameters[2] = " -c " + selection[0].substring(selection[0].indexOf("/")+1);
-    	    for(int i = 1; i < selection.length; i++) {
-    	    	if(advParameters[i] != null && !advParameters[i].isEmpty()) advParameters[2] = advParameters[2] + 
-    	    			WizardConfiguration.getSeparator() + selection[i].substring(selection[i].indexOf("/")+1);}}
-    	    if(pathPitResult != null && !pathPitResult.isEmpty()) advParameters[3] = " -m " + pathPitResult;
-    	    if(mavenHome != null && !mavenHome.isEmpty()) advParameters[4] = " --maven-home " + mavenHome;
-    	    for(int i = 0; i < advParameters.length; i++) {
-    	    	if(advParameters[i] == null) advParameters[i] = "";
-    	    }
-    	    return advParameters;
-     }*/
+
      public void resetFromMemory() {
     	 if(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY) != null) 
     			 this.randomSeed = Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY));
@@ -303,5 +284,8 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     		 cases = cases + memory.separator + selection[i];
     	 }}
     	 memory.setDSpotValue(DSpotMemory.TEST_CASES_KEY, cases);
+     }
+     public boolean dialogUnused() {
+    	 return unusedDialog;
      }
 }
