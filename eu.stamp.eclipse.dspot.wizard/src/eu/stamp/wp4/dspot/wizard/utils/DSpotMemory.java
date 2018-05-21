@@ -46,8 +46,8 @@ public class DSpotMemory {
 		
 			information = information + key + value;
              }}
-		if(booleanParameters[0])information = information + " --verbose ";
-		if(booleanParameters[1])information = information +" --clean ";
+		if(booleanParameters[0])information = information + " --verbose";
+		if(booleanParameters[1])information = information +" --clean";
 		return information;
 	}
 	

@@ -12,8 +12,6 @@
  *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard.utils;
 
-import java.io.IOException;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,7 +20,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import eu.stamp.wp4.dspot.execution.handlers.DSpotExecutionHandler;
-import eu.stamp.wp4.dspot.view.DSpotView;
 
 /**
  *  This class describes the background invocation of Dspot 
@@ -32,17 +29,15 @@ public class DSpotEclipseJob extends Job {
 
 private WizardConfiguration conf;
 private String outputDirectory;
-private DSpotView view;
 private String Orders;
 	
 public DSpotEclipseJob(String path,
-		WizardConfiguration conf,String outputDirectory,DSpotView view) {
+		WizardConfiguration conf,String outputDirectory) {
    super("DSpot working");
 
     this.Orders = " -p " + path +" "+ conf.getDSpotMemory().getAsString();
 	this.conf = conf;
 	this.outputDirectory = outputDirectory;
-	this.view = view;
 } // end of the constructor
 
 @Override
@@ -55,18 +50,8 @@ protected IStatus run(IProgressMonitor monitor) {
  	} catch (ExecutionException e) {
  		e.printStackTrace();
  	}
-     
- 	//updateDSpotView();
  	
 	return Status.OK_STATUS;
 } // end of run
-/*
-private void updateDSpotView() {
-	try {
-		view.parseJSON(outputDirectory+"/"+conf.getPro().getElementName()+".json");
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-}*/
 
 }

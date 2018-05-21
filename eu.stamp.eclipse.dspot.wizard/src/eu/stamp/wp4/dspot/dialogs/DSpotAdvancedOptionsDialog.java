@@ -90,6 +90,7 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
  		 timeOutSpinner.setMaximum(100000); timeOutSpinner.setMinimum(500); timeOutSpinner.setIncrement(100);
  		 if(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY) != null)
  			 timeOutSpinner.setSelection(Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY)));
+ 		 else timeOutSpinner.setSelection(10000);
 
  		 /*
  		  *  Row 2 : randomSeed
