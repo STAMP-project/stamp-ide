@@ -102,9 +102,9 @@ public class DSpotWizardPage2 extends WizardPage {
 	private boolean resetAdvancedOptions = false;
 	
 	public DSpotWizardPage2(WizardConfiguration wConf) {
-		super("Second page");
-		setTitle("Second page");
-		setDescription("Information about the execution");
+		super("DSpot execution");
+		setTitle("DSpot execution");
+		setDescription("Configuration of the DSpot execution");
 		this.wConf = wConf;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		expDiag = new DSpotAdvancedOptionsDialog(shell, wConf);
