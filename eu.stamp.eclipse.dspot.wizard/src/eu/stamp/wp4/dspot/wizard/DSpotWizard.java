@@ -74,7 +74,7 @@ public class DSpotWizard extends Wizard{
 	@Override
 	public Image getDefaultPageImage() {
 	final URL iconStampURL = FileLocator.find(Platform.getBundle(DSpotWizardConstants.PLUGIN_NAME)
-			,new Path("images/Stamp.png"),null);
+			,new Path("images/stamp.png"),null);
 	ImageDescriptor descriptor = ImageDescriptor.createFromURL(iconStampURL);
 	return descriptor.createImage();
 	}

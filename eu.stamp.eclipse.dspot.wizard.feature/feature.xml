@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="eu.stamp.wp4.dspot.wizard.feature"
+      id="eu.stamp.eclipse.dspot.wizard.feature"
       label="STAMP Eclipse plugin for DSpot"
       version="1.0.0.qualifier"
       provider-name="Atos Spain S.A.">
@@ -115,10 +115,10 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </url>
 
    <plugin
-         id="eu.stamp.wp4.dspot.wizard"
+         id="eu.stamp.eclipse.dspot.wizard"
          download-size="0"
          install-size="0"
-         version="1.0.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
