@@ -114,8 +114,6 @@ public class DSpotWizardPage2 extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		
-		DSpotMemory dSpotMemory = wConf.getDSpotMemory();
-		
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
 		GridLayout layout = new GridLayout();    // the layout of the composite
