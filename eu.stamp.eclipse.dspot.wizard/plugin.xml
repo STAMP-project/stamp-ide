@@ -16,7 +16,7 @@
             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
          <menu
                commandId="eu.stamp.wp4.dspot.menu.wizard.command"
-               id="DSpot.menu1"
+               id="stamp.menu.package"
                label="STAMP">
             <command
                   commandId="eu.stamp.wp4.dspot.menu.wizard.command"
@@ -40,7 +40,7 @@
             locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
          <menu
                commandId="eu.stamp.wp4.dspot.menu.wizard.command"
-               id="DSpot.menu2"
+               id="stamp.menu.project"
                label="STAMP">
             <command
                   commandId="eu.stamp.wp4.dspot.menu.wizard.command"
@@ -63,7 +63,7 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
                commandId="eu.stamp.wp4.dspot.menu.wizard.command"
-               id="DSpot.menu"
+               id="stamp.menu.main"
                label="STAMP">
             <command
                   commandId="eu.stamp.wp4.dspot.menu.wizard.command"
