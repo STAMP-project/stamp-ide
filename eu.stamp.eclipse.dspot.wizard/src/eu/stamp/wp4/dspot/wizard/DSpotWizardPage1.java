@@ -72,8 +72,8 @@ public class DSpotWizardPage1 extends WizardPage {
 	
 
 	public DSpotWizardPage1(WizardConfiguration wConf,DSpotWizard wizard){
-		super("First page");
-		setTitle("First page");
+		super("Project configuration");
+		setTitle("Project configuration");
 		setDescription("Information about the project");
 		this.wConf = wConf;
 		this.wizard = wizard;
