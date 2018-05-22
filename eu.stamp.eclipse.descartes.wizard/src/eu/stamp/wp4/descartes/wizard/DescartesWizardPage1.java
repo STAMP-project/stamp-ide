@@ -1,11 +1,20 @@
 package eu.stamp.wp4.descartes.wizard;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
@@ -83,6 +92,12 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	@Override
 	public void createControl(Composite parent) {
 		
+		// loading the properties for the tooltip, the name of each property is
+		// the name of its corresponding widget
+		Properties tooltipsProperties = new Properties();
+		try {tooltipsProperties = getTheProperties("files/descartes_tooltips.properties");	
+		} catch (IOException e1) { e1.printStackTrace(); }
+		
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
 		GridLayout layout = new GridLayout();    // the layout of composite
@@ -120,6 +135,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         mutatorsTree.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         GridLayout Layforgr1 = new GridLayout();
         mutatorsTree.setLayout(Layforgr1);
+        mutatorsTree.setToolTipText(tooltipsProperties.getProperty("mutatorsTree"));
         
         for(int i = 0; i < mutatorsTexts.length; i++) {
          TreeItem item = new TreeItem(mutatorsTree,SWT.NONE);	
@@ -138,26 +154,36 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         Button removeMutatorButton = new Button(composite,SWT.PUSH);
         removeMutatorButton.setText("Remove selected mutators");
         GridDataFactory.fillDefaults().applyTo(removeMutatorButton);
+        removeMutatorButton.setToolTipText(tooltipsProperties.getProperty(
+        		"removeMutatorButton"));
         
         // a button to add a new mutator to the list (it opens a dialog with a text)
         Button addMutatorButton = new Button(composite,SWT.PUSH);
         addMutatorButton.setText("Add mutator");
         GridDataFactory.fillDefaults().applyTo(addMutatorButton);
+        addMutatorButton.setToolTipText(tooltipsProperties.getProperty(
+        		"addMutatorButton"));
         
         // a button to remove all the mutators in the list
         Button removeAllButton = new Button(composite,SWT.PUSH);
         removeAllButton.setText("Remove all");
         GridDataFactory.fillDefaults().applyTo(removeAllButton);
+        removeAllButton.setToolTipText(tooltipsProperties.getProperty(
+        		"removeAllButton"));
         
         // a button to revert the changes in the mutator list
         Button initialListButton = new Button(composite,SWT.PUSH);
         initialListButton.setText("Set initial mutators");
         GridDataFactory.fillDefaults().applyTo(initialListButton);
+        initialListButton.setToolTipText(tooltipsProperties.getProperty(
+        		"initialListButton"));
         
         // a button to set a default mutator list
         Button defaultMutatorsButton = new Button(composite,SWT.PUSH);
         defaultMutatorsButton.setText("Set default mutators");
         GridDataFactory.fillDefaults().applyTo(defaultMutatorsButton);
+        defaultMutatorsButton.setToolTipText(tooltipsProperties.getProperty(
+        		"defaultMutatorsButton"));
         
         Label space = new Label(composite,SWT.NONE);
         space.setText("");
@@ -221,17 +247,20 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         		items.add(it);}
         	}
         });
-        String[] defaultMutators = {"void","null","true","false","empty","0","1",
-    			"(byte)0","(byte)1","(short)1","(short)2","0L","1L","0.0","1.0","0.0f","1.0f",
-    			"'\\40'","'A'","\"\"","\"A\""};
+
+
+        String[] defaultMutators = {""};
+        try { defaultMutators = getDefaultMutators();
+		} catch (IOException e1) { e1.printStackTrace(); }
+        final String[] finalDefaultMutators = defaultMutators;
         defaultMutatorsButton.addSelectionListener(new SelectionAdapter(){
         	@Override
         	public void widgetSelected(SelectionEvent e) {
         		for(int i = items.size()-1; i >= 0; i--) items.remove(i);
         		mutatorsTree.removeAll();
-        		for(int i = 0; i < defaultMutators.length; i++) {
+        		for(int i = 0; i < finalDefaultMutators.length; i++) {
         		TreeItem it = new TreeItem(mutatorsTree,SWT.NONE);
-        		it.setText(defaultMutators[i]);
+        		it.setText(finalDefaultMutators[i]);
         		items.add(it);}
         	}
         });
@@ -356,6 +385,35 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	            }
 	        }
 	        return null;
+	}
+	
+	private String[] getDefaultMutators() throws IOException {
+
+		Properties properties = getTheProperties("files/default_mutators.properties");
+		
+		ArrayList<String> list = new ArrayList<String>(1);
+		Set<Object> set = properties.keySet();
+		for(Object o : set) list.add((String)o);
+	    Collections.sort(list);
+		String[] result = new String[list.size()];
+		for(int i = 0; i < list.size(); i++) result[i] = properties.getProperty(list.get(i));
+		return result;
+	}
+	/**
+	 * loads a properties object from a file
+	 * @param path properties file's relative path to the project folder
+	 * @return a properties object
+	 * @throws IOException
+	 */
+	private Properties getTheProperties(String path) throws IOException {
+		final URL propertiesURL = FileLocator.find(Platform.getBundle(
+				DescartesWizardConstants.DESCARTES_PLUGIN_ID),
+				new Path(path),null);
+		Properties properties = new Properties();
+		InputStream inputStream = propertiesURL.openStream();
+		properties.load(inputStream);
+		inputStream.close();
+		return properties;
 	}
 
 }

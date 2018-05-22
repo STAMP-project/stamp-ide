@@ -53,7 +53,7 @@ public class DescartesWizard extends Wizard {
 	@Override
 	public Image getDefaultPageImage() {
 	final URL iconStampURL = FileLocator.find(Platform.getBundle(
-			DescartesWizardConstants.DESCARTES_PLUGIN_ID),new Path("images/Stamp.png"),null);
+			DescartesWizardConstants.DESCARTES_PLUGIN_ID),new Path("images/stamp.png"),null);
 	ImageDescriptor descriptor = ImageDescriptor.createFromURL(iconStampURL);
 	return descriptor.createImage();
 	}
