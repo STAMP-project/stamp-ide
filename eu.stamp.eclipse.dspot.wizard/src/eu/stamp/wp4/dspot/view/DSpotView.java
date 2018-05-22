@@ -25,7 +25,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.google.gson.Gson;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
+import java.util.Arrays;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTimeJSON.DSpotClassTime;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON.TestCase;

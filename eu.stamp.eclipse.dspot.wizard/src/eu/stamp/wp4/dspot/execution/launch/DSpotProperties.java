@@ -14,9 +14,9 @@ package eu.stamp.wp4.dspot.execution.launch;
 
 public class DSpotProperties {
 	
-	public final static String MAIN_CLASS = "fr.inria.stamp.Main";
+	public final static String MAIN_CLASS = "eu.stamp_project.Main";
 	public final static String LAUNCH_CONF_ID = "eu.stamp.launchEclipseConfigurationDSpot";
-	public static final String DSPOT_JAR_URL = "platform:/plugin/eu.stamp.eclipse.dspot.wizard/lib/dspot-1.0.6-SNAPSHOT-jar-with-dependencies.jar";
+	public static final String DSPOT_JAR_URL = "platform:/plugin/eu.stamp.eclipse.dspot.wizard/lib/dspot-1.1.1-SNAPSHOT-jar-with-dependencies.jar";
 	public static String LAUNCH_CONF_NAME = "DSpot"; 
 
 }
