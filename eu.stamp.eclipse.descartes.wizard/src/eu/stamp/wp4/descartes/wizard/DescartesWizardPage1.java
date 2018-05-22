@@ -81,9 +81,10 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	private String pomName;
 
 	public DescartesWizardPage1(DescartesWizard wizard) {
-		super("First page");
+		super("Descartes configuration");
 		this.wizard = wizard;
-		setTitle("First page");
+		setTitle("Descartes configuration");
+		setDescription("Configuration of Descartes mutators");
 	}
 	
 	// widgets

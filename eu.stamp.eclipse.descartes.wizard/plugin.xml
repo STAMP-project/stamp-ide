@@ -15,7 +15,7 @@
             allPopups="false"
             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
          <menu
-               id="DSpot.menu1"
+               id="stamp.menu.package"
                label="STAMP">
             <command
                   commandId="eu.stamp.wp4.descartes.wizard.command"
@@ -38,7 +38,7 @@
             allPopups="false"
             locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
          <menu
-               id="DSpot.menu2"
+               id="stamp.menu.project"
                label="STAMP">
             <command
                   commandId="eu.stamp.wp4.descartes.wizard.command"
@@ -61,7 +61,7 @@
             allPopups="false"
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
-               id="DSpot.menu3"
+               id="stamp.menu.main"
                label="STAMP">
             <command
                   commandId="eu.stamp.wp4.descartes.wizard.command"
