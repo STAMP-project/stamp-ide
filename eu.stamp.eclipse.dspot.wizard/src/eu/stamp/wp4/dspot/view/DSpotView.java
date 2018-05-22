@@ -121,7 +121,7 @@ public class DSpotView extends ViewPart {
         	}
         });
         
-		for(String sr : files) if(sr.contains("mutants_killed.json")) { System.out.println(jsonPath+sr);
+		for(String sr : files) { System.out.println(jsonPath+sr);
 			parseMutantsKilled(
 				jsonPath+sr,gson);}
 
