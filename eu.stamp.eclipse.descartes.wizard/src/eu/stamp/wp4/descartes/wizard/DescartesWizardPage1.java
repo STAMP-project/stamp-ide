@@ -37,6 +37,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -103,6 +104,28 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		GridLayout layout = new GridLayout();    // the layout of composite
 		layout.numColumns = 3;
 		composite.setLayout(layout);
+		
+		
+		/*
+		 *  ROW 1
+		 */
+		Label configurationLabel = new Label(composite,SWT.NONE);
+		configurationLabel.setText("load configuration : ");
+		GridDataFactory.swtDefaults().grab(false, false).applyTo(configurationLabel);
+		
+		Combo configurationCombo = new Combo(composite,SWT.BORDER);
+		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(configurationCombo);
+		
+		/*
+		 *  ROW : 2 
+		 */
+		Label newConfigurationLabel = new Label(composite,SWT.NONE);
+		newConfigurationLabel.setText("create new configuration : ");
+		GridDataFactory.swtDefaults().grab(false, false).applyTo(newConfigurationLabel);
+		
+		Text configurationText = new Text(composite,SWT.BORDER);
+		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(configurationText);
+		
 		/*
 		 *   ROW 1 : path of the selected project
 		 */

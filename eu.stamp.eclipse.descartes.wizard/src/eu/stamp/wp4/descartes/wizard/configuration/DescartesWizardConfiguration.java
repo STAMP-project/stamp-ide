@@ -5,6 +5,9 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -18,6 +21,9 @@ public class DescartesWizardConfiguration {
 	private String projectPath;
 	
 	private DescartesWizardPomParser descartesParser;
+	
+	private ILaunchConfiguration[] configurations;
+	private int indexOfCurrentConfiguration = 0;
 	
 	public DescartesWizardConfiguration(){
 		jProject = DescartesWizardPomParser.obtainProject();
@@ -36,6 +42,8 @@ public class DescartesWizardConfiguration {
 				e.printStackTrace();
 			}
 		}
+		try { configurations = findConfigurations();
+		} catch (CoreException e) { e.printStackTrace(); }
 	}
 	
 	public DescartesWizardConfiguration(IJavaProject jProject) {
@@ -91,5 +99,29 @@ public class DescartesWizardConfiguration {
 		}
 		projectPath = jProject.getProject().getLocation().toString();	
 	}
+	public String[] getConfigurationNames() {
+		String[] result = new String[configurations.length];
+		for(int i = 0; i < configurations.length; i++)result[i] = configurations[i].getName();
+		return result;
+	}
+	public void setCurrentConfiguration(String name) {
+		for(int i = 0; i < configurations.length; i++)if(configurations[i]
+				.getName().equalsIgnoreCase(name)) {
+			indexOfCurrentConfiguration = i; return;
+		}
+	}
+	public ILaunchConfiguration getCurrentConfiguration() {
+		if(configurations.length > 0)return configurations[indexOfCurrentConfiguration];
+		return null; 
+		}
 	
+	private ILaunchConfiguration[] findConfigurations() throws CoreException {
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunchConfiguration[] configurations = manager.getLaunchConfigurations(
+				manager.getLaunchConfigurationType(DescartesWizardConstants
+						.LAUNCH_CONFIGURATION_DESCARTES_ID));
+		ILaunchConfiguration[] result = new ILaunchConfiguration[configurations.length];
+		for(int i = 0; i < configurations.length; i++) result[i] = configurations[i].getWorkingCopy();
+		return result;
+	}
 }

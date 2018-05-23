@@ -21,6 +21,7 @@ public class DescartesEclipseJob extends Job {
 	
 	private String projectPath;
 	private String pomName;
+	private String configurationName = "Descartes Launch";
 
 	public DescartesEclipseJob(String projectPath,String pomName) {
 		super("Descartes working");
@@ -37,10 +38,11 @@ public class DescartesEclipseJob extends Job {
 				DescartesWizardConstants.LAUNCH_CONFIGURATION_DESCARTES_ID);
 		 try {
 			ILaunchConfigurationWorkingCopy wc = t.newInstance(
-				        null, "Descartes Launch");
+				        null, configurationName);
             wc.setAttribute(MavenLaunchConstants.ATTR_POM_DIR,projectPath);
             wc.setAttribute(MavenLaunchConstants.ATTR_GOALS, "clean package org.pitest:pitest-maven:mutationCoverage -f "+pomName);
             wc.setAttribute(MavenLaunchConstants.PLUGIN_ID, DescartesWizardConstants.DESCARTES_PLUGIN_ID);
+            
             
             ILaunchConfiguration config = wc.doSave();   
   	        config.launch(ILaunchManager.RUN_MODE, null);
