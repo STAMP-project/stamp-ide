@@ -8,6 +8,7 @@ public abstract class DescartesWizardConstants {
 	public static final String PITEST_DEPENDENCY_ID = "eu.stamp-project";
 	public static final String PITEST_DEPENDENCY_ARTIFACT = "descartes";
 	public static final String PITEST_DEPENDENCY_VERSION = "1.1";
+	public static final String POM_NAME_LAUNCH_CONSTANT = "pom name";
 	public static final String LAUNCH_CONFIGURATION_DESCARTES_ID = 
 			"eu.stamp.wp4.descartes.wizard.launchConfigurationType";
 }

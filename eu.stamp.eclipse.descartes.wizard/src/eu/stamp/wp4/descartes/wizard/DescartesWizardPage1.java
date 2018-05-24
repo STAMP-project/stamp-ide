@@ -69,6 +69,12 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	private String[] mutatorsTexts;
 	
 	/**
+	 *  Name of the current configuration 
+	 *  or the name of the new configuration to be created
+	 */
+	private String configurationName = "Descartes Launch";
+	
+	/**
 	 *  this is the list with the items of the mutators list, initially 
 	 *  it will contain the mutators declared in pom.xml
 	 */
@@ -77,6 +83,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	private String[] initialNames;
 	private  Tree mutatorsTree;
 	private String pomName;
+	private Text pomText;
 
 	public DescartesWizardPage1(DescartesWizard wizard) {
 		super("Descartes configuration");
@@ -86,7 +93,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	}
 	
 	// widgets
-	Text projectText;
+	private Text projectText;
+	private Text configurationText;
 	
     private String projectPath;
 	
@@ -114,8 +122,10 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		GridDataFactory.swtDefaults().grab(false, false).applyTo(configurationLabel);
 		
 		Combo configurationCombo = new Combo(composite,SWT.BORDER);
+		configurationCombo.setEnabled(false);
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(configurationCombo);
-		
+		String[] configurations = wizard.getWizardConfiguration().getConfigurationNames();
+		for(String sr : configurations) configurationCombo.add(sr);
 		/*
 		 *  ROW : 2 
 		 */
@@ -123,11 +133,14 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		newConfigurationLabel.setText("create new configuration : ");
 		GridDataFactory.swtDefaults().grab(false, false).applyTo(newConfigurationLabel);
 		
-		Text configurationText = new Text(composite,SWT.BORDER);
-		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(configurationText);
+		configurationText = new Text(composite,SWT.BORDER);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(configurationText);
+		
+		Button configurationButton = new Button(composite,SWT.CHECK);
+		configurationButton.setSelection(true);
 		
 		/*
-		 *   ROW 1 : path of the selected project
+		 *   ROW 3 : path of the selected project
 		 */
 		Label projectLabel = new Label(composite,SWT.NONE);
 		projectLabel.setText("path of the project : ");
@@ -141,13 +154,13 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		projectButton.setText("Select a Project");
 		GridDataFactory.swtDefaults().applyTo(projectButton);
 		/*
-		 *   ROW 2
+		 *   ROW 4
 		 */
 		Label mutatorsLabel = new Label(composite,SWT.NONE);
 		mutatorsLabel.setText("Mutators : ");
 		GridDataFactory.fillDefaults().span(3, 1).indent(0, 8).applyTo(mutatorsLabel);
 		/*
-		 *   ROW 3 (multiple row) : list with the mutators and buttons to add,remove ...
+		 *   ROW 5 (multiple row) : list with the mutators and buttons to add,remove ...
 		 */
 		mutatorsTree = new Tree(composite,SWT.V_SCROLL | SWT.CHECK);
         GridData gd = new GridData(SWT.FILL,SWT.FILL,true,true);
@@ -212,18 +225,44 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         space.setText("");
         
         /*
-         *   ROW 4 : Pom file
+         *   ROW 6 : Pom file
          */
         Label pomLabel = new Label(composite,SWT.NONE);
         pomLabel.setText("name of the POM file : ");
         GridDataFactory.swtDefaults().grab(false, false).indent(0, 8).applyTo(pomLabel);
         
-        Text pomText = new Text(composite,SWT.BORDER);
+        pomText = new Text(composite,SWT.BORDER);
         pomText.setText("descartes_pom.xml");
         GridDataFactory.fillDefaults().grab(true, false).span(2, 1).indent(0, 8)
         .applyTo(pomText);
         
         // listeners
+        configurationCombo.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent e) {
+        		configurationText.setText("");
+        		configurationName = configurationCombo.getText();
+        		try {
+					DescartesWizardConfiguration conf = wizard.getWizardConfiguration();
+							conf.setCurrentConfiguration(configurationCombo.getText()); 
+					wizard.setWizardConfiguration(conf);
+					// now the wizard configuration is updated ready to update all the wizard parts
+					wizard.updateWizardParts();
+				} catch (CoreException e1) {
+					e1.printStackTrace();
+				}
+        	}
+        });
+        configurationButton.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent e) {
+        		boolean selection = configurationButton.getSelection();
+        		configurationText.setEnabled(selection);
+        		if(!selection)configurationText.setText("");
+        		configurationCombo.setEnabled(!selection);
+        		if(selection)configurationCombo.setText("");
+        	}
+        });
         projectButton.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -321,7 +360,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 
             initialNames = new String[items.size()];
             for(int i = 0; i < items.size(); i++) initialNames[i] = items.get(i).getText();}
-
+            
+		    if(pomText != null) pomText.setText(wConf.getPomName());
 	}
 	@Override
 	public void updateWizardReference(DescartesWizard wizard) {
@@ -334,6 +374,11 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		String[] texts = new String[items.size()];
 		for(int i = 0; i < items.size(); i++) texts[i] = items.get(i).getText();
 		return texts;
+	}
+	public String getConfigurationName() {
+		if(configurationText.getText() != null && !configurationText.getText().isEmpty())
+			configurationName =  configurationText.getText();
+		return configurationName;
 	}
 	/**
 	 * @return the name of the POM file to write

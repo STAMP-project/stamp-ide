@@ -60,7 +60,8 @@ public class DescartesWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		String pomName = one.getPomName();
-		DescartesEclipseJob job = new DescartesEclipseJob(wConf.getProjectPath(),pomName);
+		String configurationName = one.getConfigurationName();
+		DescartesEclipseJob job = new DescartesEclipseJob(wConf.getProjectPath(),pomName,configurationName);
 		String[] texts = one.getMutatorsSelection();
 		wConf.getDescartesParser().preparePom(texts,pomName);
 		job.schedule();
@@ -81,5 +82,8 @@ public class DescartesWizard extends Wizard {
 	public void setWizardConfiguration(DescartesWizardConfiguration wConf) {
 		this.wConf = wConf;
 		updateWizardParts();
+	}
+	public DescartesWizardConfiguration getWizardConfiguration() {
+		return wConf;
 	}
 }
