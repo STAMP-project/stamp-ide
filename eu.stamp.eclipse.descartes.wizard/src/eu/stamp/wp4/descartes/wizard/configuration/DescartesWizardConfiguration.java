@@ -22,15 +22,26 @@ import eu.stamp.wp4.descartes.wizard.utils.*;
 public class DescartesWizardConfiguration {
 
 	private IJavaProject jProject;
-	
 	private String projectPath;
 	
+	/**
+	 *  this object contains information of the pom and the methods to it's manipulation
+	 */
 	private DescartesWizardPomParser descartesParser;
 	
+	/**
+	 *  an array with all the saved configurations of Descartes type
+	 */
 	private ILaunchConfiguration[] configurations;
-	private int indexOfCurrentConfiguration = 0;
+	private int indexOfCurrentConfiguration = 0;  // to set and get the configuration in use
 	
+	/**
+	 *  this is the constructor called when the wizard is open, it takes the project
+	 *  from the eclipse selection
+	 */
 	public DescartesWizardConfiguration(){
+		
+		// get the project and check that it's maven
 		jProject = DescartesWizardPomParser.obtainProject();
 		if(jProject != null) { 
 			try {
@@ -41,16 +52,20 @@ public class DescartesWizardConfiguration {
 			e.printStackTrace();
 		}
          projectPath = jProject.getProject().getLocation().toString();} 
-			} catch (CoreException e) {
-				e.printStackTrace();
-			} catch (ParserConfigurationException e) {
+			} catch (ParserConfigurationException | CoreException e) {
 				e.printStackTrace();
 			}
 		}
+		// get the Descartes configurations array
 		try { configurations = findConfigurations();
 		} catch (CoreException e) { e.printStackTrace(); }
 	}
 	
+	/**
+	 * this constructor is use to build a wizard configuration from a project, it is called 
+	 * when the project is changed
+	 * @param jProject : project corresponding to the nerw wizard configuration
+	 */
 	public DescartesWizardConfiguration(IJavaProject jProject) {
 		this.jProject = jProject;
 		try {
@@ -69,11 +84,15 @@ public class DescartesWizardConfiguration {
 	public String getProjectPath() {
 		return projectPath;
 	}
+	/*
 	public Node[] getMutators() {
 		return descartesParser.getMutators();
-	}
+	}*/
+	/**
+	 * @return an array with the mutators names
+	 */
 	public String[] getMutatorsNames() {
-		String[] names = {""};
+		String[] names = {""}; 
 		Node[] mutators = descartesParser.getMutators();
 		if(mutators != null) {
 	    names = new String[mutators.length];

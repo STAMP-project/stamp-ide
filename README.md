@@ -29,7 +29,7 @@ after this select the project mutators and pom file to use, when you press finis
 ### Loading a stored configuration
 
 To load a stored configuration deselect the check button in the "create configuration" row, the "load configuration" combo will be set ennabled,
-then choose the desired configuration in the comobo list, when you select a configuration it's parameters are loaded and shown in page one, if you change
+then choose the desired configuration in the combo list, when you select a configuration it's parameters are loaded and shown in page one, if you change
 this parameters the changes will be saved after pressing the finish button.
 
 ### Change of project
