@@ -14,6 +14,8 @@ is displayed in the Eclipse console.
 
 ## User's manual
 
+<center>![DescartesWizard](images/DescartesWizard.png)</center>
+
 ### Opening the Wizard
 
 1. select a maven project.
@@ -26,6 +28,8 @@ A Descartes configuration consists of the path of a project, a set of mutators t
 To create a new configuration select the check button in the right of the "create new configuration" row and write a name for the configuration in the text,
 after this select the project mutators and pom file to use, when you press finish your new configuration will be saved and executed.
 
+<center>![configurations](images/conf.png)</center>
+
 ### Loading a stored configuration
 
 To load a stored configuration deselect the check button in the "create configuration" row, the "load configuration" combo will be set ennabled,
@@ -36,6 +40,8 @@ this parameters the changes will be saved after pressing the finish button.
 
 Push the select project button to open a project selection dialog, select a project and press the OK button, you will see the path of the new project
 in the "path of the project" text, you can also write the path of the project directly in the text box.
+
+<center>![project selection](images/projectSelection.png)</center>
 
 ### Create a list of mutators
 
@@ -52,12 +58,16 @@ The char mutators beguins and ends with ', for example 'A', 1 is an int mutator,
 1.0 a double mutator, the others are (byte)1, (short)1, 1L and 1.0f for numbers, 
 true and false for boolean, void for void methods, and null for others.
 
+<center>![adding a mutator](images/add.png)</center>
+
 #### Remove mutators
 
 To remove mutators from the list, select the check buttons in the left of the mutators to remove and push
 the "Remove selected mutators" button (that's the only purpose of the check buttons).
 
 If you want to remove all, push the "Remove all" button.
+
+<center>![removing mutators](images/remove.png)</center>
 
 #### Set the initial list of mutators
 
@@ -72,7 +82,11 @@ The default list is taken from a properties file  <path of the project>/files/de
 so you can edit it easily, the list is shown in the wizard, using the alphabetical order of the properties keys,
 the mutator with the key ab will be under the mutator with the key aa. 
 
+<center>![default mutators](images/default.png)</center>
+
 ### Set the name of the Descartes pom file
 
 To execute Descartes the plugin writes an .xml file to use it as pom file in order not to touch the pom.xml of the project,
 you can set the name of this file writing a name (it must end with .xml) in the "name of the POM file" text box in the bottom of the page.
+
+<center>![pom name row](images/pom.png)</center>
