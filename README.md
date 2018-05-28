@@ -29,6 +29,8 @@ in the main bar STAMP > DSPOT or with ctrl + 6.
 To create a new configuration select the check button in the right of the "New configuration" row in page one and write a name for the configuration in the text
 after this, select the Dspot parameters in the wizard, when you press finish button your new configuration will be saved and executed.
 
+<center>![configuration support](images/loadConfiguration.png)</center>
+
 ### Loading a stored configuration
 
 To load a stored configuration deselect the check button in the "create configuration" row in page one, the "load configuration" combo will be set ennabled,
@@ -40,11 +42,15 @@ if you change this parameters the changes will be saved after pressing the finis
 Push the select project button (page one) to open a project selection dialog, select a project and press the OK button,
 you will see the path of the new project in the "path of the project" text, you can also write the path of the project directly in the text box.
 
+<center>![ select a project](images/selectProject.png)</center>
+
 ### Check the information about the project
 
 The fields in page one contains information about the project to write the DSpot properties file.
 
 This information is loaded automatically when opening the wizard or changing of project, check them and correct it if necessary.
+
+<center>![ project information](images/projectInformation.png)</center>
 
 #### Set the path of the sources and the java version
 
@@ -59,20 +65,28 @@ Under this combos there is another one for the Java version.
 In the "Optional information" group, at the botton of the first page there is a text box titled "Path of the output folder" to set the path of the folder
 to store the reports and files produced by DSpot.
 
+<center>![output Folder](images/outputFolder.png)</center>
+
 ### set the number of iterations
 
 At the top of the second page there is a spinner to set the number of amplification iterations. A larger number may help to improve the test but
 it will take more time.
 
+<center>![iterations spinner](images/iterations.png)</center>
+
 ### Select the test classes to amplify 
 
 Push the "Select tests" button in page two, a dialog will be opened, select the test classes to use (multiple selection is allowed), 
-you can also write the full names of the tests to use directly in the text box of the same row, separated by : in Mac or Linux and by ; in Windows.  
+you can also write the full names of the tests to use directly in the text box of the same row, separated by : in Mac or Linux and by ; in Windows.
+
+<center>![tests selection](images/iterations.png)</center>  
   
 ### Select the amplifier
 
 The list titled "Amplifier" in page two contains the DSpot amplifiers, select them clicking on them (multiple selection is allowed with crtl),
 the selected ones appear in blue, if there is not selection all will be used.
+
+<center>![amplifiers list](amplifiers/iterations.png)</center> 
 
 ### Choose a test criterion
 
@@ -103,7 +117,7 @@ select the folder pushing the "Select folder" button or write the path in the te
 
 ### Verbose and clean
 
-At the left botton of page two there are to check buttons called clean and verbose, verbose shows more information in console, 
+At the left botton of page two there are two check buttons called clean and verbose, verbose shows more information in console, 
 if clean is enabled, DSpot will remove the out directory if exists, else it will append the results to the exist files.
 
 ### MAVEN_HOME
