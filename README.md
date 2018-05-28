@@ -64,8 +64,52 @@ to store the reports and files produced by DSpot.
 At the top of the second page there is a spinner to set the number of amplification iterations. A larger number may help to improve the test but
 it will take more time.
 
- 
+### Select the test classes to amplify 
 
+Push the "Select tests" button in page two, a dialog will be opened, select the test classes to use (multiple selection is allowed), 
+you can also write the full names of the tests to use directly in the text box of the same row, separated by : in Mac or Linux and by ; in Windows.  
+  
+### Select the amplifier
+
+The list titled "Amplifier" in page two contains the DSpot amplifiers, select them clicking on them (multiple selection is allowed with crtl),
+the selected ones appear in blue, if there is not selection all will be used.
+
+### Choose a test criterion
+
+The combo in the "Test Criterion" row in page two, contains a list of the possible criterions to be maximized during the amplification,
+if there is not selection the default will be used (PitMutantScoreSelector).
+
+### Select test cases
+
+To select the specific test cases to amplify go to the advanced options dialog clicking on the same name link in page two,
+select the case or cases to use in the list titled "test cases", under the list there is a button to clean the list, finally press OK. 
+
+### Max tests amplified
+
+The spinner in the "Max test amplified" row in page two allows specifying the maximum number of amplified tests that dspot keeps before generating assertion.
+
+### Time out and randomm seed
+
+Open the advanced options dialog by clicking the link in page two, the upper spinner is titled "Time out (ms)" 
+it specifies the degenerated test's time out.
+
+Under this row there is another spinner titled random seed to specify a seed for the random object the default value is 23
+
+### Path pit result
+
+Open the advanced options dialog by clicking the link in page two, there is a row called "path pit result" 
+only enabled if the test criterion is PitMutantScoreSelector, it specifies the path to the .csv of the original result of Pit Test (expert),
+select the folder pushing the "Select folder" button or write the path in the text box.
+
+### Verbose and clean
+
+At the left botton of page two there are to check buttons called clean and verbose, verbose shows more information in console, 
+if clean is enabled, DSpot will remove the out directory if exists, else it will append the results to the exist files.
+
+### MAVEN_HOME
+
+If the enviroment variable MAVEN_HOME is not set a warning dialog will prevent you after opening the wizard, you can set the MAVEN_HOME to use
+in the advanced options dialog, if you want to do this, select the check button in the row "set MAVEN_HOME" to enable the text box and write the path.
 
 
 
