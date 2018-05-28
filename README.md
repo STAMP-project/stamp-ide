@@ -74,6 +74,8 @@ If you want to remove all, push the "Remove all" button.
 The initial mutators are those declared in the pom.xml file of the project, when you open the wizard (or when you select a new project)
 the initial list is shown in the mutators area, if you want to come back to the initial list, press the "Set initial mutators button".
 
+<center>![set initial mutators](images/initial.png)</center>
+
 #### Set default mutators
 
 To set a default list of mutators press the "Set default mutators button".
