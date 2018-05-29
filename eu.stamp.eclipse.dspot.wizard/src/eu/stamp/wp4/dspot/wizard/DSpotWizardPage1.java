@@ -12,13 +12,19 @@
  *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -83,6 +89,19 @@ public class DSpotWizardPage1 extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		
+		Properties tooltipsProperties = new Properties();
+		final URL propertiesURL = FileLocator.find(Platform.getBundle(
+				DSpotWizardConstants.PLUGIN_NAME),
+				new Path("files/dspot_tooltips1.properties"),null);
+		      InputStream inputStream;
+		
+	    try {
+			inputStream = propertiesURL.openStream();
+		tooltipsProperties.load(inputStream);
+		inputStream.close();} catch (IOException e2) {
+			e2.printStackTrace(); }
+
+		
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
 		GridLayout layout = new GridLayout();    // the layout of composite
@@ -97,6 +116,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	    
 		Combo configCombo = new Combo(composite,SWT.BORDER); // combo in (1,1) to select a configuration
 		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(configCombo);
+		configCombo.setToolTipText(tooltipsProperties.getProperty("configCombo"));
 		List<ILaunchConfiguration> configurations = wConf.getLaunchConfigurations();
 		for(ILaunchConfiguration laun : configurations) {
 			configCombo.add(laun.getName());
@@ -112,6 +132,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		txNewConfig.setText("<Type configuration name>");
 		txNewConfig.setEnabled(true);
 		GridDataFactory.fillDefaults().grab(true, false).indent(0, VS).applyTo(txNewConfig);
+		txNewConfig.setToolTipText(tooltipsProperties.getProperty("txNewConfig"));
 		txNewConfig.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -132,6 +153,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		Button btNewConfig = new Button(composite,SWT.CHECK); // button in (2,1) to enable the new dialog text
 		GridDataFactory.swtDefaults().indent(0, VS).applyTo(btNewConfig);
+		btNewConfig.setToolTipText(tooltipsProperties.getProperty("btNewConfig"));
 		btNewConfig.setSelection(true);
 		
 		btNewConfig.addSelectionListener(new SelectionAdapter() { // selection listener of the 
@@ -159,7 +181,6 @@ public class DSpotWizardPage1 extends WizardPage {
 		String direction = wConf.getProjectPath();
 		String[] sour = wConf.getSources();
 		boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
-
 		
 		Text tx1 = new Text(composite,SWT.BORDER);    // Text in (3,2) for the poject's path
 		tx1.setText(direction);
@@ -191,6 +212,7 @@ public class DSpotWizardPage1 extends WizardPage {
         Button projectSelectionbt = new Button(composite,SWT.PUSH);
         GridDataFactory.swtDefaults().indent(0, VS).applyTo(projectSelectionbt);
 		projectSelectionbt.setText("Select a Project");
+		projectSelectionbt.setToolTipText(tooltipsProperties.getProperty("projectSelectionbt"));
 		
 		// fourth row (4,x)      Source path
 		Label lb2 = new Label(composite,SWT.NONE);   // Label in (4,1)
@@ -198,6 +220,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb2);
         Combo combo0 = new Combo(composite,SWT.BORDER);  // Combo in (4,2) for the source's path
         GridDataFactory.fillDefaults().grab(true,false).span(2,1).indent(0, VS).applyTo(combo0);
+        combo0.setToolTipText(tooltipsProperties.getProperty("combo0"));
         combo0.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -216,6 +239,7 @@ public class DSpotWizardPage1 extends WizardPage {
         
         Combo combo2 = new Combo(composite,SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo2);
+        combo2.setToolTipText(tooltipsProperties.getProperty("combo2"));
         for(int i = 0; i < sour.length; i++) {  // add the sources to the combo
         	if(isTest[i]) {  // if it is not a test package
         	combo2.add(sour[i]);} else { combo0.add(sour[i]); }
@@ -283,6 +307,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		Text tx4 = new Text(gr,SWT.BORDER);     // Text in (1,2)(gr) for the output's folder path
 		tx4.setText("dspot-out/");
 		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx4);
+		tx4.setToolTipText(tooltipsProperties.getProperty("tx4"));
 		tx4.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -307,6 +332,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		Text tx5 = new Text(gr,SWT.BORDER);    // Text in (2,2)(gr) for the filter
 		tx5.setText("");
 		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx5);
+		tx5.setToolTipText(tooltipsProperties.getProperty("tx5"));
 		tx5.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}

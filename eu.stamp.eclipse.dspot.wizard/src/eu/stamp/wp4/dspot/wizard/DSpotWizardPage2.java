@@ -31,11 +31,18 @@ import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.swt.widgets.List;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -63,6 +70,7 @@ import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 
+import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.dialogs.*;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotMemory;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
@@ -114,6 +122,18 @@ public class DSpotWizardPage2 extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		
+		Properties tooltipsProperties = new Properties();
+		final URL propertiesURL = FileLocator.find(Platform.getBundle(
+				DSpotWizardConstants.PLUGIN_NAME),
+				new Path("files/dspot_tooltips2.properties"),null);
+		      InputStream inputStream;
+		
+	    try {
+			inputStream = propertiesURL.openStream();
+		tooltipsProperties.load(inputStream);
+		inputStream.close();} catch (IOException e2) {
+			e2.printStackTrace(); }
+		
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
 		GridLayout layout = new GridLayout();    // the layout of the composite
@@ -131,6 +151,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		spin = new Spinner(composite,SWT.NONE); // A spinner in  (1,2)
 		spin.setMinimum(1);                             // for the number of iterations i
 		spin.setLayoutData(gd);
+		spin.setToolTipText(tooltipsProperties.getProperty("spin"));
 		spin.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -155,6 +176,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		gd.verticalIndent = 8;
 		gd.horizontalSpan = 2;
 		tx1.setLayoutData(gd);
+		tx1.setToolTipText(tooltipsProperties.getProperty("tx1"));
 		tx1.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -214,7 +236,8 @@ public class DSpotWizardPage2 extends WizardPage {
 	    combo1.add("CloverCoverageSelector"); combo1.add("BranchCoverageTestSelector");
 	    combo1.add("JacocoCoverageSelector"); combo1.add("TakeAllSelector");
 	    combo1.add("ChangeDetectorSelector"); combo1.add("");
-
+        combo1.setToolTipText(tooltipsProperties.getProperty("combo1"));
+        combo1.setToolTipText(tooltipsProperties.getProperty("combo1"));
 	    // five row (5,x)
 	    Label lb6 = new Label(composite,SWT.NONE);  // A label in (5,1)
 	    lb6.setText("Max test amplified : ");
@@ -228,19 +251,14 @@ public class DSpotWizardPage2 extends WizardPage {
 	    lb7.setText("Verbose ");
 	    
 	    button = new Button(composite,SWT.CHECK);  // check button in (6,2)
-	    /*button.addSelectionListener(new SelectionAdapter() {
-	    	@Override
-	    	public void widgetSelected(SelectionEvent e) {
-	    		if(button.getSelection()) { dSpotMemory.setDSpotValue("verbose", "true"); return; }
-	    		dSpotMemory.setDSpotValue("verbose", "false");
-	    	}
-	    }); // end of the selection listener*/
+        button.setToolTipText(tooltipsProperties.getProperty("button"));
 	    
 	    Label space = new Label(composite,SWT.NONE);
 	    space.setText("");
 	    
 	    Link link = new Link(composite,SWT.NONE);  // this link in (6,4) open the dialog with the advanced options
 	    link.setText("<A>Dspot advanced options</A>");
+	    link.setToolTipText(tooltipsProperties.getProperty("link"));
 	    link.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
@@ -260,15 +278,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    lb8.setText("clean ");
 	    
 	    button2 = new Button(composite,SWT.CHECK);  // check button in (6,2)
-	   /* button2.addSelectionListener(new SelectionAdapter() {
-	    	@Override
-	    	public void widgetSelected(SelectionEvent e) {
-	    		//clean = button2.getSelection();
-	    		if(button2.getSelection()) { dSpotMemory.setDSpotValue("clean", "true"); return; }
-	    		dSpotMemory.setDSpotValue("clean", "false");
-	    	}
-	    }); // end of the selection listener*/
-	    
+	    button2.setToolTipText(tooltipsProperties.getProperty("button2"));
 		// required to avoid an error in the System
 		setControl(composite);
 		setPageComplete(false);	

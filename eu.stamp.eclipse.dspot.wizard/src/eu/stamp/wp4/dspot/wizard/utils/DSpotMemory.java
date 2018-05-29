@@ -14,7 +14,7 @@ public class DSpotMemory {
 	public static final String AMPLIFIERS_KEY = " -a ";
 	public static final String TIMEOUT_KEY = " --timeOut ";
 	public static final String TEST_CASES_KEY = " -c ";
-	public static final String MAX_TEST_KEY = " -g ";
+	public static final String MAX_TEST_KEY = " --max-test-amplified ";
 	public static final String TEST_CLASSES_KEY = " -t ";
 	public static final String CRITERION_KEY = " -s ";
 	public static final String PATH_PIT_RESULT_KEY = " -m ";

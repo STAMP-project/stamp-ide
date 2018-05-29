@@ -581,7 +581,7 @@ public class WizardConfiguration {
 		for (ILaunchConfiguration conf: confs) {
 			result.add(conf.getWorkingCopy());
 		}
-		
+
 		return result;
 	}
 	
