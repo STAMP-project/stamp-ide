@@ -55,14 +55,26 @@ import org.w3c.dom.Text;
 public class DescartesWizardPomParser {
 	
 	private Document pomDocument;
+	private String pomName;
 	private String projectPath;
 	private Node[] mutators;
 	
 	public DescartesWizardPomParser(IJavaProject jProject) 
 			throws ParserConfigurationException, SAXException, IOException {
+		constructPomParser(jProject,"pom.xml");
+	}
+	
+	public DescartesWizardPomParser(IJavaProject jProject, String pom) 
+			throws ParserConfigurationException, SAXException, IOException {
+		constructPomParser(jProject, pom);
+		pomName = pom;
+	}
+	
+	private void constructPomParser(IJavaProject jProject, String pom) 
+			throws ParserConfigurationException, SAXException, IOException {
 		
 		projectPath = jProject.getProject().getLocation().toString();
-		File pomFile = new File(projectPath + "/pom.xml");  // the pom file in every maven project
+		File pomFile = new File(projectPath +"/"+ pom);  // the pom file in every maven project
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	    pomDocument = builder.parse(pomFile);  // use DOM to parse the pom.xml
 	    NodeList mutatorsList = findNodeList("mutator",findBaseNode()); // look for the mutators
@@ -76,6 +88,9 @@ public class DescartesWizardPomParser {
 	 */
 	public Node[] getMutators() {
 		return mutators;
+	}
+	public String getPomName() {
+		return pomName;
 	}
     /**
      * this method prepares the pom tree to be write to a xml file making the necessary method calls

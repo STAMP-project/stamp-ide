@@ -65,14 +65,15 @@ public class DescartesWizard extends Wizard {
 	@Override
 	public Image getDefaultPageImage() {
 	final URL iconStampURL = FileLocator.find(Platform.getBundle(
-			DescartesWizardConstants.DESCARTES_PLUGIN_ID),new Path("images/Stamp.png"),null);
+			DescartesWizardConstants.DESCARTES_PLUGIN_ID),new Path("images/stamp.png"),null);
 	ImageDescriptor descriptor = ImageDescriptor.createFromURL(iconStampURL);
 	return descriptor.createImage();
 	}
 	@Override
 	public boolean performFinish() {
 		String pomName = one.getPomName();
-		DescartesEclipseJob job = new DescartesEclipseJob(wConf.getProjectPath(),pomName);
+		String configurationName = one.getConfigurationName();
+		DescartesEclipseJob job = new DescartesEclipseJob(wConf.getProjectPath(),pomName,configurationName);
 		String[] texts = one.getMutatorsSelection();
 		wConf.getDescartesParser().preparePom(texts,pomName);
 		job.schedule();
@@ -93,5 +94,8 @@ public class DescartesWizard extends Wizard {
 	public void setWizardConfiguration(DescartesWizardConfiguration wConf) {
 		this.wConf = wConf;
 		updateWizardParts();
+	}
+	public DescartesWizardConfiguration getWizardConfiguration() {
+		return wConf;
 	}
 }
