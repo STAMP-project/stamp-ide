@@ -237,6 +237,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         	@Override
         	public void widgetSelected(SelectionEvent e) {
         		configurationText.setText("");
+        		if(configurationCombo.getText() != null)if(!configurationCombo.getText().isEmpty()) {
         		configurationName = configurationCombo.getText();
         		try {
 					DescartesWizardConfiguration conf = wizard.getWizardConfiguration();
@@ -246,7 +247,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 					wizard.updateWizardParts();
 				} catch (CoreException e1) {
 					e1.printStackTrace();
-				}
+				}}
         	}
         });
         configurationButton.addSelectionListener(new SelectionAdapter() {

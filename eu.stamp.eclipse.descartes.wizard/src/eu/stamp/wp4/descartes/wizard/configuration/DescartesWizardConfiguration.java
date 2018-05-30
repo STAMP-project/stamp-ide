@@ -64,7 +64,7 @@ public class DescartesWizardConfiguration {
 	/**
 	 * this constructor is use to build a wizard configuration from a project, it is called 
 	 * when the project is changed
-	 * @param jProject : project corresponding to the nerw wizard configuration
+	 * @param jProject : project corresponding to the new wizard configuration
 	 */
 	public DescartesWizardConfiguration(IJavaProject jProject) {
 		this.jProject = jProject;
@@ -84,10 +84,6 @@ public class DescartesWizardConfiguration {
 	public String getProjectPath() {
 		return projectPath;
 	}
-	/*
-	public Node[] getMutators() {
-		return descartesParser.getMutators();
-	}*/
 	/**
 	 * @return an array with the mutators names
 	 */
