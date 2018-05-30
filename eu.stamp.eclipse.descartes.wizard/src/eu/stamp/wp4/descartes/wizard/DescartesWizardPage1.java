@@ -116,6 +116,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		Label configurationLabel = new Label(composite,SWT.NONE);
 		configurationLabel.setText("load configuration : ");
 		GridDataFactory.swtDefaults().grab(false, false).applyTo(configurationLabel);
+		configurationLabel.setToolTipText(tooltipsProperties.getProperty(
+				"configurationLabel"));
 		
 		Combo configurationCombo = new Combo(composite,SWT.BORDER); // combo for saved configurations
 		configurationCombo.setEnabled(false);
@@ -128,6 +130,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		Label newConfigurationLabel = new Label(composite,SWT.NONE);
 		newConfigurationLabel.setText("create new configuration : ");
 		GridDataFactory.swtDefaults().grab(false, false).applyTo(newConfigurationLabel);
+		newConfigurationLabel.setToolTipText(tooltipsProperties.getProperty(
+				"newConfigurationLabel"));
 		
 		configurationText = new Text(composite,SWT.BORDER);  // text for the name of a new configuration
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(configurationText);
@@ -141,6 +145,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		Label projectLabel = new Label(composite,SWT.NONE);
 		projectLabel.setText("path of the project : ");
 		GridDataFactory.swtDefaults().grab(false, false).applyTo(projectLabel);
+		projectLabel.setToolTipText(tooltipsProperties.getProperty(
+				"projectLabel"));
 		
 		projectText = new Text(composite,SWT.BORDER);  
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(projectText);
@@ -149,6 +155,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		Button projectButton = new Button(composite,SWT.PUSH);  // opens a dialog to select a project
 		projectButton.setText("Select a Project");
 		GridDataFactory.swtDefaults().applyTo(projectButton);
+		projectButton.setToolTipText(tooltipsProperties.getProperty(
+				"projectButton"));
 		/*
 		 *   ROW 4 : Mutators list title
 		 */
@@ -226,6 +234,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         Label pomLabel = new Label(composite,SWT.NONE);
         pomLabel.setText("name of the POM file : ");
         GridDataFactory.swtDefaults().grab(false, false).indent(0, 8).applyTo(pomLabel);
+        pomLabel.setToolTipText(tooltipsProperties.getProperty("pomLabel"));
         
         pomText = new Text(composite,SWT.BORDER);
         pomText.setText("descartes_pom.xml");
