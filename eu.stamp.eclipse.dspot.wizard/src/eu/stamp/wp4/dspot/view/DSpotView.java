@@ -40,14 +40,10 @@ public class DSpotView extends ViewPart {
 	private TreeColumn keyTreeColumn;
     private TreeColumn valueTreeColumn;
 	
-	private boolean isDone = false;
-	
 	@Inject IWorkbench workbench;
 
-	@PostConstruct
+	@Override
 	public void createPartControl(Composite parent) {
-		
-		if(isDone) return;  // this avoids executing the method several times (producing several tables)
 		
 		GridLayoutFactory.fillDefaults().applyTo(parent);
 		
@@ -63,9 +59,6 @@ public class DSpotView extends ViewPart {
 		valueTreeColumn = new TreeColumn(tree,SWT.CENTER);
 		valueTreeColumn.setText("value");
 		valueTreeColumn.setWidth(50);
-
-		isDone = true;
-		
 	}
 
 	@Override
@@ -76,7 +69,6 @@ public class DSpotView extends ViewPart {
 		File file = (new File(jsonPath));  // the output folder 
 		
 		// looking for the times JSON
-		@SuppressWarnings("unchecked")
 		List<String> fileList = new LinkedList<String>(Arrays.asList(file.list()));
 		String timeFile = "";
 		for(int i = 0; i < fileList.size(); i++)if(!fileList.get(i).contains(".json")) {

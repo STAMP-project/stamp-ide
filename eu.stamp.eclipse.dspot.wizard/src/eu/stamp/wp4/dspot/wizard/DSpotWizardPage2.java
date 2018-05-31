@@ -129,7 +129,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		      InputStream inputStream;
 		
 	    try {
-			inputStream = propertiesURL.openStream();
+		inputStream = propertiesURL.openStream();
 		tooltipsProperties.load(inputStream);
 		inputStream.close();} catch (IOException e2) {
 			e2.printStackTrace(); }
@@ -143,6 +143,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		// First row (1,x) number of iterations
 		Label lb1 = new Label(composite,SWT.NONE);  // A label in (1,1)
 		lb1.setText("Number of iterations :  ");
+		lb1.setToolTipText(tooltipsProperties.getProperty("lb1"));
 		
 		GridData gd = new GridData(SWT.FILL,SWT.FILL,true,false);
 		gd.heightHint = 20;
@@ -151,7 +152,6 @@ public class DSpotWizardPage2 extends WizardPage {
 		spin = new Spinner(composite,SWT.NONE); // A spinner in  (1,2)
 		spin.setMinimum(1);                             // for the number of iterations i
 		spin.setLayoutData(gd);
-		spin.setToolTipText(tooltipsProperties.getProperty("spin"));
 		spin.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -169,6 +169,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		// Second row (2,x) execution classes
 		Label lb2 = new Label(composite,SWT.NONE);   // A label in (2,1)
 		lb2.setText("Execution classes :  ");
+		lb2.setToolTipText(tooltipsProperties.getProperty("lb2"));
 				
 		tx1 = new Text(composite,SWT.BORDER);  // A text in (2,2) for the execution classes
 		tx1.setText("");
@@ -176,7 +177,6 @@ public class DSpotWizardPage2 extends WizardPage {
 		gd.verticalIndent = 8;
 		gd.horizontalSpan = 2;
 		tx1.setLayoutData(gd);
-		tx1.setToolTipText(tooltipsProperties.getProperty("tx1"));
 		tx1.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -198,6 +198,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	 
      Button fileButton = new Button(composite,SWT.PUSH); // A button in (2,3), it opens the file dialog
      fileButton.setText("Select tests");
+     fileButton.setToolTipText(tooltipsProperties.getProperty("fileButton"));
      fileButton.addSelectionListener(new SelectionAdapter() {
     	 @Override
     	 public void widgetSelected(SelectionEvent e) {
@@ -215,6 +216,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		// Third row (3,x) Method
 		Label lb3 = new Label(composite,SWT.NONE);   // A label in (3,1)
 		lb3.setText("Amplifier :  ");
+		lb3.setToolTipText(tooltipsProperties.getProperty("lb3"));
 		
 		amplifiersList = new List(composite,SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);  // list to select the amplifiers
 		gd = new GridData(SWT.FILL,SWT.FILL,true,false);
@@ -227,6 +229,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    // row five (5,x)
 	    Label lb5 = new Label(composite,SWT.NONE); // A label in (5,1)
 	    lb5.setText("Test Criterion : ");
+	    lb5.setToolTipText(tooltipsProperties.getProperty("lb5"));
 	    
 	    combo1 = new Combo(composite,SWT.BORDER);  // combo for the test criterion in (4,2)
 	    gd = new GridData(SWT.FILL,SWT.FILL,true,false);
@@ -236,11 +239,10 @@ public class DSpotWizardPage2 extends WizardPage {
 	    combo1.add("CloverCoverageSelector"); combo1.add("BranchCoverageTestSelector");
 	    combo1.add("JacocoCoverageSelector"); combo1.add("TakeAllSelector");
 	    combo1.add("ChangeDetectorSelector"); combo1.add("");
-        combo1.setToolTipText(tooltipsProperties.getProperty("combo1"));
-        combo1.setToolTipText(tooltipsProperties.getProperty("combo1"));
 	    // five row (5,x)
 	    Label lb6 = new Label(composite,SWT.NONE);  // A label in (5,1)
 	    lb6.setText("Max test amplified : ");
+	    lb6.setToolTipText(tooltipsProperties.getProperty("lb6"));
 	    
 	    spin1 = new Spinner(composite,SWT.BORDER);
 	    spin1.setMinimum(50); spin1.setIncrement(50); spin1.setMaximum(4000); spin1.setSelection(200);
