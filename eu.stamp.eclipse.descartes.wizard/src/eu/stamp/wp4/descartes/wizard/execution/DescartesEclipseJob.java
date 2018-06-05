@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -26,6 +27,7 @@ import org.eclipse.debug.core.ILaunchManager;
 
 import org.eclipse.m2e.actions.MavenLaunchConstants;
 
+import eu.stamp.wp4.descartes.wizard.utils.DescartesHtmlManager;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
 @SuppressWarnings("restriction")
@@ -57,8 +59,12 @@ public class DescartesEclipseJob extends Job {
             wc.setAttribute(MavenLaunchConstants.PLUGIN_ID, DescartesWizardConstants.DESCARTES_PLUGIN_ID);
             wc.setAttribute(DescartesWizardConstants.POM_NAME_LAUNCH_CONSTANT, pomName);
             
-            ILaunchConfiguration config = wc.doSave();   
-  	        config.launch(ILaunchManager.RUN_MODE, null);
+            ILaunchConfiguration config = wc.doSave(); 
+  	        ILaunch launch = config.launch(ILaunchManager.RUN_MODE, null);
+  	        while(!launch.isTerminated());
+            DescartesHtmlManager htmlManager = new DescartesHtmlManager(projectPath + "/target/pit-reports");
+            htmlManager.openBrowsers();
+            
 			
 		} catch (CoreException e) {
 			e.printStackTrace();

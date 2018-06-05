@@ -112,5 +112,20 @@
             type="eu.stamp.wp4.descartes.wizard.launchConfigurationType">
       </launchConfigurationTabGroup>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="eu.stamp.category"
+            name="STAMP">
+      </category>
+      <view
+            category="eu.stamp.category"
+            class="eu.stamp.wp4.descartes.view.DescartesView"
+            id="eu.stamp.wp4.descartes.view.DescartesView"
+            inject="true"
+            name="Descartes view"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>
