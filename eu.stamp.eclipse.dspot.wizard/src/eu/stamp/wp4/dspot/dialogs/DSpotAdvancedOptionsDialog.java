@@ -12,12 +12,20 @@
  *******************************************************************************/
 package eu.stamp.wp4.dspot.dialogs;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.TreeSet;
 
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -34,6 +42,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 
+import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotMemory;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
@@ -41,7 +50,7 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
  *  This class describes a dialog to set the advanced options of Dspot execution,
  *  it will be open by a link called advanced options in page 2
  */
-public class DSpotAdvancedOptionsDialog extends Dialog{
+public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
 	
 	private WizardConfiguration wConf;  // to obtain the possible test cases
 	
@@ -70,8 +79,32 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
 		this.wConf = wConf;
 	}
 	@Override
+	public void create() {
+		super.create();
+		setTitle("Advanced options");
+		setMessage("This dialog allows to set more DSpot parameters");
+		final URL iconStampURL = FileLocator.find(Platform.getBundle(DSpotWizardConstants.PLUGIN_NAME)
+				,new Path("images/stamp.png"),null);
+		ImageDescriptor descriptor = ImageDescriptor.createFromURL(iconStampURL);
+		setTitleImage(descriptor.createImage());
+	}
+	
+	@Override
      protected Control createDialogArea(Composite parent) {
     	 
+		// load the properties for the tooltips
+		Properties tooltipsProperties = new Properties();
+		final URL propertiesURL = FileLocator.find(Platform.getBundle(
+				DSpotWizardConstants.PLUGIN_NAME),
+				new Path("files/dspot_tooltips_dialog.properties"),null);
+		      InputStream inputStream;
+		
+	    try {
+		inputStream = propertiesURL.openStream();
+		tooltipsProperties.load(inputStream);
+		inputStream.close();} catch (IOException e2) {
+			e2.printStackTrace(); }
+		
     	 /*
     	  *  Row 1 : timeOut
     	  */
@@ -81,13 +114,20 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
  		 composite.setLayout(layout);
  		 int vSpace = 8;
  		 
+ 		 Label space = new Label(composite,SWT.NONE);
+ 		 space.setText("");
+ 		 GridDataFactory.fillDefaults().span(2, 1).applyTo(space);
+ 		 
  		 Label timeOutLabel = new Label(composite,SWT.NONE);
  		 timeOutLabel.setText("Time out (ms) ");
  		 GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(timeOutLabel);
+ 		 timeOutLabel.setToolTipText(tooltipsProperties.getProperty("timeOutLabel"));
  		 
  		 timeOutSpinner = new Spinner(composite,SWT.BORDER);
  		 GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(0, vSpace).applyTo(timeOutSpinner);
  		 timeOutSpinner.setMaximum(100000); timeOutSpinner.setMinimum(500); timeOutSpinner.setIncrement(100);
+ 		 
+ 		 
  		 if(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY) != null)
  			 timeOutSpinner.setSelection(Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY)));
  		 else timeOutSpinner.setSelection(10000);
@@ -96,8 +136,9 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
  		  *  Row 2 : randomSeed
  		  */
  		 final Label randomSeedLabel = new Label(composite,SWT.NONE);
- 		 randomSeedLabel.setText("random seed : ");
+ 		 randomSeedLabel.setText("Random seed : ");
  		 GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(randomSeedLabel);
+ 		 randomSeedLabel.setToolTipText(tooltipsProperties.getProperty("randomSeedLabel"));
  		 
  		 randomSeedSpinner = new Spinner(composite,SWT.BORDER);
  		 randomSeedSpinner.setMinimum(1); randomSeedSpinner.setSelection(randomSeed);
@@ -107,8 +148,9 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
  		  *  Row 3 : list for the test cases
  		  */
  		 final Label listLabel = new Label(composite,SWT.NONE);
- 		 listLabel.setText("test cases : ");
+ 		 listLabel.setText("Test cases : ");
  		 GridDataFactory.fillDefaults().align(SWT.LEFT,SWT.CENTER).indent(0, vSpace).applyTo(listLabel);
+ 		 listLabel.setToolTipText(tooltipsProperties.getProperty("listLabel"));
     	 
     	 list = new List(composite,SWT.MULTI);
     	 String[] cases = wConf.getTestCases();
@@ -124,24 +166,27 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	  *  Row 4 : button to clean the test cases list
     	  */
     	 final Label buttonLabel = new Label(composite,SWT.NONE);
-    	 buttonLabel.setText(" push to deselect all test cases : ");
+    	 buttonLabel.setText("Push to deselect all test cases : ");
     	 GridDataFactory.fillDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(buttonLabel);
     	 
     	 final Button button = new Button(composite,SWT.PUSH);
-    	 button.setText("clean list");
+    	 button.setText("Clean list");
     	 GridDataFactory.swtDefaults().span(2, 1).align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(button);
+    	 button.setToolTipText(tooltipsProperties.getProperty("button"));
     	 
     	 /*
     	  *  Row 5 : pathPitResult
     	  */
     	 final Label pathPitResultLabel = new Label(composite,SWT.NONE);
-    	 pathPitResultLabel.setText("path pit result : ");
+    	 pathPitResultLabel.setText("Path PIT result : ");
     	 GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(pathPitResultLabel);
+    	 pathPitResultLabel.setToolTipText(tooltipsProperties.getProperty("pathPitResultLabel"));
     	 
     	 final Button pathPitResultButton = new Button(composite,SWT.NONE);
     	 pathPitResultButton.setText("Select folder");
     	 pathPitResultButton.setEnabled(pitSelected);
     	 GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).indent(0, vSpace).applyTo(pathPitResultButton);
+    	 pathPitResultButton.setToolTipText(tooltipsProperties.getProperty("pathPitResultButton"));
     	 
     	 pathPitResultText = new Text(composite,SWT.BORDER);
     	 pathPitResultText.setEnabled(pitSelected);
@@ -152,7 +197,8 @@ public class DSpotAdvancedOptionsDialog extends Dialog{
     	  *  Row 6 : MAVEN_HOME
     	  */
     	 final Label mavenLabel = new Label(composite,SWT.NONE);
-    	 mavenLabel.setText(" set MAVEN_HOME");
+    	 mavenLabel.setText("Set MAVEN_HOME");
+    	 mavenLabel.setToolTipText(tooltipsProperties.getProperty("mavenLabel"));
     	 
     	 final Button mavenHomeButton = new Button(composite,SWT.CHECK); 
     	 GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).indent(0, vSpace).applyTo(mavenHomeButton);

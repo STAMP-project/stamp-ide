@@ -96,7 +96,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		      InputStream inputStream;
 		
 	    try {
-			inputStream = propertiesURL.openStream();
+		inputStream = propertiesURL.openStream();
 		tooltipsProperties.load(inputStream);
 		inputStream.close();} catch (IOException e2) {
 			e2.printStackTrace(); }
@@ -113,10 +113,10 @@ public class DSpotWizardPage1 extends WizardPage {
 		// 	first row (1,x) use saved configuration
 		Label lb0 = new Label(composite,SWT.NONE);  // label in (1,0)
 		lb0.setText("Use saved configuration : ");
+		lb0.setToolTipText(tooltipsProperties.getProperty("lb0"));
 	    
 		Combo configCombo = new Combo(composite,SWT.BORDER); // combo in (1,1) to select a configuration
 		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(configCombo);
-		configCombo.setToolTipText(tooltipsProperties.getProperty("configCombo"));
 		List<ILaunchConfiguration> configurations = wConf.getLaunchConfigurations();
 		for(ILaunchConfiguration laun : configurations) {
 			configCombo.add(laun.getName());
@@ -127,12 +127,12 @@ public class DSpotWizardPage1 extends WizardPage {
 		Label lbNewConfig = new Label(composite,SWT.NONE); // label in (2,1)
 		GridDataFactory.swtDefaults().indent(0, VS).applyTo(lbNewConfig);
 		lbNewConfig.setText("New Configuration : ");
+		lbNewConfig.setToolTipText(tooltipsProperties.getProperty("lbNewConfig"));
 		
 		Text txNewConfig = new Text(composite,SWT.BORDER); // text in (2,2) for the name of a new configuration
 		txNewConfig.setText("<Type configuration name>");
 		txNewConfig.setEnabled(true);
 		GridDataFactory.fillDefaults().grab(true, false).indent(0, VS).applyTo(txNewConfig);
-		txNewConfig.setToolTipText(tooltipsProperties.getProperty("txNewConfig"));
 		txNewConfig.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -176,6 +176,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		Label lb1 = new Label(composite,SWT.NONE);     // Label in (3,1)
 		lb1.setText("Path of the project :        ");
 		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb1);
+		lb1.setToolTipText(tooltipsProperties.getProperty("lb1"));
 		
 		// Obtain the path of the project
 		String direction = wConf.getProjectPath();
@@ -217,10 +218,11 @@ public class DSpotWizardPage1 extends WizardPage {
 		// fourth row (4,x)      Source path
 		Label lb2 = new Label(composite,SWT.NONE);   // Label in (4,1)
 		lb2.setText("Path of the source : ");
+		lb2.setToolTipText(tooltipsProperties.getProperty("lb2"));
+		
 		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb2);
         Combo combo0 = new Combo(composite,SWT.BORDER);  // Combo in (4,2) for the source's path
         GridDataFactory.fillDefaults().grab(true,false).span(2,1).indent(0, VS).applyTo(combo0);
-        combo0.setToolTipText(tooltipsProperties.getProperty("combo0"));
         combo0.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -236,10 +238,10 @@ public class DSpotWizardPage1 extends WizardPage {
 		Label lb3 = new Label(composite,SWT.NONE);   // Label in (5,1)
 		lb3.setText("Path of the source test : ");
 		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb3);
-        
+        lb3.setToolTipText(tooltipsProperties.getProperty("lb3"));
+		
         Combo combo2 = new Combo(composite,SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo2);
-        combo2.setToolTipText(tooltipsProperties.getProperty("combo2"));
         for(int i = 0; i < sour.length; i++) {  // add the sources to the combo
         	if(isTest[i]) {  // if it is not a test package
         	combo2.add(sour[i]);} else { combo0.add(sour[i]); }
@@ -275,6 +277,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		Label lb4 = new Label(composite,SWT.NONE);  // Label in (6,1)
 		lb4.setText("Java version : ");
 		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb4);
+		lb4.setToolTipText(tooltipsProperties.getProperty("lb4"));
 		
 		Combo combo1 = new Combo(composite,SWT.NONE);  // Combo in (6,2) for the version
 		combo1.add("8"); combo1.add("7"); combo1.add("6"); combo1.add("5");
@@ -301,13 +304,13 @@ public class DSpotWizardPage1 extends WizardPage {
 		gr.setLayout(layout2);
 		
 		// first row in group gr (1,x)(gr)
-		lb1 = new Label(gr,SWT.NONE);               // Label in (1,1)(gr)
-		lb1.setText("Path of the output folder : ");
+		Label lbOutput = new Label(gr,SWT.NONE);               // Label in (1,1)(gr)
+		lbOutput.setText("Path of the output folder : ");
+		lbOutput.setToolTipText(tooltipsProperties.getProperty("lbOutput"));
 		
 		Text tx4 = new Text(gr,SWT.BORDER);     // Text in (1,2)(gr) for the output's folder path
 		tx4.setText("dspot-out/");
 		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx4);
-		tx4.setToolTipText(tooltipsProperties.getProperty("tx4"));
 		tx4.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -326,13 +329,13 @@ public class DSpotWizardPage1 extends WizardPage {
 			}	
 		});
 		
-		lb2 = new Label(gr,SWT.NONE);    // Label in (2,1)(gr)
-		lb2.setText("Filter :  ");
+		Label lbFilter = new Label(gr,SWT.NONE);    // Label in (2,1)(gr)
+		lbFilter.setText("Filter :  ");
+		lbFilter.setToolTipText(tooltipsProperties.getProperty("lbFilter"));
 		
 		Text tx5 = new Text(gr,SWT.BORDER);    // Text in (2,2)(gr) for the filter
 		tx5.setText("");
 		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx5);
-		tx5.setToolTipText(tooltipsProperties.getProperty("tx5"));
 		tx5.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -462,8 +465,6 @@ public class DSpotWizardPage1 extends WizardPage {
 	        dialog.setInput(JavaCore.create(fWorkspaceRoot));
 	        dialog.addFilter(filter);
 	        dialog.setHelpAvailable(false);
-	        
-	      
 
 	        if(dialog.open() == Window.OK) {
 	            Object[] results = dialog.getResult();

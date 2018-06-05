@@ -18,9 +18,9 @@ Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
  org.eclipse.debug.ui,
  org.eclipse.e4.ui.workbench,
- org.eclipse.e4.ui.model.workbench,
  org.eclipse.e4.core.contexts,
- com.google.gson
+ com.google.gson,
+ org.eclipse.e4.ui.model.workbench
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
   javax.inject;version="1.0.0"
