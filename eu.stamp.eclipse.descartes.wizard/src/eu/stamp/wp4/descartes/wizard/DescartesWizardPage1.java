@@ -1,5 +1,6 @@
 package eu.stamp.wp4.descartes.wizard;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -22,6 +23,7 @@ import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -48,12 +50,20 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
+import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
+import com.richclientgui.toolbox.validation.ValidatingField;
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
+import com.richclientgui.toolbox.validation.validator.IFieldValidator;
+
 import eu.stamp.wp4.descartes.wizard.configuration.DescartesWizardConfiguration;
 import eu.stamp.wp4.descartes.wizard.configuration.IDescartesWizardPart;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
 @SuppressWarnings("restriction")
 public class DescartesWizardPage1 extends WizardPage implements IDescartesWizardPart{
+	
+    private static final int DECORATOR_POSITION = SWT.TOP | SWT.LEFT;
+    private static final int DECORATOR_MARGIN_WIDTH = 1;
 	
 	/**
 	 *  An instance for the wizard to call the update method 
@@ -83,25 +93,36 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	
 	// widgets
 	private Tree mutatorsTree;
-	private Text projectText;
-	private Text configurationText;
-	private Text pomText;
+	private Combo configurationCombo;
+	private ValidatingField<String> projectField;
+	private ValidatingField<String> configurationField;
+	private ValidatingField<String> pomField;
+	
+	private Properties tooltipsProperties;
+    private StringValidationToolkit strValToolkit = null;
+    private final IFieldErrorMessageHandler errorMessageHandler;
 
 	public DescartesWizardPage1(DescartesWizard wizard) {
 		super("Descartes configuration");
 		this.wizard = wizard;
 		setTitle("Descartes configuration");
 		setDescription("Configuration of Descartes mutators");
+		
+		// loading the properties for the tooltip, the name of each property is
+		// the name of its corresponding widget
+		tooltipsProperties = new Properties();
+		try {tooltipsProperties = getTheProperties("files/descartes_tooltips.properties");	
+		} catch (IOException e1) { e1.printStackTrace(); }
+		
+		errorMessageHandler = new DescartesWizardErrorHandler();
+		strValToolkit = new StringValidationToolkit(DECORATOR_POSITION,
+        		DECORATOR_MARGIN_WIDTH,true);
+        
+        strValToolkit.setDefaultErrorMessageHandler(errorMessageHandler);
 	}
 	
 	@Override
 	public void createControl(Composite parent) {
-		
-		// loading the properties for the tooltip, the name of each property is
-		// the name of its corresponding widget
-		Properties tooltipsProperties = new Properties();
-		try {tooltipsProperties = getTheProperties("files/descartes_tooltips.properties");	
-		} catch (IOException e1) { e1.printStackTrace(); }
 		
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
@@ -109,60 +130,22 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 		
+        // ROW 1 : Load configuration
+		createLabel(composite,"load configuration : ","configurationLabel");
 		
-		/*
-		 *  ROW 1 : Load configuration
-		 */
-		Label configurationLabel = new Label(composite,SWT.NONE);
-		configurationLabel.setText("load configuration : ");
-		GridDataFactory.swtDefaults().grab(false, false).applyTo(configurationLabel);
-		configurationLabel.setToolTipText(tooltipsProperties.getProperty(
-				"configurationLabel"));
-		
-		Combo configurationCombo = new Combo(composite,SWT.BORDER); // combo for saved configurations
+		configurationCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY); // combo for saved configurations
 		configurationCombo.setEnabled(false);
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(configurationCombo);
 		String[] configurations = wizard.getWizardConfiguration().getConfigurationNames();
 		for(String sr : configurations) configurationCombo.add(sr);
-		/*
-		 *  ROW 2 : Create new configuration
-		 */
-		Label newConfigurationLabel = new Label(composite,SWT.NONE);
-		newConfigurationLabel.setText("create new configuration : ");
-		GridDataFactory.swtDefaults().grab(false, false).applyTo(newConfigurationLabel);
-		newConfigurationLabel.setToolTipText(tooltipsProperties.getProperty(
-				"newConfigurationLabel"));
 		
-		configurationText = new Text(composite,SWT.BORDER);  // text for the name of a new configuration
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(configurationText);
-		
-		Button configurationButton = new Button(composite,SWT.CHECK); 
-		configurationButton.setSelection(true);   // enables-disables the configuration text and combo
-		
-		/*
-		 *   ROW 3 : path of the selected project
-		 */
-		Label projectLabel = new Label(composite,SWT.NONE);
-		projectLabel.setText("path of the project : ");
-		GridDataFactory.swtDefaults().grab(false, false).applyTo(projectLabel);
-		projectLabel.setToolTipText(tooltipsProperties.getProperty(
-				"projectLabel"));
-		
-		projectText = new Text(composite,SWT.BORDER);  
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(projectText);
-		projectText.setText(projectPath);
-		
-		Button projectButton = new Button(composite,SWT.PUSH);  // opens a dialog to select a project
-		projectButton.setText("Select a Project");
-		GridDataFactory.swtDefaults().applyTo(projectButton);
-		projectButton.setToolTipText(tooltipsProperties.getProperty(
-				"projectButton"));
-		/*
-		 *   ROW 4 : Mutators list title
-		 */
-		Label mutatorsLabel = new Label(composite,SWT.NONE);
+		createConfigurationField(composite);  // ROW 2 : Create new configuration
+		createProjectField(composite); //  ROW 3 : path of the selected project
+
+		Label mutatorsLabel = new Label(composite,SWT.NONE);  // ROW 4 : Mutators list title
 		mutatorsLabel.setText("Mutators : ");
 		GridDataFactory.fillDefaults().span(3, 1).indent(0, 8).applyTo(mutatorsLabel);
+		
 		/*
 		 *   ROW 5 (multiple row) : list with the mutators and buttons to add,remove ...
 		 */
@@ -231,21 +214,13 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         /*
          *   ROW 6 : Pom file
          */
-        Label pomLabel = new Label(composite,SWT.NONE);
-        pomLabel.setText("name of the POM file : ");
-        GridDataFactory.swtDefaults().grab(false, false).indent(0, 8).applyTo(pomLabel);
-        pomLabel.setToolTipText(tooltipsProperties.getProperty("pomLabel"));
-        
-        pomText = new Text(composite,SWT.BORDER);
-        pomText.setText("descartes_pom.xml");
-        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).indent(0, 8)
-        .applyTo(pomText);
+        createPomField(composite);
         
         // listeners
         configurationCombo.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
-        		configurationText.setText("");
+        		((Text)configurationField.getControl()).setText("");
         		if(configurationCombo.getText() != null)if(!configurationCombo.getText().isEmpty()) {
         		configurationName = configurationCombo.getText();
         		try {
@@ -259,24 +234,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 				}}
         	}
         });
-        configurationButton.addSelectionListener(new SelectionAdapter() {
-        	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        		boolean selection = configurationButton.getSelection();
-        		configurationText.setEnabled(selection);
-        		if(!selection)configurationText.setText("");
-        		configurationCombo.setEnabled(!selection);
-        		if(selection)configurationCombo.setText("");
-        	}
-        });
-        projectButton.addSelectionListener(new SelectionAdapter() {
-        	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        		IJavaProject jProject = showProjectDialog();
-        		if(jProject != null) wizard
-        		.setWizardConfiguration(new DescartesWizardConfiguration(jProject));
-        	}
-        });
+
         removeMutatorButton.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -333,26 +291,138 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         	}
         });
         
-        pomText.addKeyListener(new KeyListener() {
-        	@Override
-        	public void keyPressed(KeyEvent e) {}
-        	@Override
-        	public void keyReleased(KeyEvent e) {
-        		if(!pomText.getText().isEmpty())pomName = pomText.getText();
-        	}
-        });
-        
 		// required to avoid an error in the System
 		setControl(composite);
 		setPageComplete(true);	  
 		}
-
-	@Override
-	public void updateDescartesWizardPart(DescartesWizardConfiguration wConf) {
+	
+	private void createProjectField(Composite composite) {
+		
+		createLabel(composite,"path of the project : ","projectLabel");
+		
+		projectField = strValToolkit.createTextField(composite, new IFieldValidator<String>() {
+			@Override
+			public String getErrorMessage() { return " Project's folder not found "; }
+			@Override
+			public String getWarningMessage() { return ""; }
+			@Override
+			public boolean isValid(String contents) {
+				File file = new File(contents);
+				if(file.exists())if(file.isDirectory()) return true;
+				return false;
+			}
+			@Override
+			public boolean warningExist(String contents) { return false; }	
+		}, true,projectPath);
+		
+		GridDataFactory.fillDefaults().grab(true, false).indent(10, 0)
+		.applyTo(projectField.getControl());
+		
+		Button projectButton = new Button(composite,SWT.PUSH);  // opens a dialog to select a project
+		projectButton.setText("Select a Project");
+		GridDataFactory.swtDefaults().applyTo(projectButton);
+		projectButton.setToolTipText(tooltipsProperties.getProperty(
+				"projectButton"));
+		 projectButton.addSelectionListener(new SelectionAdapter() {
+	        	@Override
+	        	public void widgetSelected(SelectionEvent e) {
+	        		IJavaProject jProject = showProjectDialog();
+	        		if(jProject != null) wizard
+	        		.setWizardConfiguration(new DescartesWizardConfiguration(jProject));
+	        	}
+	        });
+	}
+	
+	private void createConfigurationField(Composite composite) {
+		
+		createLabel(composite,"create new configuration : ","newConfigurationLabel");
+		
+		configurationField = strValToolkit.createTextField(composite,new IFieldValidator<String>() {
+			@Override
+			public String getErrorMessage() { return "Configuration name is empty"; }
+			@Override
+			public String getWarningMessage() { return ""; }
+			@Override
+			public boolean isValid(String contents) { 
+				if(configurationField != null)if(configurationField.getControl().isEnabled())
+					return !contents.isEmpty();
+				return true;
+				}
+			@Override
+			public boolean warningExist(String contents) { return false; }
+			
+		},false,"new_configuration");	
+		
+		GridDataFactory.fillDefaults().grab(true, false).indent(10, 0)
+		.applyTo(configurationField.getControl());
+		
+		Button configurationButton = new Button(composite,SWT.CHECK); 
+		configurationButton.setSelection(true);   // enables-disables the configuration text and combo
+        configurationButton.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent e) {
+        		boolean selection = configurationButton.getSelection();
+        		configurationField.getControl().setEnabled(selection);
+        		if(selection)((Text)configurationField.getControl()).setText("new_configuration");
+        		if(!selection)((Text)configurationField.getControl()).setText("");
+        		configurationCombo.setEnabled(!selection);
+        		if(selection)configurationCombo.setText("");
+        	}
+        });
+	}
+	
+	private void createPomField(Composite composite) {
+		
+		createLabel(composite,"name of the POM file : ","pomLabel");
+		
+		pomField = strValToolkit.createTextField(composite, new IFieldValidator<String>() {
+			boolean flag;  // two possible messages 0 and 1
+			@Override
+			public String getErrorMessage() {
+				if(flag) return "Pom name must end with .xml";
+				return "Pom name is empty";
+			}
+			@Override
+			public String getWarningMessage() { return null; }
+			@Override
+			public boolean isValid(String contents) {
+				if(contents.isEmpty()) { flag = false; return false; }
+				if(!contents.endsWith(".xml")) { flag = true; return false; }
+				return true;
+			}
+			@Override
+			public boolean warningExist(String contents) { return false; }
+		}, false, "descartes_pom.xml");
+		
+		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(10, 0)
+		.applyTo(pomField.getControl());
+		
+        pomField.getControl().addKeyListener(new KeyListener() {
+        	@Override
+        	public void keyPressed(KeyEvent e) {}
+        	@Override
+        	public void keyReleased(KeyEvent e) {
+        		if(!((Text)pomField.getControl()).getText().isEmpty())
+        			pomName = ((Text)pomField.getControl()).getText();
+        	}
+        });
+	}
+	
+    private void createLabel(Composite composite,String labelText,String propertyKey) {
+	   
+		Label label = new Label(composite,SWT.NONE);
+		label.setText(labelText);
+		GridDataFactory.swtDefaults().grab(false, false).grab(false, false).applyTo(label);
+		label.setToolTipText(tooltipsProperties.getProperty(propertyKey));
+	}
+    
+   @Override
+   public void updateDescartesWizardPart(DescartesWizardConfiguration wConf) {
 		
 		// update project path
 		projectPath = wConf.getProjectPath();
-		if(projectText != null) { if(!projectText.isDisposed()) projectText.setText(projectPath);}
+		if(projectField != null) { if(!projectField.getControl().isDisposed())
+			((Text)projectField.getControl()).setText(projectPath);}
 		
 		// update mutators
 		mutatorsTexts = wConf.getMutatorsTexts();
@@ -373,7 +443,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
             for(int i = 0; i < items.size(); i++) initialNames[i] = items.get(i).getText();}
             
 		    // update pom's name
-		    if(pomText != null) pomText.setText(wConf.getPomName());
+		    if(pomField != null)((Text)pomField.getControl()).setText(wConf.getPomName());
 	}
 	
 	@Override
@@ -389,8 +459,10 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		return texts;
 	}
 	public String getConfigurationName() {
-		if(configurationText.getText() != null && !configurationText.getText().isEmpty())
-			configurationName =  configurationText.getText();
+		if(configurationField != null)if(((Text)configurationField.getControl())
+				.getText().isEmpty())
+			configurationName =  ((Text)configurationField.getControl()).getText();
+		if(configurationName.isEmpty())configurationName = configurationCombo.getText();
 		return configurationName;
 	}
 	/**
@@ -500,5 +572,25 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		inputStream.close();
 		return properties;
 	}
-
+	/**
+	 *
+	 */
+	class DescartesWizardErrorHandler implements IFieldErrorMessageHandler{
+		@Override
+		public void clearMessage() {
+			setErrorMessage(null);
+			setMessage(null,DialogPage.ERROR);	
+		}
+		@Override
+		public void handleErrorMessage(String message, String input) {
+		 setMessage(null,DialogPage.INFORMATION);
+		 setErrorMessage(message);	
+		}
+		@Override
+		public void handleWarningMessage(String message, String input) {
+		 setErrorMessage(null);
+		 setMessage(message,DialogPage.WARNING);	
+		}
+		
+	}
 }
