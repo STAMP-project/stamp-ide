@@ -75,6 +75,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	private boolean[] Comp = {true,true,true,true};  // this is to set next page
 	private WizardConfiguration wConf;
 	private DSpotWizard wizard;
+	private Properties tooltipsProperties;
 	
 
 	public DSpotWizardPage1(WizardConfiguration wConf,DSpotWizard wizard){
@@ -83,24 +84,24 @@ public class DSpotWizardPage1 extends WizardPage {
 		setDescription("Information about the project");
 		this.wConf = wConf;
 		this.wizard = wizard;
+		
+		 tooltipsProperties = new Properties();
+			final URL propertiesURL = FileLocator.find(Platform.getBundle(
+					DSpotWizardConstants.PLUGIN_NAME),
+					new Path("files/dspot_tooltips1.properties"),null);
+			      InputStream inputStream;
+			
+		    try {
+			inputStream = propertiesURL.openStream();
+			tooltipsProperties.load(inputStream);
+			inputStream.close();} catch (IOException e2) {
+				e2.printStackTrace(); }
+
 	} // end of the constructor
 	
  
 	@Override
 	public void createControl(Composite parent) {
-		
-		Properties tooltipsProperties = new Properties();
-		final URL propertiesURL = FileLocator.find(Platform.getBundle(
-				DSpotWizardConstants.PLUGIN_NAME),
-				new Path("files/dspot_tooltips1.properties"),null);
-		      InputStream inputStream;
-		
-	    try {
-		inputStream = propertiesURL.openStream();
-		tooltipsProperties.load(inputStream);
-		inputStream.close();} catch (IOException e2) {
-			e2.printStackTrace(); }
-
 		
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
@@ -124,10 +125,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		configCombo.setEnabled(false);
 		
 		// second row (2,x) New Configuration
-		Label lbNewConfig = new Label(composite,SWT.NONE); // label in (2,1)
-		GridDataFactory.swtDefaults().indent(0, VS).applyTo(lbNewConfig);
-		lbNewConfig.setText("New Configuration : ");
-		lbNewConfig.setToolTipText(tooltipsProperties.getProperty("lbNewConfig"));
+		createLabel(composite,"New Configuration : ","lbNewConfig");  // label in (2,1)
 		
 		Text txNewConfig = new Text(composite,SWT.BORDER); // text in (2,2) for the name of a new configuration
 		txNewConfig.setText("<Type configuration name>");
@@ -172,11 +170,8 @@ public class DSpotWizardPage1 extends WizardPage {
 	        }
 });
 		
-		// third row  (3,x)     Project's path
-		Label lb1 = new Label(composite,SWT.NONE);     // Label in (3,1)
-		lb1.setText("Path of the project :        ");
-		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb1);
-		lb1.setToolTipText(tooltipsProperties.getProperty("lb1"));
+		// third row  (3,x)     Project's path  
+		createLabel(composite,"Path of the project :        ","lb1"); // Label in (3,1)
 		
 		// Obtain the path of the project
 		String direction = wConf.getProjectPath();
@@ -215,12 +210,9 @@ public class DSpotWizardPage1 extends WizardPage {
 		projectSelectionbt.setText("Select a Project");
 		projectSelectionbt.setToolTipText(tooltipsProperties.getProperty("projectSelectionbt"));
 		
-		// fourth row (4,x)      Source path
-		Label lb2 = new Label(composite,SWT.NONE);   // Label in (4,1)
-		lb2.setText("Path of the source : ");
-		lb2.setToolTipText(tooltipsProperties.getProperty("lb2"));
-		
-		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb2);
+		// fourth row (4,x)      Source path  
+		createLabel(composite,"Path of the source : ","lb2"); // Label in (4,1)
+	
         Combo combo0 = new Combo(composite,SWT.BORDER);  // Combo in (4,2) for the source's path
         GridDataFactory.fillDefaults().grab(true,false).span(2,1).indent(0, VS).applyTo(combo0);
         combo0.addSelectionListener(new SelectionAdapter() {
@@ -235,10 +227,7 @@ public class DSpotWizardPage1 extends WizardPage {
         }); // end of the selection listener
         
 		// fifth row (5,x)   SourceTest path
-		Label lb3 = new Label(composite,SWT.NONE);   // Label in (5,1)
-		lb3.setText("Path of the source test : ");
-		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb3);
-        lb3.setToolTipText(tooltipsProperties.getProperty("lb3"));
+        createLabel(composite,"Path of the source test : ","lb3");
 		
         Combo combo2 = new Combo(composite,SWT.BORDER);
         GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo2);
@@ -274,10 +263,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		
         
 		// sixth row (6,x) Java version
-		Label lb4 = new Label(composite,SWT.NONE);  // Label in (6,1)
-		lb4.setText("Java version : ");
-		GridDataFactory.fillDefaults().grab(false, false).indent(0, VS).applyTo(lb4);
-		lb4.setToolTipText(tooltipsProperties.getProperty("lb4"));
+        createLabel(composite,"Java version : ","lb4"); // Label in (6,1)
 		
 		Combo combo1 = new Combo(composite,SWT.NONE);  // Combo in (6,2) for the version
 		combo1.add("8"); combo1.add("7"); combo1.add("6"); combo1.add("5");
@@ -477,5 +463,10 @@ public class DSpotWizardPage1 extends WizardPage {
 	        }
 	        return null;
 	}
-	
+	private void createLabel(Composite composite, String text,String tooltipKey) {
+		Label label = new Label(composite,SWT.NONE);
+		GridDataFactory.swtDefaults().indent(0, 8).applyTo(label);
+		label.setText(text);
+		label.setToolTipText(tooltipsProperties.getProperty(tooltipKey));
+	}
 }
