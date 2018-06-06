@@ -101,6 +101,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	private Properties tooltipsProperties;
     private StringValidationToolkit strValToolkit = null;
     private final IFieldErrorMessageHandler errorMessageHandler;
+    private boolean[] check = {false,false,false};
 
 	public DescartesWizardPage1(DescartesWizard wizard) {
 		super("Descartes configuration");
@@ -137,6 +138,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		configurationCombo.setEnabled(false);
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(configurationCombo);
 		String[] configurations = wizard.getWizardConfiguration().getConfigurationNames();
+		configurationCombo.add("");
 		for(String sr : configurations) configurationCombo.add(sr);
 		
 		createConfigurationField(composite);  // ROW 2 : Create new configuration
@@ -210,11 +212,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         
         Label space = new Label(composite,SWT.NONE);
         space.setText("");
-        
-        /*
-         *   ROW 6 : Pom file
-         */
-        createPomField(composite);
+
+        createPomField(composite); //  ROW 6 : Pom file
         
         // listeners
         configurationCombo.addSelectionListener(new SelectionAdapter() {
@@ -308,8 +307,10 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 			@Override
 			public boolean isValid(String contents) {
 				File file = new File(contents);
-				if(file.exists())if(file.isDirectory()) return true;
-				return false;
+				if(file.exists())if(file.isDirectory()) {
+					check[0] = true;  checkPage(); return true;
+				}
+				check[0] = false; checkPage(); return false;
 			}
 			@Override
 			public boolean warningExist(String contents) { return false; }	
@@ -344,9 +345,10 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 			public String getWarningMessage() { return ""; }
 			@Override
 			public boolean isValid(String contents) { 
-				if(configurationField != null)if(configurationField.getControl().isEnabled())
-					return !contents.isEmpty();
-				return true;
+				if(configurationField != null)if(configurationField.getControl().isEnabled()) {
+					check[1] = !contents.isEmpty(); checkPage(); checkPage();
+					return !contents.isEmpty();}
+				check[1] = true; checkPage();  return true;
 				}
 			@Override
 			public boolean warningExist(String contents) { return false; }
@@ -363,10 +365,16 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         	public void widgetSelected(SelectionEvent e) {
         		boolean selection = configurationButton.getSelection();
         		configurationField.getControl().setEnabled(selection);
-        		if(selection)((Text)configurationField.getControl()).setText("new_configuration");
-        		if(!selection)((Text)configurationField.getControl()).setText("");
         		configurationCombo.setEnabled(!selection);
-        		if(selection)configurationCombo.setText("");
+        		if(selection) {
+        			((Text)configurationField.getControl()).setText("new_configuration");
+        			configurationCombo.setText("");
+        			check[1] = true; checkPage();
+        		}
+        		if(!selection) {
+        			((Text)configurationField.getControl()).setText("");
+        			check[1] = false; checkPage();
+        		}
         	}
         });
 	}
@@ -386,9 +394,13 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 			public String getWarningMessage() { return null; }
 			@Override
 			public boolean isValid(String contents) {
-				if(contents.isEmpty()) { flag = false; return false; }
-				if(!contents.endsWith(".xml")) { flag = true; return false; }
-				return true;
+				if(contents.isEmpty()) { flag = false; 
+				check[2] = false; checkPage();
+				return false; }
+				if(!contents.endsWith(".xml")) { flag = true;
+				check[2] = false; checkPage();
+				return false; }
+				check[2] = true; checkPage(); return true;
 			}
 			@Override
 			public boolean warningExist(String contents) { return false; }
@@ -572,8 +584,18 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		inputStream.close();
 		return properties;
 	}
+	private void checkPage() {
+		boolean complete = true;
+		if(configurationCombo != null)  
+			if(configurationCombo.isEnabled()){
+					if(configurationCombo.getText().isEmpty())check[1] = false;
+					else check[1] = true;
+			}
+		for(boolean bo : check)complete = complete && bo;
+		setPageComplete(complete);
+	}
 	/**
-	 *
+	 *  inner class to handle the field validation error messages
 	 */
 	class DescartesWizardErrorHandler implements IFieldErrorMessageHandler{
 		@Override
