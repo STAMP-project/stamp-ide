@@ -12,6 +12,7 @@
  *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -35,6 +36,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -48,6 +50,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+
+import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
+import com.richclientgui.toolbox.validation.ValidatingField;
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
+import com.richclientgui.toolbox.validation.validator.IFieldValidator;
+
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Group;
@@ -70,14 +78,27 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 @SuppressWarnings("restriction")
 public class DSpotWizardPage1 extends WizardPage { 
 	
+    private static final int DECORATOR_POSITION = SWT.TOP | SWT.LEFT;
+    private static final int DECORATOR_MARGIN_WIDTH = 1;
+	
 	// [0] project, [1] src, [2] testScr, [3] javaVersion, [4] outputDirectory, [5] filter
 	private String[] TheProperties = new String[6];
 	private boolean[] Comp = {true,true,true,true};  // this is to set next page
 	private WizardConfiguration wConf;
 	private DSpotWizard wizard;
+	
 	private Properties tooltipsProperties;
 	
-
+    private StringValidationToolkit strValToolkit = null;
+    private final IFieldErrorMessageHandler errorMessageHandler;
+	
+    private Combo configCombo;
+    private Combo combo0;
+    private Combo combo2;
+    private Button projectSelectionbt;
+    private ValidatingField<String> configurationField;
+    private ValidatingField<String> projectField;
+    
 	public DSpotWizardPage1(WizardConfiguration wConf,DSpotWizard wizard){
 		super("Project configuration");
 		setTitle("Project configuration");
@@ -97,8 +118,11 @@ public class DSpotWizardPage1 extends WizardPage {
 			inputStream.close();} catch (IOException e2) {
 				e2.printStackTrace(); }
 
+		    errorMessageHandler = new WizardErrorHandler();
+			strValToolkit = new StringValidationToolkit(DECORATOR_POSITION,
+	        		DECORATOR_MARGIN_WIDTH,true);
+	        strValToolkit.setDefaultErrorMessageHandler(errorMessageHandler);
 	} // end of the constructor
-	
  
 	@Override
 	public void createControl(Composite parent) {
@@ -116,104 +140,29 @@ public class DSpotWizardPage1 extends WizardPage {
 		lb0.setText("Use saved configuration : ");
 		lb0.setToolTipText(tooltipsProperties.getProperty("lb0"));
 	    
-		Combo configCombo = new Combo(composite,SWT.BORDER); // combo in (1,1) to select a configuration
+		configCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY); // combo in (1,1) to select a configuration
 		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(configCombo);
 		List<ILaunchConfiguration> configurations = wConf.getLaunchConfigurations();
 		for(ILaunchConfiguration laun : configurations) {
 			configCombo.add(laun.getName());
 		}
+		configCombo.add(""); // IMPORTANT this must be at the end of the combo list to get the correct selection index
 		configCombo.setEnabled(false);
 		
-		// second row (2,x) New Configuration
-		createLabel(composite,"New Configuration : ","lbNewConfig");  // label in (2,1)
-		
-		Text txNewConfig = new Text(composite,SWT.BORDER); // text in (2,2) for the name of a new configuration
-		txNewConfig.setText("<Type configuration name>");
-		txNewConfig.setEnabled(true);
-		GridDataFactory.fillDefaults().grab(true, false).indent(0, VS).applyTo(txNewConfig);
-		txNewConfig.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent e) {}
+		createConfigurationField(composite);// second row New Configuration
 
-			@Override
-			public void keyReleased(KeyEvent e) {
-				wizard.setConfigurationName(txNewConfig.getText());
-				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
-			}
-		});
-		txNewConfig.addSegmentListener(new SegmentListener() {
-			@Override
-			public void getSegments(SegmentEvent event) {
-				wizard.setConfigurationName(txNewConfig.getText());
-				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
-			}	
-		});
-		
-		Button btNewConfig = new Button(composite,SWT.CHECK); // button in (2,1) to enable the new dialog text
-		GridDataFactory.swtDefaults().indent(0, VS).applyTo(btNewConfig);
-		btNewConfig.setToolTipText(tooltipsProperties.getProperty("btNewConfig"));
-		btNewConfig.setSelection(true);
-		
-		btNewConfig.addSelectionListener(new SelectionAdapter() { // selection listener of the 
-	        @Override                                    // new configuration check button
-	        public void widgetSelected(SelectionEvent e) {
-	        	if(btNewConfig.getSelection()) {
-	        		txNewConfig.setText(" Type configuration name ");
-	        		txNewConfig.setEnabled(true);
-	        		configCombo.setText("");
-	        		configCombo.setEnabled(false);
-	        	} else {
-	        		txNewConfig.setText("");
-	        		txNewConfig.setEnabled(false);
-	        		configCombo.setEnabled(true);
-	        	}
-	        }
-});
-		
 		// third row  (3,x)     Project's path  
-		createLabel(composite,"Path of the project :        ","lb1"); // Label in (3,1)
-		
+		// TODO
 		// Obtain the path of the project
-		String direction = wConf.getProjectPath();
 		String[] sour = wConf.getSources();
 		boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
 		
-		Text tx1 = new Text(composite,SWT.BORDER);    // Text in (3,2) for the poject's path
-		tx1.setText(direction);
-		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx1);
-        TheProperties[0] = direction;
-        tx1.addKeyListener(new KeyListener() {  // add a keyListener
-        	@Override
-        	public void keyPressed(KeyEvent e){}
-        	@Override
-        	public void keyReleased(KeyEvent e) {
-        		
-        		TheProperties[0] = tx1.getText();  // Project's path
-        		Comp[0] = !TheProperties[0].isEmpty();
-        		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
-        		
-        	} 
-        }); // end of the KeyListener
-        tx1.addSegmentListener(new SegmentListener(){
-			@Override
-			public void getSegments(SegmentEvent event) {
-			 	
-        		TheProperties[0] = tx1.getText();  // Project's path
-        		Comp[0] = !TheProperties[0].isEmpty();
-        		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
-				
-			}	
-        });  // end of the segment listener
-        
-        Button projectSelectionbt = new Button(composite,SWT.PUSH);
-        GridDataFactory.swtDefaults().indent(0, VS).applyTo(projectSelectionbt);
-		projectSelectionbt.setText("Select a Project");
-		projectSelectionbt.setToolTipText(tooltipsProperties.getProperty("projectSelectionbt"));
-		
+		createProjectField(composite);
+
 		// fourth row (4,x)      Source path  
 		createLabel(composite,"Path of the source : ","lb2"); // Label in (4,1)
 	
-        Combo combo0 = new Combo(composite,SWT.BORDER);  // Combo in (4,2) for the source's path
+        combo0 = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);  // Combo in (4,2) for the source's path
         GridDataFactory.fillDefaults().grab(true,false).span(2,1).indent(0, VS).applyTo(combo0);
         combo0.addSelectionListener(new SelectionAdapter() {
         	@Override
@@ -229,7 +178,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		// fifth row (5,x)   SourceTest path
         createLabel(composite,"Path of the source test : ","lb3");
 		
-        Combo combo2 = new Combo(composite,SWT.BORDER);
+        combo2 = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);
         GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo2);
         for(int i = 0; i < sour.length; i++) {  // add the sources to the combo
         	if(isTest[i]) {  // if it is not a test package
@@ -265,7 +214,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		// sixth row (6,x) Java version
         createLabel(composite,"Java version : ","lb4"); // Label in (6,1)
 		
-		Combo combo1 = new Combo(composite,SWT.NONE);  // Combo in (6,2) for the version
+		Combo combo1 = new Combo(composite,SWT.NONE | SWT.READ_ONLY);  // Combo in (6,2) for the version
 		combo1.add("8"); combo1.add("7"); combo1.add("6"); combo1.add("5");
 		combo1.setText("8");
         GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo1);
@@ -337,7 +286,6 @@ public class DSpotWizardPage1 extends WizardPage {
 				if(!configCombo.getText().isEmpty()) {
 				try {
 					wConf.setIndexOfCurrentConfiguration(configCombo.getSelectionIndex());
-					
 				String myArguments = wConf.getCurrentConfiguration()
 					.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
 				String myS = myArguments.substring(
@@ -346,7 +294,7 @@ public class DSpotWizardPage1 extends WizardPage {
 					myS = myS.substring(0,myS.indexOf("-"));
 				}
 				myS = myS.substring(0,myS.indexOf((new Path(myS)).lastSegment())-1); // -1 because of the last /
-				tx1.setText(myS);
+				((Text)projectField.getControl()).setText(myS);
 				
 				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 				IJavaProject theProject = null;
@@ -365,31 +313,6 @@ public class DSpotWizardPage1 extends WizardPage {
 				}
 			}
 		});
-		
-		
-		projectSelectionbt.addSelectionListener(new SelectionAdapter() {
-		    @Override
-		    public void widgetSelected(SelectionEvent e) {
-		    	IJavaProject jPro = showProjectDialog();
-		        try {
-					wConf = new WizardConfiguration(jPro);
-				} catch (CoreException e1) {
-					e1.printStackTrace();
-				}
-		        if(wConf.getPro() != null) { // to avoid problems if selection is cancelled
-		    	tx1.setText(wConf.getProjectPath());
-		    	TheProperties[0] = wConf.getProjectPath();
-                combo0.removeAll(); combo2.removeAll();
-		        for(int i = 0; i < wConf.getSources().length; i++) {  // add the sources to the combo
-		        	if(wConf.getIsTest()[i]) {  // if it is not a test package
-		        	combo2.add( wConf.getSources()[i]);} else { combo0.add( wConf.getSources()[i]); }
-		        } // end of the for
-		    	wizard.refreshConf(wConf);
-		    	wizard.setDefaultValuesInPage2();
-		        }
-		    }
-			});
-		
 		
 		// required to avoid an error in the System
 		setControl(composite);
@@ -463,10 +386,160 @@ public class DSpotWizardPage1 extends WizardPage {
 	        }
 	        return null;
 	}
+	private void createConfigurationField(Composite composite) {
+		
+		createLabel(composite,"New Configuration : ","lbNewConfig"); 
+		
+		configurationField = strValToolkit.createTextField(composite, new IFieldValidator<String>() {
+			boolean flag; // two possible error messages
+			@Override
+			public String getErrorMessage() {
+				if(flag) return "Configuration name must not contain > or <";
+				return "Configuration name is empty";
+			}
+			@Override
+			public String getWarningMessage() { return null; }
+			@Override
+			public boolean isValid(String content) {
+				if(configCombo.isEnabled()) return true;
+				if(content.isEmpty()) {
+					flag = false; return false;
+				}
+				if(content.contains(">") || content.contains("<")) {
+					flag = true; return false;
+				}
+				setPageComplete(true); return true;
+			}
+			@Override
+			public boolean warningExist(String content) { return false; }	
+		}, false, "Type configuration name");
+		
+		// add listeners to the text
+		Text text = (Text)configurationField.getControl();
+		GridDataFactory.fillDefaults().grab(true, false).indent(0, 8).applyTo(text);
+
+		text.addSegmentListener(new SegmentListener(){
+			@Override
+			public void getSegments(SegmentEvent event) {
+				wizard.setConfigurationName(text.getText());
+			}		
+		});
+		
+		Button btNewConfig = new Button(composite,SWT.CHECK); // button to enable the new dialog text
+		GridDataFactory.swtDefaults().indent(0, 8).applyTo(btNewConfig);
+		btNewConfig.setToolTipText(tooltipsProperties.getProperty("btNewConfig"));
+		btNewConfig.setSelection(true);
+		
+		
+		btNewConfig.addSelectionListener(new SelectionAdapter() { // selection listener of the 
+	        @Override                                    // new configuration check button
+	        public void widgetSelected(SelectionEvent e) {
+	        	if(btNewConfig.getSelection()) {
+	        		configCombo.setEnabled(false);
+	        		text.setEnabled(true);
+	        		text.setText(" Type configuration name ");
+	        		configCombo.setText("");
+	        	} else {
+	        		text.setEnabled(false);
+	        		configCombo.setEnabled(true);
+	        		text.setText("");
+	        	}
+	        }
+});
+	}
+	private void createProjectField(Composite composite) {
+		
+		createLabel(composite,"Path of the project :        ","lb1");
+		
+		// Obtain the path of the project
+		String direction = wConf.getProjectPath();
+		
+		projectField = strValToolkit.createTextField(composite, new IFieldValidator<String>() {
+			@Override
+			public String getErrorMessage() { return "Project's directory not found"; }
+			
+			@Override
+			public String getWarningMessage() { return null; }
+			
+			@Override
+			public boolean isValid(String content) {
+				File file = new File(content);
+				if(file.exists())if(file.isDirectory()) return true;
+				return false;
+			}
+			
+			@Override
+			public boolean warningExist(String content) { return false; }
+			
+		},true,direction);	
+		
+		Text text = (Text)projectField.getControl();
+		GridDataFactory.fillDefaults().grab(true,false).indent(0,8).applyTo(text);
+		TheProperties[0] = direction;
+		 text.addSegmentListener(new SegmentListener(){
+				@Override
+				public void getSegments(SegmentEvent event) {
+				 	
+	        		TheProperties[0] = text.getText();  // Project's path
+	        		Comp[0] = !TheProperties[0].isEmpty();
+	        		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);		
+				}	
+	        });
+		 
+	        projectSelectionbt = new Button(composite,SWT.PUSH);
+	        GridDataFactory.swtDefaults().indent(0, 8).applyTo(projectSelectionbt);
+			projectSelectionbt.setText("Select a Project");
+			projectSelectionbt.setToolTipText(tooltipsProperties.getProperty("projectSelectionbt"));
+			
+			projectSelectionbt.addSelectionListener(new SelectionAdapter() {
+			    @Override
+			    public void widgetSelected(SelectionEvent e) {
+			    	IJavaProject jPro = showProjectDialog();
+			        try {
+						wConf = new WizardConfiguration(jPro);
+					} catch (CoreException e1) {
+						e1.printStackTrace();
+					}
+			        if(wConf.getPro() != null) { // to avoid problems if selection is cancelled
+			    	text.setText(wConf.getProjectPath());
+			    	TheProperties[0] = wConf.getProjectPath();
+	                combo0.removeAll(); combo2.removeAll();
+			        for(int i = 0; i < wConf.getSources().length; i++) {  // add the sources to the combo
+			        	if(wConf.getIsTest()[i]) {  // if it is not a test package
+			        	combo2.add( wConf.getSources()[i]);} else { combo0.add( wConf.getSources()[i]); }
+			        } // end of the for
+			    	wizard.refreshConf(wConf);
+			    	wizard.setDefaultValuesInPage2();
+			        }
+			    }
+				});
+	}
+			
 	private void createLabel(Composite composite, String text,String tooltipKey) {
 		Label label = new Label(composite,SWT.NONE);
 		GridDataFactory.swtDefaults().indent(0, 8).applyTo(label);
 		label.setText(text);
 		label.setToolTipText(tooltipsProperties.getProperty(tooltipKey));
+	}	
+	/**
+	 *  inner class to handle the field validation error messages
+	 */
+		public class WizardErrorHandler implements IFieldErrorMessageHandler{
+		@Override
+		public void clearMessage() {
+			setErrorMessage(null);
+			setMessage(null,DialogPage.ERROR);	
+		}
+		@Override
+		public void handleErrorMessage(String message, String input) {
+		 setMessage(null,DialogPage.INFORMATION);
+		 setErrorMessage(message);	
+		}
+		@Override
+		public void handleWarningMessage(String message, String input) {
+		 setErrorMessage(null);
+		 setMessage(message,DialogPage.WARNING);	
+		}
+		
 	}
 }
