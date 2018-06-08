@@ -84,9 +84,7 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
 	private Spinner timeOutSpinner;
 	private Spinner randomSeedSpinner;
 	private List list;
-	//private Text pathPitResultText;
 	private ValidatingField<String> pathPitResultField;
-	//private Text mavenHomeText;
 	private ValidatingField<String> mavenHomeField;
 
 	public DSpotAdvancedOptionsDialog(Shell parentShell, WizardConfiguration wConf) {
@@ -209,11 +207,6 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     	 pathPitResultButton.setToolTipText(tooltipsProperties.getProperty("pathPitResultButton"));
     	 
     	 createPathPitField(composite);
-    	 /*
-    	 pathPitResultText = new Text(composite,SWT.BORDER);
-    	 pathPitResultText.setEnabled(pitSelected);
-    	 pathPitResultText.setText(pathPitResult);
-    	 GridDataFactory.fillDefaults().span(1, 1).grab(true, false).indent(0, vSpace).applyTo(pathPitResultText);*/
     	 
     	 /*
     	  *  Row 6 : MAVEN_HOME
@@ -226,13 +219,7 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     	 GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).indent(0, vSpace).applyTo(mavenHomeButton);
     	 
     	 createMavenHomeField(composite);
-    	 /*
-    	 mavenHomeText = new Text(composite,SWT.BORDER);
-    	 mavenHomeText.setText(System.getenv("MAVEN_HOME"));
-    	 mavenHomeText.setEnabled(false);
-    	 GridDataFactory.fillDefaults().span(1, 1).grab(true, false).indent(0, vSpace).applyTo(mavenHomeText);*/
     	 
-
     	 // listeners
     	 button.addSelectionListener(new SelectionAdapter() {
     		 @Override

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -52,6 +53,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
 import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
+import com.richclientgui.toolbox.validation.IQuickFixProvider;
 import com.richclientgui.toolbox.validation.ValidatingField;
 import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 import com.richclientgui.toolbox.validation.validator.IFieldValidator;
@@ -77,15 +79,16 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
  */
 @SuppressWarnings("restriction")
 public class DSpotWizardPage1 extends WizardPage { 
-	
+	// TODO correct page validation
     private static final int DECORATOR_POSITION = SWT.TOP | SWT.LEFT;
     private static final int DECORATOR_MARGIN_WIDTH = 1;
 	
 	// [0] project, [1] src, [2] testScr, [3] javaVersion, [4] outputDirectory, [5] filter
 	private String[] TheProperties = new String[6];
-	private boolean[] Comp = {true,true,true,true};  // this is to set next page
+	//private boolean[] Comp = {true,true,true,true};  // this is to set next page
 	private WizardConfiguration wConf;
 	private DSpotWizard wizard;
+	private DSpotPage1Validator pageValidator;
 	
 	private Properties tooltipsProperties;
 	
@@ -122,6 +125,8 @@ public class DSpotWizardPage1 extends WizardPage {
 			strValToolkit = new StringValidationToolkit(DECORATOR_POSITION,
 	        		DECORATOR_MARGIN_WIDTH,true);
 	        strValToolkit.setDefaultErrorMessageHandler(errorMessageHandler);
+	        
+	        pageValidator = new DSpotPage1Validator();
 	} // end of the constructor
  
 	@Override
@@ -149,10 +154,17 @@ public class DSpotWizardPage1 extends WizardPage {
 		configCombo.add(""); // IMPORTANT this must be at the end of the combo list to get the correct selection index
 		configCombo.setEnabled(false);
 		
+		pageValidator.addElement(new IDSpotPageElement() {
+			@Override
+			public boolean validate() {
+				if(configCombo.isEnabled() && configCombo.getText().isEmpty()) return false;
+				return true;
+			}
+		});
+		
 		createConfigurationField(composite);// second row New Configuration
 
 		// third row  (3,x)     Project's path  
-		// TODO
 		// Obtain the path of the project
 		String[] sour = wConf.getSources();
 		boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
@@ -169,8 +181,6 @@ public class DSpotWizardPage1 extends WizardPage {
         	public void widgetSelected(SelectionEvent e) {
         		
         		TheProperties[1] = combo0.getText();  // the path of the source
-        		Comp[1] = TheProperties[1] != null;    // look at the !
-        		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
         		
         	}
         }); // end of the selection listener
@@ -188,14 +198,10 @@ public class DSpotWizardPage1 extends WizardPage {
         if(combo0.getItems().length == 1) { // if there is only one option
         	combo0.setText(combo0.getItem(0));
     		TheProperties[1] = combo0.getText();  // the path of the source
-    		Comp[1] = TheProperties[1] != null;    // look at the !
-    		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
         }
         if(combo2.getItems().length == 1) {
         	combo2.setText(combo2.getItem(0));
     		TheProperties[2] = combo2.getText();    //  testSrc
-    		Comp[2] = TheProperties[2] != null;  // look at the "!"
-    		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
         }
         
         
@@ -203,10 +209,7 @@ public class DSpotWizardPage1 extends WizardPage {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
         	
-        		TheProperties[2] = combo2.getText();    //  testSrc
-        		Comp[2] = TheProperties[2] != null;  // look at the "!"
-        		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
-        		
+        		TheProperties[2] = combo2.getText();    //  testSrc 		
         	}
         });
 		
@@ -223,10 +226,7 @@ public class DSpotWizardPage1 extends WizardPage {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
         		
-        		TheProperties[3] = combo1.getText();    // javaVersion
-        		Comp[3] = TheProperties[3] != null;
-        		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
-        		
+        		TheProperties[3] = combo1.getText();    // javaVersion		
         	}
         });  // end of the SelectionListener
 		
@@ -260,8 +260,17 @@ public class DSpotWizardPage1 extends WizardPage {
 			public void getSegments(SegmentEvent event) {
 				
 				TheProperties[4] = tx4.getText();
-				
+				pageValidator.validatePage();
 			}	
+		});
+		
+		pageValidator.addElement(new IDSpotPageElement() {
+			@Override
+			public boolean validate() {
+				if(!tx4.getText().equalsIgnoreCase(tx4.getText()
+						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
+				return true;
+			}
 		});
 		
 		Label lbFilter = new Label(gr,SWT.NONE);    // Label in (2,1)(gr)
@@ -276,9 +285,19 @@ public class DSpotWizardPage1 extends WizardPage {
 			public void keyPressed(KeyEvent e) {}
 			@Override
 			public void keyReleased(KeyEvent e) {	
-				TheProperties[5] = tx5.getText();  // filter	
+				TheProperties[5] = tx5.getText();  // filter
+				pageValidator.validatePage();
 			}
 		});  // end of the KeyListener
+		
+		pageValidator.addElement(new IDSpotPageElement() {
+			@Override
+			public boolean validate() {
+				if(!tx5.getText().equalsIgnoreCase(tx5.getText()
+						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
+				return true;
+			}
+		});
 		
 		configCombo.addSelectionListener(new SelectionAdapter() { // selection listener of the 
 			@Override                                            // configurations combo
@@ -306,7 +325,7 @@ public class DSpotWizardPage1 extends WizardPage {
 				wizard.refreshPageTwo();
 				wizard.refreshConf(wConf);
 				wizard.setResetadv();
-				setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);
+				pageValidator.validatePage();
 				} catch (CoreException e1) {
 					e1.printStackTrace();
 				} 
@@ -401,6 +420,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			public String getWarningMessage() { return null; }
 			@Override
 			public boolean isValid(String content) {
+				pageValidator.validatePage();             // TODO eliminate redundancy
 				if(configCombo.isEnabled()) return true;
 				if(content.isEmpty()) {
 					flag = false; return false;
@@ -408,21 +428,45 @@ public class DSpotWizardPage1 extends WizardPage {
 				if(content.contains(">") || content.contains("<")) {
 					flag = true; return false;
 				}
+				wizard.setConfigurationName(content);
 				setPageComplete(true); return true;
 			}
+			
 			@Override
 			public boolean warningExist(String content) { return false; }	
 		}, false, "Type configuration name");
 		
-		// add listeners to the text
 		Text text = (Text)configurationField.getControl();
-		GridDataFactory.fillDefaults().grab(true, false).indent(0, 8).applyTo(text);
-
-		text.addSegmentListener(new SegmentListener(){
+		GridDataFactory.fillDefaults().grab(true, false).indent(10, 8).applyTo(configurationField.getControl());
+		
+		configurationField.setQuickFixProvider(new IQuickFixProvider<String>() {
 			@Override
-			public void getSegments(SegmentEvent event) {
-				wizard.setConfigurationName(text.getText());
-			}		
+			public boolean doQuickFix(ValidatingField<String> field) {  
+				String result = field.getContents().replaceAll("[^A-Za-Z0-9 ]","");
+			    ((Text)field.getControl()).setText(result);
+				return true;
+			}
+			@Override
+			public String getQuickFixMenuText() {
+				return "remove non alphanumeric characters";
+			}
+
+			@Override
+			public boolean hasQuickFix(String contents) {
+				return contents.contains("[^A-Za-z0-9 ]");
+			}
+			
+		});
+		
+		pageValidator.addElement(new IDSpotPageElement() {
+			@Override
+			public boolean validate() {
+				String sr = configurationField.getContents();
+				if(configurationField.getControl().isEnabled()) 
+					if(!sr.isEmpty() && sr.equalsIgnoreCase(sr
+						.replaceAll("[^A-Za-z0-9_ ]",""))) return true;
+				return false;
+			}
 		});
 		
 		Button btNewConfig = new Button(composite,SWT.CHECK); // button to enable the new dialog text
@@ -449,7 +493,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	}
 	private void createProjectField(Composite composite) {
 		
-		createLabel(composite,"Path of the project :        ","lb1");
+		createLabel(composite,"Path of the project : ","lb1");
 		
 		// Obtain the path of the project
 		String direction = wConf.getProjectPath();
@@ -463,8 +507,12 @@ public class DSpotWizardPage1 extends WizardPage {
 			
 			@Override
 			public boolean isValid(String content) {
+				pageValidator.validatePage();          // TODO eliminate redundancy
 				File file = new File(content);
-				if(file.exists())if(file.isDirectory()) return true;
+				if(file.exists())if(file.isDirectory()) {
+	        		TheProperties[0] = content;  // Project's path
+					return true;
+				}
 				return false;
 			}
 			
@@ -473,18 +521,18 @@ public class DSpotWizardPage1 extends WizardPage {
 			
 		},true,direction);	
 		
+		pageValidator.addElement(new IDSpotPageElement() {
+			@Override
+			public boolean validate() {
+				File file = new File(projectField.getContents());
+				if(file.exists() && file.isDirectory()) return true;
+				return false;
+			}
+		});
+		
 		Text text = (Text)projectField.getControl();
-		GridDataFactory.fillDefaults().grab(true,false).indent(0,8).applyTo(text);
+		GridDataFactory.fillDefaults().grab(true,false).indent(10,8).applyTo(text);
 		TheProperties[0] = direction;
-		 text.addSegmentListener(new SegmentListener(){
-				@Override
-				public void getSegments(SegmentEvent event) {
-				 	
-	        		TheProperties[0] = text.getText();  // Project's path
-	        		Comp[0] = !TheProperties[0].isEmpty();
-	        		setPageComplete(Comp[0] && Comp[1] && Comp[2] && Comp[3]);		
-				}	
-	        });
 		 
 	        projectSelectionbt = new Button(composite,SWT.PUSH);
 	        GridDataFactory.swtDefaults().indent(0, 8).applyTo(projectSelectionbt);
@@ -517,7 +565,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			
 	private void createLabel(Composite composite, String text,String tooltipKey) {
 		Label label = new Label(composite,SWT.NONE);
-		GridDataFactory.swtDefaults().indent(0, 8).applyTo(label);
+		//GridDataFactory.swtDefaults().indent(0, 8).applyTo(label);
 		label.setText(text);
 		label.setToolTipText(tooltipsProperties.getProperty(tooltipKey));
 	}	
@@ -528,11 +576,11 @@ public class DSpotWizardPage1 extends WizardPage {
 		@Override
 		public void clearMessage() {
 			setErrorMessage(null);
-			setMessage(null,DialogPage.ERROR);	
+			setMessage(null,DialogPage.WARNING);	
 		}
 		@Override
 		public void handleErrorMessage(String message, String input) {
-		 setMessage(null,DialogPage.INFORMATION);
+		 setMessage(null,DialogPage.ERROR);
 		 setErrorMessage(message);	
 		}
 		@Override
@@ -541,5 +589,22 @@ public class DSpotWizardPage1 extends WizardPage {
 		 setMessage(message,DialogPage.WARNING);	
 		}
 		
-	}
+	}	
+		private class DSpotPage1Validator{
+			
+		 ArrayList<IDSpotPageElement> list = new ArrayList<IDSpotPageElement>(5);
+		 
+		 void addElement(IDSpotPageElement element) {
+			 list.add(element);
+		 }
+		 
+		 void validatePage() {
+			 for(IDSpotPageElement element : list)if(!element.validate()) {
+				 setPageComplete(false); return;
+			 }
+			 setPageComplete(true);
+		 }
+		}
+		
+		private interface IDSpotPageElement{ public boolean validate(); }
 }
