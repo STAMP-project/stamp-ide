@@ -157,7 +157,8 @@ public class DSpotWizardPage1 extends WizardPage {
 		pageValidator.addElement(new IDSpotPageElement() {
 			@Override
 			public boolean validate() {
-				if(configCombo.isEnabled() && configCombo.getText().isEmpty()) return false;
+				if(configCombo.isEnabled() && configCombo.getText().equalsIgnoreCase("")) 
+					return false;
 				return true;
 			}
 		});
@@ -267,8 +268,9 @@ public class DSpotWizardPage1 extends WizardPage {
 		pageValidator.addElement(new IDSpotPageElement() {
 			@Override
 			public boolean validate() {
-				if(!tx4.getText().equalsIgnoreCase(tx4.getText()
-						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
+				String sr = tx4.getText().replaceAll("\\.", "");
+				if(!sr.equalsIgnoreCase(sr
+						.replaceAll("[^A-za-z0-9_/\\- ]", ""))) return false;
 				return true;
 			}
 		});
@@ -293,15 +295,16 @@ public class DSpotWizardPage1 extends WizardPage {
 		pageValidator.addElement(new IDSpotPageElement() {
 			@Override
 			public boolean validate() {
-				if(!tx5.getText().equalsIgnoreCase(tx5.getText()
+				String sr = tx5.getText().replaceAll("\\.", "");
+			if(!sr.equalsIgnoreCase(sr
 						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
 				return true;
 			}
 		});
 		
-		configCombo.addSelectionListener(new SelectionAdapter() { // selection listener of the 
-			@Override                                            // configurations combo
-			public void widgetSelected(SelectionEvent e) {
+		configCombo.addSegmentListener(new SegmentListener() {
+			@Override
+			public void getSegments(SegmentEvent event) {
 				if(!configCombo.getText().isEmpty()) {
 				try {
 					wConf.setIndexOfCurrentConfiguration(configCombo.getSelectionIndex());
@@ -330,12 +333,12 @@ public class DSpotWizardPage1 extends WizardPage {
 					e1.printStackTrace();
 				} 
 				}
-			}
+			}			
 		});
 		
 		// required to avoid an error in the System
-		setControl(composite);
-		setPageComplete(false);	
+		setControl(composite);	
+		setPageComplete(false);
 	}  // end of create control
 	
 	 @Override
@@ -462,10 +465,12 @@ public class DSpotWizardPage1 extends WizardPage {
 			@Override
 			public boolean validate() {
 				String sr = configurationField.getContents();
-				if(configurationField.getControl().isEnabled()) 
+				if(configurationField.getControl().isEnabled()) { 
 					if(!sr.isEmpty() && sr.equalsIgnoreCase(sr
 						.replaceAll("[^A-Za-z0-9_ ]",""))) return true;
-				return false;
+					return false;
+				}
+				return true;
 			}
 		});
 		
@@ -600,6 +605,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		 
 		 void validatePage() {
 			 for(IDSpotPageElement element : list)if(!element.validate()) {
+				 System.out.println("false");
 				 setPageComplete(false); return;
 			 }
 			 setPageComplete(true);
