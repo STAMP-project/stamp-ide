@@ -30,6 +30,13 @@ after this select the project mutators and pom file to use, when you press finis
 
 <center>![configurations](images/conf.png)</center>
 
+### Descartes field validation and quick fixers
+
+Descartes wizard includes validation of the text fields, if the text is empty or the content is wrong a red signal will be displayed in the wizard page's head
+in the top left corner there will be another signal, click right on it to open a quick fixer menu and push the fix problems option to correct the text.
+
+<center>![quick fixer](images/DescartesValidation.png)</center> 
+
 ### Loading a stored configuration
 
 To load a stored configuration deselect the check button in the "create configuration" row, the "load configuration" combo will be set ennabled,
@@ -92,3 +99,12 @@ To execute Descartes the plugin writes an .xml file to use it as pom file in ord
 you can set the name of this file writing a name (it must end with .xml) in the "name of the POM file" text box in the bottom of the page.
 
 <center>![pom name row](images/pom.png)</center>
+
+### Result
+
+Press the finish button to execute Descartes, you will see the information about the execution in the Eclipse console.
+
+At the end you will see the summary in the console and the Descartes view will be opened to show the information in the html summaries 
+produced by Descartes, there will be several tab items, showing the different html documents.
+
+<center>![Descartes views](images/DescartesView.png)</center>
