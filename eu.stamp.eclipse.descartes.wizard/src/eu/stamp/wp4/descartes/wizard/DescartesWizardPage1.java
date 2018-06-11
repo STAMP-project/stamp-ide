@@ -54,6 +54,7 @@ import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
 import com.richclientgui.toolbox.validation.ValidatingField;
 import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 import com.richclientgui.toolbox.validation.validator.IFieldValidator;
+import com.richclientgui.toolbox.validation.IQuickFixProvider;
 
 import eu.stamp.wp4.descartes.wizard.configuration.DescartesWizardConfiguration;
 import eu.stamp.wp4.descartes.wizard.configuration.IDescartesWizardPart;
@@ -339,15 +340,26 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		createLabel(composite,"create new configuration : ","newConfigurationLabel");
 		
 		configurationField = strValToolkit.createTextField(composite,new IFieldValidator<String>() {
+			boolean flag; // two possible error messages
 			@Override
-			public String getErrorMessage() { return "Configuration name is empty"; }
+			public String getErrorMessage() { 
+				if(flag) return "Configuration name is empty";
+				return "Configuration contains non allowed characters"; }
 			@Override
 			public String getWarningMessage() { return ""; }
 			@Override
 			public boolean isValid(String contents) { 
 				if(configurationField != null)if(configurationField.getControl().isEnabled()) {
-					check[1] = !contents.isEmpty(); checkPage(); checkPage();
-					return !contents.isEmpty();}
+					if(contents.isEmpty()) {
+						check[1] = false; checkPage();
+					     flag = true; return false;
+					     }
+					if( !contents.equalsIgnoreCase(
+							contents.replaceAll("[^A-Za-z0-9_-]", ""))) {
+						check[1] = false; checkPage();
+						flag = false; return false;
+					}
+				}
 				check[1] = true; checkPage();  return true;
 				}
 			@Override
@@ -357,6 +369,28 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		
 		GridDataFactory.fillDefaults().grab(true, false).indent(10, 0)
 		.applyTo(configurationField.getControl());
+		
+		configurationField.setQuickFixProvider(new IQuickFixProvider<String>() {
+			boolean flag; // two possible problems
+			@Override
+			public boolean doQuickFix(ValidatingField<String> field) {
+				Text text = ((Text)field.getControl());
+				if(flag) {
+					text.setText("descartes_configuration"); return true;
+				}
+			    text.setText(text.getText().replaceAll("[^A-Za-z0-9_\\-\\.]",""));
+				return true;
+			}   
+			@Override  
+			public String getQuickFixMenuText() { 
+				return "fix problems"; }
+			@Override
+			public boolean hasQuickFix(String content) {
+				if(content.isEmpty()) { flag = true; return true;}
+				flag = false;
+				return !content.equalsIgnoreCase(content.replaceAll("[^A-Za-z0-9_-]",""));
+			}			
+		});
 		
 		Button configurationButton = new Button(composite,SWT.CHECK); 
 		configurationButton.setSelection(true);   // enables-disables the configuration text and combo
@@ -384,22 +418,27 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		createLabel(composite,"name of the POM file : ","pomLabel");
 		
 		pomField = strValToolkit.createTextField(composite, new IFieldValidator<String>() {
-			boolean flag;  // two possible messages 0 and 1
+			int flag;  // three posible messages
 			@Override
 			public String getErrorMessage() {
-				if(flag) return "Pom name must end with .xml";
-				return "Pom name is empty";
+				if(flag == 0) return "Pom name is empty";
+				if(flag == 1) return "Pom name must end with .xml";
+				return "Pom name contains non allowed characters";
 			}
 			@Override
 			public String getWarningMessage() { return null; }
 			@Override
 			public boolean isValid(String contents) {
-				if(contents.isEmpty()) { flag = false; 
+				if(contents.isEmpty()) { flag = 0; 
 				check[2] = false; checkPage();
 				return false; }
-				if(!contents.endsWith(".xml")) { flag = true;
+				if(!contents.endsWith(".xml")) { flag = 1;
 				check[2] = false; checkPage();
 				return false; }
+				if(!contents.equalsIgnoreCase(contents
+						.replaceAll("[^A-Za-z0-9_/\\ \\.-]",""))) {flag = 2;
+					check[2] = false; checkPage(); 
+					return false; }
 				check[2] = true; checkPage(); return true;
 			}
 			@Override
@@ -417,6 +456,40 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         		if(!((Text)pomField.getControl()).getText().isEmpty())
         			pomName = ((Text)pomField.getControl()).getText();
         	}
+        });
+        pomField.setQuickFixProvider(new IQuickFixProvider<String>() {
+            int flag; // three possible problems
+			@Override
+			public boolean doQuickFix(ValidatingField<String> field) {
+				Text text = (Text)field.getControl();
+				if(flag == 0) {
+                  text.setText("descartes_pom.xml"); return true;
+				}
+				if(flag == 1) {
+					text.setText(text.getText()+".xml"); 
+				}
+				text.setText(text.getText()
+						.replaceAll("[^A-Za-z0-9_/\\.\\- \\ ]",""));
+				return true;
+			}
+			@Override
+			public String getQuickFixMenuText() {      
+				return "fix problems";
+			}
+			@Override
+			public boolean hasQuickFix(String content) {
+				if(content.isEmpty()) {
+					flag = 0; return true;
+				}
+				if(!content.endsWith(".xml")) {
+					flag = 1; return true;
+				}
+				if(!content.equalsIgnoreCase(
+						content.replaceAll("[^A-Za-z0-9/_\\.\\- \\ ]",""))) {
+					flag = 2; return true;
+				}
+				return false;
+			}       	
         });
 	}
 	
