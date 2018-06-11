@@ -33,6 +33,14 @@ after this, select the Dspot parameters in the wizard, when you press finish but
 
 <center>![configuration support](images/loadConfiguration.png)</center>
 
+### DSpot field validation and quick fixers
+
+Some fields of the DSpot wizard includes validation, if the text is wrong or empty a red signal and an error message will be displayed at the wizard page's head
+there will be another signal in the left top corner of the text, clicking right on this signal a quick fix menu will be open if there is a quick fixer for that 
+specific problem, click on it to correct the text.
+
+<center>![Quick fixer](images/DSpotValidation.png)</center>
+
 ### Loading a stored configuration
 
 To load a stored configuration deselect the check button in the "create configuration" row in page one, the "load configuration" combo will be set ennabled,
@@ -79,7 +87,7 @@ it will take more time.
 ### Select the test classes to amplify 
 
 Push the "Select tests" button in page two, a dialog will be opened, select the test classes to use (multiple selection is allowed), 
-you can also write the full names of the tests to use directly in the text box of the same row, separated by : in Mac or Linux and by ; in Windows.
+the text is only read so you have to select the tests in the dialog.
 
 <center>![tests selection](images/tests.png)</center>  
   
