@@ -416,7 +416,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			boolean flag; // two possible error messages
 			@Override
 			public String getErrorMessage() {
-				if(flag) return "Configuration name must not contain > or <";
+				if(flag) return "Configuration name contains not allowed characters";
 				return "Configuration name is empty";
 			}
 			@Override
@@ -428,7 +428,7 @@ public class DSpotWizardPage1 extends WizardPage {
 				if(content.isEmpty()) {
 					flag = false; return false;
 				}
-				if(content.contains(">") || content.contains("<")) {
+				if(!content.equalsIgnoreCase(content.replaceAll("[^A-Za-z0-9\\.\\-_ ]",""))) {
 					flag = true; return false;
 				}
 				wizard.setConfigurationName(content);
@@ -445,18 +445,23 @@ public class DSpotWizardPage1 extends WizardPage {
 		configurationField.setQuickFixProvider(new IQuickFixProvider<String>() {
 			@Override
 			public boolean doQuickFix(ValidatingField<String> field) {  
-				String result = field.getContents().replaceAll("[^A-Za-Z0-9 ]","");
+				String result = field.getContents().replaceAll("[^A-Za-z0-9_\\-\\. ]","");
+				if(result.isEmpty()) {
+					((Text)field.getControl()).setText("DSpot_configuration");
+					return true;
+				}
 			    ((Text)field.getControl()).setText(result);
 				return true;
 			}
 			@Override
 			public String getQuickFixMenuText() {
-				return "remove non alphanumeric characters";
+				return "fix problems";
 			}
 
 			@Override
 			public boolean hasQuickFix(String contents) {
-				return contents.contains("[^A-Za-z0-9 ]");
+				if(contents.isEmpty()) return true;
+				return !contents.equalsIgnoreCase(contents.replaceAll("[A-Za-z0-9\\.\\-_ ]",""));
 			}
 			
 		});
@@ -467,7 +472,7 @@ public class DSpotWizardPage1 extends WizardPage {
 				String sr = configurationField.getContents();
 				if(configurationField.getControl().isEnabled()) { 
 					if(!sr.isEmpty() && sr.equalsIgnoreCase(sr
-						.replaceAll("[^A-Za-z0-9_ ]",""))) return true;
+						.replaceAll("[^A-Za-z0-9_\\.\\- ]",""))) return true;
 					return false;
 				}
 				return true;
@@ -614,3 +619,4 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		private interface IDSpotPageElement{ public boolean validate(); }
 }
+
