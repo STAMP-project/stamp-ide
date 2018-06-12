@@ -1,6 +1,5 @@
 package eu.stamp.wp4.descartes.view;
 
-import java.net.URL;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -11,7 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
@@ -34,6 +33,8 @@ public class DescartesView extends ViewPart {
     
 	public void setUrls(String[] urls) { 
 		if(urls != null) {
+			Control[] children = parent.getChildren();
+			for(Control child : children) child.dispose();
 			GridLayoutFactory.fillDefaults().applyTo(parent);
 			TabFolder tabFolder = new TabFolder(parent,SWT.NONE);
 			GridDataFactory.fillDefaults().grab(true, true).minSize(200,150).applyTo(tabFolder);

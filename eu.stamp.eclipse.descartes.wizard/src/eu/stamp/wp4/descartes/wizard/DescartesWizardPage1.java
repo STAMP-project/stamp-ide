@@ -32,8 +32,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -355,7 +353,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 					     flag = true; return false;
 					     }
 					if( !contents.equalsIgnoreCase(
-							contents.replaceAll("[^A-Za-z0-9_-]", ""))) {
+							contents.replaceAll("[^A-Za-z0-9_\\-]", ""))) {
 						check[1] = false; checkPage();
 						flag = false; return false;
 					}
@@ -378,7 +376,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 				if(flag) {
 					text.setText("descartes_configuration"); return true;
 				}
-			    text.setText(text.getText().replaceAll("[^A-Za-z0-9_\\-\\.]",""));
+			    text.setText(text.getText().replaceAll("[^A-Za-z0-9_\\-]",""));
 				return true;
 			}   
 			@Override  
@@ -388,7 +386,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 			public boolean hasQuickFix(String content) {
 				if(content.isEmpty()) { flag = true; return true;}
 				flag = false;
-				return !content.equalsIgnoreCase(content.replaceAll("[^A-Za-z0-9_-]",""));
+				return !content.equalsIgnoreCase(content.replaceAll("[^A-Za-z0-9_\\-]",""));
 			}			
 		});
 		
@@ -429,14 +427,18 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 			public String getWarningMessage() { return null; }
 			@Override
 			public boolean isValid(String contents) {
-				if(contents.isEmpty()) { flag = 0; 
+				
+        		if(pomField != null)if(!((Text)pomField.getControl()).getText().isEmpty()) // the listener instructions
+        			pomName = ((Text)pomField.getControl()).getText();
+				
+				if(contents.isEmpty()) { flag = 0;   // validation
 				check[2] = false; checkPage();
 				return false; }
 				if(!contents.endsWith(".xml")) { flag = 1;
 				check[2] = false; checkPage();
 				return false; }
 				if(!contents.equalsIgnoreCase(contents
-						.replaceAll("[^A-Za-z0-9_/\\ \\.-]",""))) {flag = 2;
+						.replaceAll("[^A-Za-z0-9_/\\.\\-\\ ]",""))) {flag = 2;
 					check[2] = false; checkPage(); 
 					return false; }
 				check[2] = true; checkPage(); return true;
@@ -447,16 +449,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(10, 0)
 		.applyTo(pomField.getControl());
-		
-        pomField.getControl().addKeyListener(new KeyListener() {
-        	@Override
-        	public void keyPressed(KeyEvent e) {}
-        	@Override
-        	public void keyReleased(KeyEvent e) {
-        		if(!((Text)pomField.getControl()).getText().isEmpty())
-        			pomName = ((Text)pomField.getControl()).getText();
-        	}
-        });
+
         pomField.setQuickFixProvider(new IQuickFixProvider<String>() {
             int flag; // three possible problems
 			@Override
@@ -469,7 +462,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 					text.setText(text.getText()+".xml"); 
 				}
 				text.setText(text.getText()
-						.replaceAll("[^A-Za-z0-9_/\\.\\- \\ ]",""));
+						.replaceAll("[^A-Za-z0-9_/\\.\\-\\ ]",""));
 				return true;
 			}
 			@Override
