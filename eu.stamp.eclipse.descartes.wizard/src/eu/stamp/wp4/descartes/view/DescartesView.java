@@ -15,7 +15,12 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.part.ViewPart;
-
+/**
+ *  This class describes the Descartes Eclipse view to display 
+ *  the content of the html summaries, the view is formed by a tab,
+ *  each item of the tab contains a browser to display one of the documents
+ *
+ */
 public class DescartesView extends ViewPart {
 	
 	@Inject IWorkbench workbench;
@@ -31,6 +36,10 @@ public class DescartesView extends ViewPart {
 	@Override
 	public void setFocus() {}
     
+	/**
+	 * updates the view to show a new html list
+	 * @param urls : a string array with the urls of the documents
+	 */
 	public void setUrls(String[] urls) { 
 		if(urls != null) {
 			Control[] children = parent.getChildren();
@@ -56,13 +65,21 @@ public class DescartesView extends ViewPart {
 				}
 			}
 		}
+	/**
+	 * get the name of a file from its url, this method is called to set the name of the tab items
+	 * @param url : a string representing an url
+	 * @return the name of the file (without extension)
+	 */
 	private String getFileName(String url) {
-		if(url.contains("/") && url.contains(".")) 
+		if(url.contains("/") && url.contains("."))   // / or \\ depending of the OS
 			return url.substring(url.lastIndexOf('/')+1,url.lastIndexOf('.'));
 		if(url.contains("\\") && url.contains("."))
             return url.substring(url.lastIndexOf('\\')+1,url.lastIndexOf('.'));
 		return url;
 	}
+	/**
+	 * inner class to store the MyFile objects without name repetition 
+	 */
 	private class MyFileList{
 		private ArrayList<MyFile> list;
 		public MyFileList() {
@@ -77,6 +94,9 @@ public class DescartesView extends ViewPart {
 			return list;
 		}
 	}
+	/**
+	 * inner class to get together the name and url of a file
+	 */
 	private class MyFile{
 		public String name;
 		public String url;

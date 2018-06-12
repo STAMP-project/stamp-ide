@@ -14,16 +14,25 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 
 import eu.stamp.wp4.descartes.view.DescartesView;
-
+/**
+ *  an instance of this class stores the file objects of the html documents in a folder system
+ *  and shows them in an Eclipse view formed by several tabs 
+ *  with a browser to display one document in each tab
+ */
 public class DescartesHtmlManager {
-	
+	/**
+	 *  the html summaries produced by Descartes
+	 */
 	private File[] htmls;
-	
+	/**
+	 * a DescartesHtmlManager object is created from a parent folder finding the htmls inside
+	 * @param outputFolder : the parent folder of the file system where the html are stored
+	 */
 	public DescartesHtmlManager(String outputFolder) {
 		htmls = findHtmls(new File(outputFolder));
 	}
 	/**
-	 * opens an Eclipse web browser for each html
+	 * opens an Eclipse web browser in a tab item for each html
 	 */
 	public void openBrowsers() {
 		Display.getDefault().asyncExec(new Runnable() {
@@ -43,15 +52,7 @@ public class DescartesHtmlManager {
 				}
 			}
 		});
-		//IWorkbenchBrowserSupport support =
-				  //PlatformUI.getWorkbench().getBrowserSupport();
-		/*
-		try {
-			IWebBrowser browser = support.createBrowser("");
-			browser.openURL(file.toURI().toURL());
-		} catch (PartInitException | MalformedURLException e) {
-			e.printStackTrace();
-		}*/
+
 	}
 	/**
 	 * finds the Descartes html files

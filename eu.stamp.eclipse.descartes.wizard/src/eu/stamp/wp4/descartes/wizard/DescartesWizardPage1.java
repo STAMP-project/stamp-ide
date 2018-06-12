@@ -60,10 +60,6 @@ import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
 @SuppressWarnings("restriction")
 public class DescartesWizardPage1 extends WizardPage implements IDescartesWizardPart{
-	
-    private static final int DECORATOR_POSITION = SWT.TOP | SWT.LEFT;
-    private static final int DECORATOR_MARGIN_WIDTH = 1;
-	
 	/**
 	 *  An instance for the wizard to call the update method 
 	 *  and get access to the only DescartesWizardConfiguration object
@@ -98,8 +94,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	private ValidatingField<String> pomField;
 	
 	private Properties tooltipsProperties;
-    private StringValidationToolkit strValToolkit = null;
-    private final IFieldErrorMessageHandler errorMessageHandler;
+    private StringValidationToolkit valKit = null;
+    private final IFieldErrorMessageHandler errorHandler;
     private boolean[] check = {false,false,false};
 
 	public DescartesWizardPage1(DescartesWizard wizard) {
@@ -108,17 +104,17 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		setTitle("Descartes configuration");
 		setDescription("Configuration of Descartes mutators");
 		
-		// loading the properties for the tooltip, the name of each property is
-		// the name of its corresponding widget
+		/*  loading the properties for the tooltip, the name of each property is
+		 *  the name of its corresponding widget   
+		 */
 		tooltipsProperties = new Properties();
 		try {tooltipsProperties = getTheProperties("files/descartes_tooltips.properties");	
 		} catch (IOException e1) { e1.printStackTrace(); }
 		
-		errorMessageHandler = new DescartesWizardErrorHandler();
-		strValToolkit = new StringValidationToolkit(DECORATOR_POSITION,
-        		DECORATOR_MARGIN_WIDTH,true);
-        
-        strValToolkit.setDefaultErrorMessageHandler(errorMessageHandler);
+		// prepare the message handler and the validation tool kit
+		errorHandler = new DescartesWizardErrorHandler(); 
+		valKit = new StringValidationToolkit(SWT.LEFT | SWT.TOP,1,true);
+        valKit.setDefaultErrorMessageHandler(errorHandler);
 	}
 	
 	@Override
@@ -274,10 +270,10 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 
 
         String[] defaultMutators = {""};
-        try { defaultMutators = getDefaultMutators();
+        try { defaultMutators = getDefaultMutators();  // get the default list from the properties file
 		} catch (IOException e1) { e1.printStackTrace(); }
         final String[] finalDefaultMutators = defaultMutators;
-        defaultMutatorsButton.addSelectionListener(new SelectionAdapter(){
+        defaultMutatorsButton.addSelectionListener(new SelectionAdapter(){ // set a default mutators list
         	@Override
         	public void widgetSelected(SelectionEvent e) {
         		for(int i = items.size()-1; i >= 0; i--) items.remove(i);
@@ -289,16 +285,21 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         	}
         });
         
-		// required to avoid an error in the System
+		// required
 		setControl(composite);
 		setPageComplete(true);	  
 		}
-	
+	/**
+	 * creates the text validation field for the project parameter, the validation checks
+	 * that the folder in the text exists, in the right of the project's path text there is a button
+	 * to open a project selection dialog 
+	 * @param composite : the composite to append the validation field
+	 */
 	private void createProjectField(Composite composite) {
 		
 		createLabel(composite,"path of the project : ","projectLabel");
 		
-		projectField = strValToolkit.createTextField(composite, new IFieldValidator<String>() {
+		projectField = valKit.createTextField(composite, new IFieldValidator<String>() {
 			@Override
 			public String getErrorMessage() { return " Project's folder not found "; }
 			@Override
@@ -332,12 +333,19 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	        	}
 	        });
 	}
-	
+	/**
+	 * create a validation field to set the name of the new configuration, the validator 
+	 * checks that the name is not empty and it doesn't contain non allowed characters,
+	 * the non allowed characters are the non alphanumeric characters except _ and - 
+	 * the field includes a quick fixer to remove the non allowed characters and to set
+	 * a default name when the text is empty
+	 * @param composite : the composite to append the validation field
+	 */
 	private void createConfigurationField(Composite composite) {
 		
 		createLabel(composite,"create new configuration : ","newConfigurationLabel");
 		
-		configurationField = strValToolkit.createTextField(composite,new IFieldValidator<String>() {
+		configurationField = valKit.createTextField(composite,new IFieldValidator<String>() {
 			boolean flag; // two possible error messages
 			@Override
 			public String getErrorMessage() { 
@@ -410,12 +418,15 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         	}
         });
 	}
-	
+	/**
+	 * 
+	 * @param composite : the composite to append the validation field
+	 */
 	private void createPomField(Composite composite) {
 		
 		createLabel(composite,"name of the POM file : ","pomLabel");
 		
-		pomField = strValToolkit.createTextField(composite, new IFieldValidator<String>() {
+		pomField = valKit.createTextField(composite, new IFieldValidator<String>() {
 			int flag;  // three posible messages
 			@Override
 			public String getErrorMessage() {
@@ -485,7 +496,12 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 			}       	
         });
 	}
-	
+	/**
+	 * creates a label with the given text, and tooltip text and a predefined grid data and style
+	 * @param composite : the composite to append the label
+	 * @param labelText : the text to display in the label
+	 * @param propertyKey : the key of the tooltip text for this label
+	 */
     private void createLabel(Composite composite,String labelText,String propertyKey) {
 	   
 		Label label = new Label(composite,SWT.NONE);
@@ -505,8 +521,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		// update mutators
 		mutatorsTexts = wConf.getMutatorsTexts();
 		 
-		// set the updated mutators in the tree
-		
+		// set the updated mutators in the tree	
 		if(mutatorsTree != null) if(!mutatorsTree.isDisposed()) {
 		for(int i = items.size()-1; i >= 0; i--) items.remove(i);
 		mutatorsTree.removeAll();
@@ -553,11 +568,16 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	 *  This method opens a dialog with a text to set the content of a new mutator
 	 *  it is called by the add mutator button listener
 	 */
-	private String showInputDialog () {
-		InputDialog dialog = new InputDialog(
+	private String showInputDialog () {   // TODO
+		AddMutatorDialog diag = new AddMutatorDialog(PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getShell());
+		if(diag.open() == Window.OK) {
+			return diag.getResult();
+		}
+		/*InputDialog dialog = new InputDialog(
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),"Add mutator",
 				"enter the new mutator",null,null);
-		if(dialog.open() == Window.OK) return dialog.getValue();
+		if(dialog.open() == Window.OK) return dialog.getValue();*/
 		return null;
 	}
 	/**

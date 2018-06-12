@@ -224,8 +224,7 @@ public class DescartesWizardPomParser {
 	}
 	/**
 	 * this method takes the tree representation of the project's pom.xml 
-	 * and checks if the mutators declaration in the project build is complete
-	 * or not. 
+	 * and checks if the mutators declaration in the project build is complete or not. 
 	 * The hierarchy is build-plugins-plugin-configuration-mutators-mutator
 	 * some of this element have anther child, 
 	 * if this structure is partially complete the method completes it
