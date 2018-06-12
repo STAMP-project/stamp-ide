@@ -79,9 +79,6 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
  */
 @SuppressWarnings("restriction")
 public class DSpotWizardPage1 extends WizardPage { 
-	// TODO correct page validation
-    private static final int DECORATOR_POSITION = SWT.TOP | SWT.LEFT;
-    private static final int DECORATOR_MARGIN_WIDTH = 1;
 	
 	// [0] project, [1] src, [2] testScr, [3] javaVersion, [4] outputDirectory, [5] filter
 	private String[] TheProperties = new String[6];
@@ -92,7 +89,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	
 	private Properties tooltipsProperties;
 	
-    private StringValidationToolkit strValToolkit = null;
+    private StringValidationToolkit valKit = null;
     private final IFieldErrorMessageHandler errorMessageHandler;
 	
     private Combo configCombo;
@@ -122,9 +119,9 @@ public class DSpotWizardPage1 extends WizardPage {
 				e2.printStackTrace(); }
 
 		    errorMessageHandler = new WizardErrorHandler();
-			strValToolkit = new StringValidationToolkit(DECORATOR_POSITION,
-	        		DECORATOR_MARGIN_WIDTH,true);
-	        strValToolkit.setDefaultErrorMessageHandler(errorMessageHandler);
+			valKit = new StringValidationToolkit(SWT.LEFT | SWT.TOP,
+	        		1,true);
+	        valKit.setDefaultErrorMessageHandler(errorMessageHandler);
 	        
 	        pageValidator = new DSpotPage1Validator();
 	} // end of the constructor
@@ -412,7 +409,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		createLabel(composite,"New Configuration : ","lbNewConfig"); 
 		
-		configurationField = strValToolkit.createTextField(composite, new IFieldValidator<String>() {
+		configurationField = valKit.createTextField(composite, new IFieldValidator<String>() {
 			boolean flag; // two possible error messages
 			@Override
 			public String getErrorMessage() {
@@ -423,7 +420,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			public String getWarningMessage() { return null; }
 			@Override
 			public boolean isValid(String content) {
-				pageValidator.validatePage();             // TODO eliminate redundancy
+				pageValidator.validatePage();          
 				if(configCombo.isEnabled()) return true;
 				if(content.isEmpty()) {
 					flag = false; return false;
@@ -508,7 +505,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		// Obtain the path of the project
 		String direction = wConf.getProjectPath();
 		
-		projectField = strValToolkit.createTextField(composite, new IFieldValidator<String>() {
+		projectField = valKit.createTextField(composite, new IFieldValidator<String>() {
 			@Override
 			public String getErrorMessage() { return "Project's directory not found"; }
 			
@@ -517,7 +514,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			
 			@Override
 			public boolean isValid(String content) {
-				pageValidator.validatePage();          // TODO eliminate redundancy
+				pageValidator.validatePage();     
 				File file = new File(content);
 				if(file.exists())if(file.isDirectory()) {
 	        		TheProperties[0] = content;  // Project's path
@@ -553,12 +550,12 @@ public class DSpotWizardPage1 extends WizardPage {
 			    @Override
 			    public void widgetSelected(SelectionEvent e) {
 			    	IJavaProject jPro = showProjectDialog();
+			    	if(jPro != null) {
 			        try {
 						wConf = new WizardConfiguration(jPro);
 					} catch (CoreException e1) {
 						e1.printStackTrace();
 					}
-			        if(wConf.getPro() != null) { // to avoid problems if selection is cancelled
 			    	text.setText(wConf.getProjectPath());
 			    	TheProperties[0] = wConf.getProjectPath();
 	                combo0.removeAll(); combo2.removeAll();

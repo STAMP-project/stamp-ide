@@ -206,8 +206,11 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     	 GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).indent(0, vSpace).applyTo(pathPitResultButton);
     	 pathPitResultButton.setToolTipText(tooltipsProperties.getProperty("pathPitResultButton"));
     	 
-    	 createPathPitField(composite);
-    	 
+    	 Text pathPitText = new Text(composite,SWT.READ_ONLY |SWT.BORDER);
+     	 GridDataFactory.fillDefaults().grab(true, false).indent(10, 8).applyTo(pathPitText);
+     	 pathPitText.setEnabled(pitSelected);
+     	 pathPitText.setText(pathPitResult);
+     	 
     	 /*
     	  *  Row 6 : MAVEN_HOME
     	  */
@@ -235,7 +238,8 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     			 dialog.setText("Select a folder");
     			 final String directoryPath = dialog.open();
     			 if(directoryPath != null && !directoryPath.isEmpty()) {
-    				 ((Text)pathPitResultField.getControl()).setText(directoryPath);
+    				 pathPitText.setText(directoryPath);
+    				 //((Text)pathPitResultField.getControl()).setText(directoryPath);
     				 pathPitResult = directoryPath;
     			 }
     		 }
@@ -347,15 +351,7 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
      public boolean dialogUnused() {
     	 return unusedDialog;
      }
-     private void createPathPitField(Composite composite) {
-    	 
-    	pathPitResultField =  strValToolkit.createTextField(composite,
-    			getFolderValidator("Path Pit result"),false,"");
-    	Text text = (Text)pathPitResultField.getControl();
-    	GridDataFactory.fillDefaults().grab(true, false).indent(10, 8).applyTo(text);
-    	text.setEnabled(pitSelected);
-    	text.setText(pathPitResult);
-     }
+
      private void createMavenHomeField (Composite composite) {
     	 
        mavenHomeField = strValToolkit.createTextField(composite,getFolderValidator("MAVEN_HOME")
