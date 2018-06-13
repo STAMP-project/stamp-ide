@@ -1,6 +1,5 @@
 package eu.stamp.wp4.descartes.wizard;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -24,7 +23,6 @@ import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -89,7 +87,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	// widgets
 	private Tree mutatorsTree;
 	private Combo configurationCombo;
-	private ValidatingField<String> projectField;
+	private Text projectText;
+	//private ValidatingField<String> projectField;
 	private ValidatingField<String> configurationField;
 	private ValidatingField<String> pomField;
 	
@@ -137,7 +136,31 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		for(String sr : configurations) configurationCombo.add(sr);
 		
 		createConfigurationField(composite);  // ROW 2 : Create new configuration
-		createProjectField(composite); //  ROW 3 : path of the selected project
+		
+		createLabel(composite,"path of the project : ","projectLabel");
+		
+		projectText = new Text(composite,SWT.BORDER | SWT.READ_ONLY);
+		projectText.setText(projectPath);
+		GridDataFactory.fillDefaults().applyTo(projectText);
+		
+		Button projectButton = new Button(composite,SWT.PUSH);  // opens a dialog to select a project
+		projectButton.setText("Select a Project");
+		GridDataFactory.swtDefaults().applyTo(projectButton);
+		projectButton.setToolTipText(tooltipsProperties.getProperty(
+				"projectButton"));
+		 projectButton.addSelectionListener(new SelectionAdapter() {
+	        	@Override
+	        	public void widgetSelected(SelectionEvent e) {
+	        		IJavaProject jProject = showProjectDialog();
+	        		if(jProject == null) return;
+	        		wizard.setWizardConfiguration(new DescartesWizardConfiguration(jProject));
+	        		projectText.setText(wizard.getWizardConfiguration().getProjectPath());
+	        		check[1] = true; checkPage();
+	        	}
+	        });
+		
+		
+		//createProjectField(composite); //  ROW 3 : path of the selected project
 
 		Label mutatorsLabel = new Label(composite,SWT.NONE);  // ROW 4 : Mutators list title
 		mutatorsLabel.setText("Mutators : ");
@@ -217,9 +240,10 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         		((Text)configurationField.getControl()).setText("");
         		if(configurationCombo.getText() != null)if(!configurationCombo.getText().isEmpty()) {
         		configurationName = configurationCombo.getText();
+        		if(!configurationName.isEmpty()) { check[0] = true; checkPage();}
         		try {
 					DescartesWizardConfiguration conf = wizard.getWizardConfiguration();
-							conf.setCurrentConfiguration(configurationCombo.getText()); 
+					conf.setCurrentConfiguration(configurationCombo.getText()); 
 					wizard.setWizardConfiguration(conf);
 					// now the wizard configuration is updated ready to update all the wizard parts
 					wizard.updateWizardParts();
@@ -289,50 +313,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		setControl(composite);
 		setPageComplete(true);	  
 		}
-	/**
-	 * creates the text validation field for the project parameter, the validation checks
-	 * that the folder in the text exists, in the right of the project's path text there is a button
-	 * to open a project selection dialog 
-	 * @param composite : the composite to append the validation field
-	 */
-	private void createProjectField(Composite composite) {
-		
-		createLabel(composite,"path of the project : ","projectLabel");
-		
-		projectField = valKit.createTextField(composite, new IFieldValidator<String>() {
-			@Override
-			public String getErrorMessage() { return " Project's folder not found "; }
-			@Override
-			public String getWarningMessage() { return ""; }
-			@Override
-			public boolean isValid(String contents) {
-				File file = new File(contents);
-				if(file.exists())if(file.isDirectory()) {
-					check[0] = true;  checkPage(); return true;
-				}
-				check[0] = false; checkPage(); return false;
-			}
-			@Override
-			public boolean warningExist(String contents) { return false; }	
-		}, true,projectPath);
-		
-		GridDataFactory.fillDefaults().grab(true, false).indent(10, 0)
-		.applyTo(projectField.getControl());
-		
-		Button projectButton = new Button(composite,SWT.PUSH);  // opens a dialog to select a project
-		projectButton.setText("Select a Project");
-		GridDataFactory.swtDefaults().applyTo(projectButton);
-		projectButton.setToolTipText(tooltipsProperties.getProperty(
-				"projectButton"));
-		 projectButton.addSelectionListener(new SelectionAdapter() {
-	        	@Override
-	        	public void widgetSelected(SelectionEvent e) {
-	        		IJavaProject jProject = showProjectDialog();
-	        		if(jProject != null) wizard
-	        		.setWizardConfiguration(new DescartesWizardConfiguration(jProject));
-	        	}
-	        });
-	}
+
 	/**
 	 * create a validation field to set the name of the new configuration, the validator 
 	 * checks that the name is not empty and it doesn't contain non allowed characters,
@@ -357,16 +338,17 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 			public boolean isValid(String contents) { 
 				if(configurationField != null)if(configurationField.getControl().isEnabled()) {
 					if(contents.isEmpty()) {
-						check[1] = false; checkPage();
+						check[0] = false; checkPage();
 					     flag = true; return false;
 					     }
 					if( !contents.equalsIgnoreCase(
 							contents.replaceAll("[^A-Za-z0-9_\\-]", ""))) {
-						check[1] = false; checkPage();
+						check[0] = false; checkPage();
 						flag = false; return false;
 					}
 				}
-				check[1] = true; checkPage();  return true;
+				check[0] = true; checkPage(); 
+				return true;
 				}
 			@Override
 			public boolean warningExist(String contents) { return false; }
@@ -409,11 +391,11 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         		if(selection) {
         			((Text)configurationField.getControl()).setText("new_configuration");
         			configurationCombo.setText("");
-        			check[1] = true; checkPage();
+        			checkPage();
         		}
         		if(!selection) {
         			((Text)configurationField.getControl()).setText("");
-        			check[1] = false; checkPage();
+        	         checkPage();
         		}
         	}
         });
@@ -515,8 +497,9 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		
 		// update project path
 		projectPath = wConf.getProjectPath();
-		if(projectField != null) { if(!projectField.getControl().isDisposed())
-			((Text)projectField.getControl()).setText(projectPath);}
+		if(projectText != null)if(!projectText.isDisposed()) {
+			projectText.setText(projectPath);
+		}
 		
 		// update mutators
 		mutatorsTexts = wConf.getMutatorsTexts();
@@ -552,7 +535,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		return texts;
 	}
 	public String getConfigurationName() {
-		if(configurationField != null)if(((Text)configurationField.getControl())
+		if(configurationField != null)if(!((Text)configurationField.getControl())
 				.getText().isEmpty())
 			configurationName =  ((Text)configurationField.getControl()).getText();
 		if(configurationName.isEmpty())configurationName = configurationCombo.getText();
@@ -574,10 +557,6 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		if(diag.open() == Window.OK) {
 			return diag.getResult();
 		}
-		/*InputDialog dialog = new InputDialog(
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),"Add mutator",
-				"enter the new mutator",null,null);
-		if(dialog.open() == Window.OK) return dialog.getValue();*/
 		return null;
 	}
 	/**
@@ -674,9 +653,14 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		boolean complete = true;
 		if(configurationCombo != null)  
 			if(configurationCombo.isEnabled()){
-					if(configurationCombo.getText().isEmpty())check[1] = false;
-					else check[1] = true;
+					if(configurationCombo.getText().isEmpty())check[0] = false;
+					else check[0] = true;
 			}
+		if(projectText != null) {
+			if(!projectText.isDisposed()) check[1] = !projectText.getText().isEmpty();
+			else check[1] = true;
+		}
+		else check[1] = true;
 		for(boolean bo : check)complete = complete && bo;
 		setPageComplete(complete);
 	}

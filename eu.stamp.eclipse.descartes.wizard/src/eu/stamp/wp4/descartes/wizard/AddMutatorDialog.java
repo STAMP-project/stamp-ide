@@ -92,6 +92,8 @@ public class AddMutatorDialog extends TitleAreaDialog {
     protected void okPressed() {
     	result = text.getText();
     	if(decimal && !result.contains(".")) result = result +".0";
+    	if(leftLabel.getText().equalsIgnoreCase("\'") && result
+    			.equalsIgnoreCase(result.replaceAll("[^0-9]",""))) result = "\\" + result;
     	result = leftLabel.getText() + result + rightLabel.getText();
     	super.okPressed();
     }
@@ -133,6 +135,7 @@ public class AddMutatorDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 			leftLabel.setText(""); rightLabel.setText("");
 			text.setText(name); text.setEnabled(false);
+			decimal = false;
 			} });
  		return;
     	 }
