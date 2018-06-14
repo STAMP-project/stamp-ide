@@ -34,7 +34,7 @@ import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
-import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -42,8 +42,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -60,13 +58,18 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
+import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
+import com.richclientgui.toolbox.validation.ValidatingField;
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
+import com.richclientgui.toolbox.validation.validator.IFieldValidator;
+import com.richclientgui.toolbox.validation.IQuickFixProvider;
+
 import eu.stamp.wp4.descartes.wizard.configuration.DescartesWizardConfiguration;
 import eu.stamp.wp4.descartes.wizard.configuration.IDescartesWizardPart;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
 @SuppressWarnings("restriction")
 public class DescartesWizardPage1 extends WizardPage implements IDescartesWizardPart{
-	
 	/**
 	 *  An instance for the wizard to call the update method 
 	 *  and get access to the only DescartesWizardConfiguration object
@@ -95,25 +98,38 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	
 	// widgets
 	private Tree mutatorsTree;
+	private Combo configurationCombo;
 	private Text projectText;
-	private Text configurationText;
-	private Text pomText;
+	//private ValidatingField<String> projectField;
+	private ValidatingField<String> configurationField;
+	private ValidatingField<String> pomField;
+	
+	private Properties tooltipsProperties;
+    private StringValidationToolkit valKit = null;
+    private final IFieldErrorMessageHandler errorHandler;
+    private boolean[] check = {false,false,false};
 
 	public DescartesWizardPage1(DescartesWizard wizard) {
 		super("Descartes configuration");
 		this.wizard = wizard;
 		setTitle("Descartes configuration");
 		setDescription("Configuration of Descartes mutators");
+		
+		/*  loading the properties for the tooltip, the name of each property is
+		 *  the name of its corresponding widget   
+		 */
+		tooltipsProperties = new Properties();
+		try {tooltipsProperties = getTheProperties("files/descartes_tooltips.properties");	
+		} catch (IOException e1) { e1.printStackTrace(); }
+		
+		// prepare the message handler and the validation tool kit
+		errorHandler = new DescartesWizardErrorHandler(); 
+		valKit = new StringValidationToolkit(SWT.LEFT | SWT.TOP,1,true);
+        valKit.setDefaultErrorMessageHandler(errorHandler);
 	}
 	
 	@Override
 	public void createControl(Composite parent) {
-		
-		// loading the properties for the tooltip, the name of each property is
-		// the name of its corresponding widget
-		Properties tooltipsProperties = new Properties();
-		try {tooltipsProperties = getTheProperties("files/descartes_tooltips.properties");	
-		} catch (IOException e1) { e1.printStackTrace(); }
 		
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
@@ -121,60 +137,47 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 		
+        // ROW 1 : Load configuration
+		createLabel(composite,"load configuration : ","configurationLabel");
 		
-		/*
-		 *  ROW 1 : Load configuration
-		 */
-		Label configurationLabel = new Label(composite,SWT.NONE);
-		configurationLabel.setText("load configuration : ");
-		GridDataFactory.swtDefaults().grab(false, false).applyTo(configurationLabel);
-		configurationLabel.setToolTipText(tooltipsProperties.getProperty(
-				"configurationLabel"));
-		
-		Combo configurationCombo = new Combo(composite,SWT.BORDER); // combo for saved configurations
+		configurationCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY); // combo for saved configurations
 		configurationCombo.setEnabled(false);
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(configurationCombo);
 		String[] configurations = wizard.getWizardConfiguration().getConfigurationNames();
+		configurationCombo.add("");
 		for(String sr : configurations) configurationCombo.add(sr);
-		/*
-		 *  ROW 2 : Create new configuration
-		 */
-		Label newConfigurationLabel = new Label(composite,SWT.NONE);
-		newConfigurationLabel.setText("create new configuration : ");
-		GridDataFactory.swtDefaults().grab(false, false).applyTo(newConfigurationLabel);
-		newConfigurationLabel.setToolTipText(tooltipsProperties.getProperty(
-				"newConfigurationLabel"));
 		
-		configurationText = new Text(composite,SWT.BORDER);  // text for the name of a new configuration
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(configurationText);
+		createConfigurationField(composite);  // ROW 2 : Create new configuration
 		
-		Button configurationButton = new Button(composite,SWT.CHECK); 
-		configurationButton.setSelection(true);   // enables-disables the configuration text and combo
+		createLabel(composite,"path of the project : ","projectLabel");
 		
-		/*
-		 *   ROW 3 : path of the selected project
-		 */
-		Label projectLabel = new Label(composite,SWT.NONE);
-		projectLabel.setText("path of the project : ");
-		GridDataFactory.swtDefaults().grab(false, false).applyTo(projectLabel);
-		projectLabel.setToolTipText(tooltipsProperties.getProperty(
-				"projectLabel"));
-		
-		projectText = new Text(composite,SWT.BORDER);  
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(projectText);
+		projectText = new Text(composite,SWT.BORDER | SWT.READ_ONLY);
 		projectText.setText(projectPath);
+		GridDataFactory.fillDefaults().applyTo(projectText);
 		
 		Button projectButton = new Button(composite,SWT.PUSH);  // opens a dialog to select a project
 		projectButton.setText("Select a Project");
 		GridDataFactory.swtDefaults().applyTo(projectButton);
 		projectButton.setToolTipText(tooltipsProperties.getProperty(
 				"projectButton"));
-		/*
-		 *   ROW 4 : Mutators list title
-		 */
-		Label mutatorsLabel = new Label(composite,SWT.NONE);
+		 projectButton.addSelectionListener(new SelectionAdapter() {
+	        	@Override
+	        	public void widgetSelected(SelectionEvent e) {
+	        		IJavaProject jProject = showProjectDialog();
+	        		if(jProject == null) return;
+	        		wizard.setWizardConfiguration(new DescartesWizardConfiguration(jProject));
+	        		projectText.setText(wizard.getWizardConfiguration().getProjectPath());
+	        		check[1] = true; checkPage();
+	        	}
+	        });
+		
+		
+		//createProjectField(composite); //  ROW 3 : path of the selected project
+
+		Label mutatorsLabel = new Label(composite,SWT.NONE);  // ROW 4 : Mutators list title
 		mutatorsLabel.setText("Mutators : ");
 		GridDataFactory.fillDefaults().span(3, 1).indent(0, 8).applyTo(mutatorsLabel);
+		
 		/*
 		 *   ROW 5 (multiple row) : list with the mutators and buttons to add,remove ...
 		 */
@@ -239,30 +242,20 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         
         Label space = new Label(composite,SWT.NONE);
         space.setText("");
-        
-        /*
-         *   ROW 6 : Pom file
-         */
-        Label pomLabel = new Label(composite,SWT.NONE);
-        pomLabel.setText("name of the POM file : ");
-        GridDataFactory.swtDefaults().grab(false, false).indent(0, 8).applyTo(pomLabel);
-        pomLabel.setToolTipText(tooltipsProperties.getProperty("pomLabel"));
-        
-        pomText = new Text(composite,SWT.BORDER);
-        pomText.setText("descartes_pom.xml");
-        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).indent(0, 8)
-        .applyTo(pomText);
+
+        createPomField(composite); //  ROW 6 : Pom file
         
         // listeners
         configurationCombo.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
-        		configurationText.setText("");
+        		((Text)configurationField.getControl()).setText("");
         		if(configurationCombo.getText() != null)if(!configurationCombo.getText().isEmpty()) {
         		configurationName = configurationCombo.getText();
+        		if(!configurationName.isEmpty()) { check[0] = true; checkPage();}
         		try {
 					DescartesWizardConfiguration conf = wizard.getWizardConfiguration();
-							conf.setCurrentConfiguration(configurationCombo.getText()); 
+					conf.setCurrentConfiguration(configurationCombo.getText()); 
 					wizard.setWizardConfiguration(conf);
 					// now the wizard configuration is updated ready to update all the wizard parts
 					wizard.updateWizardParts();
@@ -271,24 +264,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 				}}
         	}
         });
-        configurationButton.addSelectionListener(new SelectionAdapter() {
-        	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        		boolean selection = configurationButton.getSelection();
-        		configurationText.setEnabled(selection);
-        		if(!selection)configurationText.setText("");
-        		configurationCombo.setEnabled(!selection);
-        		if(selection)configurationCombo.setText("");
-        	}
-        });
-        projectButton.addSelectionListener(new SelectionAdapter() {
-        	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        		IJavaProject jProject = showProjectDialog();
-        		if(jProject != null) wizard
-        		.setWizardConfiguration(new DescartesWizardConfiguration(jProject));
-        	}
-        });
+
         removeMutatorButton.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -330,10 +306,10 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 
 
         String[] defaultMutators = {""};
-        try { defaultMutators = getDefaultMutators();
+        try { defaultMutators = getDefaultMutators();  // get the default list from the properties file
 		} catch (IOException e1) { e1.printStackTrace(); }
         final String[] finalDefaultMutators = defaultMutators;
-        defaultMutatorsButton.addSelectionListener(new SelectionAdapter(){
+        defaultMutatorsButton.addSelectionListener(new SelectionAdapter(){ // set a default mutators list
         	@Override
         	public void widgetSelected(SelectionEvent e) {
         		for(int i = items.size()-1; i >= 0; i--) items.remove(i);
@@ -345,32 +321,202 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         	}
         });
         
-        pomText.addKeyListener(new KeyListener() {
-        	@Override
-        	public void keyPressed(KeyEvent e) {}
-        	@Override
-        	public void keyReleased(KeyEvent e) {
-        		if(!pomText.getText().isEmpty())pomName = pomText.getText();
-        	}
-        });
-        
-		// required to avoid an error in the System
+		// required
 		setControl(composite);
 		setPageComplete(true);	  
 		}
 
-	@Override
-	public void updateDescartesWizardPart(DescartesWizardConfiguration wConf) {
+	/**
+	 * create a validation field to set the name of the new configuration, the validator 
+	 * checks that the name is not empty and it doesn't contain non allowed characters,
+	 * the non allowed characters are the non alphanumeric characters except _ and - 
+	 * the field includes a quick fixer to remove the non allowed characters and to set
+	 * a default name when the text is empty
+	 * @param composite : the composite to append the validation field
+	 */
+	private void createConfigurationField(Composite composite) {
+		
+		createLabel(composite,"create new configuration : ","newConfigurationLabel");
+		
+		configurationField = valKit.createTextField(composite,new IFieldValidator<String>() {
+			boolean flag; // two possible error messages
+			@Override
+			public String getErrorMessage() { 
+				if(flag) return "Configuration name is empty";
+				return "Configuration contains non allowed characters"; }
+			@Override
+			public String getWarningMessage() { return ""; }
+			@Override
+			public boolean isValid(String contents) { 
+				if(configurationField != null)if(configurationField.getControl().isEnabled()) {
+					if(contents.isEmpty()) {
+						check[0] = false; checkPage();
+					     flag = true; return false;
+					     }
+					if( !contents.equalsIgnoreCase(
+							contents.replaceAll("[^A-Za-z0-9_\\-]", ""))) {
+						check[0] = false; checkPage();
+						flag = false; return false;
+					}
+				}
+				check[0] = true; checkPage(); 
+				return true;
+				}
+			@Override
+			public boolean warningExist(String contents) { return false; }
+			
+		},false,"new_configuration");	
+		
+		GridDataFactory.fillDefaults().grab(true, false).indent(10, 0)
+		.applyTo(configurationField.getControl());
+		
+		configurationField.setQuickFixProvider(new IQuickFixProvider<String>() {
+			boolean flag; // two possible problems
+			@Override
+			public boolean doQuickFix(ValidatingField<String> field) {
+				Text text = ((Text)field.getControl());
+				if(flag) {
+					text.setText("descartes_configuration"); return true;
+				}
+			    text.setText(text.getText().replaceAll("[^A-Za-z0-9_\\-]",""));
+				return true;
+			}   
+			@Override  
+			public String getQuickFixMenuText() { 
+				return "fix problems"; }
+			@Override
+			public boolean hasQuickFix(String content) {
+				if(content.isEmpty()) { flag = true; return true;}
+				flag = false;
+				return !content.equalsIgnoreCase(content.replaceAll("[^A-Za-z0-9_\\-]",""));
+			}			
+		});
+		
+		Button configurationButton = new Button(composite,SWT.CHECK); 
+		configurationButton.setSelection(true);   // enables-disables the configuration text and combo
+        configurationButton.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent e) {
+        		boolean selection = configurationButton.getSelection();
+        		configurationField.getControl().setEnabled(selection);
+        		configurationCombo.setEnabled(!selection);
+        		if(selection) {
+        			((Text)configurationField.getControl()).setText("new_configuration");
+        			configurationCombo.setText("");
+        			checkPage();
+        		}
+        		if(!selection) {
+        			((Text)configurationField.getControl()).setText("");
+        	         checkPage();
+        		}
+        	}
+        });
+	}
+	/**
+	 * 
+	 * @param composite : the composite to append the validation field
+	 */
+	private void createPomField(Composite composite) {
+		
+		createLabel(composite,"name of the POM file : ","pomLabel");
+		
+		pomField = valKit.createTextField(composite, new IFieldValidator<String>() {
+			int flag;  // three posible messages
+			@Override
+			public String getErrorMessage() {
+				if(flag == 0) return "Pom name is empty";
+				if(flag == 1) return "Pom name must end with .xml";
+				return "Pom name contains non allowed characters";
+			}
+			@Override
+			public String getWarningMessage() { return null; }
+			@Override
+			public boolean isValid(String contents) {
+				
+        		if(pomField != null)if(!((Text)pomField.getControl()).getText().isEmpty()) // the listener instructions
+        			pomName = ((Text)pomField.getControl()).getText();
+				
+				if(contents.isEmpty()) { flag = 0;   // validation
+				check[2] = false; checkPage();
+				return false; }
+				if(!contents.endsWith(".xml")) { flag = 1;
+				check[2] = false; checkPage();
+				return false; }
+				if(!contents.equalsIgnoreCase(contents
+						.replaceAll("[^A-Za-z0-9_/\\.\\-\\ ]",""))) {flag = 2;
+					check[2] = false; checkPage(); 
+					return false; }
+				check[2] = true; checkPage(); return true;
+			}
+			@Override
+			public boolean warningExist(String contents) { return false; }
+		}, false, "descartes_pom.xml");
+		
+		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(10, 0)
+		.applyTo(pomField.getControl());
+
+        pomField.setQuickFixProvider(new IQuickFixProvider<String>() {
+            int flag; // three possible problems
+			@Override
+			public boolean doQuickFix(ValidatingField<String> field) {
+				Text text = (Text)field.getControl();
+				if(flag == 0) {
+                  text.setText("descartes_pom.xml"); return true;
+				}
+				if(flag == 1) {
+					text.setText(text.getText()+".xml"); 
+				}
+				text.setText(text.getText()
+						.replaceAll("[^A-Za-z0-9_/\\.\\-\\ ]",""));
+				return true;
+			}
+			@Override
+			public String getQuickFixMenuText() {      
+				return "fix problems";
+			}
+			@Override
+			public boolean hasQuickFix(String content) {
+				if(content.isEmpty()) {
+					flag = 0; return true;
+				}
+				if(!content.endsWith(".xml")) {
+					flag = 1; return true;
+				}
+				if(!content.equalsIgnoreCase(
+						content.replaceAll("[^A-Za-z0-9/_\\.\\- \\ ]",""))) {
+					flag = 2; return true;
+				}
+				return false;
+			}       	
+        });
+	}
+	/**
+	 * creates a label with the given text, and tooltip text and a predefined grid data and style
+	 * @param composite : the composite to append the label
+	 * @param labelText : the text to display in the label
+	 * @param propertyKey : the key of the tooltip text for this label
+	 */
+    private void createLabel(Composite composite,String labelText,String propertyKey) {
+	   
+		Label label = new Label(composite,SWT.NONE);
+		label.setText(labelText);
+		GridDataFactory.swtDefaults().grab(false, false).grab(false, false).applyTo(label);
+		label.setToolTipText(tooltipsProperties.getProperty(propertyKey));
+	}
+    
+   @Override
+   public void updateDescartesWizardPart(DescartesWizardConfiguration wConf) {
 		
 		// update project path
 		projectPath = wConf.getProjectPath();
-		if(projectText != null) { if(!projectText.isDisposed()) projectText.setText(projectPath);}
+		if(projectText != null)if(!projectText.isDisposed()) {
+			projectText.setText(projectPath);
+		}
 		
 		// update mutators
 		mutatorsTexts = wConf.getMutatorsTexts();
 		 
-		// set the updated mutators in the tree
-		
+		// set the updated mutators in the tree	
 		if(mutatorsTree != null) if(!mutatorsTree.isDisposed()) {
 		for(int i = items.size()-1; i >= 0; i--) items.remove(i);
 		mutatorsTree.removeAll();
@@ -385,7 +531,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
             for(int i = 0; i < items.size(); i++) initialNames[i] = items.get(i).getText();}
             
 		    // update pom's name
-		    if(pomText != null) pomText.setText(wConf.getPomName());
+		    if(pomField != null)((Text)pomField.getControl()).setText(wConf.getPomName());
 	}
 	
 	@Override
@@ -401,8 +547,10 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		return texts;
 	}
 	public String getConfigurationName() {
-		if(configurationText.getText() != null && !configurationText.getText().isEmpty())
-			configurationName =  configurationText.getText();
+		if(configurationField != null)if(!((Text)configurationField.getControl())
+				.getText().isEmpty())
+			configurationName =  ((Text)configurationField.getControl()).getText();
+		if(configurationName.isEmpty())configurationName = configurationCombo.getText();
 		return configurationName;
 	}
 	/**
@@ -415,11 +563,12 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	 *  This method opens a dialog with a text to set the content of a new mutator
 	 *  it is called by the add mutator button listener
 	 */
-	private String showInputDialog () {
-		InputDialog dialog = new InputDialog(
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),"Add mutator",
-				"enter the new mutator",null,null);
-		if(dialog.open() == Window.OK) return dialog.getValue();
+	private String showInputDialog () {   // TODO
+		AddMutatorDialog diag = new AddMutatorDialog(PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getShell());
+		if(diag.open() == Window.OK) {
+			return diag.getResult();
+		}
 		return null;
 	}
 	/**
@@ -512,5 +661,40 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		inputStream.close();
 		return properties;
 	}
-
+	private void checkPage() {
+		boolean complete = true;
+		if(configurationCombo != null)  
+			if(configurationCombo.isEnabled()){
+					if(configurationCombo.getText().isEmpty())check[0] = false;
+					else check[0] = true;
+			}
+		if(projectText != null) {
+			if(!projectText.isDisposed()) check[1] = !projectText.getText().isEmpty();
+			else check[1] = true;
+		}
+		else check[1] = true;
+		for(boolean bo : check)complete = complete && bo;
+		setPageComplete(complete);
+	}
+	/**
+	 *  inner class to handle the field validation error messages
+	 */
+	class DescartesWizardErrorHandler implements IFieldErrorMessageHandler{
+		@Override
+		public void clearMessage() {
+			setErrorMessage(null);
+			setMessage(null,DialogPage.ERROR);	
+		}
+		@Override
+		public void handleErrorMessage(String message, String input) {
+		 setMessage(null,DialogPage.INFORMATION);
+		 setErrorMessage(message);	
+		}
+		@Override
+		public void handleWarningMessage(String message, String input) {
+		 setErrorMessage(null);
+		 setMessage(message,DialogPage.WARNING);	
+		}
+		
+	}
 }
