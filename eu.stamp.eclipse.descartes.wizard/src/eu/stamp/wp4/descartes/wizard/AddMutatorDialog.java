@@ -23,6 +23,9 @@ public class AddMutatorDialog extends TitleAreaDialog {
 	private boolean decimal;
 	private String result;
 	
+	private int xSize = 0;
+	private int ySize = 0;
+	
 	// widgets
 	private Label leftLabel;
 	private Label rightLabel;
@@ -57,6 +60,7 @@ public class AddMutatorDialog extends TitleAreaDialog {
 		text = new Text(composite,SWT.BORDER);
 		text.setText("");
 		GridDataFactory.fillDefaults().span(4,1).applyTo(text);
+		ySize = ySize + text.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
 		
 		rightLabel = new Label(composite,SWT.NONE);
 		rightLabel.setText("");
@@ -86,7 +90,7 @@ public class AddMutatorDialog extends TitleAreaDialog {
  	}
     @Override
     protected Point getInitialSize() { // default size of the dialog
-        return new Point(400, 500);
+        return new Point(xSize + 20, ySize + 180);
     }
     @Override
     protected void okPressed() {
@@ -116,6 +120,8 @@ public class AddMutatorDialog extends TitleAreaDialog {
     		button = new Button(composite,SWT.RADIO);
     		button.setText(name);
     		factory.applyTo(button);
+    		xSize = xSize + button.computeSize(SWT.DEFAULT,SWT.DEFAULT).x;
+    		ySize = ySize + button.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
     	} 
      
      public void configureListener() {
@@ -136,7 +142,7 @@ public class AddMutatorDialog extends TitleAreaDialog {
 			leftLabel.setText(""); rightLabel.setText("");
 			text.setText(name); text.setEnabled(false);
 			decimal = false;
-			} });
+			} }); 
  		return;
     	 }
     	 button.addSelectionListener(new SelectionAdapter() {
@@ -149,7 +155,7 @@ public class AddMutatorDialog extends TitleAreaDialog {
     			 decimal = isDecimal;
     		 }});
      }
-     
+    
     }
     
 }

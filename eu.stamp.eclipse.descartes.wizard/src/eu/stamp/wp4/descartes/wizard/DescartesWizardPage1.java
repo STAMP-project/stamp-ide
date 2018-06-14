@@ -100,14 +100,14 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	private Tree mutatorsTree;
 	private Combo configurationCombo;
 	private Text projectText;
-	//private ValidatingField<String> projectField;
 	private ValidatingField<String> configurationField;
 	private ValidatingField<String> pomField;
+	private ValidatingField<String> configurationComboField;
 	
 	private Properties tooltipsProperties;
     private StringValidationToolkit valKit = null;
     private final IFieldErrorMessageHandler errorHandler;
-    private boolean[] check = {false,false,false};
+    private boolean[] check = {true,false,false};
 
 	public DescartesWizardPage1(DescartesWizard wizard) {
 		super("Descartes configuration");
@@ -245,6 +245,19 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 
         createPomField(composite); //  ROW 6 : Pom file
         
+        // ROW 7 : Pom field button
+        Button pomButton = new Button(composite,SWT.CHECK);
+        pomButton.setText(" Use a different pom name");
+        pomButton.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent e) {
+             pomField.getControl().setEnabled(pomButton.getSelection());
+             if(!pomButton.getSelection() && configurationField.getControl().isEnabled())
+            	 ((Text)pomField.getControl()).setText(
+            			 ((Text)configurationField.getControl()).getText() + "_pom.xml"); 
+        	}
+        });
+        
         // listeners
         configurationCombo.addSelectionListener(new SelectionAdapter() {
         	@Override
@@ -264,7 +277,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 				}}
         	}
         });
-
+        
         removeMutatorButton.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -278,7 +291,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         addMutatorButton.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
-        	  String sr = showInputDialog();
+        	  String sr = showAddDialog();
         	  if(sr != null) { 
         		  items.add(new TreeItem(mutatorsTree,SWT.NONE));
         		  items.get(items.size()-1).setText(sr);
@@ -321,6 +334,9 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
         	}
         });
         
+        // now the widgets are not null and open
+        createConfigurationComboValidator();
+        
 		// required
 		setControl(composite);
 		setPageComplete(true);	  
@@ -348,6 +364,10 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 			public String getWarningMessage() { return ""; }
 			@Override
 			public boolean isValid(String contents) { 
+				 if(pomField != null)if(!pomField.getControl().isDisposed())
+					 if(!pomField.getControl().isEnabled())
+						 ((Text)pomField.getControl()).setText(contents + "_pom.xml"); // look at the !
+				
 				if(configurationField != null)if(configurationField.getControl().isEnabled()) {
 					if(contents.isEmpty()) {
 						check[0] = false; checkPage();
@@ -360,6 +380,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 					}
 				}
 				check[0] = true; checkPage(); 
+
 				return true;
 				}
 			@Override
@@ -396,21 +417,42 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		configurationButton.setSelection(true);   // enables-disables the configuration text and combo
         configurationButton.addSelectionListener(new SelectionAdapter() {
         	@Override
-        	public void widgetSelected(SelectionEvent e) {
+        	public void widgetSelected(SelectionEvent e) { 
+  
         		boolean selection = configurationButton.getSelection();
         		configurationField.getControl().setEnabled(selection);
         		configurationCombo.setEnabled(!selection);
         		if(selection) {
         			((Text)configurationField.getControl()).setText("new_configuration");
         			configurationCombo.setText("");
+        			configurationComboField.validate();
         			checkPage();
         		}
         		if(!selection) {
         			((Text)configurationField.getControl()).setText("");
+        			configurationComboField.validate();
         	         checkPage();
         		}
         	}
         });
+	}
+	private void createConfigurationComboValidator() {
+		configurationComboField = valKit.createField(configurationCombo,new IFieldValidator<String>() {
+			@Override
+			public String getErrorMessage() { return " Select a configuration ";
+			}
+			@Override
+			public String getWarningMessage() { return null; 
+			}
+			@Override
+			public boolean isValid(String sr) {
+				if(configurationCombo.isEnabled() && sr.isEmpty()) return false;
+				return true;
+			}
+			@Override
+			public boolean warningExist(String sr) { return false;
+			}		
+		},false, "");
 	}
 	/**
 	 * 
@@ -450,7 +492,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 			}
 			@Override
 			public boolean warningExist(String contents) { return false; }
-		}, false, "descartes_pom.xml");
+		}, false, "new_configuration_pom.xml");
 		
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(10, 0)
 		.applyTo(pomField.getControl());
@@ -489,6 +531,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 				return false;
 			}       	
         });
+       pomField.getControl().setEnabled(false);
 	}
 	/**
 	 * creates a label with the given text, and tooltip text and a predefined grid data and style
@@ -563,11 +606,11 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	 *  This method opens a dialog with a text to set the content of a new mutator
 	 *  it is called by the add mutator button listener
 	 */
-	private String showInputDialog () {   // TODO
-		AddMutatorDialog diag = new AddMutatorDialog(PlatformUI.getWorkbench()
+	private String showAddDialog () {
+		AddMutatorDialog addDialog = new AddMutatorDialog(PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell());
-		if(diag.open() == Window.OK) {
-			return diag.getResult();
+		if(addDialog.open() == Window.OK) {
+			return addDialog.getResult();
 		}
 		return null;
 	}
@@ -661,8 +704,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		inputStream.close();
 		return properties;
 	}
+
 	private void checkPage() {
-		boolean complete = true;
 		if(configurationCombo != null)  
 			if(configurationCombo.isEnabled()){
 					if(configurationCombo.getText().isEmpty())check[0] = false;
@@ -673,8 +716,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 			else check[1] = true;
 		}
 		else check[1] = true;
-		for(boolean bo : check)complete = complete && bo;
-		setPageComplete(complete);
+		for(boolean bo : check)if(!bo) { setPageComplete(false); return; }
+		setPageComplete(true);
 	}
 	/**
 	 *  inner class to handle the field validation error messages
@@ -697,4 +740,5 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		}
 		
 	}
+
 }

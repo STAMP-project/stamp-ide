@@ -8,11 +8,12 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.part.ViewPart;
 /**
@@ -41,10 +42,38 @@ public class DescartesView extends ViewPart {
 	 * @param urls : a string array with the urls of the documents
 	 */
 	public void setUrls(String[] urls) { 
-		if(urls != null) {
+		
+		String url = null;
+		for(String sr : urls)if(sr.contains("index")) { url = sr; break; }
+		
+		if(url != null) {		
 			Control[] children = parent.getChildren();
 			for(Control child : children) child.dispose();
-			GridLayoutFactory.fillDefaults().applyTo(parent);
+			GridLayoutFactory.fillDefaults().numColumns(3).applyTo(parent);
+			
+			Button backButton = new Button(parent,SWT.PUSH);
+			backButton.setText("Back");	
+			GridDataFactory.swtDefaults().applyTo(backButton);
+			
+			Button forwardButton = new Button(parent,SWT.PUSH);
+			forwardButton.setText("Forward");
+			GridDataFactory.swtDefaults().applyTo(forwardButton);
+			
+			Browser browser = new Browser(parent,SWT.NONE);
+			browser.setUrl(url);
+			GridDataFactory.fillDefaults().span(3,1).grab(true, true).minSize(200,150)
+			.applyTo(browser);
+			
+			backButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) { browser.back(); }
+			});
+			
+			forwardButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) { browser.forward(); }
+			});
+			/*
 			TabFolder tabFolder = new TabFolder(parent,SWT.NONE);
 			GridDataFactory.fillDefaults().grab(true, true).minSize(200,150).applyTo(tabFolder);
             tabFolder.setLayout(new GridLayout());
@@ -62,7 +91,7 @@ public class DescartesView extends ViewPart {
 				.applyTo(browser);
 				tab.setControl(browser);
 				parent.layout();
-				}
+				}*/
 			}
 		}
 	/**
