@@ -214,7 +214,9 @@ public class DescartesWizardPomParser {
 	    try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "no");
-			StreamResult result = new StreamResult(new FileWriter(projectPath+"/"+pomName));
+			File dir = new File(projectPath+"/Descartes_poms");
+			if(!dir.exists()) dir.mkdir();
+			StreamResult result = new StreamResult(new FileWriter(projectPath+"/Descartes_poms/"+pomName));
 			DOMSource source = new DOMSource(pomDocument);
 			transformer.transform(source, result);
 		} catch (TransformerFactoryConfigurationError |IOException |
