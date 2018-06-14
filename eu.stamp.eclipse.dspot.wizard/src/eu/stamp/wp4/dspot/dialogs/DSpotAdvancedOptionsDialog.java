@@ -12,6 +12,7 @@
  *******************************************************************************/
 package eu.stamp.wp4.dspot.dialogs;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -23,6 +24,7 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -37,6 +39,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+
+import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
+import com.richclientgui.toolbox.validation.ValidatingField;
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
+import com.richclientgui.toolbox.validation.validator.IFieldValidator;
+
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -52,6 +60,12 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
  */
 public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
 	
+    private static final int DECORATOR_POSITION = SWT.TOP | SWT.LEFT;
+    private static final int DECORATOR_MARGIN_WIDTH = 1;
+	
+    private StringValidationToolkit strValToolkit = null;
+    private final IFieldErrorMessageHandler errorMessageHandler;
+    
 	private WizardConfiguration wConf;  // to obtain the possible test cases
 	
 	// parameters  
@@ -70,13 +84,17 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
 	private Spinner timeOutSpinner;
 	private Spinner randomSeedSpinner;
 	private List list;
-	private Text pathPitResultText;
-	private Text mavenHomeText;
-	
+	private ValidatingField<String> pathPitResultField;
+	private ValidatingField<String> mavenHomeField;
 
 	public DSpotAdvancedOptionsDialog(Shell parentShell, WizardConfiguration wConf) {
 		super(parentShell);
 		this.wConf = wConf;
+
+	    errorMessageHandler = new WizardErrorHandler();
+		strValToolkit = new StringValidationToolkit(DECORATOR_POSITION,
+        		DECORATOR_MARGIN_WIDTH,true);
+        strValToolkit.setDefaultErrorMessageHandler(errorMessageHandler);
 	}
 	@Override
 	public void create() {
@@ -188,11 +206,11 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     	 GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).indent(0, vSpace).applyTo(pathPitResultButton);
     	 pathPitResultButton.setToolTipText(tooltipsProperties.getProperty("pathPitResultButton"));
     	 
-    	 pathPitResultText = new Text(composite,SWT.BORDER);
-    	 pathPitResultText.setEnabled(pitSelected);
-    	 pathPitResultText.setText(pathPitResult);
-    	 GridDataFactory.fillDefaults().span(1, 1).grab(true, false).indent(0, vSpace).applyTo(pathPitResultText);
-    	 
+    	 Text pathPitText = new Text(composite,SWT.READ_ONLY |SWT.BORDER);
+     	 GridDataFactory.fillDefaults().grab(true, false).indent(10, 8).applyTo(pathPitText);
+     	 pathPitText.setEnabled(pitSelected);
+     	 pathPitText.setText(pathPitResult);
+     	 
     	 /*
     	  *  Row 6 : MAVEN_HOME
     	  */
@@ -203,12 +221,8 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     	 final Button mavenHomeButton = new Button(composite,SWT.CHECK); 
     	 GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).indent(0, vSpace).applyTo(mavenHomeButton);
     	 
-    	 mavenHomeText = new Text(composite,SWT.BORDER);
-    	 mavenHomeText.setText(System.getenv("MAVEN_HOME"));
-    	 mavenHomeText.setEnabled(false);
-    	 GridDataFactory.fillDefaults().span(1, 1).grab(true, false).indent(0, vSpace).applyTo(mavenHomeText);
+    	 createMavenHomeField(composite);
     	 
-
     	 // listeners
     	 button.addSelectionListener(new SelectionAdapter() {
     		 @Override
@@ -224,7 +238,8 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     			 dialog.setText("Select a folder");
     			 final String directoryPath = dialog.open();
     			 if(directoryPath != null && !directoryPath.isEmpty()) {
-    				 pathPitResultText.setText(directoryPath);
+    				 pathPitText.setText(directoryPath);
+    				 //((Text)pathPitResultField.getControl()).setText(directoryPath);
     				 pathPitResult = directoryPath;
     			 }
     		 }
@@ -233,7 +248,7 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     	 mavenHomeButton.addSelectionListener(new SelectionAdapter() {
     		 @Override
     		 public void widgetSelected(final SelectionEvent e) {
-    			 mavenHomeText.setEnabled(mavenHomeButton.getSelection());
+    			 mavenHomeField.getControl().setEnabled(mavenHomeButton.getSelection());
     		 }
     	 });
     	 
@@ -245,15 +260,16 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     	 selection = list.getSelection();
     	 //timeOut = timeOutSpinner.getSelection();
     	 randomSeed = randomSeedSpinner.getSelection();
-    	 pathPitResult = pathPitResultText.getText();
-    	 mavenHome = mavenHomeText.getText();
+    	 Text pathPitText = (Text)pathPitResultField.getControl();
+    	 pathPitResult = pathPitText.getText();
+    	 mavenHome = ((Text)mavenHomeField.getControl()).getText();
     	 memory.setDSpotValue(DSpotMemory.MAVEN_HOME_KEY, mavenHome);
     	 String[] mySelection = new String[selection.length];
     	 for(int i = 0; i < selection.length; i++) {
     		 mySelection[i] = selection[i].substring(selection[i].indexOf("/")+1);
     	 }
     	 setMemoryData(timeOutSpinner.getSelection(),randomSeedSpinner.getSelection(),
-    			 pathPitResultText.getText(), mySelection);
+    			 pathPitText.getText(), mySelection);
     	 unusedDialog = false;
     	 super.okPressed();
      }
@@ -335,4 +351,52 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
      public boolean dialogUnused() {
     	 return unusedDialog;
      }
+
+     private void createMavenHomeField (Composite composite) {
+    	 
+       mavenHomeField = strValToolkit.createTextField(composite,getFolderValidator("MAVEN_HOME")
+    		   ,false,System.getenv("MAVEN_HOME"));
+       Control mavenControl = mavenHomeField.getControl();
+       GridDataFactory.fillDefaults().grab(true, false).indent(10, 8).applyTo(mavenControl);
+       mavenControl.setEnabled(false);
+     }
+     private IFieldValidator<String> getFolderValidator(String name) {
+	 return new IFieldValidator<String>() {
+			@Override
+			public String getErrorMessage() { return name + "'s folder not found"; }
+			@Override
+			public String getWarningMessage() { return null; }
+
+			@Override
+			public boolean isValid(String content) {
+				if(name.contains("Pit") && content.isEmpty()) return true;
+				File file = new File(content);
+				if(file.exists())if(file.isDirectory()) return true;
+				return false;
+			}
+			@Override
+			public boolean warningExist(String content) { return false; }
+ };
+     }
+     /**
+ 	 *  inner class to handle the field validation error messages
+ 	 */
+ 		public class WizardErrorHandler implements IFieldErrorMessageHandler{
+ 		@Override
+ 		public void clearMessage() {
+ 			setErrorMessage(null);
+ 			setMessage(null,DialogPage.ERROR);	
+ 		}
+ 		@Override
+ 		public void handleErrorMessage(String message, String input) {
+ 		 setMessage(null,DialogPage.INFORMATION);
+ 		 setErrorMessage(message);	
+ 		}
+ 		@Override
+ 		public void handleWarningMessage(String message, String input) {
+ 		 setErrorMessage(null);
+ 		 setMessage(message,DialogPage.WARNING);	
+ 		}
+ 		
+ 	}
 }

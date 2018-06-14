@@ -55,6 +55,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -170,8 +171,8 @@ public class DSpotWizardPage2 extends WizardPage {
 		Label lb2 = new Label(composite,SWT.NONE);   // A label in (2,1)
 		lb2.setText("Execution classes :  ");
 		lb2.setToolTipText(tooltipsProperties.getProperty("lb2"));
-				
-		tx1 = new Text(composite,SWT.BORDER);  // A text in (2,2) for the execution classes
+
+		tx1 = new Text(composite,SWT.BORDER | SWT.READ_ONLY);  // A text in (2,2) for the execution classes
 		tx1.setText("");
 		gd = new GridData(SWT.FILL,SWT.FILL,true,false);
 		gd.verticalIndent = 8;
@@ -231,7 +232,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	    lb5.setText("Test Criterion : ");
 	    lb5.setToolTipText(tooltipsProperties.getProperty("lb5"));
 	    
-	    combo1 = new Combo(composite,SWT.BORDER);  // combo for the test criterion in (4,2)
+	    combo1 = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);  // combo for the test criterion in (4,2)
 	    gd = new GridData(SWT.FILL,SWT.FILL,true,false);
 	    gd.horizontalSpan = n-1;
 	    combo1.setLayoutData(gd);  // setting the criterions in the combo
