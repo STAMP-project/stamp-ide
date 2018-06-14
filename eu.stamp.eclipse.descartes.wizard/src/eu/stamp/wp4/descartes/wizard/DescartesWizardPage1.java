@@ -348,6 +348,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 					}
 				}
 				check[0] = true; checkPage(); 
+
 				return true;
 				}
 			@Override

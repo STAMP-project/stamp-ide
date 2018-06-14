@@ -60,13 +60,8 @@ public class DescartesEclipseJob extends Job {
             
             // save the configuration and start to run
             ILaunchConfiguration config = wc.doSave(); 
-  	        ILaunch launch = config.launch(ILaunchManager.RUN_MODE, null);
-  	        
-  	        // after finishing the process show the Descartes view for the html summaries
-  	        while(!launch.isTerminated());
-            DescartesHtmlManager htmlManager = new DescartesHtmlManager(projectPath + "/target/pit-reports");
-            htmlManager.openBrowsers();       
-			
+  	        config.launch(ILaunchManager.RUN_MODE, null);
+
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}	
