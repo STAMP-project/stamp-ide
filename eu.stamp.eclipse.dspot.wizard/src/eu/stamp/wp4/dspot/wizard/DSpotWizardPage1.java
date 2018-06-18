@@ -98,6 +98,7 @@ public class DSpotWizardPage1 extends WizardPage {
     private Button projectSelectionbt;
     private ValidatingField<String> configurationField;
     private ValidatingField<String> projectField;
+    private ValidatingField<String> configurationComboField;
     
 	public DSpotWizardPage1(WizardConfiguration wConf,DSpotWizard wizard){
 		super("Project configuration");
@@ -143,13 +144,13 @@ public class DSpotWizardPage1 extends WizardPage {
 		lb0.setToolTipText(tooltipsProperties.getProperty("lb0"));
 	    
 		configCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY); // combo in (1,1) to select a configuration
-		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(configCombo);
+		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).indent(8, 0).applyTo(configCombo);
 		List<ILaunchConfiguration> configurations = wConf.getLaunchConfigurations();
 		for(ILaunchConfiguration laun : configurations) {
 			configCombo.add(laun.getName());
 		}
 		configCombo.add(""); // IMPORTANT this must be at the end of the combo list to get the correct selection index
-		configCombo.setEnabled(false);
+		configCombo.setEnabled(false);  
 		
 		pageValidator.addElement(new IDSpotPageElement() {
 			@Override
@@ -160,11 +161,13 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 		});
 		
+		createConfigurationComboValidator();  // this is to display an error message if no configuration is selected
+		
 		createConfigurationField(composite);// second row New Configuration
 
 		// third row  (3,x)     Project's path  
 		// Obtain the path of the project
-		String[] sour = wConf.getSources();
+		String[] sour = wConf.getSources();  // TODO
 		boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
 		
 		createProjectField(composite);
@@ -193,11 +196,11 @@ public class DSpotWizardPage1 extends WizardPage {
         	combo2.add(sour[i]);} else { combo0.add(sour[i]); }
         } // end of the for
         
-        if(combo0.getItems().length == 1) { // if there is only one option
+        if(combo0.getItems().length > 0) {
         	combo0.setText(combo0.getItem(0));
     		TheProperties[1] = combo0.getText();  // the path of the source
         }
-        if(combo2.getItems().length == 1) {
+        if(combo2.getItems().length > 0) {
         	combo2.setText(combo2.getItem(0));
     		TheProperties[2] = combo2.getText();    //  testSrc
         }
@@ -330,12 +333,13 @@ public class DSpotWizardPage1 extends WizardPage {
 					e1.printStackTrace();
 				} 
 				}
+				pageValidator.validatePage();
 			}			
 		});
 		
 		// required to avoid an error in the System
 		setControl(composite);	
-		setPageComplete(false);
+		pageValidator.validatePage();
 	}  // end of create control
 	
 	 @Override
@@ -490,13 +494,37 @@ public class DSpotWizardPage1 extends WizardPage {
 	        		text.setEnabled(true);
 	        		text.setText(" Type configuration name ");
 	        		configCombo.setText("");
+	        		configurationComboField.validate();
 	        	} else {
 	        		text.setEnabled(false);
 	        		configCombo.setEnabled(true);
 	        		text.setText("");
+	        		configurationComboField.validate();
 	        	}
 	        }
 });
+	}
+	private void createConfigurationComboValidator() {
+		
+		configurationComboField = valKit.createField(configCombo,new IFieldValidator<String>(){
+			@Override
+			public String getErrorMessage() {
+				return "Select a configuration or create a new one";
+			}
+			@Override
+			public String getWarningMessage() { return null;
+			}
+			@Override
+			public boolean isValid(String sr) {
+				if(configCombo.isEnabled() && configCombo.getText().equalsIgnoreCase("")) 
+					return false;
+				return true;
+			}
+			@Override
+			public boolean warningExist(String sr) { return false;
+			}	
+			
+		},false,"");
 	}
 	private void createProjectField(Composite composite) {
 		
@@ -564,6 +592,28 @@ public class DSpotWizardPage1 extends WizardPage {
 			        	combo2.add( wConf.getSources()[i]);} else { combo0.add( wConf.getSources()[i]); }
 			        } // end of the for
 			    	wizard.refreshConf(wConf);
+			    	configCombo.setEnabled(false);
+			    	configCombo.setText("");
+			    	configurationField.getControl().setEnabled(true);
+			    	((Text)configurationField.getControl()).setText("Type configuration name");
+			    	String[] sour = wConf.getSources();  // TODO
+					boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
+					combo0.removeAll();
+					combo2.removeAll();
+			        for(int i = 0; i < sour.length; i++) {  // add the sources to the combo
+			        	if(isTest[i]) {  // if it is not a test package
+			        	combo2.add(sour[i]);} else { combo0.add(sour[i]); }
+			        } // end of the for
+			        
+			        if(combo0.getItems().length > 0) {
+			        	combo0.setText(combo0.getItem(0));
+			    		TheProperties[1] = combo0.getText();  // the path of the source
+			        }
+			        if(combo2.getItems().length > 0) {
+			        	combo2.setText(combo2.getItem(0));
+			    		TheProperties[2] = combo2.getText();    //  testSrc
+			        }
+			        
 			    	wizard.setDefaultValuesInPage2();
 			        }
 			    }
@@ -607,7 +657,6 @@ public class DSpotWizardPage1 extends WizardPage {
 		 
 		 void validatePage() {
 			 for(IDSpotPageElement element : list)if(!element.validate()) {
-				 System.out.println("false");
 				 setPageComplete(false); return;
 			 }
 			 setPageComplete(true);
