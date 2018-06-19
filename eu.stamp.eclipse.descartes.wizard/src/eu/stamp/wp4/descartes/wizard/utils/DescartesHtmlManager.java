@@ -3,15 +3,12 @@ package eu.stamp.wp4.descartes.wizard.utils;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-//import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 
 import eu.stamp.wp4.descartes.view.DescartesView;
 /**
