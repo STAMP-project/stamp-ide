@@ -248,7 +248,7 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 	            	if(ob instanceof IJavaProject) { 
 	             IJavaProject javaProject;
 	             javaProject =  (IJavaProject) ob;
-	             projectText.setText(javaProject.getElementName());}
+	             projectText.setText(javaProject.getProject().getLocation().toString());}
 	            }
 	        }
 		
