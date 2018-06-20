@@ -225,102 +225,6 @@ public class DescartesWizardPomParser {
 		}
 	}
 	/**
-	 * this method takes the tree representation of the project's pom.xml 
-	 * and checks if the mutators declaration in the project build is complete or not. 
-	 * The hierarchy is build-plugins-plugin-configuration-mutators-mutator
-	 * some of this element have anther child, 
-	 * if this structure is partially complete the method completes it
-	 */
-	private void createPomDescartesStructure () {
-		Node node = findBaseNode();
-		NodeList nodeList = findNodeList("mutators",node);  // find the mutators node
-		if(nodeList.item(0) == null) {                     // (this node list should have only one element)
-	      nodeList = findNodeList("configuration",node);   // if there is not mutators declared look for the configuration node
-	       if(nodeList.item(0) == null) {                 // if there is not a mutators node look for the plugin node
-	    	   nodeList = findNodeList("plugin",node);    // and continue going up until you find an existing node
-	    	   if(nodeList.item(0) == null) {             // in the worst case the build node should exist
-	    		   nodeList = findNodeList("plugins",node);
-	    		   if(nodeList.item(0) == null) {
-	    			   nodeList = findNodeList("build",node);
-	    			   if(nodeList.item(0) == null) {
-	    				   structureFrom("build",node);        // now the else blocks corresponding to the if
-	    			   } else structureFrom("plugins",nodeList.item(0)); // they contain what to do to complete the tree
-	    		   } else structureFrom("plugin",nodeList.item(0));      // starting at each point
-	    	   } else {    		   
-	    		   if(lookForPitestPlugin(nodeList))structureFrom("configuration",nodeList.item(0));
-	    		   else structureFrom("plugin",nodeList.item(0).getParentNode());
-	    	   }
-	        } else{
-	        	if(thisPluginIsPitest(nodeList.item(0))) structureFrom("mutators",nodeList.item(0));
-	        	else structureFrom("plugin",nodeList.item(0).getParentNode().getParentNode());
-	        }
-	       } else {
-               Node element = pomDocument.createElement("mutator");
-	    	   node.appendChild(element);
-	    	   mutators = new Node[1];
-	    	   mutators[0] = element;
-	       }
-	} // end of createPomDescartesStructure
-	/**
-	 * complete the tree structure fragment in whose bottom will be declared the mutators,
-	 * from a start point the tree structure before the start point is assume to be complete
-	 * the tree structure is a hierarchy of nodes some of them containing another nodes with
-	 * required information as group ID or version ...
-	 * @param name : the name of the starting level (the upper node in the fragment of the tree to build
-	 * @param parentNode : the specific node to append the child structure
-	 */
-	private void structureFrom(String name,Node parentNode) {
-		// the names of the parent nodes ordered parent-child-<child of the child>
-		String[] names = {"build","plugins","plugin","configuration","mutators"}; 
-		ArrayList<String> fragment = new ArrayList<String>(1);               
-		boolean start = false;  
-		for(String sr : names) { 
-			if(name.equalsIgnoreCase(sr)) start = true; // if the string of this iteration is the given name start
-			if(start)fragment.add(sr);
-		}
-		Element[] elements = new Element[fragment.size()]; // the array to contain the elements to be created
-		for(int i = 0; i < elements.length; i++) {
-			elements[i] = pomDocument.createElement(fragment.get(i)); // create the new elements
-		}
-		for(int i = 0; i < elements.length - 1; i++) { // this loop will add the extra childs ant the related information 
-			elements[i].appendChild(elements[i+1]);    // corresponding to each node in the hierarchy
-			if((((Node)elements[i]).getNodeName()).equalsIgnoreCase("plugin")){
-				putNodeWithText("groupId",DescartesWizardConstants.PITEST_PLUGIN_ID,elements[i]);
-                putNodeWithText("artifactId",DescartesWizardConstants.PITEST_ARTIFACT_ID,elements[i]);
-				putNodeWithText("version",DescartesWizardConstants.PITEST_DEPENDENCY_VERSION,elements[i]);
-				putNodeWithText("mutationEngine","descartes",elements[i]
-						.getElementsByTagName("configuration").item(0));
-				Node node = pomDocument.createElement("dependencies");
-				Node child = pomDocument.createElement("dependency");
-				putNodeWithText("groupId",DescartesWizardConstants.PITEST_DEPENDENCY_ID,child);
-				putNodeWithText("artifactId",DescartesWizardConstants.PITEST_DEPENDENCY_ARTIFACT,child);
-				putNodeWithText("version",DescartesWizardConstants.PITEST_DEPENDENCY_VERSION,child);
-				node.appendChild(child);
-				elements[i].appendChild(node);		
-			}
-		}
-		Node mutator = pomDocument.createElement("mutator");
-		elements[elements.length-1].appendChild(mutator);
-		parentNode.appendChild(elements[0]);
-		mutators = new Node[1];
-		mutators[0] = mutator;
-	}
-	/**
-	 * this method checks a NodeList looking for the pitest plugin
-	 * @param pluginList : the NodeList to check for pitest
-	 * @return : true if the pitest plugin is present
-	 */
-	private boolean lookForPitestPlugin(NodeList pluginList) {
-		for(int i = 0; i < pluginList.getLength(); i++) {
-			 Node node = ((Element)pluginList.item(i)).getElementsByTagName("groupId").item(0);
-			 Node node2 = ((Element)pluginList.item(i)).getElementsByTagName("artifactId").item(0);
-			 if(node != null) if(node.getTextContent().equalsIgnoreCase("org.pitest")) {
-				 if(node2.getTextContent().equalsIgnoreCase("pitest-maven")) return true;
-			 }
-		}
-		return false;
-	}
-	/**
 	 * check if a given node corresponds to the pitest plugin
 	 * @param configurationNode : the node to check
 	 * @return : true if the node corresponds to pitest
@@ -346,7 +250,11 @@ public class DescartesWizardPomParser {
 		node.appendChild(textNode);
 		parent.appendChild(node);
 	}
-		
+		/**
+	     * creates the declaration of the Pitest plugin with the necessary
+	     * configuration for Descartes execution and replaces the pitest declaration in the tree
+	     * that will be used to create the Descartes pom
+		 */
 		private void createPitestPluginTree(){
 			Node parent = findBaseNode();
 			Node pitestTree = pomDocument.createElement("plugin");
