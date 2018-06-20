@@ -57,13 +57,9 @@ have the only purpose to use the "Remove selected mutators" button, to the right
 
 #### Add a mutator
 
-To add a mutator push the "Add mutator" button to open a dialog with a text, write the new mutator and push OK,
-remember that the String mutators beguins and ends with ", for example "A", if a mutator is wrong for example A,
-you will get an exception (could not match input) when running the tests.
-
-The char mutators beguins and ends with ', for example 'A', 1 is an int mutator,
-1.0 a double mutator, the others are (byte)1, (short)1, 1L and 1.0f for numbers, 
-true and false for boolean, void for void methods, and null for others.
+To add a mutator push the "Add mutator" button to open a dialog, select the type of mutator you want,
+if the mutator type requires to write a text like string or int the text will be enabled, write the text of the mutator
+and press ok, the necessary sintax like "" for strings, '' for chars or key words as short is provided.
 
 <center>![adding a mutator](images/add.png)</center>
 

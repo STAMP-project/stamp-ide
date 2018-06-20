@@ -259,6 +259,9 @@ public class DescartesWizardPomParser {
 			Node parent = findBaseNode();
 			Node pitestTree = pomDocument.createElement("plugin");
 			
+			/*
+			 *   create pitest plugin tree
+			 */
 			Node dependenciesNode = pomDocument.createElement("dependencies");
 			Node dependencyNode = pomDocument.createElement("dependency");
 			putNodeWithText("groupId",DescartesWizardConstants.PITEST_DEPENDENCY_ID,dependencyNode);
@@ -283,18 +286,21 @@ public class DescartesWizardPomParser {
 			putNodeWithText("artifactId",DescartesWizardConstants.PITEST_ARTIFACT_ID,pitestTree);
 			putNodeWithText("version",DescartesWizardConstants.PITEST_VERSION,pitestTree);
 			
+			/*
+			 *   look for the pitest plugin in the DOM tree
+			 */
 		    NodeList list = findNodeList("plugin", parent);
 		
 		    if(list.item(0) != null) {
 			
 		    Node node = list.item(0).getParentNode();
 	
-		    
 		    for(int i = 0; i < list.getLength(); i++) {
-		    	if(thisPluginIsPitest(list.item(i))) { 
-			 node.removeChild(list.item(i)); break; }}
+		    	if(thisPluginIsPitest(list.item(i))) {  // if it's pit remove the plugin 
+			 node.removeChild(list.item(i)); break; }}  // to put our declaration
 		
-		   node.appendChild(pitestTree); return;
+		 // put our declaration of the pitest plugin in the tree
+		   node.appendChild(pitestTree); return;  
 		    }
 		
 		   Node buildNode = pomDocument.createElement("build");
