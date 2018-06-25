@@ -61,7 +61,6 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
 	
     private static final int DECORATOR_POSITION = SWT.TOP | SWT.LEFT;
-    private static final int DECORATOR_MARGIN_WIDTH = 1;
 	
     private StringValidationToolkit strValToolkit = null;
     private final IFieldErrorMessageHandler errorMessageHandler;
@@ -69,7 +68,7 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
 	private WizardConfiguration wConf;  // to obtain the possible test cases
 	
 	// parameters  
-	private int randomSeed = 23;
+	//private int randomSeed = 23;
 	//private int timeOut = 10000;
 	private String[] selection = {""};
 	private String pathPitResult = "";
@@ -93,7 +92,7 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
 
 	    errorMessageHandler = new WizardErrorHandler();
 		strValToolkit = new StringValidationToolkit(DECORATOR_POSITION,
-        		DECORATOR_MARGIN_WIDTH,true);
+        		1,true);
         strValToolkit.setDefaultErrorMessageHandler(errorMessageHandler);
 	}
 	@Override
@@ -160,7 +159,9 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
  		 randomSeedLabel.setToolTipText(tooltipsProperties.getProperty("randomSeedLabel"));
  		 
  		 randomSeedSpinner = new Spinner(composite,SWT.BORDER);
- 		 randomSeedSpinner.setMinimum(1); randomSeedSpinner.setSelection(randomSeed);
+ 		 if(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY) != null)
+ 			 randomSeedSpinner.setMinimum(1); randomSeedSpinner
+ 			 .setSelection(Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY)));
  		 GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(0, vSpace).applyTo(randomSeedSpinner);
  		 
  		 /*
@@ -260,7 +261,7 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
      public void okPressed() {
     	 selection = list.getSelection();
     	 //timeOut = timeOutSpinner.getSelection();
-    	 randomSeed = randomSeedSpinner.getSelection();
+    	 //randomSeed = randomSeedSpinner.getSelection();
     	 //Text pathPitText = (Text)pathPitResultField.getControl();
     	// pathPitResult = pathPitText.getText();
     	 mavenHome = ((Text)mavenHomeField.getControl()).getText();
@@ -324,9 +325,9 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
      }
 
      public void resetFromMemory() {
-    	 if(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY) != null) 
-    			 this.randomSeed = Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY));
-    	 if(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY) != null)
+    	 //if(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY) != null) 
+    			 //this.randomSeed = Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY));
+    	// if(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY) != null)
     		 //this.timeOut = Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY));
     	 this.selection = memory.getSelectedCasesAsArray();
     	 this.pathPitResult = memory.getDSpotValue(DSpotMemory.PATH_PIT_RESULT_KEY);

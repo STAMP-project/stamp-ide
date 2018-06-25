@@ -82,7 +82,6 @@ public class DSpotWizardPage1 extends WizardPage {
 	
 	// [0] project, [1] src, [2] testScr, [3] javaVersion, [4] outputDirectory, [5] filter
 	private String[] TheProperties = new String[6];
-	//private boolean[] Comp = {true,true,true,true};  // this is to set next page
 	private WizardConfiguration wConf;
 	private DSpotWizard wizard;
 	private DSpotPage1Validator pageValidator;
@@ -93,8 +92,8 @@ public class DSpotWizardPage1 extends WizardPage {
     private final IFieldErrorMessageHandler errorMessageHandler;
 	
     private Combo configCombo;
-    private Combo combo0;
-    private Combo combo2;
+    private Combo sourcePathCombo;
+    private Combo sourceTestCombo;
     private Button projectSelectionbt;
     private ValidatingField<String> configurationField;
     private ValidatingField<String> projectField;
@@ -167,7 +166,7 @@ public class DSpotWizardPage1 extends WizardPage {
 
 		// third row  (3,x)     Project's path  
 		// Obtain the path of the project
-		String[] sour = wConf.getSources();  // TODO
+		String[] sour = wConf.getSources();  
 		boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
 		
 		createProjectField(composite);
@@ -175,13 +174,13 @@ public class DSpotWizardPage1 extends WizardPage {
 		// fourth row (4,x)      Source path  
 		createLabel(composite,"Path of the source : ","lb2"); // Label in (4,1)
 	
-        combo0 = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);  // Combo in (4,2) for the source's path
-        GridDataFactory.fillDefaults().grab(true,false).span(2,1).indent(0, VS).applyTo(combo0);
-        combo0.addSelectionListener(new SelectionAdapter() {
+        sourcePathCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);  // Combo in (4,2) for the source's path
+        GridDataFactory.fillDefaults().grab(true,false).span(2,1).indent(0, VS).applyTo(sourcePathCombo);
+        sourcePathCombo.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
         		
-        		TheProperties[1] = combo0.getText();  // the path of the source
+        		TheProperties[1] = sourcePathCombo.getText();  // the path of the source
         		
         	}
         }); // end of the selection listener
@@ -189,28 +188,28 @@ public class DSpotWizardPage1 extends WizardPage {
 		// fifth row (5,x)   SourceTest path
         createLabel(composite,"Path of the source test : ","lb3");
 		
-        combo2 = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);
-        GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo2);
+        sourceTestCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);
+        GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(sourceTestCombo);
         for(int i = 0; i < sour.length; i++) {  // add the sources to the combo
         	if(isTest[i]) {  // if it is not a test package
-        	combo2.add(sour[i]);} else { combo0.add(sour[i]); }
+        	sourceTestCombo.add(sour[i]);} else { sourcePathCombo.add(sour[i]); }
         } // end of the for
         
-        if(combo0.getItems().length > 0) {
-        	combo0.setText(combo0.getItem(0));
-    		TheProperties[1] = combo0.getText();  // the path of the source
+        if(sourcePathCombo.getItems().length > 0) {
+        	sourcePathCombo.setText(sourcePathCombo.getItem(0));
+    		TheProperties[1] = sourcePathCombo.getText();  // the path of the source
         }
-        if(combo2.getItems().length > 0) {
-        	combo2.setText(combo2.getItem(0));
-    		TheProperties[2] = combo2.getText();    //  testSrc
+        if(sourceTestCombo.getItems().length > 0) {
+        	sourceTestCombo.setText(sourceTestCombo.getItem(0));
+    		TheProperties[2] = sourceTestCombo.getText();    //  testSrc
         }
         
         
-        combo2.addSelectionListener(new SelectionAdapter() {
+        sourceTestCombo.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
         	
-        		TheProperties[2] = combo2.getText();    //  testSrc 		
+        		TheProperties[2] = sourceTestCombo.getText();    //  testSrc 		
         	}
         });
 		
@@ -586,32 +585,32 @@ public class DSpotWizardPage1 extends WizardPage {
 					}
 			    	text.setText(wConf.getProjectPath());
 			    	TheProperties[0] = wConf.getProjectPath();
-	                combo0.removeAll(); combo2.removeAll();
+	                sourcePathCombo.removeAll(); sourceTestCombo.removeAll();
 			        for(int i = 0; i < wConf.getSources().length; i++) {  // add the sources to the combo
 			        	if(wConf.getIsTest()[i]) {  // if it is not a test package
-			        	combo2.add( wConf.getSources()[i]);} else { combo0.add( wConf.getSources()[i]); }
+			        	sourceTestCombo.add( wConf.getSources()[i]);} else { sourcePathCombo.add( wConf.getSources()[i]); }
 			        } // end of the for
 			    	wizard.refreshConf(wConf);
 			    	configCombo.setEnabled(false);
 			    	configCombo.setText("");
 			    	configurationField.getControl().setEnabled(true);
 			    	((Text)configurationField.getControl()).setText("Type configuration name");
-			    	String[] sour = wConf.getSources();  // TODO
+			    	String[] sour = wConf.getSources(); 
 					boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
-					combo0.removeAll();
-					combo2.removeAll();
+					sourcePathCombo.removeAll();
+					sourceTestCombo.removeAll();
 			        for(int i = 0; i < sour.length; i++) {  // add the sources to the combo
 			        	if(isTest[i]) {  // if it is not a test package
-			        	combo2.add(sour[i]);} else { combo0.add(sour[i]); }
+			        	sourceTestCombo.add(sour[i]);} else { sourcePathCombo.add(sour[i]); }
 			        } // end of the for
 			        
-			        if(combo0.getItems().length > 0) {
-			        	combo0.setText(combo0.getItem(0));
-			    		TheProperties[1] = combo0.getText();  // the path of the source
+			        if(sourcePathCombo.getItems().length > 0) {
+			        	sourcePathCombo.setText(sourcePathCombo.getItem(0));
+			    		TheProperties[1] = sourcePathCombo.getText();  // the path of the source
 			        }
-			        if(combo2.getItems().length > 0) {
-			        	combo2.setText(combo2.getItem(0));
-			    		TheProperties[2] = combo2.getText();    //  testSrc
+			        if(sourceTestCombo.getItems().length > 0) {
+			        	sourceTestCombo.setText(sourceTestCombo.getItem(0));
+			    		TheProperties[2] = sourceTestCombo.getText();    //  testSrc
 			        }
 			        
 			    	wizard.setDefaultValuesInPage2();
