@@ -11,27 +11,48 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
+import com.richclientgui.toolbox.validation.IQuickFixProvider;
+import com.richclientgui.toolbox.validation.ValidatingField;
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
+import com.richclientgui.toolbox.validation.validator.IFieldValidator;
+
+import eu.stamp.eclipse.descartes.wizard.validation.DescartesWizardErrorHandler;
+import eu.stamp.eclipse.descartes.wizard.validation.IDescartesPage;
+
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 
-public class AddMutatorDialog extends TitleAreaDialog {
+public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage {
 	
 	private final static String CUT_CODE = "c";
 	private final static String ITSELF_CODE = "i";
 	private final static String DOUBLE_CODE = "d";
 	
 	private boolean decimal;
+	private boolean doubleActive;
 	private String result;
 	
 	private int xSize = 0;
 	private int ySize = 0;
 	
+    private StringValidationToolkit valKit = null;
+    private final IFieldErrorMessageHandler errorHandler;
+	
 	// widgets
 	private Label leftLabel;
 	private Label rightLabel;
+	private ValidatingField<String> mutatorField;
+	private int quickFixerFlag;
 	private Text text;
 	
-	public AddMutatorDialog(Shell parentShell) { super(parentShell); }
+	public AddMutatorDialog(Shell parentShell) { 
+		super(parentShell);
+		errorHandler = new DescartesWizardErrorHandler(this);
+		valKit = new StringValidationToolkit(SWT.LEFT | SWT.TOP,1,true);
+        valKit.setDefaultErrorMessageHandler(errorHandler);
+		}
 
 	@Override
 	public void create() {
@@ -42,7 +63,6 @@ public class AddMutatorDialog extends TitleAreaDialog {
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		
 		// create the composite
    	     Composite composite = (Composite)super.createDialogArea(parent);
 		 GridLayout layout = new GridLayout(6,true);
@@ -57,10 +77,7 @@ public class AddMutatorDialog extends TitleAreaDialog {
 		leftLabel.setAlignment(SWT.RIGHT);
 		GridDataFactory.fillDefaults().applyTo(leftLabel);
 		
-		text = new Text(composite,SWT.BORDER);
-		text.setText("");
-		GridDataFactory.fillDefaults().span(4,1).applyTo(text);
-		ySize = ySize + text.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
+		createField(composite);
 		
 		rightLabel = new Label(composite,SWT.NONE);
 		rightLabel.setText("");
@@ -130,8 +147,10 @@ public class AddMutatorDialog extends TitleAreaDialog {
     			 @Override
     			 public void widgetSelected(SelectionEvent e) {
     				 leftLabel.setText(""); rightLabel.setText("");
-    				 text.setText(""); text.setEnabled(true);
+    				 text.setEnabled(true);
     				 decimal = true;
+    				 doubleActive = true;
+    				 text.setText("");
     			 } });
     		 return;
     	 }
@@ -139,9 +158,11 @@ public class AddMutatorDialog extends TitleAreaDialog {
  		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+			text.setEnabled(false);
 			leftLabel.setText(""); rightLabel.setText("");
-			text.setText(name); text.setEnabled(false);
 			decimal = false;
+			doubleActive = false;
+			text.setText(name);
 			} }); 
  		return;
     	 }
@@ -151,11 +172,110 @@ public class AddMutatorDialog extends TitleAreaDialog {
     			 int n = code.indexOf(CUT_CODE);
     			 leftLabel.setText(code.substring(0,n));
                  rightLabel.setText(code.substring(n + CUT_CODE.length()));
-    			 text.setText(""); text.setEnabled(true);
+    			 text.setEnabled(true);
     			 decimal = isDecimal;
+    			 doubleActive = false;
+    			 text.setText("");
     		 }});
      }
     
     }
+    /**
+     * creates a text validation field to add the mutators
+     * @param composite
+     */
+   private void createField(Composite composite) {
+	   
+	   mutatorField = valKit.createTextField(composite,new IFieldValidator<String>() {
+		   private String message = "";
+		@Override
+		public String getErrorMessage() { return message;
+		}
+		@Override
+		public String getWarningMessage() { return null; 
+		}
+		@Override
+		public boolean isValid(String sr) {
+			quickFixerFlag = 0;
+			if(text == null) return true;
+	
+            if(!text.isEnabled()) return true; // these mutators are always right
+            
+            String right = rightLabel.getText();
+            
+            if(right.contains("\"") || right.contains("\'")) return true;
+            
+            if(right.contains("f") || doubleActive) {
+            	
+            	if(sr.isEmpty()) {
+            		message = "this mutator must not be empty";
+            		return false;
+            	}
+            	boolean bo = sr.replaceAll("[^0-9.]","").equalsIgnoreCase(sr);
+            	if(!bo) {
+            		message = "only real numbers are allowed for this mutator";
+            		quickFixerFlag = 1;
+            		return false;
+            	}
+            	bo = !(sr.replaceAll("[^.]","").length() > 1); // no more than one point
+            	if(bo) return true;
+            	message = "the text contains more than one point";
+            	quickFixerFlag = 2;
+            	return false;
+            }
+            
+            // here only int, short and long are possibles
+                if(sr.isEmpty()) {
+                	message = "this muttator must not be empty";
+                	return false;
+                }
+            	boolean bo = sr.replaceAll("[^0-9]","").equalsIgnoreCase(sr);
+            	if(bo) return true;
+            	message = "only numeric characters are allolwed for this mutator";
+            	quickFixerFlag = 3;
+            	return false;
+		}
+		@Override
+		public boolean warningExist(String arg0) { return false;
+		}
+	   },false,"");
+	   
+	   mutatorField.setQuickFixProvider(new IQuickFixProvider<String>() {
+		@Override
+		public boolean doQuickFix(ValidatingField<String> field) {
+			if(quickFixerFlag == 1) {
+				text.setText(text.getText().replaceAll("[^0-9.]",""));
+				return true;
+			}
+			if(quickFixerFlag == 2) {
+				String target = text.getText();
+				String begin = target.substring(0,target.indexOf(".")+1);
+				String end = target.substring(target.indexOf(".")+1);
+				end = end.replaceAll(".","");
+				text.setText(begin + end);
+				return true;
+			}
+			if(quickFixerFlag == 3) {
+				text.setText(text.getText().replaceAll("[^0-9]",""));
+			}
+			return true;
+		}
+		@Override
+		public String getQuickFixMenuText() { return "fix problems";
+		}
+		@Override
+		public boolean hasQuickFix(String sr) {
+			return quickFixerFlag != 0;
+		}	   
+	   });
+	   
+	   text = (Text)mutatorField.getControl();
+	   GridDataFactory.fillDefaults().span(4,1).indent(8, 0).applyTo(text);
+	   ySize = ySize + text.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
+   }
+	@Override
+	public void error(String mess) { setErrorMessage(mess);	}
+	@Override
+	public void message(String mess, int style) { setMessage(mess,style);	}
     
 }

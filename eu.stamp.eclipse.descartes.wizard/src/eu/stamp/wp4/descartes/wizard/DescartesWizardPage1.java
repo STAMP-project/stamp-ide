@@ -22,7 +22,6 @@ import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
-import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -52,12 +51,15 @@ import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 import com.richclientgui.toolbox.validation.validator.IFieldValidator;
 import com.richclientgui.toolbox.validation.IQuickFixProvider;
 
+import eu.stamp.eclipse.descartes.wizard.validation.DescartesWizardErrorHandler;
+import eu.stamp.eclipse.descartes.wizard.validation.IDescartesPage;
 import eu.stamp.wp4.descartes.wizard.configuration.DescartesWizardConfiguration;
 import eu.stamp.wp4.descartes.wizard.configuration.IDescartesWizardPart;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
 @SuppressWarnings("restriction")
-public class DescartesWizardPage1 extends WizardPage implements IDescartesWizardPart{
+public class DescartesWizardPage1 extends WizardPage 
+                           implements IDescartesWizardPart, IDescartesPage{
 	/**
 	 *  An instance for the wizard to call the update method 
 	 *  and get access to the only DescartesWizardConfiguration object
@@ -111,7 +113,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		} catch (IOException e1) { e1.printStackTrace(); }
 		
 		// prepare the message handler and the validation tool kit
-		errorHandler = new DescartesWizardErrorHandler(); 
+		errorHandler = new DescartesWizardErrorHandler(this); 
 		valKit = new StringValidationToolkit(SWT.LEFT | SWT.TOP,1,true);
         valKit.setDefaultErrorMessageHandler(errorHandler);
 	}
@@ -707,26 +709,9 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		for(boolean bo : check)if(!bo) { setPageComplete(false); return; }
 		setPageComplete(true);
 	}
-	/**
-	 *  inner class to handle the field validation error messages
-	 */
-	class DescartesWizardErrorHandler implements IFieldErrorMessageHandler{
-		@Override
-		public void clearMessage() {
-			setErrorMessage(null);
-			setMessage(null,DialogPage.ERROR);	
-		}
-		@Override
-		public void handleErrorMessage(String message, String input) {
-		 setMessage(null,DialogPage.INFORMATION);
-		 setErrorMessage(message);	
-		}
-		@Override
-		public void handleWarningMessage(String message, String input) {
-		 setErrorMessage(null);
-		 setMessage(message,DialogPage.WARNING);	
-		}
-		
-	}
 
+	@Override
+	public void error(String mess) { setErrorMessage(mess); }
+	@Override
+	public void message(String mess, int style) { setMessage(mess,style); }
 }
