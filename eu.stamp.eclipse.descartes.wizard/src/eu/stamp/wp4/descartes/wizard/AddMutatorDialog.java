@@ -1,8 +1,10 @@
 package eu.stamp.wp4.descartes.wizard;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -24,19 +26,50 @@ import eu.stamp.eclipse.descartes.wizard.validation.IDescartesPage;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 
+/**
+ *  This class represents the dialog to add new mutators to the list
+ *  the dialog contains a set of radio buttons to choose the mutator type 
+ *  and a text, when there is only one possible text for the selected 
+ *  mutator type (for example true) the text becomes disabled and the text is shown
+ *  else the text is enabled and it provides the validation and quick fixer 
+ *  corresponding to the selected mutator type, the labels in the left and right of the text
+ *  show the required syntax, for example "" for Strings.
+ */
 public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage {
 	
+    // static strings to process each mutator code when generating the buttons listeners
+	/**
+	 *   this string separates the strings placed in the left and right sides of the text
+	 *   for each mutator type
+	 */
 	private final static String CUT_CODE = "c";
+	/**
+	 *  if the mutator's code contains this string it is one of the mutators with only
+	 *  one possible text for example void
+	 */
 	private final static String ITSELF_CODE = "i";
+	/**
+	 *  this mutator code part allows distinguishing a double from an int
+	 */
 	private final static String DOUBLE_CODE = "d";
+	/**
+	 *  this is to set the title area image, it's static to be easily set 
+	 *  when the wizard loads the default image
+	 */
+	public static Image image;
 	
+	// useful booleans to determine when the special cases are active
 	private boolean decimal;
 	private boolean doubleActive;
+	
+	// the text to add to the first page mutators list after pressing ok
 	private String result;
 	
+	// int variables to compute the dialog size
 	private int xSize = 0;
 	private int ySize = 0;
 	
+	// validation tools
     private StringValidationToolkit valKit = null;
     private final IFieldErrorMessageHandler errorHandler;
 	
@@ -44,8 +77,11 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
 	private Label leftLabel;
 	private Label rightLabel;
 	private ValidatingField<String> mutatorField;
-	private int quickFixerFlag;
+	// reference for the text in mutatorField in order not to get and cast it a lot of times
 	private Text text;
+	
+	// this int flag allows coordination between the field validator and the quick fixer
+	private int quickFixerFlag;
 	
 	public AddMutatorDialog(Shell parentShell) { 
 		super(parentShell);
@@ -59,11 +95,12 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
 		super.create();
 		setTitle("Add mutator");
 		setMessage("Select the mutator type and write the text");
+		if(image != null) setTitleImage(image);
 	}
 	
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		// create the composite
+		
    	     Composite composite = (Composite)super.createDialogArea(parent);
 		 GridLayout layout = new GridLayout(6,true);
 		 composite.setLayout(layout);
@@ -72,27 +109,38 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
 		space.setText("");
 		GridDataFactory.swtDefaults().span(5,1).applyTo(space);
 		
+		/* this label will contains the required text in the left of the mutator, 
+		 * for example " for string and (byte) for byte, it is dinamically chaged by
+		 * the buttons listeners  
+		 */	
 		leftLabel = new Label(composite,SWT.NONE);
 		leftLabel.setText("");
 		leftLabel.setAlignment(SWT.RIGHT);
 		GridDataFactory.fillDefaults().applyTo(leftLabel);
 		
-		createField(composite);
+		createField(composite);  // create a text with validation of content
 		
+		// the same for the right side of the text 
 		rightLabel = new Label(composite,SWT.NONE);
 		rightLabel.setText("");
 		GridDataFactory.fillDefaults().applyTo(rightLabel);
 		
-		
+		// the name of the mutators will appear in the right of their radio buttons
 		String[] mutators = {"void","null","empty","true","false","string","character",
-			"int","double","byte","short","float","long"};
-		
+			"int","double","byte","short","float","long"};		
+		/*
+		 *  this codes are used to set dynamically the texts of the left and right labels
+		 *  and to create the buttons listeners
+		 */
 		String[] codes = {ITSELF_CODE , ITSELF_CODE , ITSELF_CODE , ITSELF_CODE,
 			 ITSELF_CODE, "\"" + CUT_CODE + "\"", "'"+ CUT_CODE + "'" , CUT_CODE,
 			 DOUBLE_CODE , "(byte)" + CUT_CODE , "(short)" + CUT_CODE, CUT_CODE + "f",CUT_CODE + "L"};
 		
-		GridDataFactory factory = GridDataFactory.swtDefaults().span(2,1);
-				
+		GridDataFactory factory = GridDataFactory.swtDefaults().span(2,1);		
+		/*
+		 *  create the MyMutator objects to manage together the labels texts, 
+		 *  the buttons listeners, the text validation and the quick fixers
+		 */
 		for(int i = 0; i < mutators.length; i++) {
 			MyMutator mut = new MyMutator(mutators[i],codes[i],composite,factory);
 			mut.configureListener();
@@ -111,7 +159,9 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
     }
     @Override
     protected void okPressed() {
-    	result = text.getText();
+    	result = text.getText(); 
+    	// before return we must add the required syntax (the text of the labels)
+    	// the .0 for the decimals if it is not set, and a \ before the number of a char
     	if(decimal && !result.contains(".")) result = result +".0";
     	if(leftLabel.getText().equalsIgnoreCase("\'") && result
     			.equalsIgnoreCase(result.replaceAll("[^0-9]",""))) result = "\\" + result;
@@ -120,6 +170,12 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
     }
     public String getResult() { return result; }
     
+    /**
+     * inner class to manage together the requirements for a mutator type
+     * this class contains the radio button to select this mutator type, when an
+     * object of this class is created it is given the mutator name (the text for the button)
+     * and a string with a code to create the listener for the button
+     */
     private class MyMutator {
     	
     	final String name;
@@ -140,7 +196,11 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
     		xSize = xSize + button.computeSize(SWT.DEFAULT,SWT.DEFAULT).x;
     		ySize = ySize + button.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
     	} 
-     
+     /**
+      *  this method creates and sets the listener for the button using the information in the 
+      *  code string, the listener sets the text in the left and right labels, and controls
+      *  the activation, validation and quick fixer of the field text
+      */
      public void configureListener() {
     	 if(code.contains(DOUBLE_CODE)) {
     		 button.addSelectionListener(new SelectionAdapter() {
@@ -197,43 +257,46 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
 		@Override
 		public boolean isValid(String sr) {
 			quickFixerFlag = 0;
-			if(text == null) return true;
+			Button okButton = getButton(IDialogConstants.OK_ID);
+			if(text == null) return true; 
 	
-            if(!text.isEnabled()) return true; // these mutators are always right
+            if(!text.isEnabled()) { 
+            	okButton.setEnabled(true); return true; } // these mutators are always right
             
             String right = rightLabel.getText();
             
-            if(right.contains("\"") || right.contains("\'")) return true;
+            if(right.contains("\"") || right.contains("\'")) { // char and String
+            	okButton.setEnabled(true); return true; }
             
-            if(right.contains("f") || doubleActive) {
+            if(right.contains("f") || doubleActive) { // the decimal ones
             	
             	if(sr.isEmpty()) {
             		message = "this mutator must not be empty";
-            		return false;
+            		 okButton.setEnabled(false); return false;
             	}
             	boolean bo = sr.replaceAll("[^0-9.]","").equalsIgnoreCase(sr);
             	if(!bo) {
             		message = "only real numbers are allowed for this mutator";
             		quickFixerFlag = 1;
-            		return false;
+            		 okButton.setEnabled(false); return false;
             	}
             	bo = !(sr.replaceAll("[^.]","").length() > 1); // no more than one point
-            	if(bo) return true;
+            	if(bo) {okButton.setEnabled(true); return true; }
             	message = "the text contains more than one point";
             	quickFixerFlag = 2;
-            	return false;
+            	 okButton.setEnabled(false); return false;
             }
             
             // here only int, short and long are possibles
                 if(sr.isEmpty()) {
                 	message = "this muttator must not be empty";
-                	return false;
+                	 okButton.setEnabled(false); return false;
                 }
             	boolean bo = sr.replaceAll("[^0-9]","").equalsIgnoreCase(sr);
-            	if(bo) return true;
+            	if(bo) { okButton.setEnabled(true); return true; }
             	message = "only numeric characters are allolwed for this mutator";
             	quickFixerFlag = 3;
-            	return false;
+            	 okButton.setEnabled(false); return false;
 		}
 		@Override
 		public boolean warningExist(String arg0) { return false;
@@ -247,11 +310,11 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
 				text.setText(text.getText().replaceAll("[^0-9.]",""));
 				return true;
 			}
-			if(quickFixerFlag == 2) {
+			if(quickFixerFlag == 2) {  // remove the non numerical characters except the first point
 				String target = text.getText();
 				String begin = target.substring(0,target.indexOf(".")+1);
 				String end = target.substring(target.indexOf(".")+1);
-				end = end.replaceAll(".","");
+				end = end.replaceAll("[^0-9]","");
 				text.setText(begin + end);
 				return true;
 			}
@@ -273,6 +336,7 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
 	   GridDataFactory.fillDefaults().span(4,1).indent(8, 0).applyTo(text);
 	   ySize = ySize + text.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
    }
+
 	@Override
 	public void error(String mess) { setErrorMessage(mess);	}
 	@Override

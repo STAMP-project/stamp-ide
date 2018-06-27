@@ -2,7 +2,10 @@ package eu.stamp.eclipse.descartes.wizard.validation;
 
 import org.eclipse.jface.dialogs.DialogPage;
 import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
-
+/**
+ * instances of this class are responsible to display the page messages
+ * about the validation of a field
+ */
 public class DescartesWizardErrorHandler implements IFieldErrorMessageHandler{
 	
 	private IDescartesPage page;

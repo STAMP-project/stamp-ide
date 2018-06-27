@@ -232,7 +232,6 @@ public class DescartesWizardPomParser {
 	private boolean thisPluginIsPitest(Node configurationNode) {
 		NodeList nodeList = configurationNode.getParentNode().getChildNodes();
 		for(int i = 0; i < nodeList.getLength(); i++) {
-			System.out.println(nodeList.item(i).getTextContent());
 				if(nodeList.item(i).getTextContent()
 						.contains(DescartesWizardConstants.PITEST_ARTIFACT_ID)) return true;	
 		}

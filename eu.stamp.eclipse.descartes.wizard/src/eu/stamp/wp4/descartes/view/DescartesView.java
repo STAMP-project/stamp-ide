@@ -16,7 +16,6 @@ import org.eclipse.ui.part.ViewPart;
  *  This class describes the Descartes Eclipse view to display 
  *  the content of the html summaries, the view is formed by a tab,
  *  each item of the tab contains a browser to display one of the documents
- *
  */
 public class DescartesView extends ViewPart {
 	

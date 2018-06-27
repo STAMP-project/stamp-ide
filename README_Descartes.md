@@ -59,7 +59,9 @@ have the only purpose to use the "Remove selected mutators" button, to the right
 
 To add a mutator push the "Add mutator" button to open a dialog, select the type of mutator you want,
 if the mutator type requires to write a text like string or int the text will be enabled, write the text of the mutator
-and press ok, the necessary sintax like "" for strings, '' for chars or key words as short is provided.
+and press ok, the necessary sintax like "" for strings, '' for chars or key words as short is provided, the text implements
+validation when necessary and a quick fixer for some of the possible problems (open the quick fixer by right
+clicking on the error signal on the top left corner of the text).
 
 <center>![adding a mutator](images/add.png)</center>
 

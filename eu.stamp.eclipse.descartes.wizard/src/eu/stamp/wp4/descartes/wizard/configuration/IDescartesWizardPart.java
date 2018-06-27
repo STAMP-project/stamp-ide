@@ -11,7 +11,7 @@ public interface IDescartesWizardPart {
 	 */
 	public void updateDescartesWizardPart(DescartesWizardConfiguration wConf);
 	/**
-	 * @param wizard : the updated reference too the Descartes wizard
+	 * @param wizard : the updated reference to the Descartes wizard
 	 */
 	public void updateWizardReference(DescartesWizard wizard);
     
