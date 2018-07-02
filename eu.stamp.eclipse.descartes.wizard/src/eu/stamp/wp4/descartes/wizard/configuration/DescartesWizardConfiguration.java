@@ -107,6 +107,7 @@ public class DescartesWizardConfiguration {
 		for(int i = 0; i < mutators.length; i++) names[i] = mutators[i].getNodeName();}
 		return names;
 	}
+
 	public String[] getMutatorsTexts() {
 		String[] texts = {""};
 		Node[] mutators = descartesParser.getMutators();
@@ -135,7 +136,11 @@ public class DescartesWizardConfiguration {
 		for(int i = 0; i < configurations.length; i++)result[i] = configurations[i].getName();
 		return result;
 	}
-
+    /**
+     * loads a stored Descartes configuration
+     * @param name : the name of the configuration to load
+     * @throws CoreException
+     */
 	public void setCurrentConfiguration(String name) throws CoreException {
 		
 		configurations = findConfigurations();
@@ -167,12 +172,16 @@ public class DescartesWizardConfiguration {
 	}
 	  // Now the wizard configuration is updated
 	}
-	
+	/**
+	 * @return the active Descartes configuration
+	 */
 	public ILaunchConfiguration getCurrentConfiguration() {
 		if(configurations.length > 0)return configurations[indexOfCurrentConfiguration];
 		return null; 
 		}
-	
+	/**
+	 * @return the name of the file use as pom by the current configuration 
+	 */
 	public String getPomName() {
 		String result = descartesParser.getPomName();
 		if(result == null && configurations != null) {
@@ -186,7 +195,10 @@ public class DescartesWizardConfiguration {
 		else if(result.isEmpty()) result = "descartes_pom.xml";
 		return result;
 	}
-	
+	/**
+	 * @return the list of Descartes configurations that will be displayed in the load configuration combo
+	 * @throws CoreException
+	 */
 	private ILaunchConfiguration[] findConfigurations() throws CoreException {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfiguration[] configurations = manager.getLaunchConfigurations(

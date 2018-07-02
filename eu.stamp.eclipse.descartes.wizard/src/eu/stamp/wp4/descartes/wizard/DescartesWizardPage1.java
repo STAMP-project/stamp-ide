@@ -34,7 +34,6 @@ import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
 import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
-import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -64,12 +63,15 @@ import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 import com.richclientgui.toolbox.validation.validator.IFieldValidator;
 import com.richclientgui.toolbox.validation.IQuickFixProvider;
 
+import eu.stamp.eclipse.descartes.wizard.validation.DescartesWizardErrorHandler;
+import eu.stamp.eclipse.descartes.wizard.validation.IDescartesPage;
 import eu.stamp.wp4.descartes.wizard.configuration.DescartesWizardConfiguration;
 import eu.stamp.wp4.descartes.wizard.configuration.IDescartesWizardPart;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
 @SuppressWarnings("restriction")
-public class DescartesWizardPage1 extends WizardPage implements IDescartesWizardPart{
+public class DescartesWizardPage1 extends WizardPage 
+                           implements IDescartesWizardPart, IDescartesPage{
 	/**
 	 *  An instance for the wizard to call the update method 
 	 *  and get access to the only DescartesWizardConfiguration object
@@ -123,7 +125,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		} catch (IOException e1) { e1.printStackTrace(); }
 		
 		// prepare the message handler and the validation tool kit
-		errorHandler = new DescartesWizardErrorHandler(); 
+		errorHandler = new DescartesWizardErrorHandler(this); 
 		valKit = new StringValidationToolkit(SWT.LEFT | SWT.TOP,1,true);
         valKit.setDefaultErrorMessageHandler(errorHandler);
 	}
@@ -134,7 +136,8 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
 		GridLayout layout = new GridLayout();    // the layout of composite
-		layout.numColumns = 3;
+		layout.numColumns = 4;
+		layout.makeColumnsEqualWidth = true;
 		composite.setLayout(layout);
 		
         // ROW 1 : Load configuration
@@ -142,10 +145,53 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		
 		configurationCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY); // combo for saved configurations
 		configurationCombo.setEnabled(false);
-		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(configurationCombo);
+		GridDataFactory.fillDefaults().span(3, 1).indent(10, 0).grab(true, false).applyTo(configurationCombo);
 		String[] configurations = wizard.getWizardConfiguration().getConfigurationNames();
 		configurationCombo.add("");
 		for(String sr : configurations) configurationCombo.add(sr);
+		/*
+		Button deleteButton = new Button(composite,SWT.PUSH);
+		deleteButton.setText("Delete configuration");
+		deleteButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(configurationCombo.getText().isEmpty()) {
+
+					MessageBox noConfBox = new MessageBox(
+							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
+							,SWT.ICON_WARNING);
+					noConfBox.setMessage("No configuration loaded");
+					noConfBox.setText("Delete configuration");
+					noConfBox.open();
+					return;
+				}
+				MessageBox deleteBox = new MessageBox(PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell(),
+						SWT.ICON_WORKING | SWT.NO | SWT.YES);
+				deleteBox.setText("Delete configuration");
+				deleteBox.setMessage("Do you want to delete the current configuration");
+				if(deleteBox.open() == SWT.YES) {
+
+			try {
+				ILaunchConfiguration conf = wizard.getWizardConfiguration().getCurrentConfiguration();
+				conf.delete();
+				
+				wizard.setWizardConfiguration(new DescartesWizardConfiguration(
+						wizard.getWizardConfiguration().getProject()));
+				wizard.updateWizardParts();
+				
+				   String[] configurations = wizard.getWizardConfiguration().getConfigurationNames();
+				   configurationCombo.removeAll();
+					configurationCombo.add("");
+					for(String sr : configurations) configurationCombo.add(sr);
+
+                
+			} catch (CoreException | SecurityException | IllegalArgumentException e1) {
+				e1.printStackTrace();
+			}
+				}
+			}
+		});*/
 		
 		createConfigurationField(composite);  // ROW 2 : Create new configuration
 		
@@ -153,7 +199,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		
 		projectText = new Text(composite,SWT.BORDER | SWT.READ_ONLY);
 		projectText.setText(projectPath);
-		GridDataFactory.fillDefaults().applyTo(projectText);
+		GridDataFactory.fillDefaults().span(2, 1).indent(10, 0).applyTo(projectText);
 		
 		Button projectButton = new Button(composite,SWT.PUSH);  // opens a dialog to select a project
 		projectButton.setText("Select a Project");
@@ -168,7 +214,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	        		wizard.setWizardConfiguration(new DescartesWizardConfiguration(jProject));
 	        		projectText.setText(wizard.getWizardConfiguration().getProjectPath());
 	        		check[1] = true; checkPage();
-	        	}
+	        	} 
 	        });
 		
 		
@@ -176,14 +222,14 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 
 		Label mutatorsLabel = new Label(composite,SWT.NONE);  // ROW 4 : Mutators list title
 		mutatorsLabel.setText("Mutators : ");
-		GridDataFactory.fillDefaults().span(3, 1).indent(0, 8).applyTo(mutatorsLabel);
+		GridDataFactory.fillDefaults().span(4, 1).indent(0, 8).applyTo(mutatorsLabel);
 		
 		/*
 		 *   ROW 5 (multiple row) : list with the mutators and buttons to add,remove ...
 		 */
 		mutatorsTree = new Tree(composite,SWT.V_SCROLL | SWT.CHECK);
         GridData gd = new GridData(SWT.FILL,SWT.FILL,true,true);
-        gd.horizontalSpan = 2;
+        gd.horizontalSpan = 3;
         gd.verticalSpan = 6;
         gd.minimumWidth = 250;
         mutatorsTree.setLayoutData(gd);
@@ -388,7 +434,7 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 			
 		},false,"new_configuration");	
 		
-		GridDataFactory.fillDefaults().grab(true, false).indent(10, 0)
+		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(10, 0)
 		.applyTo(configurationField.getControl());
 		
 		configurationField.setQuickFixProvider(new IQuickFixProvider<String>() {
@@ -549,18 +595,19 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
     
    @Override
    public void updateDescartesWizardPart(DescartesWizardConfiguration wConf) {
-		
-		// update project path
-		projectPath = wConf.getProjectPath();
-		if(projectText != null)if(!projectText.isDisposed()) {
-			projectText.setText(projectPath);
-		}
-		
+	   //TODO
+	  
+	// update project path
+	   projectPath = wConf.getProjectPath();
 		// update mutators
 		mutatorsTexts = wConf.getMutatorsTexts();
+	   
+	   if(projectText == null) return;
+	   if(projectText.isDisposed()) return;
+	   
+			projectText.setText(projectPath);
 		 
 		// set the updated mutators in the tree	
-		if(mutatorsTree != null) if(!mutatorsTree.isDisposed()) {
 		for(int i = items.size()-1; i >= 0; i--) items.remove(i);
 		mutatorsTree.removeAll();
 		
@@ -568,13 +615,12 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
             TreeItem item = new TreeItem(mutatorsTree,SWT.NONE);
             item.setText(mutatorsTexts[i]);
             items.add(item);
-           }
-
+        }
             initialNames = new String[items.size()];
-            for(int i = 0; i < items.size(); i++) initialNames[i] = items.get(i).getText();}
+            for(int i = 0; i < items.size(); i++) initialNames[i] = items.get(i).getText();
             
 		    // update pom's name
-		    if(pomField != null)((Text)pomField.getControl()).setText(wConf.getPomName());
+		    ((Text)pomField.getControl()).setText(wConf.getPomName());
 	}
 	
 	@Override
@@ -657,8 +703,6 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 	        dialog.setInput(JavaCore.create(fWorkspaceRoot));
 	        dialog.addFilter(filter);
 	        dialog.setHelpAvailable(false);
-	        
-	      
 
 	        if(dialog.open() == Window.OK) {
 	            Object[] results = dialog.getResult();
@@ -719,26 +763,10 @@ public class DescartesWizardPage1 extends WizardPage implements IDescartesWizard
 		for(boolean bo : check)if(!bo) { setPageComplete(false); return; }
 		setPageComplete(true);
 	}
-	/**
-	 *  inner class to handle the field validation error messages
-	 */
-	class DescartesWizardErrorHandler implements IFieldErrorMessageHandler{
-		@Override
-		public void clearMessage() {
-			setErrorMessage(null);
-			setMessage(null,DialogPage.ERROR);	
-		}
-		@Override
-		public void handleErrorMessage(String message, String input) {
-		 setMessage(null,DialogPage.INFORMATION);
-		 setErrorMessage(message);	
-		}
-		@Override
-		public void handleWarningMessage(String message, String input) {
-		 setErrorMessage(null);
-		 setMessage(message,DialogPage.WARNING);	
-		}
-		
-	}
 
+	@Override
+	public void error(String mess) { setErrorMessage(mess); }
+	@Override
+	public void message(String mess, int style) { setMessage(mess,style); }
+	
 }

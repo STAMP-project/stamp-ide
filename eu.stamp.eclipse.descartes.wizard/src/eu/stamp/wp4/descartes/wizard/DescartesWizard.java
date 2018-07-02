@@ -67,7 +67,9 @@ public class DescartesWizard extends Wizard {
 	final URL iconStampURL = FileLocator.find(Platform.getBundle(
 			DescartesWizardConstants.DESCARTES_PLUGIN_ID),new Path("images/stamp.png"),null);
 	ImageDescriptor descriptor = ImageDescriptor.createFromURL(iconStampURL);
-	return descriptor.createImage();
+	Image image = descriptor.createImage();
+	AddMutatorDialog.image = image;
+	return image;
 	}
 	@Override
 	public boolean performFinish() {
@@ -95,6 +97,9 @@ public class DescartesWizard extends Wizard {
 		this.wConf = wConf;
 		updateWizardParts();
 	}
+	/**
+	 * @return the DescartesWizardConfiguration object
+	 */
 	public DescartesWizardConfiguration getWizardConfiguration() {
 		return wConf;
 	}

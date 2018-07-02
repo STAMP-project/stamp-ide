@@ -54,15 +54,19 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
 @SuppressWarnings("restriction")
+/**
+ *  this class describes the tab to create, modify and run Descartes Configurations 
+ *  from the Eclipse "Run configuration"
+ */
 public class DescartesLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 	
 	private Text projectText;
-	private Text pomText;
+	private Text pomText; // in this case we only can specify the file, to modify it use the wizard
 	private boolean dirtyTexts = false;
 
 	@Override
 	public void createControl(Composite parent) {
-
+        
 		Composite container = new Group(parent,SWT.BORDER);
 		setControl(container);
 		
@@ -96,7 +100,7 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 		pomButton.setText("Select pom file");	
 		GridDataFactory.fillDefaults().applyTo(pomButton);
 		
-		// file dialog
+		// file dialog to select the pom file
 		FileDialog fileDiag = new FileDialog(
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		fileDiag.setText("select a POM file");
@@ -216,6 +220,7 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 	 */
 	private void showProjectDialog() {
 		
+		// show only projects
 		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class,IProject.class};
 		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,true);
 		ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
@@ -241,6 +246,7 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 		
 		  IWorkspaceRoot fWorkspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
 	        
+		  // set the dialog characteristics
 	        StandardJavaElementContentProvider provider= new StandardJavaElementContentProvider();
 	        ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
@@ -253,14 +259,14 @@ public class DescartesLaunchConfigurationTab extends AbstractLaunchConfiguration
 	        dialog.addFilter(filter);
 	        dialog.setHelpAvailable(false);
 	        
-
+            // after pressing ok returns the selected project's path to set it into the project text
 	        if(dialog.open() == Window.OK) {
 	            Object[] results = dialog.getResult();
 	            for(Object ob : results) {
 	            	if(ob instanceof IJavaProject) { 
 	             IJavaProject javaProject;
 	             javaProject =  (IJavaProject) ob;
-	             projectText.setText(javaProject.getElementName());}
+	             projectText.setText(javaProject.getProject().getLocation().toString());}
 	            }
 	        }
 		
