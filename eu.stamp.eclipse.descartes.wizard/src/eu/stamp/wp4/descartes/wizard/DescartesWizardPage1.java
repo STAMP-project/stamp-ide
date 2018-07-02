@@ -2,8 +2,6 @@ package eu.stamp.wp4.descartes.wizard;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,11 +15,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.internal.ui.launchConfigurations.AbstractLaunchConfigurationAction;
-import org.eclipse.debug.internal.ui.launchConfigurations.DeleteLaunchConfigurationAction;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
@@ -31,8 +24,6 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
@@ -47,14 +38,12 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.actions.BaseSelectionListenerAction;
 
 import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
 import com.richclientgui.toolbox.validation.ValidatingField;
@@ -66,8 +55,6 @@ import eu.stamp.eclipse.descartes.wizard.validation.DescartesWizardErrorHandler;
 import eu.stamp.eclipse.descartes.wizard.validation.IDescartesPage;
 import eu.stamp.wp4.descartes.wizard.configuration.DescartesWizardConfiguration;
 import eu.stamp.wp4.descartes.wizard.configuration.IDescartesWizardPart;
-import eu.stamp.wp4.descartes.wizard.launch.ui.DescartesLaunchConfigurationTab;
-import eu.stamp.wp4.descartes.wizard.launch.ui.DescartesLaunchConfigurationTabGroup;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
 @SuppressWarnings("restriction")
@@ -146,18 +133,18 @@ public class DescartesWizardPage1 extends WizardPage
 		
 		configurationCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY); // combo for saved configurations
 		configurationCombo.setEnabled(false);
-		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(configurationCombo);
+		GridDataFactory.fillDefaults().span(3, 1).indent(10, 0).grab(true, false).applyTo(configurationCombo);
 		String[] configurations = wizard.getWizardConfiguration().getConfigurationNames();
 		configurationCombo.add("");
 		for(String sr : configurations) configurationCombo.add(sr);
-		
+		/*
 		Button deleteButton = new Button(composite,SWT.PUSH);
 		deleteButton.setText("Delete configuration");
 		deleteButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(configurationCombo.getText().isEmpty()) {
-					// TODO comment
+
 					MessageBox noConfBox = new MessageBox(
 							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
 							,SWT.ICON_WARNING);
@@ -172,23 +159,27 @@ public class DescartesWizardPage1 extends WizardPage
 				deleteBox.setText("Delete configuration");
 				deleteBox.setMessage("Do you want to delete the current configuration");
 				if(deleteBox.open() == SWT.YES) {
-					// TODO
+
 			try {
 				ILaunchConfiguration conf = wizard.getWizardConfiguration().getCurrentConfiguration();
 				conf.delete();
 				
-				/*
-				LaunchConfigurationsDialog diag = 
-						(LaunchConfigurationsDialog)
-						LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
-				diag.notifyAll();*/
+				wizard.setWizardConfiguration(new DescartesWizardConfiguration(
+						wizard.getWizardConfiguration().getProject()));
+				wizard.updateWizardParts();
+				
+				   String[] configurations = wizard.getWizardConfiguration().getConfigurationNames();
+				   configurationCombo.removeAll();
+					configurationCombo.add("");
+					for(String sr : configurations) configurationCombo.add(sr);
+
                 
 			} catch (CoreException | SecurityException | IllegalArgumentException e1) {
 				e1.printStackTrace();
 			}
 				}
 			}
-		});
+		});*/
 		
 		createConfigurationField(composite);  // ROW 2 : Create new configuration
 		
@@ -196,7 +187,7 @@ public class DescartesWizardPage1 extends WizardPage
 		
 		projectText = new Text(composite,SWT.BORDER | SWT.READ_ONLY);
 		projectText.setText(projectPath);
-		GridDataFactory.fillDefaults().span(2, 1).applyTo(projectText);
+		GridDataFactory.fillDefaults().span(2, 1).indent(10, 0).applyTo(projectText);
 		
 		Button projectButton = new Button(composite,SWT.PUSH);  // opens a dialog to select a project
 		projectButton.setText("Select a Project");
@@ -211,7 +202,7 @@ public class DescartesWizardPage1 extends WizardPage
 	        		wizard.setWizardConfiguration(new DescartesWizardConfiguration(jProject));
 	        		projectText.setText(wizard.getWizardConfiguration().getProjectPath());
 	        		check[1] = true; checkPage();
-	        	}
+	        	} 
 	        });
 		
 		
