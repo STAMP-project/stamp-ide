@@ -68,8 +68,6 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
 	private WizardConfiguration wConf;  // to obtain the possible test cases
 	
 	// parameters  
-	//private int randomSeed = 23;
-	//private int timeOut = 10000;
 	private String[] selection = {""};
 	private String pathPitResult = "";
 	private String mavenHome;
@@ -253,7 +251,7 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     			 mavenHomeField.getControl().setEnabled(mavenHomeButton.getSelection());
     		 }
     	 });
-    	 
+         composite.pack();
     	 return composite;
      }
      
