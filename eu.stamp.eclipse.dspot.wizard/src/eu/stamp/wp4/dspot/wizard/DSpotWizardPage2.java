@@ -25,10 +25,6 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SegmentListener;
-import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.swt.widgets.List;
 
 import java.io.IOException;
@@ -78,12 +74,11 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
  * this class describes the second page of the DSpot wizard 
- *
  */
 @SuppressWarnings("restriction")
 public class DSpotWizardPage2 extends WizardPage {
 	
-	private boolean[] Comp = {true,false};  // this is to set page complete
+	//private boolean[] Comp = {true,false};  // this is to set page complete
 	private WizardConfiguration wConf;   
 	private String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
 			"BooleanLiteralAmplifier","AllLiteralAmplifiers","MethodAdd","MethodRemove","TestDataMutator",
@@ -96,7 +91,8 @@ public class DSpotWizardPage2 extends WizardPage {
 	private List amplifiersList;
 	private Combo combo1;
 	private Button button;
-	private Button button2;
+	private Button cleanButton;
+	private  Button commentButton;
 	
 	// Dialogs
 	private ArrayList<Object> testSelection = new ArrayList<Object>(1);
@@ -156,9 +152,7 @@ public class DSpotWizardPage2 extends WizardPage {
 		spin.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
-				Comp[0] = spin.getSelection() > 0;  // we need a positive number of iterations
-				setPageComplete(Comp[0] && Comp[1]);						
+				setPageComplete(spin.getSelection() > 0);				
 			}
 		});
 		
@@ -177,26 +171,8 @@ public class DSpotWizardPage2 extends WizardPage {
 		gd = new GridData(SWT.FILL,SWT.FILL,true,false);
 		gd.verticalIndent = 8;
 		gd.horizontalSpan = 2;
-		tx1.setLayoutData(gd);
-		tx1.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent e) {}
-			@Override
-			public void keyReleased(KeyEvent e) {
-			Comp[1] = !tx1.getText().isEmpty();	  // look at the "!"
-			setPageComplete(Comp[0] && Comp[1]);
-			}
-		});   // end of the Key listener
-		
-     tx1.addSegmentListener(new SegmentListener() {  // if the user copy-pastes the key listener dosn't detect it
-    	 @Override
-    	 public void getSegments(SegmentEvent e) {
- 			Comp[1] = !tx1.getText().isEmpty();	  // look at the "!"
- 			setPageComplete(Comp[0] && Comp[1]); 
-    	 }
-     });  // end of the segment listener
+		tx1.setLayoutData(gd);  
      
-	 
      Button fileButton = new Button(composite,SWT.PUSH); // A button in (2,3), it opens the file dialog
      fileButton.setText("Select tests");
      fileButton.setToolTipText(tooltipsProperties.getProperty("fileButton"));
@@ -277,14 +253,20 @@ public class DSpotWizardPage2 extends WizardPage {
 	    }); // end of the selection listener
 	    
 	    // seventh row (7,x)
-	    Label lb8 = new Label(composite,SWT.NONE); // A label in (6,1)
-	    lb8.setText("clean ");
 	    
-	    button2 = new Button(composite,SWT.CHECK);  // check button in (6,2)
-	    button2.setToolTipText(tooltipsProperties.getProperty("button2"));
-		// required to avoid an error in the System
+	    cleanButton = new Button(composite,SWT.CHECK);  // check button in (6,2)
+	    cleanButton.setText("clean ");
+	    cleanButton.setToolTipText(tooltipsProperties.getProperty("button2"));
+	    
+	    Label space2 = new Label(composite,SWT.NONE);
+	    space2.setText("");
+	    
+	    // comment button 
+	    commentButton = new Button(composite,SWT.CHECK);
+	    commentButton.setText("with comment ");
+	    
 		setControl(composite);
-		setPageComplete(false);	
+		setPageComplete(true);
 	}  // end of create Control
 	/**
 	 * Method to create and show a dialog to select test classes
@@ -456,8 +438,10 @@ public class DSpotWizardPage2 extends WizardPage {
      	} else pathPitResult = "";
    	if(argument.contains("verbose")) { button.setSelection(true); dSpotMemory.setDSpotValue("verbose", "true"); }
    	else { button.setSelection(false); dSpotMemory.setDSpotValue("verbose", "false"); }
-   	if(argument.contains("clean")) {button2.setSelection(true); dSpotMemory.setDSpotValue("clean", "true"); }
-   	else { button2.setSelection(false); dSpotMemory.setDSpotValue("clean", "false"); }
+   	if(argument.contains("clean")) {cleanButton.setSelection(true); dSpotMemory.setDSpotValue("clean", "true"); }
+   	else { cleanButton.setSelection(false); dSpotMemory.setDSpotValue("clean", "false"); }
+   	if(argument.contains("comment")) { commentButton.setSelection(true); dSpotMemory.setDSpotValue("comment","true"); }
+   	else { commentButton.setSelection(false); dSpotMemory.setDSpotValue("comment","false"); }
    	expDiag.setMemory(dSpotMemory);
    	expDiag.resetFromMemory();
    	wConf.setDSpotMemory(dSpotMemory);
@@ -492,7 +476,8 @@ public class DSpotWizardPage2 extends WizardPage {
  		//if(button.getSelection()) memory.setDSpotValue("verbose", "true");
  		//else memory.setDSpotValue("verbose", "false");
  		 memory.setDSpotValue("verbose", String.valueOf(button.getSelection()));
- 	     memory.setDSpotValue("clean", String.valueOf(button2.getSelection()));
+ 	     memory.setDSpotValue("clean", String.valueOf(cleanButton.getSelection()));
+ 	     memory.setDSpotValue("comment", String.valueOf(commentButton.getSelection()));
     	 wConf.setDSpotMemory(memory);	 
     	 return wConf;
      }

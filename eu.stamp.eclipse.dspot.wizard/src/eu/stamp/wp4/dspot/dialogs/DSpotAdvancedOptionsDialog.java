@@ -159,9 +159,9 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
  		 randomSeedLabel.setToolTipText(tooltipsProperties.getProperty("randomSeedLabel"));
  		 
  		 randomSeedSpinner = new Spinner(composite,SWT.BORDER);
+ 		 randomSeedSpinner.setMinimum(1);
  		 if(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY) != null)
- 			 randomSeedSpinner.setMinimum(1); randomSeedSpinner
- 			 .setSelection(Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY)));
+ 			  randomSeedSpinner.setSelection(Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY)));
  		 GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(0, vSpace).applyTo(randomSeedSpinner);
  		 
  		 /*

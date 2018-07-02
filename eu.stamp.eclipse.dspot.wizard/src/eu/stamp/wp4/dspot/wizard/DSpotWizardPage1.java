@@ -69,6 +69,9 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SegmentEvent;
 
+import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotPageSizeCalculator;
+import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotRowSizeCalculator;
+import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotSizeManager;
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.dialogs.DspotWizardHelpDialog;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
@@ -99,6 +102,10 @@ public class DSpotWizardPage1 extends WizardPage {
     private ValidatingField<String> projectField;
     private ValidatingField<String> configurationComboField;
     
+    // to compute size
+    DSpotPageSizeCalculator sizeCalculator;
+    DSpotRowSizeCalculator row;
+    
 	public DSpotWizardPage1(WizardConfiguration wConf,DSpotWizard wizard){
 		super("Project configuration");
 		setTitle("Project configuration");
@@ -124,6 +131,8 @@ public class DSpotWizardPage1 extends WizardPage {
 	        valKit.setDefaultErrorMessageHandler(errorMessageHandler);
 	        
 	        pageValidator = new DSpotPage1Validator();
+	        sizeCalculator = new DSpotPageSizeCalculator();
+	        row = new DSpotRowSizeCalculator();
 	} // end of the constructor
  
 	@Override
@@ -137,10 +146,13 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		int VS = 8;   // this will be the verticalIndent between rows in composite
 		
-		// 	first row (1,x) use saved configuration
+		/*
+		 *  ROW 1 : use saved configuration
+		 */
 		Label lb0 = new Label(composite,SWT.NONE);  // label in (1,0)
 		lb0.setText("Use saved configuration : ");
 		lb0.setToolTipText(tooltipsProperties.getProperty("lb0"));
+		row.addWidget(lb0);
 	    
 		configCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY); // combo in (1,1) to select a configuration
 		GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).indent(8, 0).applyTo(configCombo);
@@ -149,7 +161,8 @@ public class DSpotWizardPage1 extends WizardPage {
 			configCombo.add(laun.getName());
 		}
 		configCombo.add(""); // IMPORTANT this must be at the end of the combo list to get the correct selection index
-		configCombo.setEnabled(false);  
+		configCombo.setEnabled(false); 
+		row.addWidget(configCombo);
 		
 		pageValidator.addElement(new IDSpotPageElement() {
 			@Override
@@ -161,21 +174,32 @@ public class DSpotWizardPage1 extends WizardPage {
 		});
 		
 		createConfigurationComboValidator();  // this is to display an error message if no configuration is selected
-		
-		createConfigurationField(composite);// second row New Configuration
-
-		// third row  (3,x)     Project's path  
+		sizeCalculator.addRow(row);
+		/*
+		 *  Row 2 : New Configuration 
+		 */
+		row = new DSpotRowSizeCalculator();
+		createConfigurationField(composite);
+		sizeCalculator.addRow(row);
+		/*
+		 *  ROW 3 : Project's path
+		 */ 
+		row = new DSpotRowSizeCalculator();
 		// Obtain the path of the project
 		String[] sour = wConf.getSources();  
 		boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
 		
 		createProjectField(composite);
-
-		// fourth row (4,x)      Source path  
+		sizeCalculator.addRow(row);
+        /*
+         *  ROW 4 : Source path
+         */
+		row = new DSpotRowSizeCalculator();
 		createLabel(composite,"Path of the source : ","lb2"); // Label in (4,1)
 	
         sourcePathCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);  // Combo in (4,2) for the source's path
         GridDataFactory.fillDefaults().grab(true,false).span(2,1).indent(0, VS).applyTo(sourcePathCombo);
+        row.addWidget(sourcePathCombo);
         sourcePathCombo.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -184,12 +208,16 @@ public class DSpotWizardPage1 extends WizardPage {
         		
         	}
         }); // end of the selection listener
-        
-		// fifth row (5,x)   SourceTest path
+        sizeCalculator.addRow(row);
+        /*
+         *  ROW 5 : SourceTest path
+         */
+        row = new DSpotRowSizeCalculator();
         createLabel(composite,"Path of the source test : ","lb3");
 		
         sourceTestCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);
         GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(sourceTestCombo);
+        row.addWidget(sourceTestCombo);
         for(int i = 0; i < sour.length; i++) {  // add the sources to the combo
         	if(isTest[i]) {  // if it is not a test package
         	sourceTestCombo.add(sour[i]);} else { sourcePathCombo.add(sour[i]); }
@@ -212,15 +240,18 @@ public class DSpotWizardPage1 extends WizardPage {
         		TheProperties[2] = sourceTestCombo.getText();    //  testSrc 		
         	}
         });
-		
-        
-		// sixth row (6,x) Java version
+		sizeCalculator.addRow(row);
+        /*
+         *  ROW 6 : Java version
+         */
+		row = new DSpotRowSizeCalculator();
         createLabel(composite,"Java version : ","lb4"); // Label in (6,1)
 		
 		Combo combo1 = new Combo(composite,SWT.NONE | SWT.READ_ONLY);  // Combo in (6,2) for the version
 		combo1.add("8"); combo1.add("7"); combo1.add("6"); combo1.add("5");
 		combo1.setText("8");
         GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo1);
+        row.addWidget(combo1);
         TheProperties[3] = "8";
         combo1.addSelectionListener(new SelectionAdapter() {  // Use a SelectionAdapter
         	@Override
@@ -231,6 +262,7 @@ public class DSpotWizardPage1 extends WizardPage {
         });  // end of the SelectionListener
 		
 		// (7,1 and 2) group with optional information
+        row = new DSpotRowSizeCalculator();
 		Group gr = new Group(composite,SWT.NONE);
 		gr.setText("Optional information");
 		GridDataFactory.fillDefaults().grab(true,false).span(3,3).indent(0,2*VS).applyTo(gr);
@@ -290,6 +322,10 @@ public class DSpotWizardPage1 extends WizardPage {
 				pageValidator.validatePage();
 			}
 		});  // end of the KeyListener
+		row.addWidget(gr);
+		sizeCalculator.addRow(row);
+		DSpotSizeManager.getInstance().addPage(sizeCalculator);
+		DSpotSizeManager.getInstance().configureWizardSize(wizard);
 		
 		pageValidator.addElement(new IDSpotPageElement() {
 			@Override
@@ -441,6 +477,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		Text text = (Text)configurationField.getControl();
 		GridDataFactory.fillDefaults().grab(true, false).indent(10, 8).applyTo(configurationField.getControl());
+		row.addWidget(text);
 		
 		configurationField.setQuickFixProvider(new IQuickFixProvider<String>() {
 			@Override
@@ -483,7 +520,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		GridDataFactory.swtDefaults().indent(0, 8).applyTo(btNewConfig);
 		btNewConfig.setToolTipText(tooltipsProperties.getProperty("btNewConfig"));
 		btNewConfig.setSelection(true);
-		
+		row.addWidget(btNewConfig);
 		
 		btNewConfig.addSelectionListener(new SelectionAdapter() { // selection listener of the 
 	        @Override                                    // new configuration check button
@@ -567,11 +604,13 @@ public class DSpotWizardPage1 extends WizardPage {
 		Text text = (Text)projectField.getControl();
 		GridDataFactory.fillDefaults().grab(true,false).indent(10,8).applyTo(text);
 		TheProperties[0] = direction;
+		row.addWidget(text);
 		 
 	        projectSelectionbt = new Button(composite,SWT.PUSH);
 	        GridDataFactory.swtDefaults().indent(0, 8).applyTo(projectSelectionbt);
 			projectSelectionbt.setText("Select a Project");
 			projectSelectionbt.setToolTipText(tooltipsProperties.getProperty("projectSelectionbt"));
+			row.addWidget(projectSelectionbt);
 			
 			projectSelectionbt.addSelectionListener(new SelectionAdapter() {
 			    @Override
@@ -624,6 +663,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		//GridDataFactory.swtDefaults().indent(0, 8).applyTo(label);
 		label.setText(text);
 		label.setToolTipText(tooltipsProperties.getProperty(tooltipKey));
+		row.addWidget(label);
 	}	
 	/**
 	 *  inner class to handle the field validation error messages
