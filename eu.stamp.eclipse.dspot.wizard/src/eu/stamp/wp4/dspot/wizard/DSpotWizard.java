@@ -118,8 +118,10 @@ public class DSpotWizard extends Wizard{
 		    
 			String p = wConf.getProjectPath();
 			configurationName = configurationName.replaceAll(" ", "_");
-			parameters[1] = p+"/"+configurationName+"_dspot.properties";  // this will be set when perform finish will use it
-			File file = new File(p+"/"+configurationName+"_dspot.properties");
+			File folder = new File(p+"/dspot_properties_files/");
+			if(!folder.exists()) folder.mkdir();
+			parameters[1] = p+"/dspot_properties_files/"+configurationName+"_dspot.properties";  // this will be set when perform finish will use it
+			File file = new File(p+"/dspot_properties_files/"+configurationName+"_dspot.properties");
 			try {
 			file.createNewFile();
 			BufferedWriter fw = new BufferedWriter(new FileWriter(file));

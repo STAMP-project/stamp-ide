@@ -123,15 +123,16 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
 		inputStream.close();} catch (IOException e2) {
 			e2.printStackTrace(); }
 		
-    	 /*
-    	  *  Row 1 : timeOut
-    	  */
+         // create the composite
     	 Composite composite = (Composite)super.createDialogArea(parent);
  		 GridLayout layout = new GridLayout();
  		 layout.numColumns = 3;
  		 composite.setLayout(layout);
  		 int vSpace = 8;
  		 
+    	 /*
+    	  *  Row 1 : timeOut
+    	  */
  		 Label space = new Label(composite,SWT.NONE);
  		 space.setText("");
  		 GridDataFactory.fillDefaults().span(2, 1).applyTo(space);
@@ -260,8 +261,8 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     	 selection = list.getSelection();
     	 //timeOut = timeOutSpinner.getSelection();
     	 randomSeed = randomSeedSpinner.getSelection();
-    	 Text pathPitText = (Text)pathPitResultField.getControl();
-    	 pathPitResult = pathPitText.getText();
+    	 //Text pathPitText = (Text)pathPitResultField.getControl();
+    	// pathPitResult = pathPitText.getText();
     	 mavenHome = ((Text)mavenHomeField.getControl()).getText();
     	 memory.setDSpotValue(DSpotMemory.MAVEN_HOME_KEY, mavenHome);
     	 String[] mySelection = new String[selection.length];
@@ -269,7 +270,7 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     		 mySelection[i] = selection[i].substring(selection[i].indexOf("/")+1);
     	 }
     	 setMemoryData(timeOutSpinner.getSelection(),randomSeedSpinner.getSelection(),
-    			 pathPitText.getText(), mySelection);
+    			 "", mySelection); // TODO  pathPitText.getText()
     	 unusedDialog = false;
     	 super.okPressed();
      }
