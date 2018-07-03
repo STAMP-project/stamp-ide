@@ -31,7 +31,7 @@ public class DSpotRowSizeCalculator {
 			String sr = "";
 			for(String s : strings)if(s.length() > sr.length()) sr = s;
 			x = sr.length()*10;
-			y = strings.length*10;
+			y = 100;
 			return;
 		}
 		Point point = control.computeSize(x0,y0);

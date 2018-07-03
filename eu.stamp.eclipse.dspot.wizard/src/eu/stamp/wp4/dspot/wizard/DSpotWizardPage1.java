@@ -178,7 +178,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		/*
 		 *  Row 2 : New Configuration 
 		 */
-		row.reStart();;
+		row.reStart();
 		createConfigurationField(composite);
 		sizeCalculator.addRow(row);
 		/*
@@ -456,7 +456,8 @@ public class DSpotWizardPage1 extends WizardPage {
 				return "Configuration name is empty";
 			}
 			@Override
-			public String getWarningMessage() { return null; }
+			public String getWarningMessage() {
+				return "This name overloads an existing configuration"; }
 			@Override
 			public boolean isValid(String content) {
 				pageValidator.validatePage();          
@@ -472,7 +473,11 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 			
 			@Override
-			public boolean warningExist(String content) { return false; }	
+			public boolean warningExist(String content) { 
+				List<ILaunchConfiguration> list = wConf.getLaunchConfigurations();
+				for(ILaunchConfiguration lau : list)
+					if(lau.getName().equalsIgnoreCase(content)) return true;
+				return false; }	// TODO
 		}, false, "Type configuration name");
 		
 		Text text = (Text)configurationField.getControl();
