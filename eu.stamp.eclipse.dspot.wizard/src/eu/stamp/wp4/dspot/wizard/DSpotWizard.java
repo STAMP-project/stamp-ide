@@ -82,7 +82,7 @@ public class DSpotWizard extends Wizard{
 	public void addPages() {
 		one = new DSpotWizardPage1(wConf,this);
 		addPage(one);
-		two = new DSpotWizardPage2(wConf);
+		two = new DSpotWizardPage2(wConf,this);
 		addPage(two);
 		
 	}

@@ -7,7 +7,8 @@ public class DSpotMemory {
 
 	private HashMap<String,String> DSpotMap = new HashMap<String,String>();
 	
-	private boolean[] booleanParameters = {false,false}; // [0] verbose [1] clean
+	private boolean[] booleanParameters = {
+			false,false,false}; // [0] verbose [1] clean [2] comment
 	
 	public static final String ITERATIONS_KEY = " -i ";
 	public static final String RANDOMSEED_KEY = " --randomSeed ";
@@ -48,6 +49,7 @@ public class DSpotMemory {
              }}
 		if(booleanParameters[0])information = information + " --verbose";
 		if(booleanParameters[1])information = information +" --clean";
+		if(booleanParameters[2])information = information + " --with-comment";
 		return information;
 	}
 	
@@ -62,6 +64,7 @@ public class DSpotMemory {
 		}
 		booleanParameters[0] = information.contains("--verbose");
 		booleanParameters[1] = information.contains("--clean");
+		booleanParameters[2] = information.contains("comment");
 		return this;
 	}
 	
@@ -76,6 +79,10 @@ public class DSpotMemory {
 		}
 		if(key.contains("clean")) {
 			booleanParameters[1] = value.contains("true");
+			return;
+		}
+		if(key.contains("comment")) {
+			booleanParameters[2] = value.contains("true");
 			return;
 		}
 		if(DSpotMap.containsKey(key)) DSpotMap.put(key, value);
