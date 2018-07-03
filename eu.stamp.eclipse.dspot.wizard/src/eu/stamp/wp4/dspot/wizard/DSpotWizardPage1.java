@@ -103,8 +103,8 @@ public class DSpotWizardPage1 extends WizardPage {
     private ValidatingField<String> configurationComboField;
     
     // to compute size
-    DSpotPageSizeCalculator sizeCalculator;
-    DSpotRowSizeCalculator row;
+    private DSpotPageSizeCalculator sizeCalculator;
+    private final DSpotRowSizeCalculator row;
     
 	public DSpotWizardPage1(WizardConfiguration wConf,DSpotWizard wizard){
 		super("Project configuration");
@@ -178,13 +178,13 @@ public class DSpotWizardPage1 extends WizardPage {
 		/*
 		 *  Row 2 : New Configuration 
 		 */
-		row = new DSpotRowSizeCalculator();
+		row.reStart();;
 		createConfigurationField(composite);
 		sizeCalculator.addRow(row);
 		/*
 		 *  ROW 3 : Project's path
 		 */ 
-		row = new DSpotRowSizeCalculator();
+		row.reStart();
 		// Obtain the path of the project
 		String[] sour = wConf.getSources();  
 		boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
@@ -194,7 +194,7 @@ public class DSpotWizardPage1 extends WizardPage {
         /*
          *  ROW 4 : Source path
          */
-		row = new DSpotRowSizeCalculator();
+		row.reStart();
 		createLabel(composite,"Path of the source : ","lb2"); // Label in (4,1)
 	
         sourcePathCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);  // Combo in (4,2) for the source's path
@@ -212,7 +212,7 @@ public class DSpotWizardPage1 extends WizardPage {
         /*
          *  ROW 5 : SourceTest path
          */
-        row = new DSpotRowSizeCalculator();
+        row.reStart();
         createLabel(composite,"Path of the source test : ","lb3");
 		
         sourceTestCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);
@@ -244,7 +244,7 @@ public class DSpotWizardPage1 extends WizardPage {
         /*
          *  ROW 6 : Java version
          */
-		row = new DSpotRowSizeCalculator();
+		row.reStart();
         createLabel(composite,"Java version : ","lb4"); // Label in (6,1)
 		
 		Combo combo1 = new Combo(composite,SWT.NONE | SWT.READ_ONLY);  // Combo in (6,2) for the version
@@ -262,7 +262,7 @@ public class DSpotWizardPage1 extends WizardPage {
         });  // end of the SelectionListener
 		
 		// (7,1 and 2) group with optional information
-        row = new DSpotRowSizeCalculator();
+        row.reStart();
 		Group gr = new Group(composite,SWT.NONE);
 		gr.setText("Optional information");
 		GridDataFactory.fillDefaults().grab(true,false).span(3,3).indent(0,2*VS).applyTo(gr);

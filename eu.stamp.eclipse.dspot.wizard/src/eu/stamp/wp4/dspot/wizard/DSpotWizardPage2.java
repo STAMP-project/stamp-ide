@@ -51,7 +51,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -67,6 +67,9 @@ import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 
+import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotPageSizeCalculator;
+import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotRowSizeCalculator;
+import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotSizeManager;
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.dialogs.*;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotMemory;
@@ -78,14 +81,14 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 @SuppressWarnings("restriction")
 public class DSpotWizardPage2 extends WizardPage {
 	
-	//private boolean[] Comp = {true,false};  // this is to set page complete
-	private WizardConfiguration wConf;   
+	private WizardConfiguration wConf; 
+	private Wizard wizard;
 	private String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
 			"BooleanLiteralAmplifier","AllLiteralAmplifiers","MethodAdd","MethodRemove","TestDataMutator",
 			"StatementAdd",""};  // the possible amplifiers;
 	
 	// widgets 
-	private Text tx1;
+	private Text executionClassesText;
 	private Spinner spin;
 	private Spinner spin1; 
 	private List amplifiersList;
@@ -106,14 +109,21 @@ public class DSpotWizardPage2 extends WizardPage {
 	private DSpotAdvancedOptionsDialog expDiag;
 	private boolean resetAdvancedOptions = false;
 	
-	public DSpotWizardPage2(WizardConfiguration wConf) {
+    // to compute size
+    private DSpotPageSizeCalculator sizeCalculator;
+    private final DSpotRowSizeCalculator row;
+	
+	public DSpotWizardPage2(WizardConfiguration wConf,Wizard wizard) {
 		super("DSpot execution");
 		setTitle("DSpot execution");
 		setDescription("Configuration of the DSpot execution");
 		this.wConf = wConf;
+		this.wizard = wizard;
 		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		expDiag = new DSpotAdvancedOptionsDialog(shell, wConf);
 		expDiag.setMemory(wConf.getDSpotMemory());
+		sizeCalculator = new DSpotPageSizeCalculator();
+		row = new DSpotRowSizeCalculator();
 	} 
 	
 	@Override
@@ -137,10 +147,14 @@ public class DSpotWizardPage2 extends WizardPage {
 		int n = 4;
 		layout.numColumns = n;
 		composite.setLayout(layout);
-		// First row (1,x) number of iterations
+		/*
+		 *   ROW 1 : number of iterations
+		 */
+		row.reStart();
 		Label lb1 = new Label(composite,SWT.NONE);  // A label in (1,1)
 		lb1.setText("Number of iterations :  ");
 		lb1.setToolTipText(tooltipsProperties.getProperty("lb1"));
+		row.addWidget(lb1);
 		
 		GridData gd = new GridData(SWT.FILL,SWT.FILL,true,false);
 		gd.heightHint = 20;
@@ -155,27 +169,35 @@ public class DSpotWizardPage2 extends WizardPage {
 				setPageComplete(spin.getSelection() > 0);				
 			}
 		});
+		row.addWidget(spin);
 		
 		Label space1 = new Label(composite,SWT.NONE);    // (1,3)
 		space1.setText("");
 		gd = new GridData(SWT.FILL,SWT.FILL,false,false);
 		space1.setLayoutData(gd);
 		
-		// Second row (2,x) execution classes
+		sizeCalculator.addRow(row);
+		/*
+		 *   Row 2 : execution classes 
+		 */
+		row.reStart();
 		Label lb2 = new Label(composite,SWT.NONE);   // A label in (2,1)
 		lb2.setText("Execution classes :  ");
 		lb2.setToolTipText(tooltipsProperties.getProperty("lb2"));
+		row.addWidget(lb2);
 
-		tx1 = new Text(composite,SWT.BORDER | SWT.READ_ONLY);  // A text in (2,2) for the execution classes
-		tx1.setText("");
+		executionClassesText = new Text(composite,SWT.BORDER | SWT.READ_ONLY);  // A text in (2,2) for the execution classes
+		executionClassesText.setText("");
 		gd = new GridData(SWT.FILL,SWT.FILL,true,false);
 		gd.verticalIndent = 8;
 		gd.horizontalSpan = 2;
-		tx1.setLayoutData(gd);  
+		executionClassesText.setLayoutData(gd);
+		row.addWidget(executionClassesText);
      
      Button fileButton = new Button(composite,SWT.PUSH); // A button in (2,3), it opens the file dialog
      fileButton.setText("Select tests");
      fileButton.setToolTipText(tooltipsProperties.getProperty("fileButton"));
+     row.addWidget(fileButton);
      fileButton.addSelectionListener(new SelectionAdapter() {
     	 @Override
     	 public void widgetSelected(SelectionEvent e) {
@@ -188,12 +210,15 @@ public class DSpotWizardPage2 extends WizardPage {
 
     	 }
      }); // end of the selection listener
-     
-     		
-		// Third row (3,x) Method
+     sizeCalculator.addRow(row);
+     	/*
+     	 *   Row 3 : Amplifiers	
+     	 */
+        row.reStart();
 		Label lb3 = new Label(composite,SWT.NONE);   // A label in (3,1)
 		lb3.setText("Amplifier :  ");
 		lb3.setToolTipText(tooltipsProperties.getProperty("lb3"));
+		row.addWidget(lb3);
 		
 		amplifiersList = new List(composite,SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);  // list to select the amplifiers
 		gd = new GridData(SWT.FILL,SWT.FILL,true,false);
@@ -203,10 +228,16 @@ public class DSpotWizardPage2 extends WizardPage {
 		for(int i = 0; i < amplifiers.length -1; i++) {
 			amplifiersList.add(amplifiers[i]);
 		}
-	    // row five (5,x)
+		row.addWidget(amplifiersList);
+		sizeCalculator.addRow(row);
+		/*
+		 *  Row 4 : criterion
+		 */
+		row.reStart();
 	    Label lb5 = new Label(composite,SWT.NONE); // A label in (5,1)
 	    lb5.setText("Test Criterion : ");
 	    lb5.setToolTipText(tooltipsProperties.getProperty("lb5"));
+	    row.addWidget(lb5);
 	    
 	    combo1 = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);  // combo for the test criterion in (4,2)
 	    gd = new GridData(SWT.FILL,SWT.FILL,true,false);
@@ -216,28 +247,42 @@ public class DSpotWizardPage2 extends WizardPage {
 	    combo1.add("CloverCoverageSelector"); combo1.add("BranchCoverageTestSelector");
 	    combo1.add("JacocoCoverageSelector"); combo1.add("TakeAllSelector");
 	    combo1.add("ChangeDetectorSelector"); combo1.add("");
-	    // five row (5,x)
+	    row.addWidget(combo1);
+	    sizeCalculator.addRow(row);
+	    /*
+	     *  Row 5 : Max test amplified
+	     */
+	    row.reStart();
 	    Label lb6 = new Label(composite,SWT.NONE);  // A label in (5,1)
 	    lb6.setText("Max test amplified : ");
 	    lb6.setToolTipText(tooltipsProperties.getProperty("lb6"));
+	    row.addWidget(lb6);
 	    
 	    spin1 = new Spinner(composite,SWT.BORDER);
 	    spin1.setMinimum(50); spin1.setIncrement(50); spin1.setMaximum(4000); spin1.setSelection(200);
 	    spin1.setLayoutData(gd);
-
-	    // sixth row (6,x)
+	    row.addWidget(spin1);
+        sizeCalculator.addRow(row);
+        /*
+         *   Row 6 : Verbose
+         */
+	    row.reStart();
 	    Label lb7 = new Label(composite,SWT.NONE); // A label in (6,1)
 	    lb7.setText("Verbose ");
+	    row.addWidget(lb7);
 	    
 	    button = new Button(composite,SWT.CHECK);  // check button in (6,2)
         button.setToolTipText(tooltipsProperties.getProperty("button"));
+        row.addWidget(button);
 	    
 	    Label space = new Label(composite,SWT.NONE);
 	    space.setText("");
+	    row.addWidget(space);
 	    
 	    Link link = new Link(composite,SWT.NONE);  // this link in (6,4) open the dialog with the advanced options
 	    link.setText("<A>Dspot advanced options</A>");
 	    link.setToolTipText(tooltipsProperties.getProperty("link"));
+	    row.addWidget(link);
 	    link.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
@@ -251,19 +296,27 @@ public class DSpotWizardPage2 extends WizardPage {
 	    		
 	    	}
 	    }); // end of the selection listener
-	    
-	    // seventh row (7,x)
-	    
+	    sizeCalculator.addRow(row);
+	    /*
+	     *  Row 7 : check buttons
+	     */
+	    row.reStart();
 	    cleanButton = new Button(composite,SWT.CHECK);  // check button in (6,2)
 	    cleanButton.setText("clean ");
 	    cleanButton.setToolTipText(tooltipsProperties.getProperty("button2"));
+	    row.addWidget(cleanButton);
 	    
 	    Label space2 = new Label(composite,SWT.NONE);
 	    space2.setText("");
+	    row.addWidget(space2);
 	    
 	    // comment button 
 	    commentButton = new Button(composite,SWT.CHECK);
 	    commentButton.setText("with comment ");
+	    row.addWidget(commentButton);
+	    sizeCalculator.addRow(row);
+	    DSpotSizeManager.getInstance().addPage(sizeCalculator);
+	    DSpotSizeManager.getInstance().configureWizardSize(wizard);
 	    
 		setControl(composite);
 		setPageComplete(true);
@@ -367,7 +420,7 @@ public class DSpotWizardPage2 extends WizardPage {
             		 .getSeparator() + wConf.getqName(((ICompilationUnit)ob).getElementName());}
             		else{ selection = wConf.getqName(((ICompilationUnit)ob).getElementName()); }}
             }
-            tx1.setText(selection);
+            executionClassesText.setText(selection);
         }
         return selection;
     }
@@ -390,7 +443,7 @@ public class DSpotWizardPage2 extends WizardPage {
    	spin.setSelection(Integer.parseInt(dSpotMemory.getDSpotValue(DSpotMemory.ITERATIONS_KEY)));
    	
    	if(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY) != null) {
-   		tx1.setText(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY));
+   		executionClassesText.setText(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY));
    	IJavaElement[] children = wConf.getFinalChildren(wConf.getPro());
    	testSelection = new ArrayList<Object>(1);
    	for(IJavaElement child : children) {
@@ -463,7 +516,7 @@ public class DSpotWizardPage2 extends WizardPage {
     		memory.setDSpotValue(DSpotMemory.TEST_CASES_KEY, selection);
     	 }
     	 memory.setDSpotValue(DSpotMemory.MAX_TEST_KEY, String.valueOf(spin1.getSelection()));
-    	 memory.setDSpotValue(DSpotMemory.TEST_CLASSES_KEY, tx1.getText());
+    	 memory.setDSpotValue(DSpotMemory.TEST_CLASSES_KEY, executionClassesText.getText());
     	 memory.setDSpotValue(DSpotMemory.ITERATIONS_KEY, String.valueOf(spin.getSelection()));
     	 memory.setDSpotValue(DSpotMemory.CRITERION_KEY, combo1.getText());
     	 String[] selection = amplifiersList.getSelection();
@@ -494,7 +547,7 @@ public class DSpotWizardPage2 extends WizardPage {
 	 */
 	
 	public void setDefaultValues() {
-		tx1.setText("");
+		executionClassesText.setText("");
 		spin.setSelection(1);
 		spin1.setSelection(200);
 		amplifiersList.deselectAll();
