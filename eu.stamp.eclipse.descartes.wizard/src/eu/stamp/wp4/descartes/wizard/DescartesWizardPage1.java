@@ -43,7 +43,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
+//import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -136,7 +136,7 @@ public class DescartesWizardPage1 extends WizardPage
 		// create the composite
 		Composite composite = new Composite(parent,SWT.NONE);
 		GridLayout layout = new GridLayout();    // the layout of composite
-		layout.numColumns = 4;
+		layout.numColumns = 3;
 		layout.makeColumnsEqualWidth = true;
 		composite.setLayout(layout);
 		
@@ -145,53 +145,10 @@ public class DescartesWizardPage1 extends WizardPage
 		
 		configurationCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY); // combo for saved configurations
 		configurationCombo.setEnabled(false);
-		GridDataFactory.fillDefaults().span(3, 1).indent(10, 0).grab(true, false).applyTo(configurationCombo);
+		GridDataFactory.fillDefaults().span(2, 1).indent(10, 0).grab(true, false).applyTo(configurationCombo);
 		String[] configurations = wizard.getWizardConfiguration().getConfigurationNames();
 		configurationCombo.add("");
 		for(String sr : configurations) configurationCombo.add(sr);
-		/*
-		Button deleteButton = new Button(composite,SWT.PUSH);
-		deleteButton.setText("Delete configuration");
-		deleteButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(configurationCombo.getText().isEmpty()) {
-
-					MessageBox noConfBox = new MessageBox(
-							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
-							,SWT.ICON_WARNING);
-					noConfBox.setMessage("No configuration loaded");
-					noConfBox.setText("Delete configuration");
-					noConfBox.open();
-					return;
-				}
-				MessageBox deleteBox = new MessageBox(PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getShell(),
-						SWT.ICON_WORKING | SWT.NO | SWT.YES);
-				deleteBox.setText("Delete configuration");
-				deleteBox.setMessage("Do you want to delete the current configuration");
-				if(deleteBox.open() == SWT.YES) {
-
-			try {
-				ILaunchConfiguration conf = wizard.getWizardConfiguration().getCurrentConfiguration();
-				conf.delete();
-				
-				wizard.setWizardConfiguration(new DescartesWizardConfiguration(
-						wizard.getWizardConfiguration().getProject()));
-				wizard.updateWizardParts();
-				
-				   String[] configurations = wizard.getWizardConfiguration().getConfigurationNames();
-				   configurationCombo.removeAll();
-					configurationCombo.add("");
-					for(String sr : configurations) configurationCombo.add(sr);
-
-                
-			} catch (CoreException | SecurityException | IllegalArgumentException e1) {
-				e1.printStackTrace();
-			}
-				}
-			}
-		});*/
 		
 		createConfigurationField(composite);  // ROW 2 : Create new configuration
 		
@@ -199,7 +156,7 @@ public class DescartesWizardPage1 extends WizardPage
 		
 		projectText = new Text(composite,SWT.BORDER | SWT.READ_ONLY);
 		projectText.setText(projectPath);
-		GridDataFactory.fillDefaults().span(2, 1).indent(10, 0).applyTo(projectText);
+		GridDataFactory.fillDefaults().span(1, 1).indent(10, 0).applyTo(projectText);
 		
 		Button projectButton = new Button(composite,SWT.PUSH);  // opens a dialog to select a project
 		projectButton.setText("Select a Project");
@@ -222,17 +179,14 @@ public class DescartesWizardPage1 extends WizardPage
 
 		Label mutatorsLabel = new Label(composite,SWT.NONE);  // ROW 4 : Mutators list title
 		mutatorsLabel.setText("Mutators : ");
-		GridDataFactory.fillDefaults().span(4, 1).indent(0, 8).applyTo(mutatorsLabel);
+		GridDataFactory.fillDefaults().span(3, 1).indent(0, 8).applyTo(mutatorsLabel);
 		
 		/*
 		 *   ROW 5 (multiple row) : list with the mutators and buttons to add,remove ...
 		 */
 		mutatorsTree = new Tree(composite,SWT.V_SCROLL | SWT.CHECK);
-        GridData gd = new GridData(SWT.FILL,SWT.FILL,true,true);
-        gd.horizontalSpan = 3;
-        gd.verticalSpan = 6;
-        gd.minimumWidth = 250;
-        mutatorsTree.setLayoutData(gd);
+		GridDataFactory.fillDefaults().grab(true, true).span(2, 6)
+		.minSize(200,200).applyTo(mutatorsTree);
         mutatorsTree.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         GridLayout Layforgr1 = new GridLayout();
         mutatorsTree.setLayout(Layforgr1);
@@ -363,7 +317,6 @@ public class DescartesWizardPage1 extends WizardPage
         	}
         });
 
-
         String[] defaultMutators = {""};
         try { defaultMutators = getDefaultMutators();  // get the default list from the properties file
 		} catch (IOException e1) { e1.printStackTrace(); }
@@ -407,20 +360,21 @@ public class DescartesWizardPage1 extends WizardPage
 				if(flag) return "Configuration name is empty";
 				return "Configuration contains non allowed characters"; }
 			@Override
-			public String getWarningMessage() { return ""; }
+			public String getWarningMessage() { 
+				return "This name overloads an existing configuration"; }
 			@Override
-			public boolean isValid(String contents) { 
+			public boolean isValid(String argument) { 
 				 if(pomField != null)if(!pomField.getControl().isDisposed())
 					 if(!pomField.getControl().isEnabled())
-						 ((Text)pomField.getControl()).setText(contents + "_pom.xml"); // look at the !
+						 ((Text)pomField.getControl()).setText(argument + "_pom.xml"); // look at the !
 				
 				if(configurationField != null)if(configurationField.getControl().isEnabled()) {
-					if(contents.isEmpty()) {
+					if(argument.isEmpty()) {
 						check[0] = false; checkPage();
 					     flag = true; return false;
 					     }
-					if( !contents.equalsIgnoreCase(
-							contents.replaceAll("[^A-Za-z0-9_\\-]", ""))) {
+					if( !argument.equalsIgnoreCase(
+							argument.replaceAll("[^A-Za-z0-9_\\-]", ""))) {
 						check[0] = false; checkPage();
 						flag = false; return false;
 					}
@@ -430,11 +384,14 @@ public class DescartesWizardPage1 extends WizardPage
 				return true;
 				}
 			@Override
-			public boolean warningExist(String contents) { return false; }
+			public boolean warningExist(String argument) { 
+				String[] names = wizard.getWizardConfiguration().getConfigurationNames();
+				for(String name : names)if(name.equalsIgnoreCase(argument)) return true;
+				return false; }
 			
 		},false,"new_configuration");	
 		
-		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(10, 0)
+		GridDataFactory.fillDefaults().grab(true, false).indent(10, 0)
 		.applyTo(configurationField.getControl());
 		
 		configurationField.setQuickFixProvider(new IQuickFixProvider<String>() {
@@ -540,7 +497,7 @@ public class DescartesWizardPage1 extends WizardPage
 			public boolean warningExist(String contents) { return false; }
 		}, false, "new_configuration_pom.xml");
 		
-		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(10, 0)
+		GridDataFactory.fillDefaults().grab(true, false).indent(10, 0)
 		.applyTo(pomField.getControl());
 
         pomField.setQuickFixProvider(new IQuickFixProvider<String>() {
@@ -589,7 +546,7 @@ public class DescartesWizardPage1 extends WizardPage
 	   
 		Label label = new Label(composite,SWT.NONE);
 		label.setText(labelText);
-		GridDataFactory.swtDefaults().grab(false, false).grab(false, false).applyTo(label);
+		GridDataFactory.swtDefaults().grab(false, false).applyTo(label);
 		label.setToolTipText(tooltipsProperties.getProperty(propertyKey));
 	}
     
