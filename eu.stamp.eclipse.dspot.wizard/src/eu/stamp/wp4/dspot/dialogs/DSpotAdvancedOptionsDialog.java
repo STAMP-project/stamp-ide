@@ -185,19 +185,19 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
  		 GridDataFactory.fillDefaults().align(SWT.LEFT,SWT.CENTER).indent(0, vSpace).applyTo(listLabel);
  		 listLabel.setToolTipText(tooltipsProperties.getProperty("listLabel"));
     	 
-    	 list = new List(composite,SWT.MULTI);
+    	 list = new List(composite,SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
     	 String[] cases = wConf.getTestCases();
     	 final TreeSet<String> casesSet = new TreeSet<String>(Collator.getInstance());
     	 for(final String sr : cases) casesSet.add(sr);
     	 cases = casesSet.toArray(new String[casesSet.size()]);
     	 for(final String sr : cases) list.add(sr);
-    	 GridDataFactory.fillDefaults().grab(true, false).span(2,1).indent(0, vSpace).applyTo(list);
+    	 GridDataFactory.fillDefaults().grab(true, false)
+    	 .hint(200, 100).span(2,1).indent(0, vSpace).applyTo(list);
     	 if(selection != null) {
     	 if(selection.length > 0) list.setSelection(selection);}
     	 row.addWidget(list);
     	 sizeCalculator.addRow(row);
-    	 
-    	 
+    	
     	 /*
     	  *  Row 4 : button to clean the test cases list
     	  */

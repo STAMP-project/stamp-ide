@@ -95,7 +95,8 @@ public class DSpotWizardPage2 extends WizardPage {
 	private Combo combo1;
 	private Button button;
 	private Button cleanButton;
-	private  Button commentButton;
+	private Button commentButton;
+	private Button noMinimizeButton;
 	
 	// Dialogs
 	private ArrayList<Object> testSelection = new ArrayList<Object>(1);
@@ -314,6 +315,12 @@ public class DSpotWizardPage2 extends WizardPage {
 	    commentButton = new Button(composite,SWT.CHECK);
 	    commentButton.setText("with comment ");
 	    row.addWidget(commentButton);
+	    
+	    // no minimize button
+	    noMinimizeButton = new Button(composite,SWT.CHECK);
+	    noMinimizeButton.setText("no minimize");
+	    row.addWidget(noMinimizeButton);
+	    
 	    sizeCalculator.addRow(row);
 	    DSpotSizeManager.getInstance().addPage(sizeCalculator);
 	    DSpotSizeManager.getInstance().configureWizardSize(wizard);
@@ -495,6 +502,9 @@ public class DSpotWizardPage2 extends WizardPage {
    	else { cleanButton.setSelection(false); dSpotMemory.setDSpotValue("clean", "false"); }
    	if(argument.contains("comment")) { commentButton.setSelection(true); dSpotMemory.setDSpotValue("comment","true"); }
    	else { commentButton.setSelection(false); dSpotMemory.setDSpotValue("comment","false"); }
+   	if(argument.contains("no-minimize")) { noMinimizeButton.setSelection(true); 
+   	dSpotMemory.setDSpotValue("no-minimize", "true");
+   	} else { noMinimizeButton.setSelection(false); dSpotMemory.setDSpotValue("no-minimize","false"); }
    	expDiag.setMemory(dSpotMemory);
    	expDiag.resetFromMemory();
    	wConf.setDSpotMemory(dSpotMemory);
@@ -531,6 +541,7 @@ public class DSpotWizardPage2 extends WizardPage {
  		 memory.setDSpotValue("verbose", String.valueOf(button.getSelection()));
  	     memory.setDSpotValue("clean", String.valueOf(cleanButton.getSelection()));
  	     memory.setDSpotValue("comment", String.valueOf(commentButton.getSelection()));
+ 	     memory.setDSpotValue("no-minimize",String.valueOf(noMinimizeButton.getSelection()));
     	 wConf.setDSpotMemory(memory);	 
     	 return wConf;
      }
