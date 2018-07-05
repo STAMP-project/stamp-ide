@@ -351,6 +351,9 @@ public class DSpotWizardPage1 extends WizardPage {
 					myS = myS.substring(0,myS.indexOf("-"));
 				}
 				myS = myS.substring(0,myS.indexOf((new Path(myS)).lastSegment())-1); // -1 because of the last /
+				if(myS.contains("/dspot_properties_files")) {
+					myS = myS.replaceAll("/dspot_properties_files","");
+				}
 				((Text)projectField.getControl()).setText(myS);
 				
 				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
