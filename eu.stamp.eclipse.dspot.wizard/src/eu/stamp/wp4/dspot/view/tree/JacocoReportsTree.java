@@ -8,8 +8,16 @@ import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTimeJSON;
 
 public class JacocoReportsTree extends DSpotReportsTree {
+	
+	private int amplifiedTests;
+	
+	public JacocoReportsTree (DSpotTestClassJSON info,int amplifiedTests) {
+		super(info); this.amplifiedTests = amplifiedTests;
+	}
 
-	public JacocoReportsTree(DSpotTestClassJSON info) { super(info); }
+	public JacocoReportsTree(DSpotTestClassJSON info) { 
+		super(info); this.amplifiedTests = 0;
+		}
 
 	@Override
 	public void createTree(Tree tree,DSpotTimeJSON time) {
@@ -32,7 +40,10 @@ public class JacocoReportsTree extends DSpotReportsTree {
 				+ "\n amplifiedInstructionCovered / amplifiedInstructionTotal");
 		item.setText(1, info.percentageamplifiedInstructionCovered + " %");
 		
+		if(amplifiedTests != 0 && info.nbOriginalTestCases != 0) {
 		item = new TreeItem(rootItem,SWT.NONE);
-		item.setText("Amplified tests/original tests : "); //TODO 
+		item.setText(0,"Amplified tests/original tests : ");
+		item.setText(1,String.valueOf((double)amplifiedTests/(double)info.nbOriginalTestCases));
+		}
 	}	
 }

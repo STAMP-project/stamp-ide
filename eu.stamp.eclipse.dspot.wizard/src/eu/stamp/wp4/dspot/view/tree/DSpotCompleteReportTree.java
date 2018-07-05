@@ -57,17 +57,33 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 	    this.time = gson.fromJson(json, DSpotTimeJSON.class);
 	    
 	    // generate the partial report trees
-	    for(String name : fileList) createDSpotReportTree(jsonFolderPath + name,gson);
+	    for(String name : fileList) createDSpotReportTree(jsonFolderPath,name,gson);
 	}
 	
-	private void createDSpotReportTree(String file,Gson gson) 
-			throws FileNotFoundException {
+	private void createDSpotReportTree(String folder,String file,Gson gson) 
+			throws IOException {
 		
 		
-		BufferedReader json = new BufferedReader(new FileReader(new File(file)));
+		BufferedReader json = new BufferedReader(new FileReader(new File(folder + file)));
 		DSpotTestClassJSON info = gson.fromJson(json, DSpotTestClassJSON.class);
 		
 		if(file.contains("jacoco")) {
+			File txtReport = new File(folder);
+			String[] names = txtReport.list();
+			// find the jacoco txt report
+			for(String name : names)if(name.contains("report.txt") && name.contains("jacoco")) {
+				txtReport = new File(folder + name); break;
+			}
+			// read the jacoco txt report to find the number of amplified tests
+			if(!txtReport.isDirectory()) {
+			BufferedReader reader = new BufferedReader(new FileReader(txtReport));
+			String line;
+			while((line = reader.readLine()) != null) {
+				if(line.contains("results with") && line.contains("amplified tests")) {
+					  //line = line.substring(line.i, endIndex)    TODO                                                         // TODO
+				}
+			}
+			}
 			partialReportTrees.add(new JacocoReportsTree(info)); return;
 		}
 		
