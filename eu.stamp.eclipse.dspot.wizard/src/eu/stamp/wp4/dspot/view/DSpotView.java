@@ -1,13 +1,13 @@
 
 package eu.stamp.wp4.dspot.view;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+//import java.io.BufferedReader;
+//import java.io.File;
+//import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.LinkedList;
+//import java.util.List;
 
 import javax.inject.Inject;
 
@@ -15,21 +15,22 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
+//import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
+//import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.part.ViewPart;
 
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 
-import java.util.Arrays;
-import eu.stamp.wp4.dspot.wizard.json.DSpotTimeJSON.DSpotClassTime;
-import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON;
-import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON.TestCase;
-import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON.TestCase.MutantKilled;
-import eu.stamp.wp4.dspot.wizard.json.DSpotTimeJSON;
+//import java.util.Arrays;
+//import eu.stamp.wp4.dspot.wizard.json.DSpotTimeJSON.DSpotClassTime;
+import eu.stamp.wp4.dspot.view.tree.DSpotCompleteReportTree;
+//import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON;
+//import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON.TestCase;
+//import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON.TestCase.MutantKilled;
+//import eu.stamp.wp4.dspot.wizard.json.DSpotTimeJSON;
 
 public class DSpotView extends ViewPart {
 	
@@ -63,10 +64,13 @@ public class DSpotView extends ViewPart {
 	@Override
 	public void setFocus() {}
     
-	public void parseJSON(String jsonPath) throws IOException {
+	public void parseJSON(String jsonFolderPath) throws IOException {
 		
+		DSpotCompleteReportTree completeReport = new DSpotCompleteReportTree(tree,jsonFolderPath);
+		completeReport.createTree();
+		/*
 		File file = (new File(jsonPath));  // the output folder 
-		
+
 		// looking for the times JSON
 		List<String> fileList = new LinkedList<String>(Arrays.asList(file.list()));
 		String timeFile = "";
@@ -115,9 +119,9 @@ public class DSpotView extends ViewPart {
 		for(String sr : files) { System.out.println(jsonPath+sr);
 			parseMutantsKilled(
 				jsonPath+sr,gson);}
-
+*/
         }
-	
+	/*
 	private void parseMutantsKilled(String path, Gson gson) throws IOException {
 		BufferedReader json = new BufferedReader(new FileReader(path));
 		DSpotTestClassJSON dSpotJSON = gson.fromJson(json, DSpotTestClassJSON.class);
@@ -225,5 +229,5 @@ public class DSpotView extends ViewPart {
 			timeInMs = timeInMs + ", "+ String.valueOf(time);
 		}
 	}
-	
+	*/
 	}

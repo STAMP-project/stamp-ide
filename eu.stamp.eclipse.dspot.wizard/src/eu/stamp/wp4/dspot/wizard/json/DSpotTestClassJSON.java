@@ -4,10 +4,20 @@ import java.util.List;
 
 public class DSpotTestClassJSON {
 	
-	public int nbMutantKilledOriginally;
 	public String name;
 	public int nbOriginalTestCases;
+	
+	// Pit score
+	public int nbMutantKilledOriginally;
 	public List<TestCase> testCases;
+	
+	// Jacoco
+	public int initialInstructionCovered;
+	public int initialInstructionTotal;
+	public double percentageinitialInstructionCovered;
+	public int amplifiedInstructionCovered;
+	public int amplifiedInstructionTotal;
+	public double percentageamplifiedInstructionCovered;
 	
 	public class TestCase {
 		

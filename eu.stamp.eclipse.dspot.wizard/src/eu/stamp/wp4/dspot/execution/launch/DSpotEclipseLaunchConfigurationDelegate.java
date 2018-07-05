@@ -157,10 +157,8 @@ public class DSpotEclipseLaunchConfigurationDelegate extends JavaLaunchDelegate 
 				return;
 			}
 		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		finally {
@@ -172,7 +170,7 @@ public class DSpotEclipseLaunchConfigurationDelegate extends JavaLaunchDelegate 
 					try {  // getting the DSpotView part
 						final DSpotView viw = (DSpotView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 								.getActivePage().showView("eu.stamp.wp4.dspot.wizard.view");
-						 viw.parseJSON(outputDirectory);
+						 viw.parseJSON(outputDirectory); // TODO
 					} catch (PartInitException | IOException e) { e.printStackTrace(); }
 				}
 			});
