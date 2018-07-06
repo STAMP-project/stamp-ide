@@ -13,11 +13,11 @@ import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON.TestCase.MutantKilled;
 
 public class PitMutantScoreSelectorReportsTree extends DSpotReportsTree{
 
-	public PitMutantScoreSelectorReportsTree(DSpotTestClassJSON info) { super(info); }
+	public PitMutantScoreSelectorReportsTree(DSpotTestClassJSON info) { 
+		super(info,"Pit"); }
 
 	@Override
 	public void createTree(Tree tree, DSpotTimeJSON time) {
-     
 		
 		TreeItem rootItem = new TreeItem(tree,SWT.NONE);
 		rootItem.setText(0,"Test Class name : ");
@@ -27,7 +27,7 @@ public class PitMutantScoreSelectorReportsTree extends DSpotReportsTree{
 		item.setText(0, "Amplification time : ");
 		item.setText(1, String.valueOf(time.getClassTime(info.name)) + " ms");
 		
-		item = new TreeItem(tree,SWT.NONE);
+		item = new TreeItem(rootItem,SWT.NONE);
 		item.setText(0, "test cases");
 		List<TestCase> testCases = info.testCases;
 		

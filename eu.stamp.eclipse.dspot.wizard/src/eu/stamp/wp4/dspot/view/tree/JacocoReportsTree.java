@@ -12,16 +12,16 @@ public class JacocoReportsTree extends DSpotReportsTree {
 	private int amplifiedTests;
 	
 	public JacocoReportsTree (DSpotTestClassJSON info,int amplifiedTests) {
-		super(info); this.amplifiedTests = amplifiedTests;
+		super(info,"Jacoco"); this.amplifiedTests = amplifiedTests;
 	}
 
 	public JacocoReportsTree(DSpotTestClassJSON info) { 
-		super(info); this.amplifiedTests = 0;
+		super(info,"Jacoco"); this.amplifiedTests = 0;
 		}
 
 	@Override
 	public void createTree(Tree tree,DSpotTimeJSON time) {
-			
+		
 		TreeItem rootItem = new TreeItem(tree,SWT.NONE);
 		rootItem.setText(0,"Test Class name : ");
 		rootItem.setText(1,info.name);
@@ -33,17 +33,20 @@ public class JacocoReportsTree extends DSpotReportsTree {
 		item = new TreeItem(rootItem,SWT.NONE);
 		item.setText(0,"Initial instruction coverage : "
 				+ "\n initialInstructionCovered / initialInstructionTotal ");
-		item.setText(1,info.percentageinitialInstructionCovered + " %");
+		item.setText(1,
+				String.format("%.2f",info.percentageinitialInstructionCovered) + " %");
 		
 		item = new TreeItem(rootItem,SWT.NONE);
 		item.setText(0,"Amplified instruction coverage: "
 				+ "\n amplifiedInstructionCovered / amplifiedInstructionTotal");
-		item.setText(1, info.percentageamplifiedInstructionCovered + " %");
+		item.setText(1, String.format("%.2f",
+				info.percentageamplifiedInstructionCovered) + " %");
 		
 		if(amplifiedTests != 0 && info.nbOriginalTestCases != 0) {
 		item = new TreeItem(rootItem,SWT.NONE);
 		item.setText(0,"Amplified tests/original tests : ");
-		item.setText(1,String.valueOf((double)amplifiedTests/(double)info.nbOriginalTestCases));
+		item.setText(1,String.valueOf(String.valueOf(amplifiedTests) 
+				+ "/" + String.valueOf(info.nbOriginalTestCases)));
 		}
 	}	
 }

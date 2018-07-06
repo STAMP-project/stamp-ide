@@ -2,17 +2,22 @@ package eu.stamp.wp4.dspot.view.tree;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.TreeColumn;
 
 import com.google.gson.Gson;
 
@@ -24,17 +29,20 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 
 	private LinkedList<DSpotReportsTree> partialReportTrees = new LinkedList<DSpotReportsTree>();
 	
-	private Tree tree;
+	private TabFolder tabFolder;
 	
 	private DSpotTimeJSON time;
 	
-	public DSpotCompleteReportTree (Tree tree,String jsonFolderPath) throws IOException {
+	private List<Tree> trees;
+	
+	public DSpotCompleteReportTree (TabFolder tabFolder,String jsonFolderPath, List<Tree> trees) throws IOException {
 		
-		this.tree = tree;
+		this.tabFolder = tabFolder;
+		this.trees = trees;
         
 		File file = (new File(jsonFolderPath));  // the output folder 
 		// get the files
-	     ArrayList<String> fileList = new ArrayList(Arrays.asList(file.list()));
+	     ArrayList<String> fileList = new ArrayList<String>(Arrays.asList(file.list()));
         // only JSON
 	    for(int i = 0; i < fileList.size(); i++)if(!fileList.get(i).contains(".json")) {
 	    	fileList.remove(i); i--;
@@ -75,16 +83,22 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 				txtReport = new File(folder + name); break;
 			}
 			// read the jacoco txt report to find the number of amplified tests
+			int nbAmplifiedTest = 0;
 			if(!txtReport.isDirectory()) {
 			BufferedReader reader = new BufferedReader(new FileReader(txtReport));
 			String line;
+			
 			while((line = reader.readLine()) != null) {
 				if(line.contains("results with") && line.contains("amplified tests")) {
-					  //line = line.substring(line.i, endIndex)    TODO                                                         // TODO
+					  line = line.replaceAll("[^0-9]","");
+					  //System.out.println(line); 
+					  nbAmplifiedTest = Integer.parseInt(line);
+					  break;
 				}
 			}
+			reader.close();
 			}
-			partialReportTrees.add(new JacocoReportsTree(info)); return;
+			partialReportTrees.add(new JacocoReportsTree(info,nbAmplifiedTest)); return;
 		}
 		
 		partialReportTrees.add(new PitMutantScoreSelectorReportsTree(info));
@@ -94,14 +108,38 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				TreeItem item;
               for(DSpotReportsTree part : partialReportTrees) {
+            	  TabItem tabItem = new TabItem(tabFolder,SWT.BORDER);
+            	  Composite composite = new Composite(tabFolder,SWT.NONE);
+            	  composite.setLayout(new FillLayout());
+            	  Tree tree = createBaseTree(composite);
             	  part.createTree(tree, time);
-            	  item = new TreeItem(tree,SWT.NONE); // space
-            	  item.setText("");
+            	  tabItem.setText(part.name);
+            	  trees.add(tree);
+                  tabItem.setControl(composite);
               }
 			}
 		});
+	}
+	
+	public List<Tree> getTrees(){ return trees; }
+	
+	private Tree createBaseTree(Composite parent) {
+		
+		Tree tree = new Tree(parent,SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		tree.setLinesVisible(true);
+		tree.setHeaderVisible(true);
+		//GridDataFactory.fillDefaults().grab(true, true).applyTo(tree);
+		
+		TreeColumn keyTreeColumn = new TreeColumn(tree,SWT.LEFT);
+		keyTreeColumn.setText("key");
+		keyTreeColumn.setWidth(100);
+		
+		TreeColumn valueTreeColumn = new TreeColumn(tree,SWT.CENTER);
+		valueTreeColumn.setText("value");
+		valueTreeColumn.setWidth(200);
+		
+		return tree;
 	}
 	
 }

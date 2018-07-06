@@ -9,8 +9,11 @@ public abstract class DSpotReportsTree {
 	
 	protected DSpotTestClassJSON info; // TODO put java-doc
 	
-	public DSpotReportsTree(DSpotTestClassJSON info) {
+	public final String name;
+	
+	public DSpotReportsTree(DSpotTestClassJSON info,String name) {
 		this.info = info;
+		this.name = name;
 	}
 
 	/**
