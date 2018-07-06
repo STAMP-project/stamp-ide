@@ -30,25 +30,31 @@ public class PitMutantScoreSelectorReportsTree extends DSpotReportsTree{
 		item = new TreeItem(rootItem,SWT.NONE);
 		item.setText(0, "test cases");
 		List<TestCase> testCases = info.testCases;
+		int i = 0;
 		
 		for(TestCase testCase : testCases) {
-			TreeItem subItem = new TreeItem(item,SWT.NONE);
+			
+			i++;
+			TreeItem testCaseItem = new TreeItem(item,SWT.NONE);
+			testCaseItem.setText(0," test case : " + String.valueOf(i));
+			
+		    TreeItem subItem = new TreeItem(testCaseItem,SWT.NONE);
 			subItem.setText(0,"name");
 			subItem.setText(1,testCase.name);
 			
-			subItem = new TreeItem(item,SWT.NONE);
+			subItem = new TreeItem(testCaseItem,SWT.NONE);
 			subItem.setText(0, "nbAssertionAdded");
 			subItem.setText(1, String.valueOf(testCase.nbAssertionAdded));
 			
-			subItem = new TreeItem(item,SWT.NONE);
+			subItem = new TreeItem(testCaseItem,SWT.NONE);
 			subItem.setText(0, "nbInputAdded");
 			subItem.setText(1, String.valueOf(testCase.nbInputAdded));
 			
-			subItem = new TreeItem(item,SWT.NONE);
+			subItem = new TreeItem(testCaseItem,SWT.NONE);
 			subItem.setText(0, "nbMutantKilled");
 			subItem.setText(1, String.valueOf(testCase.nbMutantKilled));
 			
-			subItem = new TreeItem(item,SWT.NONE);
+			subItem = new TreeItem(testCaseItem,SWT.NONE);
 			subItem.setText(0, "mutants killed");
 			List<MutantKilled> mutantsKilled = testCase.mutantsKilled;
 			

@@ -115,7 +115,6 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
      protected Control createDialogArea(Composite parent) {
     	 
 		// load the properties for the tooltips
-		 sizeCalculator = new DSpotPageSizeCalculator();
 		Properties tooltipsProperties = new Properties();
 		final URL propertiesURL = FileLocator.find(Platform.getBundle(
 				DSpotWizardConstants.PLUGIN_NAME),
@@ -138,48 +137,41 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     	 /*
     	  *  Row 1 : timeOut
     	  */
- 		 row.reStart();
  		 Label space = new Label(composite,SWT.NONE);
  		 space.setText("");
  		 GridDataFactory.fillDefaults().span(2, 1).applyTo(space);
- 		 row.addWidget(space);
  		 
  		 Label timeOutLabel = new Label(composite,SWT.NONE);
  		 timeOutLabel.setText("Time out (ms) ");
  		 GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(timeOutLabel);
  		 timeOutLabel.setToolTipText(tooltipsProperties.getProperty("timeOutLabel"));
- 		 row.addWidget(timeOutLabel);
+ 		 
  		 
  		 timeOutSpinner = new Spinner(composite,SWT.BORDER);
  		 GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(0, vSpace).applyTo(timeOutSpinner);
  		 timeOutSpinner.setMaximum(100000); timeOutSpinner.setMinimum(500); timeOutSpinner.setIncrement(100);
- 		 row.addWidget(timeOutSpinner);
  		 
  		 if(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY) != null)
  			 timeOutSpinner.setSelection(Integer.parseInt(memory.getDSpotValue(DSpotMemory.TIMEOUT_KEY)));
  		 else timeOutSpinner.setSelection(10000);
-         sizeCalculator.addRow(row);
  		 /*
  		  *  Row 2 : randomSeed
  		  */
-         row.reStart();
  		 final Label randomSeedLabel = new Label(composite,SWT.NONE);
  		 randomSeedLabel.setText("Random seed : ");
  		 GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(randomSeedLabel);
  		 randomSeedLabel.setToolTipText(tooltipsProperties.getProperty("randomSeedLabel"));
- 		 row.addWidget(randomSeedLabel);
  		 
  		 randomSeedSpinner = new Spinner(composite,SWT.BORDER);
+ 		 randomSeedSpinner.setSelection(23);
  		 randomSeedSpinner.setMinimum(1);
- 		 row.addWidget(randomSeedSpinner);
  		 if(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY) != null)
  			  randomSeedSpinner.setSelection(Integer.parseInt(memory.getDSpotValue(DSpotMemory.RANDOMSEED_KEY)));
  		 GridDataFactory.fillDefaults().span(2, 1).grab(true, false).indent(0, vSpace).applyTo(randomSeedSpinner);
- 		 sizeCalculator.addRow(row);
+ 		 
  		 /*
  		  *  Row 3 : list for the test cases
  		  */
- 		 row.reStart();
  		 final Label listLabel = new Label(composite,SWT.NONE);
  		 listLabel.setText("Test cases : ");
  		 GridDataFactory.fillDefaults().align(SWT.LEFT,SWT.CENTER).indent(0, vSpace).applyTo(listLabel);
@@ -195,63 +187,80 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     	 .hint(200, 100).span(2,1).indent(0, vSpace).applyTo(list);
     	 if(selection != null) {
     	 if(selection.length > 0) list.setSelection(selection);}
-    	 row.addWidget(list);
-    	 sizeCalculator.addRow(row);
-    	
+
     	 /*
     	  *  Row 4 : button to clean the test cases list
     	  */
-    	 row.reStart();
     	 final Label buttonLabel = new Label(composite,SWT.NONE);
     	 buttonLabel.setText("Push to deselect all test cases : ");
     	 GridDataFactory.fillDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(buttonLabel);
-    	 row.addWidget(buttonLabel);
     	 
     	 final Button button = new Button(composite,SWT.PUSH);
     	 button.setText("Clean list");
     	 GridDataFactory.swtDefaults().span(2, 1).align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(button);
     	 button.setToolTipText(tooltipsProperties.getProperty("button"));
-    	 row.addWidget(button);
-    	 sizeCalculator.addRow(row);
     	 /*
     	  *  Row 5 : pathPitResult
     	  */
-    	 row.reStart();
     	 final Label pathPitResultLabel = new Label(composite,SWT.NONE);
     	 pathPitResultLabel.setText("Path PIT result : ");
     	 GridDataFactory.swtDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, vSpace).applyTo(pathPitResultLabel);
     	 pathPitResultLabel.setToolTipText(tooltipsProperties.getProperty("pathPitResultLabel"));
-    	 row.addWidget(pathPitResultLabel);
     	 
     	 final Button pathPitResultButton = new Button(composite,SWT.NONE);
     	 pathPitResultButton.setText("Select folder");
     	 pathPitResultButton.setEnabled(pitSelected);
     	 GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).indent(0, vSpace).applyTo(pathPitResultButton);
     	 pathPitResultButton.setToolTipText(tooltipsProperties.getProperty("pathPitResultButton"));
-    	 row.addWidget(pathPitResultButton);
     	 
     	 Text pathPitText = new Text(composite,SWT.READ_ONLY |SWT.BORDER);
      	 GridDataFactory.fillDefaults().grab(true, false).indent(10, 8).applyTo(pathPitText);
      	 pathPitText.setEnabled(pitSelected);
      	 pathPitText.setText(pathPitResult);
-     	 row.addWidget(pathPitText);
-     	 sizeCalculator.addRow(row);
     	 /*
     	  *  Row 6 : MAVEN_HOME
     	  */
-     	 row.reStart();
     	 final Label mavenLabel = new Label(composite,SWT.NONE);
     	 mavenLabel.setText("Set MAVEN_HOME");
     	 mavenLabel.setToolTipText(tooltipsProperties.getProperty("mavenLabel"));
-    	 row.addWidget(mavenLabel);
     	 
     	 final Button mavenHomeButton = new Button(composite,SWT.CHECK); 
     	 GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).indent(0, vSpace).applyTo(mavenHomeButton);
-    	 row.addWidget(mavenHomeButton);
     	 
     	 createMavenHomeField(composite);
-    	 row.addWidget(mavenHomeField.getControl());
-    	 
+    	 /*
+    	  *   Compute page size
+    	  */
+    	 if(sizeCalculator == null) {
+    	 sizeCalculator = new DSpotPageSizeCalculator();
+ 		 row.reStart();
+ 		 row.addWidget(space);
+ 		 row.addWidget(timeOutLabel);
+ 		 row.addWidget(timeOutSpinner);
+ 		 sizeCalculator.addRow(row);
+ 		 row.reStart();
+ 		 row.addWidget(randomSeedLabel);
+ 		 row.addWidget(randomSeedSpinner);
+ 		 sizeCalculator.addRow(row);
+ 		 row.reStart();
+ 		 row.addWidget(list);
+    	 sizeCalculator.addRow(row);
+    	 row.reStart();
+    	 row.addWidget(buttonLabel);
+    	 row.addWidget(button);
+    	 sizeCalculator.addRow(row);
+    	 row.reStart();
+    	 row.addWidget(pathPitResultLabel);
+    	 row.addWidget(pathPitResultButton);
+     	 row.addWidget(pathPitText);
+     	 sizeCalculator.addRow(row);
+     	 row.reStart();
+     	 row.addWidget(mavenLabel);
+     	 row.addWidget(mavenHomeButton);
+     	 row.addWidget(mavenHomeField.getControl());
+     	 sizeCalculator.addRow(row);
+    	 }
+     	 
     	 // listeners
     	 button.addSelectionListener(new SelectionAdapter() {
     		 @Override
@@ -297,7 +306,7 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     		 mySelection[i] = selection[i].substring(selection[i].indexOf("/")+1);
     	 }
     	 setMemoryData(timeOutSpinner.getSelection(),randomSeedSpinner.getSelection(),
-    			 "", mySelection); // TODO  pathPitText.getText()
+    			 "", mySelection); // TODO path pit 
     	 unusedDialog = false;
     	 super.okPressed();
      }
@@ -311,7 +320,6 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     @Override
     protected Point getInitialSize() { // default size of the dialog
         return new Point(sizeCalculator.getX() + 50, sizeCalculator.getY() + 100);
-       // return new Point(400,500);
     }
      /**
       * this method updates the dialog when a new project is loaded
