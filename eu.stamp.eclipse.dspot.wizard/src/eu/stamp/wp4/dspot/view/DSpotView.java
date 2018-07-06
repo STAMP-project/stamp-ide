@@ -18,6 +18,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 //import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
@@ -47,7 +48,6 @@ public class DSpotView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		
 		GridLayoutFactory.fillDefaults().applyTo(parent);
-		
 		tabFolder = new TabFolder(parent,SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(tabFolder);
 	}
@@ -56,6 +56,11 @@ public class DSpotView extends ViewPart {
 	public void setFocus() {}
     
 	public void parseJSON(String jsonFolderPath) throws IOException {
+		
+		if(tabFolder.getItemCount() > 0)if( !tabFolder.getItem(0).isDisposed()) {
+			TabItem[] items = tabFolder.getItems();
+			for(TabItem item : items) item.dispose();
+		}
 		
 		if(trees == null) trees = new LinkedList<Tree>();
 		if(!trees.isEmpty()) for(Tree tree : trees) tree.removeAll();
