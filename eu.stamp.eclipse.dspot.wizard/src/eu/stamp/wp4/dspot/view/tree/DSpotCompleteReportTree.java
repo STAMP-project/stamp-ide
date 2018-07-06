@@ -33,12 +33,14 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 	
 	private DSpotTimeJSON time;
 	
-	private List<Tree> trees;
+	//private List<Tree> trees;
+	private final TreeManager treeManager;
 	
 	public DSpotCompleteReportTree (TabFolder tabFolder,String jsonFolderPath, List<Tree> trees) throws IOException {
 		
 		this.tabFolder = tabFolder;
-		this.trees = trees;
+		//this.trees = trees;
+		treeManager = new TreeManager(); 
         
 		File file = (new File(jsonFolderPath));  // the output folder 
 		// get the files
@@ -79,7 +81,8 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 			File txtReport = new File(folder);
 			String[] names = txtReport.list();
 			// find the jacoco txt report
-			for(String name : names)if(name.contains("report.txt") && name.contains("jacoco")) {
+			for(String name : names)if(name.contains(info.name) &&
+					name.contains("report.txt") && name.contains("jacoco")) {
 				txtReport = new File(folder + name); break;
 			}
 			// read the jacoco txt report to find the number of amplified tests
@@ -108,7 +111,6 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() { // TODO
-			  final TreeManager treeManager = new TreeManager(); // TODO
               for(DSpotReportsTree part : partialReportTrees) {
             	  if(!treeManager.isPresent(part.name)) {
             	  TabItem tabItem = new TabItem(tabFolder,SWT.BORDER);
@@ -117,13 +119,11 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
             	  Tree tree = createBaseTree(composite);
             	  part.createTree(tree, time);
             	  tabItem.setText(part.name);
-            	  trees.add(tree);
             	  treeManager.addTree(part.name, tree);
                   tabItem.setControl(composite);
             	  }
             	  else {
             		  Tree tree = treeManager.getTree(part.name);
-            		  createBaseTree(tree);
             		  part.createTree(tree, time);
             	  }
               }
@@ -131,16 +131,11 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 		});
 	}
 	
-	public List<Tree> getTrees(){ return trees; }
+	public List<Tree> getTrees(){ return treeManager.getTrees(); }
 	
 	private Tree createBaseTree(Composite parent) {
 		
 		Tree tree = new Tree(parent,SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        return createBaseTree(tree);
-	}
-	
-	private Tree createBaseTree(Tree tree) {
-		
 		tree.setLinesVisible(true);
 		tree.setHeaderVisible(true);
 		
@@ -174,6 +169,12 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 			 for(TreeWithName tree : trees)if(tree.tabName.equalsIgnoreCase(tabName))
 				 return true;
 			 return false;
+		 }
+		 
+		 public List<Tree> getTrees() {
+			 LinkedList<Tree> result = new LinkedList<Tree>();
+			 for(TreeWithName treeWithName : trees) result.add(treeWithName.tree);
+			 return result;
 		 }
 		 
 		 private class TreeWithName{
