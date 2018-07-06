@@ -11,4 +11,10 @@ public class DSpotTimeJSON {
 		public String fullQualifiedName;
 		public int timeInMs;
 	}
+	
+	public int getClassTime(String fullQualifiedName) { // TODO
+		for(DSpotClassTime time : classTimes)if(time.fullQualifiedName
+				.equalsIgnoreCase(fullQualifiedName)) return time.timeInMs;
+		return 0;
+	}
 }

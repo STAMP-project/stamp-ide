@@ -14,7 +14,7 @@ public class DSpotPageSizeCalculator {
 		if(finish) return;
 		if(row.getX() > x) x = row.getX();
         y = y + row.getY();
-        System.out.println(String.valueOf(x) + "  " + String.valueOf(y));
+        //System.out.println(String.valueOf(x) + "  " + String.valueOf(y));
 	}
 	
 	public int getX() { finish = true; return x; }

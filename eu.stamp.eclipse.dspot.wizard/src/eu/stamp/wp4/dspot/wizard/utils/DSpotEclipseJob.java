@@ -45,11 +45,11 @@ protected IStatus run(IProgressMonitor monitor) {
      
      DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders,outputDirectory);
  	try {	
- 		long start = System.currentTimeMillis();
+ 		//long start = System.currentTimeMillis();
  		executor.execute(new ExecutionEvent());
 	while(!executor.isFinished());  // wait until DSpod finish
- 	long time = System.currentTimeMillis() - start;
- 	System.out.println(time);
+ 	//long time = System.currentTimeMillis() - start;
+ 	//System.out.println(time);
  	} catch (ExecutionException e) {
  		e.printStackTrace();
  	}
