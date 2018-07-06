@@ -107,8 +107,10 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 	public void createTree() {	
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
-			public void run() {
+			public void run() { // TODO
+			  final TreeManager treeManager = new TreeManager(); // TODO
               for(DSpotReportsTree part : partialReportTrees) {
+            	  if(!treeManager.isPresent(part.name)) {
             	  TabItem tabItem = new TabItem(tabFolder,SWT.BORDER);
             	  Composite composite = new Composite(tabFolder,SWT.NONE);
             	  composite.setLayout(new FillLayout());
@@ -116,7 +118,14 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
             	  part.createTree(tree, time);
             	  tabItem.setText(part.name);
             	  trees.add(tree);
+            	  treeManager.addTree(part.name, tree);
                   tabItem.setControl(composite);
+            	  }
+            	  else {
+            		  Tree tree = treeManager.getTree(part.name);
+            		  createBaseTree(tree);
+            		  part.createTree(tree, time);
+            	  }
               }
 			}
 		});
@@ -127,9 +136,13 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 	private Tree createBaseTree(Composite parent) {
 		
 		Tree tree = new Tree(parent,SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        return createBaseTree(tree);
+	}
+	
+	private Tree createBaseTree(Tree tree) {
+		
 		tree.setLinesVisible(true);
 		tree.setHeaderVisible(true);
-		//GridDataFactory.fillDefaults().grab(true, true).applyTo(tree);
 		
 		TreeColumn keyTreeColumn = new TreeColumn(tree,SWT.LEFT);
 		keyTreeColumn.setText("key");
@@ -141,5 +154,34 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 		
 		return tree;
 	}
-	
+	 private class TreeManager{
+		 
+		 private LinkedList<TreeWithName> trees;
+		 
+		 public TreeManager() { trees = new LinkedList<TreeWithName>(); }
+		 
+		 public void addTree(String tabName,Tree tree) {
+			 trees.add(new TreeWithName(tabName,tree));
+		 }
+		 
+		 public Tree getTree(String tabName){
+			 for(TreeWithName tree : trees)if(tree.tabName.equalsIgnoreCase(tabName))
+             return tree.tree;
+			 return null;
+		 }
+		 
+		 public boolean isPresent(String tabName) {
+			 for(TreeWithName tree : trees)if(tree.tabName.equalsIgnoreCase(tabName))
+				 return true;
+			 return false;
+		 }
+		 
+		 private class TreeWithName{
+			 private Tree tree;
+			 private String tabName;
+			 private TreeWithName(String tabName,Tree tree) {
+				 this.tabName = tabName; this.tree = tree;
+			 }
+		 }
+	 }
 }
