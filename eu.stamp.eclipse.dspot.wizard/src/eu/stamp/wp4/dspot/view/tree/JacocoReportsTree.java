@@ -31,18 +31,16 @@ public class JacocoReportsTree extends DSpotReportsTree {
 		item.setText(1, String.valueOf(time.getClassTime(info.name)) + " ms");
 		
 		item = new TreeItem(rootItem,SWT.NONE);
-		item.setText(0,"Initial instruction coverage : "
-				+ "\n initialInstructionCovered / initialInstructionTotal ");
-		item.setText(1,
-				String.format("%.2f",info.percentageinitialInstructionCovered) + " %");
+		item.setText(0,"Initial instruction coverage : ");
+		item.setText(1, info.initialInstructionCovered +"/"+ info.initialInstructionTotal +" ("+
+				String.format("%.2f",info.percentageinitialInstructionCovered) + " %)");
 		
 		item = new TreeItem(rootItem,SWT.NONE);
-		item.setText(0,"Amplified instruction coverage: "
-				+ "\n amplifiedInstructionCovered / amplifiedInstructionTotal");
-		item.setText(1, String.format("%.2f",
-				info.percentageamplifiedInstructionCovered) + " %");
+		item.setText(0,"Amplified instruction coverage: ");
+		item.setText(1, info.amplifiedInstructionCovered + "/" + info.amplifiedInstructionTotal +" ("+
+				String.format("%.2f",info.percentageamplifiedInstructionCovered) + " %)");
 		
-		if(amplifiedTests != 0 && info.nbOriginalTestCases != 0) {
+		if(info.nbOriginalTestCases != 0) {
 		item = new TreeItem(rootItem,SWT.NONE);
 		item.setText(0,"Amplified tests/original tests : ");
 		item.setText(1,String.valueOf(String.valueOf(amplifiedTests) 
