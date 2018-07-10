@@ -266,9 +266,10 @@ public class DescartesWizardPomParser {
 			putNodeWithText("groupId",DescartesWizardConstants.PITEST_DEPENDENCY_ID,dependencyNode);
 			putNodeWithText("artifactId",DescartesWizardConstants.PITEST_DEPENDENCY_ARTIFACT,dependencyNode);
 			putNodeWithText("version",DescartesWizardConstants.PITEST_DEPENDENCY_VERSION,dependencyNode);
-			
+	
 			dependenciesNode.appendChild(dependencyNode);
 			pitestTree.appendChild(dependenciesNode);
+			
 			
 			Node configurationNode = pomDocument.createElement("configuration");
 			putNodeWithText("mutationEngine","descartes",configurationNode);
@@ -278,6 +279,14 @@ public class DescartesWizardPomParser {
 				configurationNode.appendChild(mutatorsNode);
 				
 				mutators = new Node[1]; mutators[0] = mutatorsNode.getFirstChild();
+				
+				// output formats
+				Node formatsNode = pomDocument.createElement("outputFormats");
+				putNodeWithText("value","HTML",formatsNode);
+				putNodeWithText("value","ISSUES",formatsNode); 
+				//putNodeWithText("value","METHODS",formatsNode);
+				
+				configurationNode.appendChild(formatsNode);
 			
 			pitestTree.appendChild(configurationNode);
 			
@@ -307,6 +316,7 @@ public class DescartesWizardPomParser {
 		   pluginsNode.appendChild(pitestTree);
 		
 		   list = findNodeList("build",parent);
+		   
 		
 		   if(list.item(0) != null) {
 			list.item(0).appendChild(pluginsNode); return;
