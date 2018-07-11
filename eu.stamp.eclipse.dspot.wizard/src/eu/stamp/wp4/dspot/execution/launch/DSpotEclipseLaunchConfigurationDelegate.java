@@ -49,7 +49,7 @@ public class DSpotEclipseLaunchConfigurationDelegate extends JavaLaunchDelegate 
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
 		
-		String outputDirectory = configuration.getAttribute("outputDirectory", "");
+		String outputDirectory = configuration.getAttribute("outputDirectory", ""); // TODO
 		
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();

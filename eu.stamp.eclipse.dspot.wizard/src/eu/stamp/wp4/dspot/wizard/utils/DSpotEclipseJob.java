@@ -12,6 +12,10 @@
  *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard.utils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,8 +46,9 @@ public DSpotEclipseJob(String path,
 
 @Override
 protected IStatus run(IProgressMonitor monitor) {
-     
-     DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders,outputDirectory);
+	 
+     DSpotExecutionHandler executor = new DSpotExecutionHandler(
+    		 conf,Orders,outputDirectory);
  	try {	
  		//long start = System.currentTimeMillis();
  		executor.execute(new ExecutionEvent());

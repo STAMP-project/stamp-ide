@@ -78,7 +78,7 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	        IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, DSpotProperties.MAIN_CLASS);
 	      wc.setAttribute(
 	  	        IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
-	      wc.setAttribute("outputDirectory", outputDirectory);
+	      wc.setAttribute("outputDirectory", conf.getProjectPath() +"/"+ outputDirectory);
 	      System.out.println(arguments);
 	      ILaunchConfiguration config = wc.doSave();   
 	      myLaunch = config.launch(ILaunchManager.RUN_MODE, null);

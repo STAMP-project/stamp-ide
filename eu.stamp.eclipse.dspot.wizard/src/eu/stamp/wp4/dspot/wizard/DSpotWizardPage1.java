@@ -16,7 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -278,21 +280,33 @@ public class DSpotWizardPage1 extends WizardPage {
 		Text tx4 = new Text(gr,SWT.BORDER);     // Text in (1,2)(gr) for the output's folder path
 		tx4.setText("dspot-out/");
 		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx4);
+		
+		// get the date to create a sub output folder
+		Date date = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
+		String dateString = dateFormat.format(date);      // TODO
+		TheProperties[4] = "dspot-out/" + dateString + "/";
+		
 		tx4.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
 			@Override
 			public void keyReleased(KeyEvent e) {
-				
-				TheProperties[4] = tx4.getText();
+				String sr = tx4.getText();
+				if(sr.endsWith("/"))
+				TheProperties[4] = sr + dateString + "/";
+				else if (sr != null && !sr.isEmpty())
+					TheProperties[4] = sr + "/" + dateString + "/";
 			}
 		});  // end of the KeyListener
 		tx4.addSegmentListener(new SegmentListener() {
 			@Override
 			public void getSegments(SegmentEvent event) {
-				
-				TheProperties[4] = tx4.getText();
-				pageValidator.validatePage();
+				String sr = tx4.getText();
+				if(sr.endsWith("/"))
+				TheProperties[4] = sr + dateString + "/";
+				else if (sr != null && !sr.isEmpty())
+					TheProperties[4] = sr + "/" + dateString + "/";
 			}	
 		});
 		

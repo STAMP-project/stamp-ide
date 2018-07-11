@@ -17,7 +17,9 @@ import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.URL;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.io.File;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -127,10 +129,6 @@ public class DSpotWizard extends Wizard{
 			BufferedWriter fw = new BufferedWriter(new FileWriter(file));
 			fw.write("# Properties File #");
 			fw.newLine();
-			if(Values[4] == null || Values[4] == "") {   // use the default output directory
-				Values[4] = "dspot-out/";
-			}
-			Values[4] = p+"/"+Values[4];
 			if(Values[5] == null) { Values[5] = ""; } // if there is no filter
 			for(int i = 0; i < Values.length; i++){
 				fw.write(Keys[i]+"="+Values[i]);
