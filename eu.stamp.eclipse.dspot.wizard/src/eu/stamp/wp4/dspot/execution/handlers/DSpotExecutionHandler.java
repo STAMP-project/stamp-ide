@@ -74,6 +74,7 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	      wc.setAttribute(
 	        IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, 
 	        javaProject.getElementName());
+	      System.out.println(javaProject.getElementName());
 	      wc.setAttribute(
 	        IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, DSpotProperties.MAIN_CLASS);
 	      wc.setAttribute(
