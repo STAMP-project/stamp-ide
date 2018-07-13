@@ -45,6 +45,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
@@ -89,6 +90,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	private String[] TheProperties = new String[6];
 	private WizardConfiguration wConf;
 	private DSpotWizard wizard;
+	private IWizardContainer wizardContainer;
 	private DSpotPage1Validator pageValidator;
 	
 	private Properties tooltipsProperties;
@@ -114,6 +116,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		setDescription("Information about the project");
 		this.wConf = wConf;
 		this.wizard = wizard;
+		wizardContainer = wizard.getContainer();
 		
 		 tooltipsProperties = new Properties();
 			final URL propertiesURL = FileLocator.find(Platform.getBundle(
@@ -391,7 +394,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		// required to avoid an error in the System
 		setControl(composite);	
-		pageValidator.validatePage();
+		setPageComplete(true);
 	}  // end of create control
 	
 	 @Override
@@ -718,9 +721,12 @@ public class DSpotWizardPage1 extends WizardPage {
 		 
 		 void validatePage() {
 			 for(IDSpotPageElement element : list)if(!element.validate()) {
-				 setPageComplete(false); return;
+				 setPageComplete(false); 
+				wizardContainer.updateButtons();
+				 return;
 			 }
 			 setPageComplete(true);
+			 wizardContainer.updateButtons();
 		 }
 		}
 		
