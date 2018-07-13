@@ -49,7 +49,8 @@ public class DSpotView extends ViewPart {
 		}
 		
 		if(trees == null) trees = new LinkedList<Tree>();
-		if(!trees.isEmpty()) for(Tree tree : trees) tree.removeAll();
+		if(!trees.isEmpty())if(!trees.get(0).isDisposed())
+			for(Tree tree : trees) tree.removeAll();
 		DSpotCompleteReportTree completeReport = new DSpotCompleteReportTree(
 				tabFolder,jsonFolderPath,trees);
 		completeReport.createTree();
