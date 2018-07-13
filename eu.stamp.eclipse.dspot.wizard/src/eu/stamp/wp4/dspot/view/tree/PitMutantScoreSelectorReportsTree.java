@@ -23,9 +23,21 @@ public class PitMutantScoreSelectorReportsTree extends DSpotReportsTree{
 		rootItem.setText(0,"Test Class name : ");
 		rootItem.setText(1,info.name);
 		
-		TreeItem item = new TreeItem(rootItem,SWT.NONE);
+		TreeItem item;
+		
+		if(time != null) {
+	    item = new TreeItem(rootItem,SWT.NONE);
 		item.setText(0, "Amplification time : ");
 		item.setText(1, String.valueOf(time.getClassTime(info.name)) + " ms");
+		}
+		
+		item = new TreeItem(rootItem,SWT.NONE);
+		item.setText(0, "number of mutants killed originally : ");
+		item.setText(1,String.valueOf(info.nbMutantKilledOriginally));
+		
+		item = new TreeItem(rootItem,SWT.NONE);
+		item.setText(0, "number of original test cases : ");
+		item.setText(1, String.valueOf(info.nbOriginalTestCases));
 		
 		item = new TreeItem(rootItem,SWT.NONE);
 		item.setText(0, "test cases");
