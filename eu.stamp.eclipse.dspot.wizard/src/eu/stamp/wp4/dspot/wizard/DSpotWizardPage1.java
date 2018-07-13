@@ -577,8 +577,13 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 			@Override
 			public boolean isValid(String sr) {
-				if(configCombo.isEnabled() && configCombo.getText().equalsIgnoreCase("")) 
-					return false;
+				if(configCombo.isEnabled() && configCombo.getText().equalsIgnoreCase("")) {
+					setPageComplete(false);
+					wizardContainer.updateButtons();
+					return false; 
+					}
+				setPageComplete(true);
+				wizardContainer.updateButtons();
 				return true;
 			}
 			@Override
