@@ -41,7 +41,9 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 		//this.trees = trees;
 		treeManager = new TreeManager(); 
         
-		File file = (new File(jsonFolderPath));  // the output folder 
+		File file = new File(jsonFolderPath);  // the output folder 
+		System.out.println(file.exists()); // TODO
+		System.out.println(file.isDirectory());
 		// get the files
 	     ArrayList<String> fileList = new ArrayList<String>(Arrays.asList(file.list()));
         // only JSON
@@ -61,9 +63,11 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 				}
 			}
 		// parse time json
-	    json = new BufferedReader(new FileReader(new File(jsonFolderPath+timeFile)));
-	    Gson gson = new Gson();
-	    this.time = gson.fromJson(json, DSpotTimeJSON.class);
+		File myFile = new File(jsonFolderPath+timeFile);
+		Gson gson = new Gson();
+		if(myFile.exists() && !timeFile.isEmpty()) {
+	    json = new BufferedReader(new FileReader(myFile));
+	    this.time = gson.fromJson(json, DSpotTimeJSON.class);}
 	    
 	    // generate the partial report trees
 	    for(String name : fileList) createDSpotReportTree(jsonFolderPath,name,gson);
@@ -71,7 +75,6 @@ public class DSpotCompleteReportTree { // TODO java-docs and comments
 	
 	private void createDSpotReportTree(String folder,String file,Gson gson) 
 			throws IOException {
-		
 		
 		BufferedReader json = new BufferedReader(new FileReader(new File(folder + file)));
 		DSpotTestClassJSON info = gson.fromJson(json, DSpotTestClassJSON.class);

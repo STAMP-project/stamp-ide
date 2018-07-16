@@ -16,7 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -43,6 +45,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
@@ -87,6 +90,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	private String[] TheProperties = new String[6];
 	private WizardConfiguration wConf;
 	private DSpotWizard wizard;
+	private IWizardContainer wizardContainer;
 	private DSpotPage1Validator pageValidator;
 	
 	private Properties tooltipsProperties;
@@ -112,6 +116,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		setDescription("Information about the project");
 		this.wConf = wConf;
 		this.wizard = wizard;
+		wizardContainer = wizard.getContainer();
 		
 		 tooltipsProperties = new Properties();
 			final URL propertiesURL = FileLocator.find(Platform.getBundle(
@@ -278,21 +283,33 @@ public class DSpotWizardPage1 extends WizardPage {
 		Text tx4 = new Text(gr,SWT.BORDER);     // Text in (1,2)(gr) for the output's folder path
 		tx4.setText("dspot-out/");
 		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx4);
+		
+		// get the date to create a sub output folder
+		Date date = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
+		String dateString = dateFormat.format(date);      // TODO
+		TheProperties[4] = "dspot-out/" + dateString + "/";
+		
 		tx4.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
 			@Override
 			public void keyReleased(KeyEvent e) {
-				
-				TheProperties[4] = tx4.getText();
+				String sr = tx4.getText();
+				if(sr.endsWith("/"))
+				TheProperties[4] = sr + dateString + "/";
+				else if (sr != null && !sr.isEmpty())
+					TheProperties[4] = sr + "/" + dateString + "/";
 			}
 		});  // end of the KeyListener
 		tx4.addSegmentListener(new SegmentListener() {
 			@Override
 			public void getSegments(SegmentEvent event) {
-				
-				TheProperties[4] = tx4.getText();
-				pageValidator.validatePage();
+				String sr = tx4.getText();
+				if(sr.endsWith("/"))
+				TheProperties[4] = sr + dateString + "/";
+				else if (sr != null && !sr.isEmpty())
+					TheProperties[4] = sr + "/" + dateString + "/";
 			}	
 		});
 		
@@ -337,47 +354,9 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 		});
 		
-		configCombo.addSegmentListener(new SegmentListener() {
-			@Override
-			public void getSegments(SegmentEvent event) {
-				if(!configCombo.getText().isEmpty()) {
-				try {
-					wConf.setIndexOfCurrentConfiguration(configCombo.getSelectionIndex());
-				String myArguments = wConf.getCurrentConfiguration()
-					.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
-				String myS = myArguments.substring(
-						myArguments.indexOf("-p ")+3);
-				if(myS.contains("-")) {
-					myS = myS.substring(0,myS.indexOf("-"));
-				}
-				myS = myS.substring(0,myS.indexOf((new Path(myS)).lastSegment())-1); // -1 because of the last /
-				if(myS.contains("/dspot_properties_files")) {
-					myS = myS.replaceAll("/dspot_properties_files","");
-				}
-				((Text)projectField.getControl()).setText(myS);
-				
-				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-				IJavaProject theProject = null;
-				for(IProject pro : projects) {
-				if(pro.getLocation().toString().contains(myS)) theProject = new JavaProject(pro,null);
-		}
-				if(theProject != null) wConf = new WizardConfiguration(theProject);
-				wizard.setConfigurationName(configCombo.getText());
-				wizard.refreshPageTwo();
-				wizard.refreshConf(wConf);
-				wizard.setResetadv();
-				pageValidator.validatePage();
-				} catch (CoreException e1) {
-					e1.printStackTrace();
-				} 
-				}
-				pageValidator.validatePage();
-			}			
-		});
-		
 		// required to avoid an error in the System
 		setControl(composite);	
-		pageValidator.validatePage();
+		setPageComplete(true);
 	}  // end of create control
 	
 	 @Override
@@ -560,8 +539,14 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 			@Override
 			public boolean isValid(String sr) {
-				if(configCombo.isEnabled() && configCombo.getText().equalsIgnoreCase("")) 
-					return false;
+				if(configCombo.isEnabled() && configCombo.getText().equalsIgnoreCase("")) { // TODO
+					setPageComplete(false);
+					wizardContainer.updateButtons();
+					return false; 
+					}
+				loadConfigurations();
+				setPageComplete(true);
+				wizardContainer.updateButtons();
 				return true;
 			}
 			@Override
@@ -673,6 +658,41 @@ public class DSpotWizardPage1 extends WizardPage {
 		label.setToolTipText(tooltipsProperties.getProperty(tooltipKey));
 		row.addWidget(label);
 	}	
+	
+	private void loadConfigurations() {
+		if(!configCombo.getText().isEmpty()) {
+		try {
+			wConf.setIndexOfCurrentConfiguration(configCombo.getSelectionIndex());
+		String myArguments = wConf.getCurrentConfiguration()
+			.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
+		String myS = myArguments.substring(
+				myArguments.indexOf("-p ")+3);
+		if(myS.contains("-")) {
+			myS = myS.substring(0,myS.indexOf("-"));
+		}
+		myS = myS.substring(0,myS.indexOf((new Path(myS)).lastSegment())-1); // -1 because of the last /
+		if(myS.contains("/dspot_properties_files")) {
+			myS = myS.replaceAll("/dspot_properties_files","");
+		}
+		((Text)projectField.getControl()).setText(myS);
+		
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		IJavaProject theProject = null;
+		for(IProject pro : projects) {
+		if(pro.getLocation().toString().contains(myS)) theProject = new JavaProject(pro,null);
+}
+		if(theProject != null) wConf = new WizardConfiguration(theProject);
+		wizard.setConfigurationName(configCombo.getText());
+		wizard.refreshPageTwo();
+		wizard.refreshConf(wConf);
+		wizard.setResetadv();
+		pageValidator.validatePage();
+		} catch (CoreException e1) {
+			e1.printStackTrace();
+		} 
+		}
+		pageValidator.validatePage();
+	}
 	/**
 	 *  inner class to handle the field validation error messages
 	 */
@@ -704,9 +724,12 @@ public class DSpotWizardPage1 extends WizardPage {
 		 
 		 void validatePage() {
 			 for(IDSpotPageElement element : list)if(!element.validate()) {
-				 setPageComplete(false); return;
+				 setPageComplete(false); 
+				wizardContainer.updateButtons();
+				 return;
 			 }
 			 setPageComplete(true);
+			 wizardContainer.updateButtons();
 		 }
 		}
 		
