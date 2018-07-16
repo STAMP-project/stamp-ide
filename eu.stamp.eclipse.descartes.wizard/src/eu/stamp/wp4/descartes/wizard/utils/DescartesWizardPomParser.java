@@ -61,19 +61,21 @@ public class DescartesWizardPomParser {
 	
 	public DescartesWizardPomParser(IJavaProject jProject) 
 			throws ParserConfigurationException, SAXException, IOException {
-		constructPomParser(jProject,"pom.xml");
+		constructPomParser(jProject.getProject().getLocation().toString()
+				,"pom.xml");
 	}
 	
-	public DescartesWizardPomParser(IJavaProject jProject, String pom) 
+	public DescartesWizardPomParser(String projectPath, String pom) 
 			throws ParserConfigurationException, SAXException, IOException {
-		constructPomParser(jProject, pom);
+		constructPomParser(projectPath,pom);
 		pomName = pom;
 	}
 	
-	private void constructPomParser(IJavaProject jProject, String pom) 
+	private void constructPomParser(String projectPath, String pom) 
 			throws ParserConfigurationException, SAXException, IOException {
 		
-		projectPath = jProject.getProject().getLocation().toString();
+		//projectPath = jProject.getProject().getLocation().toString();
+		this.projectPath = projectPath;
 		File pomFile = new File(projectPath +"/"+ pom);  // the pom file in every maven project
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	    pomDocument = builder.parse(pomFile);  // use DOM to parse the pom.xml

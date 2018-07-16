@@ -166,7 +166,7 @@ public class DescartesWizardConfiguration {
 	  
 	  // parse the pom of the configuration
 	  try {
-		descartesParser = new DescartesWizardPomParser(jProject,pomName);
+		descartesParser = new DescartesWizardPomParser(projectPath,pomName);
 	} catch (ParserConfigurationException | SAXException | IOException e) {
 		e.printStackTrace();
 	}
