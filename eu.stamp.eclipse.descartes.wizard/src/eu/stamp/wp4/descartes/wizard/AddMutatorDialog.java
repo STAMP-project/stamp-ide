@@ -338,7 +338,10 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
 	   .span(2,1).grab(true, false).applyTo(text);
 	   ySize = ySize + text.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
    }
-
+    @Override
+    public boolean isResizable() {
+    	return true;
+    }
 	@Override
 	public void error(String mess) { setErrorMessage(mess);	}
 	@Override
