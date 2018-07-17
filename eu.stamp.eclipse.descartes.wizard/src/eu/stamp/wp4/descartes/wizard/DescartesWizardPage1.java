@@ -125,7 +125,7 @@ public class DescartesWizardPage1 extends WizardPage
 		Composite composite = new Composite(parent,SWT.NONE);
 		GridLayout layout = new GridLayout();    // the layout of composite
 		layout.numColumns = 3;
-		layout.makeColumnsEqualWidth = true;
+		layout.makeColumnsEqualWidth = false;
 		composite.setLayout(layout);
 		
         // ROW 1 : Load configuration
@@ -174,7 +174,7 @@ public class DescartesWizardPage1 extends WizardPage
 		 */
 		mutatorsTree = new Tree(composite,SWT.V_SCROLL | SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(true, true).span(2, 6)
-		.minSize(200,200).applyTo(mutatorsTree);
+		.minSize(100,200).applyTo(mutatorsTree);
         mutatorsTree.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         GridLayout Layforgr1 = new GridLayout();
         mutatorsTree.setLayout(Layforgr1);

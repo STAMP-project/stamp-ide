@@ -102,12 +102,12 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
 	protected Control createDialogArea(Composite parent) {
 		
    	     Composite composite = (Composite)super.createDialogArea(parent);
-		 GridLayout layout = new GridLayout(6,true);
+		 GridLayout layout = new GridLayout(4,true);
 		 composite.setLayout(layout);
 		 
 		Label space = new Label(composite,SWT.NONE);
 		space.setText("");
-		GridDataFactory.swtDefaults().span(5,1).applyTo(space);
+		GridDataFactory.swtDefaults().span(3,1).applyTo(space);
 		
 		/* this label will contains the required text in the left of the mutator, 
 		 * for example " for string and (byte) for byte, it is dinamically chaged by
@@ -136,7 +136,7 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
 			 ITSELF_CODE, "\"" + CUT_CODE + "\"", "'"+ CUT_CODE + "'" , CUT_CODE,
 			 DOUBLE_CODE , "(byte)" + CUT_CODE , "(short)" + CUT_CODE, CUT_CODE + "f",CUT_CODE + "L"};
 		
-		GridDataFactory factory = GridDataFactory.swtDefaults().span(2,1);		
+		GridDataFactory factory = GridDataFactory.swtDefaults();		
 		/*
 		 *  create the MyMutator objects to manage together the labels texts, 
 		 *  the buttons listeners, the text validation and the quick fixers
@@ -155,7 +155,7 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
  	}
     @Override
     protected Point getInitialSize() { // default size of the dialog
-        return new Point(xSize + 20, ySize + 180);
+        return new Point(xSize + 40 , ySize + 350);
     }
     @Override
     protected void okPressed() {
@@ -192,9 +192,10 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
     		else isDecimal = false;
     		button = new Button(composite,SWT.RADIO);
     		button.setText(name);
-    		factory.applyTo(button);
-    		xSize = xSize + button.computeSize(SWT.DEFAULT,SWT.DEFAULT).x;
-    		ySize = ySize + button.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+    		if(xSize == 0) xSize = 4*
+    				(button.computeSize(SWT.DEFAULT,SWT.DEFAULT).x + name.length()*10);
+    		if(ySize == 0) ySize = 6*
+    				button.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
     	} 
      /**
       *  this method creates and sets the listener for the button using the information in the 
@@ -333,7 +334,8 @@ public class AddMutatorDialog extends TitleAreaDialog implements IDescartesPage 
 	   });
 	   
 	   text = (Text)mutatorField.getControl();
-	   GridDataFactory.fillDefaults().span(4,1).indent(8, 0).applyTo(text);
+	   GridDataFactory.fillDefaults().indent(4, 10)
+	   .span(2,1).grab(true, false).applyTo(text);
 	   ySize = ySize + text.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
    }
 
