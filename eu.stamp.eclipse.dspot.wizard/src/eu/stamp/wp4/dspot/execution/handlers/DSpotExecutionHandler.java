@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
+import eu.stamp.wp4.dspot.wizard.utils.DSpotPropertiesFile;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
@@ -81,6 +82,7 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	  	        IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
 	      wc.setAttribute("outputDirectory", conf.getProjectPath() +"/"+ outputDirectory);
 	      System.out.println(arguments);
+	      wc = DSpotPropertiesFile.getInstance().appendToConfiguration(wc);
 	      ILaunchConfiguration config = wc.doSave();   
 	      myLaunch = config.launch(ILaunchManager.RUN_MODE, null);
 	      hasStarted = true;

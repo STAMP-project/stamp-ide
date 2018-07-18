@@ -36,6 +36,7 @@ import org.eclipse.ui.PlatformUI;
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotEclipseJob;
+import eu.stamp.wp4.dspot.wizard.utils.DSpotPropertiesFile;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 
@@ -116,7 +117,6 @@ public class DSpotWizard extends Wizard{
 
 		String[] Values = one.getTheProperties();
 		String[] Keys = {"project","src","testSrc","javaVersion","outputDirectory","filter"};
-		
 		    
 			String p = wConf.getProjectPath();
 			configurationName = configurationName.replaceAll(" ", "_");
