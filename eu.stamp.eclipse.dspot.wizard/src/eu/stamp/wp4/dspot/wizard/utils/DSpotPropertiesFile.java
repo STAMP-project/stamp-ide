@@ -1,5 +1,10 @@
 package eu.stamp.wp4.dspot.wizard.utils;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -11,9 +16,12 @@ public class DSpotPropertiesFile {
 	private final String separator;
 	private final String key;
 	
+	private File file;
+	
 	private DSpotPropertiesFile() {
 		separator = "1f6l0nwq3";
-		key = "dspotFileString";	
+		key = "dspotFileString";
+		file = null;
 	}
 	
 	public static DSpotPropertiesFile getInstance(){
@@ -55,4 +63,34 @@ public class DSpotPropertiesFile {
     	  copy.setAttribute(key, info);
     	  return copy;
       }
+      public void writeTheFile(String projectPath,String configurationName) {
+    	  configurationName.replaceAll(" ","_");
+    	  File folder = new File(projectPath +"/dspot_properties_files/");
+		  if(!folder.exists()) folder.mkdir();
+		  file = new File(projectPath+"/dspot_properties_files/"
+		  +configurationName+"_dspot.properties");
+		  
+		  try {
+			file.createNewFile();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+			bw.write("# DSpot properties file #");
+			bw.newLine();
+			bw.write("project="+projectPath);
+			bw.newLine();
+			bw.write("src="+src);
+			bw.newLine();
+			bw.write("testSrc="+testSrc);
+			bw.newLine();
+			bw.write("javaVersion="+javaVersion);
+			bw.newLine();
+			bw.write("outputDirectory="+outputDirectory);
+			bw.newLine();
+			bw.write("filter="+filter);
+			bw.close();
+		} catch (IOException e) { e.printStackTrace(); }
+      }
+      
+      public boolean fileReady() { return file != null; }
+      
+      public String getFileLocation() { return file.getAbsolutePath(); }
 }

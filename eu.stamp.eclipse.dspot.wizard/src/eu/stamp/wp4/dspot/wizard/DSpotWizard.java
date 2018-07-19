@@ -53,7 +53,7 @@ public class DSpotWizard extends Wizard{
 	
 	// [0] Dspot jar path, [1] project path, [2] number of iterations i, [3] -t test class, [4] -a Method
 	// [5] test criterion, [6] max Test Amplified
-	private String[] parameters = new String[7];   // this will be the execution parameters
+	//private String[] parameters = new String[7];   // this will be the execution parameters
 	private Shell shell;
 	
 	public DSpotWizard(WizardConfiguration wConf) {
@@ -96,9 +96,12 @@ public class DSpotWizard extends Wizard{
 		if(System.getenv("MAVEN_HOME") == null) { // an error message if MAVEN_HOME is not set
 			MessageDialog.openError(shell, "Maven Home not set","Error the enviroment variable MAVEN_HOME is required, please set it in your computer or in the text in advanced options in page 2");
 		}else {  // if MAVEN_HOME is set
-		writeTheFile();    // writing the properties file
+		//writeTheFile();    // writing the properties file
+		DSpotPropertiesFile.getInstance().writeTheFile(wConf.getProjectPath(),configurationName);
         wConf = two.getConfiguration(); // obtain the user information from page 2
-        Job job = new DSpotEclipseJob(parameters[1],wConf,one.getTheProperties()[4]); // execute Dspot in background
+        // TODO
+        Job job = new DSpotEclipseJob(DSpotPropertiesFile.getInstance().getFileLocation(),
+        		wConf); // execute Dspot in background
         job.schedule();  // background invocation of Dspot
 		}
 		return true;
@@ -109,34 +112,6 @@ public class DSpotWizard extends Wizard{
 	public void setConfigurationName(String configurationName) {
 		this.configurationName = configurationName;
 	}
-	/**
-	 * this is the method to write the dspot.properties, it is called by performFinish
-	 * it uses the information in page 1 and it is called by performFinish
-	 */
-	private void writeTheFile() {   	                       
-
-		String[] Values = one.getTheProperties();
-		String[] Keys = {"project","src","testSrc","javaVersion","outputDirectory","filter"};
-		    
-			String p = wConf.getProjectPath();
-			configurationName = configurationName.replaceAll(" ", "_");
-			File folder = new File(p+"/dspot_properties_files/");
-			if(!folder.exists()) folder.mkdir();
-			parameters[1] = p+"/dspot_properties_files/"+configurationName+"_dspot.properties";  // this will be set when perform finish will use it
-			File file = new File(p+"/dspot_properties_files/"+configurationName+"_dspot.properties");
-			try {
-			file.createNewFile();
-			BufferedWriter fw = new BufferedWriter(new FileWriter(file));
-			fw.write("# Properties File #");
-			fw.newLine();
-			if(Values[5] == null) { Values[5] = ""; } // if there is no filter
-			for(int i = 0; i < Values.length; i++){
-				fw.write(Keys[i]+"="+Values[i]);
-				fw.newLine();
-			}  // end of the for
-			fw.close();
-			} catch(IOException ioe) {ioe.printStackTrace();}		
-	}    // end of writTheFile
 	/**
 	 * this method updates the information in page two when a configuration is loaded
 	 */
