@@ -329,24 +329,8 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 		});
 		
-		/*Label lbFilter = new Label(gr,SWT.NONE);    // Label in (2,1)(gr)
-		lbFilter.setText("Filter :  ");
-		lbFilter.setToolTipText(tooltipsProperties.getProperty("lbFilter"));*/
-		
 		createFilterField(gr);
-		
-		/*filterText = new Text(gr,SWT.BORDER);    // Text in (2,2)(gr) for the filter
-		filterText.setText("");
-		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(filterText); // TODO
-		filterText.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent e) {}
-			@Override
-			public void keyReleased(KeyEvent e) {	
-				dspotFile.filter = filterText.getText();
-				pageValidator.validatePage();
-			}
-		});  // end of the KeyListener*/
+
 		row.addWidget(gr);
 		sizeCalculator.addRow(row);
 		DSpotSizeManager.getInstance().addPage(sizeCalculator);
@@ -666,10 +650,10 @@ public class DSpotWizardPage1 extends WizardPage {
 			@Override
 			public String getWarningMessage() { return null; }
 			@Override
-			public boolean isValid(String arg0) {
-				DSpotPropertiesFile.getInstance().filter = filterText.getText();
+			public boolean isValid(String filterString) {
+				DSpotPropertiesFile.getInstance().filter = filterString;
 				pageValidator.validatePage();
-				String sr = filterText.getText().replaceAll("\\.", "");
+				String sr = filterString.replaceAll("\\.", "");
 			if(!sr.equalsIgnoreCase(sr
 						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
 				return true;
