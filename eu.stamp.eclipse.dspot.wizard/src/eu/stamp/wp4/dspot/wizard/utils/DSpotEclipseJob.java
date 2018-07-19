@@ -32,23 +32,20 @@ import eu.stamp.wp4.dspot.execution.handlers.DSpotExecutionHandler;
 public class DSpotEclipseJob extends Job {
 
 private WizardConfiguration conf;
-private String outputDirectory;
 private String Orders;
 	
 public DSpotEclipseJob(String path,
-		WizardConfiguration conf,String outputDirectory) {
+		WizardConfiguration conf) {
    super("DSpot working");
 
     this.Orders = " -p " + path +" "+ conf.getDSpotMemory().getAsString();
 	this.conf = conf;
-	this.outputDirectory = outputDirectory;
 } // end of the constructor
 
 @Override
 protected IStatus run(IProgressMonitor monitor) {
 	 
-     DSpotExecutionHandler executor = new DSpotExecutionHandler(
-    		 conf,Orders,outputDirectory);
+     DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders);
  	try {	
  		//long start = System.currentTimeMillis();
  		executor.execute(new ExecutionEvent());

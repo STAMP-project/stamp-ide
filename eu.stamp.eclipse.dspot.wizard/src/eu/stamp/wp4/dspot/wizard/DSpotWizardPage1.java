@@ -77,6 +77,7 @@ import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotRowSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotSizeManager;
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.dialogs.DspotWizardHelpDialog;
+import eu.stamp.wp4.dspot.wizard.utils.DSpotPropertiesFile;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
@@ -87,7 +88,6 @@ import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 public class DSpotWizardPage1 extends WizardPage { 
 	
 	// [0] project, [1] src, [2] testScr, [3] javaVersion, [4] outputDirectory, [5] filter
-	private String[] TheProperties = new String[6];
 	private WizardConfiguration wConf;
 	private DSpotWizard wizard;
 	private IWizardContainer wizardContainer;
@@ -97,11 +97,16 @@ public class DSpotWizardPage1 extends WizardPage {
 	
     private StringValidationToolkit valKit = null;
     private final IFieldErrorMessageHandler errorMessageHandler;
+    
+    private final int VS;   // this will be the verticalIndent between rows in composite
 	
     private Combo configCombo;
     private Combo sourcePathCombo;
     private Combo sourceTestCombo;
     private Button projectSelectionbt;
+    private Text filterText;
+    private Text outputText;
+    private Combo versionCombo;
     private ValidatingField<String> configurationField;
     private ValidatingField<String> projectField;
     private ValidatingField<String> configurationComboField;
@@ -138,6 +143,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	        pageValidator = new DSpotPage1Validator();
 	        sizeCalculator = new DSpotPageSizeCalculator();
 	        row = new DSpotRowSizeCalculator();
+	        VS = 8;
 	} // end of the constructor
  
 	@Override
@@ -149,7 +155,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 		
-		int VS = 8;   // this will be the verticalIndent between rows in composite
+		DSpotPropertiesFile dspotFile = DSpotPropertiesFile.getInstance();
 		
 		/*
 		 *  ROW 1 : use saved configuration
@@ -208,9 +214,7 @@ public class DSpotWizardPage1 extends WizardPage {
         sourcePathCombo.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
-        		
-        		TheProperties[1] = sourcePathCombo.getText();  // the path of the source
-        		
+        		dspotFile.src = sourcePathCombo.getText();
         	}
         }); // end of the selection listener
         sizeCalculator.addRow(row);
@@ -230,19 +234,17 @@ public class DSpotWizardPage1 extends WizardPage {
         
         if(sourcePathCombo.getItems().length > 0) {
         	sourcePathCombo.setText(sourcePathCombo.getItem(0));
-    		TheProperties[1] = sourcePathCombo.getText();  // the path of the source
+    		dspotFile.src = sourcePathCombo.getText();
         }
         if(sourceTestCombo.getItems().length > 0) {
         	sourceTestCombo.setText(sourceTestCombo.getItem(0));
-    		TheProperties[2] = sourceTestCombo.getText();    //  testSrc
+    		dspotFile.testSrc = sourceTestCombo.getText();
         }
-        
         
         sourceTestCombo.addSelectionListener(new SelectionAdapter() {
         	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        	
-        		TheProperties[2] = sourceTestCombo.getText();    //  testSrc 		
+        	public void widgetSelected(SelectionEvent e) { 
+        		dspotFile.testSrc = sourceTestCombo.getText();
         	}
         });
 		sizeCalculator.addRow(row);
@@ -252,17 +254,17 @@ public class DSpotWizardPage1 extends WizardPage {
 		row.reStart();
         createLabel(composite,"Java version : ","lb4"); // Label in (6,1)
 		
-		Combo combo1 = new Combo(composite,SWT.NONE | SWT.READ_ONLY);  // Combo in (6,2) for the version
-		combo1.add("8"); combo1.add("7"); combo1.add("6"); combo1.add("5");
-		combo1.setText("8");
-        GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(combo1);
-        row.addWidget(combo1);
-        TheProperties[3] = "8";
-        combo1.addSelectionListener(new SelectionAdapter() {  // Use a SelectionAdapter
+		versionCombo = new Combo(composite,SWT.NONE | SWT.READ_ONLY);  // Combo in (6,2) for the version
+		versionCombo.add("8"); versionCombo.add("7"); versionCombo.add("6"); versionCombo.add("5");
+		versionCombo.setText("8");
+        GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(versionCombo);
+        row.addWidget(versionCombo);
+        dspotFile.javaVersion = "8";
+        
+        versionCombo.addSelectionListener(new SelectionAdapter() {  // Use a SelectionAdapter
         	@Override
         	public void widgetSelected(SelectionEvent e) {
-        		
-        		TheProperties[3] = combo1.getText();    // javaVersion		
+        		dspotFile.javaVersion = versionCombo.getText();
         	}
         });  // end of the SelectionListener
 		
@@ -280,65 +282,54 @@ public class DSpotWizardPage1 extends WizardPage {
 		lbOutput.setText("Path of the output folder : ");
 		lbOutput.setToolTipText(tooltipsProperties.getProperty("lbOutput"));
 		
-		Text tx4 = new Text(gr,SWT.BORDER);     // Text in (1,2)(gr) for the output's folder path
-		tx4.setText("dspot-out/");
-		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx4);
+	    outputText = new Text(gr,SWT.BORDER);     // Text in (1,2)(gr) for the output's folder path
+		outputText.setText("dspot-out/");
+		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(outputText);
 		
 		// get the date to create a sub output folder
 		Date date = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
-		String dateString = dateFormat.format(date);      // TODO
-		TheProperties[4] = "dspot-out/" + dateString + "/";
+		String dateString = dateFormat.format(date);      
+		dspotFile.outputDirectory = "dspot-out/" + dateString + "/";
 		
-		tx4.addKeyListener(new KeyListener() {
+		outputText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
 			@Override
 			public void keyReleased(KeyEvent e) {
-				String sr = tx4.getText();
-				if(sr.endsWith("/"))
-				TheProperties[4] = sr + dateString + "/";
-				else if (sr != null && !sr.isEmpty())
-					TheProperties[4] = sr + "/" + dateString + "/";
+				String sr = outputText.getText();
+				if(sr.endsWith("/")) {
+				dspotFile.outputDirectory = sr + dateString + "/";}
+				else if (sr != null && !sr.isEmpty()) {
+					dspotFile.outputDirectory = sr + "/" + dateString + "/";
+				}
 			}
 		});  // end of the KeyListener
-		tx4.addSegmentListener(new SegmentListener() {
+		outputText.addSegmentListener(new SegmentListener() {
 			@Override
 			public void getSegments(SegmentEvent event) {
-				String sr = tx4.getText();
-				if(sr.endsWith("/"))
-				TheProperties[4] = sr + dateString + "/";
-				else if (sr != null && !sr.isEmpty())
-					TheProperties[4] = sr + "/" + dateString + "/";
+				String sr = outputText.getText();
+				if(sr.endsWith("/")) {
+				dspotFile.outputDirectory = sr + dateString + "/";
+				}
+				else if (sr != null && !sr.isEmpty()) {
+					dspotFile.outputDirectory = sr + "/" + dateString + "/";
+				}
 			}	
 		});
 		
 		pageValidator.addElement(new IDSpotPageElement() {
 			@Override
 			public boolean validate() {
-				String sr = tx4.getText().replaceAll("\\.", "");
+				String sr = outputText.getText().replaceAll("\\.", "");
 				if(!sr.equalsIgnoreCase(sr
 						.replaceAll("[^A-za-z0-9_/\\- ]", ""))) return false;
 				return true;
 			}
 		});
 		
-		Label lbFilter = new Label(gr,SWT.NONE);    // Label in (2,1)(gr)
-		lbFilter.setText("Filter :  ");
-		lbFilter.setToolTipText(tooltipsProperties.getProperty("lbFilter"));
-		
-		Text tx5 = new Text(gr,SWT.BORDER);    // Text in (2,2)(gr) for the filter
-		tx5.setText("");
-		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(tx5);
-		tx5.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent e) {}
-			@Override
-			public void keyReleased(KeyEvent e) {	
-				TheProperties[5] = tx5.getText();  // filter
-				pageValidator.validatePage();
-			}
-		});  // end of the KeyListener
+		createFilterField(gr);
+
 		row.addWidget(gr);
 		sizeCalculator.addRow(row);
 		DSpotSizeManager.getInstance().addPage(sizeCalculator);
@@ -347,7 +338,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		pageValidator.addElement(new IDSpotPageElement() {
 			@Override
 			public boolean validate() {
-				String sr = tx5.getText().replaceAll("\\.", "");
+				String sr = filterText.getText().replaceAll("\\.", "");
 			if(!sr.equalsIgnoreCase(sr
 						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
 				return true;
@@ -368,13 +359,6 @@ public class DSpotWizardPage1 extends WizardPage {
 		 DspotWizardHelpDialog info = new DspotWizardHelpDialog(shell, " This page contains the information to write the properties file for DSpot ",myText);
 		 info.open();
 	 }  
-	
-	 /**
-	  * @return an String array with the information set by the user in this page
-	  */
-	public String[] getTheProperties() {
-		return TheProperties;
-	}
 	
 	private IJavaProject showProjectDialog() {
 		
@@ -447,7 +431,8 @@ public class DSpotWizardPage1 extends WizardPage {
 				if(content.isEmpty()) {
 					flag = false; return false;
 				}
-				if(!content.equalsIgnoreCase(content.replaceAll("[^A-Za-z0-9\\.\\-_ ]",""))) {
+				if(!content.equalsIgnoreCase(content.replaceAll(" ","")
+						.replaceAll("[^A-Za-z0-9\\.\\-_ ]",""))) {
 					flag = true; return false;
 				}
 				wizard.setConfigurationName(content);
@@ -459,8 +444,8 @@ public class DSpotWizardPage1 extends WizardPage {
 				List<ILaunchConfiguration> list = wConf.getLaunchConfigurations();
 				for(ILaunchConfiguration lau : list)
 					if(lau.getName().equalsIgnoreCase(content)) return true;
-				return false; }	// TODO
-		}, false, "Type configuration name");
+				return false; }	
+		}, false, "Type_configuration_name");
 		
 		Text text = (Text)configurationField.getControl();
 		GridDataFactory.fillDefaults().grab(true, false).indent(10, 8).applyTo(configurationField.getControl());
@@ -469,7 +454,8 @@ public class DSpotWizardPage1 extends WizardPage {
 		configurationField.setQuickFixProvider(new IQuickFixProvider<String>() {
 			@Override
 			public boolean doQuickFix(ValidatingField<String> field) {  
-				String result = field.getContents().replaceAll("[^A-Za-z0-9_\\-\\. ]","");
+				String result = field.getContents().replaceAll(" ","_")
+						.replaceAll("[^A-Za-z0-9_\\-\\. ]","");
 				if(result.isEmpty()) {
 					((Text)field.getControl()).setText("DSpot_configuration");
 					return true;
@@ -485,7 +471,8 @@ public class DSpotWizardPage1 extends WizardPage {
 			@Override
 			public boolean hasQuickFix(String contents) {
 				if(contents.isEmpty()) return true;
-				return !contents.equalsIgnoreCase(contents.replaceAll("[A-Za-z0-9\\.\\-_ ]",""));
+				return !contents.equalsIgnoreCase(contents.replaceAll(" ","")
+						.replaceAll("[A-Za-z0-9\\.\\-_ ]",""));
 			}
 			
 		});
@@ -495,7 +482,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			public boolean validate() {
 				String sr = configurationField.getContents();
 				if(configurationField.getControl().isEnabled()) { 
-					if(!sr.isEmpty() && sr.equalsIgnoreCase(sr
+					if(!sr.isEmpty() && sr.equalsIgnoreCase(sr.replaceAll(" ","")
 						.replaceAll("[^A-Za-z0-9_\\.\\- ]",""))) return true;
 					return false;
 				}
@@ -515,7 +502,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	        	if(btNewConfig.getSelection()) {
 	        		configCombo.setEnabled(false);
 	        		text.setEnabled(true);
-	        		text.setText(" Type configuration name ");
+	        		text.setText("Type_configuration_name");
 	        		configCombo.setText("");
 	        		configurationComboField.validate();
 	        	} else {
@@ -539,7 +526,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 			@Override
 			public boolean isValid(String sr) {
-				if(configCombo.isEnabled() && configCombo.getText().equalsIgnoreCase("")) { // TODO
+				if(configCombo.isEnabled() && configCombo.getText().equalsIgnoreCase("")) { 
 					setPageComplete(false);
 					wizardContainer.updateButtons();
 					return false; 
@@ -573,10 +560,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			public boolean isValid(String content) {
 				pageValidator.validatePage();     
 				File file = new File(content);
-				if(file.exists())if(file.isDirectory()) {
-	        		TheProperties[0] = content;  // Project's path
-					return true;
-				}
+				if(file.exists())if(file.isDirectory())return true;
 				return false;
 			}
 			
@@ -596,7 +580,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		
 		Text text = (Text)projectField.getControl();
 		GridDataFactory.fillDefaults().grab(true,false).indent(10,8).applyTo(text);
-		TheProperties[0] = direction;
+		//TheProperties[0] = direction;
 		row.addWidget(text);
 		 
 	        projectSelectionbt = new Button(composite,SWT.PUSH);
@@ -616,7 +600,7 @@ public class DSpotWizardPage1 extends WizardPage {
 						e1.printStackTrace();
 					}
 			    	text.setText(wConf.getProjectPath());
-			    	TheProperties[0] = wConf.getProjectPath();
+			    	DSpotPropertiesFile.getInstance().projectPath = wConf.getProjectPath();
 	                sourcePathCombo.removeAll(); sourceTestCombo.removeAll();
 			        for(int i = 0; i < wConf.getSources().length; i++) {  // add the sources to the combo
 			        	if(wConf.getIsTest()[i]) {  // if it is not a test package
@@ -626,7 +610,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			    	configCombo.setEnabled(false);
 			    	configCombo.setText("");
 			    	configurationField.getControl().setEnabled(true);
-			    	((Text)configurationField.getControl()).setText("Type configuration name");
+			    	((Text)configurationField.getControl()).setText("Type_configuration_name");
 			    	String[] sour = wConf.getSources(); 
 					boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
 					sourcePathCombo.removeAll();
@@ -638,17 +622,57 @@ public class DSpotWizardPage1 extends WizardPage {
 			        
 			        if(sourcePathCombo.getItems().length > 0) {
 			        	sourcePathCombo.setText(sourcePathCombo.getItem(0));
-			    		TheProperties[1] = sourcePathCombo.getText();  // the path of the source
+			    		// the path of the source
+			    		DSpotPropertiesFile.getInstance().src = sourcePathCombo.getText();
 			        }
 			        if(sourceTestCombo.getItems().length > 0) {
 			        	sourceTestCombo.setText(sourceTestCombo.getItem(0));
-			    		TheProperties[2] = sourceTestCombo.getText();    //  testSrc
+			    		//  testSrc
+			    		DSpotPropertiesFile.getInstance().testSrc = sourceTestCombo.getText();
 			        }
 			        
 			    	wizard.setDefaultValuesInPage2();
 			        }
 			    }
 				});
+	}
+	
+	private void createFilterField(Composite composite) { // TODO
+		createLabel(composite,"Filter : ","lbFilter");
+		
+		ValidatingField<String> filterField = 
+				valKit.createTextField(composite,new IFieldValidator<String>() {
+			@Override
+			public String getErrorMessage() {
+				return "Filter contains non allowed characters";
+			}
+			@Override
+			public String getWarningMessage() { return null; }
+			@Override
+			public boolean isValid(String filterString) {
+				DSpotPropertiesFile.getInstance().filter = filterString;
+				pageValidator.validatePage();
+				String sr = filterString.replaceAll("\\.", "");
+			if(!sr.equalsIgnoreCase(sr
+						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
+				return true;
+			}
+			@Override
+			public boolean warningExist(String arg0) { return false; }	
+		},false,"");
+		
+		filterText = (Text)filterField.getControl();
+		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(filterText);
+		
+		pageValidator.addElement(new IDSpotPageElement() {
+			@Override
+			public boolean validate() {
+				String sr = filterText.getText().replaceAll("\\.", "");
+			if(!sr.equalsIgnoreCase(sr
+						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
+				return true;
+			}
+		});
 	}
 			
 	private void createLabel(Composite composite, String text,String tooltipKey) {
@@ -662,24 +686,32 @@ public class DSpotWizardPage1 extends WizardPage {
 	private void loadConfigurations() {
 		if(!configCombo.getText().isEmpty()) {
 		try {
-			wConf.setIndexOfCurrentConfiguration(configCombo.getSelectionIndex());
-		String myArguments = wConf.getCurrentConfiguration()
-			.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
-		String myS = myArguments.substring(
-				myArguments.indexOf("-p ")+3);
-		if(myS.contains("-")) {
-			myS = myS.substring(0,myS.indexOf("-"));
+			wConf.setIndexOfCurrentConfiguration(configCombo.getSelectionIndex());	
+		/*
+		 *   Load properties file information
+		 */
+		DSpotPropertiesFile dspotFile = DSpotPropertiesFile.getInstance();
+		dspotFile.reload(wConf.getCurrentConfiguration());
+		((Text)projectField.getControl()).setText(dspotFile.projectPath);
+		if(dspotFile.src != null) sourcePathCombo.setText(dspotFile.src);
+		if(dspotFile.testSrc != null) sourceTestCombo.setText(dspotFile.testSrc);
+		if(dspotFile.javaVersion != null) versionCombo.setText(dspotFile.javaVersion);
+		if(dspotFile.outputDirectory != null) {
+			String output = dspotFile.outputDirectory;
+			if(output.contains("\\")) output = output.replaceAll("\\","/");
+			if(output.endsWith("/")) output = output.substring(0,output.length()-1);
+			output = output.substring(0,output.lastIndexOf("/") + 1);
+			outputText.setText(output);
 		}
-		myS = myS.substring(0,myS.indexOf((new Path(myS)).lastSegment())-1); // -1 because of the last /
-		if(myS.contains("/dspot_properties_files")) {
-			myS = myS.replaceAll("/dspot_properties_files","");
-		}
-		((Text)projectField.getControl()).setText(myS);
+		if(dspotFile.filter != null) filterText.setText(dspotFile.filter);
+		if(filterText.getText() == null 
+				|| filterText.getText().equalsIgnoreCase("null"))
+			filterText.setText("");
 		
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		IJavaProject theProject = null;
 		for(IProject pro : projects) {
-		if(pro.getLocation().toString().contains(myS)) theProject = new JavaProject(pro,null);
+		if(pro.getLocation().toString().contains(dspotFile.projectPath)) theProject = new JavaProject(pro,null);
 }
 		if(theProject != null) wConf = new WizardConfiguration(theProject);
 		wizard.setConfigurationName(configCombo.getText());

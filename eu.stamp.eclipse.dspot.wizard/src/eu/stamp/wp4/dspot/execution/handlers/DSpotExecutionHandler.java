@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
+import eu.stamp.wp4.dspot.wizard.utils.DSpotPropertiesFile;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
@@ -41,12 +42,10 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	
 	private boolean hasStarted = false;
 	private ILaunch myLaunch;
-	private String outputDirectory;
 	
-	public DSpotExecutionHandler(WizardConfiguration conf,String arguments,String outputDirectory) {
+	public DSpotExecutionHandler(WizardConfiguration conf,String arguments) {
 		super();
 		this.conf = conf;
-		this.outputDirectory = outputDirectory;
 		DSpotExecutionHandler.arguments = arguments;
 	}
 
@@ -79,8 +78,10 @@ public class DSpotExecutionHandler extends AbstractHandler {
 	        IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, DSpotProperties.MAIN_CLASS);
 	      wc.setAttribute(
 	  	        IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
-	      wc.setAttribute("outputDirectory", conf.getProjectPath() +"/"+ outputDirectory);
+	      wc.setAttribute("outputDirectory", conf.getProjectPath() +"/"+ 
+	  	        DSpotPropertiesFile.getInstance().outputDirectory);
 	      System.out.println(arguments);
+	      wc = DSpotPropertiesFile.getInstance().appendToConfiguration(wc);
 	      ILaunchConfiguration config = wc.doSave();   
 	      myLaunch = config.launch(ILaunchManager.RUN_MODE, null);
 	      hasStarted = true;
