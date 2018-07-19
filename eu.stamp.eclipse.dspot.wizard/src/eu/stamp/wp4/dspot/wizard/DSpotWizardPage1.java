@@ -105,7 +105,6 @@ public class DSpotWizardPage1 extends WizardPage {
     private Combo sourceTestCombo;
     private Button projectSelectionbt;
     private Text filterText;
-    //private ValidatingField<String> filterField;   // TODO
     private Text outputText;
     private Combo versionCombo;
     private ValidatingField<String> configurationField;
@@ -601,7 +600,7 @@ public class DSpotWizardPage1 extends WizardPage {
 						e1.printStackTrace();
 					}
 			    	text.setText(wConf.getProjectPath());
-			    	//TheProperties[0] = wConf.getProjectPath();
+			    	DSpotPropertiesFile.getInstance().projectPath = wConf.getProjectPath();
 	                sourcePathCombo.removeAll(); sourceTestCombo.removeAll();
 			        for(int i = 0; i < wConf.getSources().length; i++) {  // add the sources to the combo
 			        	if(wConf.getIsTest()[i]) {  // if it is not a test package
@@ -687,26 +686,13 @@ public class DSpotWizardPage1 extends WizardPage {
 	private void loadConfigurations() {
 		if(!configCombo.getText().isEmpty()) {
 		try {
-			wConf.setIndexOfCurrentConfiguration(configCombo.getSelectionIndex());
-		String myArguments = wConf.getCurrentConfiguration()
-			.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,"");
-		String myS = myArguments.substring(
-				myArguments.indexOf("-p ")+3);
-		if(myS.contains("-")) {
-			myS = myS.substring(0,myS.indexOf("-"));
-		}
-		myS = myS.substring(0,myS.indexOf((new Path(myS)).lastSegment())-1); // -1 because of the last /
-		if(myS.contains("/dspot_properties_files")) {
-			myS = myS.replaceAll("/dspot_properties_files","");
-		}
-		((Text)projectField.getControl()).setText(myS);
-		
+			wConf.setIndexOfCurrentConfiguration(configCombo.getSelectionIndex());	
 		/*
 		 *   Load properties file information
 		 */
 		DSpotPropertiesFile dspotFile = DSpotPropertiesFile.getInstance();
 		dspotFile.reload(wConf.getCurrentConfiguration());
-		
+		((Text)projectField.getControl()).setText(dspotFile.projectPath);
 		if(dspotFile.src != null) sourcePathCombo.setText(dspotFile.src);
 		if(dspotFile.testSrc != null) sourceTestCombo.setText(dspotFile.testSrc);
 		if(dspotFile.javaVersion != null) versionCombo.setText(dspotFile.javaVersion);
@@ -725,7 +711,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		IJavaProject theProject = null;
 		for(IProject pro : projects) {
-		if(pro.getLocation().toString().contains(myS)) theProject = new JavaProject(pro,null);
+		if(pro.getLocation().toString().contains(dspotFile.projectPath)) theProject = new JavaProject(pro,null);
 }
 		if(theProject != null) wConf = new WizardConfiguration(theProject);
 		wizard.setConfigurationName(configCombo.getText());

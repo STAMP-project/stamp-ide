@@ -97,7 +97,7 @@ public class DSpotWizard extends Wizard{
 			MessageDialog.openError(shell, "Maven Home not set","Error the enviroment variable MAVEN_HOME is required, please set it in your computer or in the text in advanced options in page 2");
 		}else {  // if MAVEN_HOME is set
 		//writeTheFile();    // writing the properties file
-		DSpotPropertiesFile.getInstance().writeTheFile(wConf.getProjectPath(),configurationName);
+		DSpotPropertiesFile.getInstance().writeTheFile(configurationName);
         wConf = two.getConfiguration(); // obtain the user information from page 2
         // TODO
         Job job = new DSpotEclipseJob(DSpotPropertiesFile.getInstance().getFileLocation(),

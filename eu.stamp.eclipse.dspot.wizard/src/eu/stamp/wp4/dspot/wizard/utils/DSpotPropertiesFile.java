@@ -31,6 +31,7 @@ public class DSpotPropertiesFile {
 	/*
 	 *  File properties
 	 */
+	public String projectPath;
     public String src;
     public String testSrc;
     public String javaVersion;
@@ -44,26 +45,27 @@ public class DSpotPropertiesFile {
 		} catch (CoreException e) { e.printStackTrace(); }
     	if(!string.isEmpty())if(string.contains(separator)){
     		String[] strings = string.split(separator);
-    		if(strings.length > 3) {
-    		this.src = strings[0];
-    		this.testSrc = strings[1];
-    		this.javaVersion = strings[2];
-    		this.outputDirectory = strings[3];
+    		if(strings.length > 4) {
+    		this.projectPath = strings[0];
+    		this.src = strings[1];
+    		this.testSrc = strings[2];
+    		this.javaVersion = strings[3];
+    		this.outputDirectory = strings[4];
     		}
-    		if(strings.length == 5) this.filter = strings[4];
+    		if(strings.length == 6) this.filter = strings[5];
     		else this.filter = "";
     	}
     }
       public ILaunchConfigurationWorkingCopy appendToConfiguration(
     		    ILaunchConfigurationWorkingCopy copy) {
     	  
-    	  String info = src + separator + testSrc + separator
-    			  + javaVersion + separator + outputDirectory + 
+    	  String info = projectPath + separator + src + separator + testSrc 
+    			  + separator + javaVersion + separator + outputDirectory + 
     			  separator + filter;
     	  copy.setAttribute(key, info);
     	  return copy;
       }
-      public void writeTheFile(String projectPath,String configurationName) {
+      public void writeTheFile(String configurationName) {
     	  configurationName.replaceAll(" ","_");
     	  File folder = new File(projectPath +"/dspot_properties_files/");
 		  if(!folder.exists()) folder.mkdir();
