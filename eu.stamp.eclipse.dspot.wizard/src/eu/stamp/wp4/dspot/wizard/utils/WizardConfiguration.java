@@ -95,6 +95,7 @@ public class WizardConfiguration {
         IProject project = jproject.getProject(); // Convert to project
         IPath pa = project.getLocation();         // get it's absolute path
 	    projectPath = pa.toString();      // put it into a string
+	    DSpotPropertiesFile.getInstance().projectPath = projectPath;
 	    
 	    sources = findSour();  // obtain the sources
 	    
