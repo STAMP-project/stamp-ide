@@ -12,8 +12,8 @@ public class DSpotPropertiesFile {
 	private final String key;
 	
 	private DSpotPropertiesFile() {
-		separator = "a4f6ll0nwq3";
-		key = "dspotFileString";
+		separator = "1f6l0nwq3";
+		key = "dspotFileString";	
 	}
 	
 	public static DSpotPropertiesFile getInstance(){
@@ -42,7 +42,7 @@ public class DSpotPropertiesFile {
     		this.javaVersion = strings[2];
     		this.outputDirectory = strings[3];
     		}
-    		if(string.length() == 4) this.filter = strings[4];
+    		if(strings.length == 5) this.filter = strings[4];
     		else this.filter = "";
     	}
     }

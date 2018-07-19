@@ -273,7 +273,8 @@ public class DSpotWizardPage1 extends WizardPage {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
         		
-        		TheProperties[3] = versionCombo.getText();    // javaVersion		
+        		TheProperties[3] = versionCombo.getText();    // javaVersion
+        		dspotFile.javaVersion = versionCombo.getText();
         	}
         });  // end of the SelectionListener
 		
