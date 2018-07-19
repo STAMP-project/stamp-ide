@@ -72,7 +72,8 @@ public class DescartesView extends ViewPart {
 		
 		if(tabFolder == null) {
 			tabFolder = new TabFolder(parent,SWT.BORDER);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(tabFolder);
+			GridDataFactory.fillDefaults().indent(0, 5)
+			.grab(true, true).applyTo(tabFolder);
 		}
 		
 		if(pitUrl != null) {
@@ -87,15 +88,15 @@ public class DescartesView extends ViewPart {
 			
 			pitBackButton = new Button(pitComposite,SWT.PUSH);
 			pitBackButton.setText("back");
-			GridDataFactory.swtDefaults().applyTo(pitBackButton);
+			GridDataFactory.swtDefaults().indent(5, 10).applyTo(pitBackButton);
 			
 			pitForwardButton = new Button(pitComposite,SWT.PUSH);
 			pitForwardButton.setText("forward");
-			GridDataFactory.swtDefaults().applyTo(pitForwardButton);
+			GridDataFactory.swtDefaults().indent(0, 10).applyTo(pitForwardButton);
 			
 			pitBrowser = new Browser(pitComposite,SWT.NONE);
 			GridDataFactory.fillDefaults().span(3,1).grab(true, true).minSize(200,150)
-			.applyTo(pitBrowser);
+			.indent(0,5).applyTo(pitBrowser);
 			
 			pitBackButton.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -124,15 +125,15 @@ public class DescartesView extends ViewPart {
                 
 				descartesBackButton = new Button(descartesComposite,SWT.PUSH);
 				descartesBackButton.setText("back");
-				GridDataFactory.swtDefaults().applyTo(descartesBackButton);
+				GridDataFactory.swtDefaults().indent(5,10).applyTo(descartesBackButton);
 				
 				descartesForwardButton = new Button(descartesComposite,SWT.PUSH);
 				descartesForwardButton.setText("forward");
-				GridDataFactory.swtDefaults().applyTo(descartesForwardButton);
+				GridDataFactory.swtDefaults().indent(0,10).applyTo(descartesForwardButton);
 				
 				descartesBrowser = new Browser(descartesComposite,SWT.NONE);
 				GridDataFactory.fillDefaults().span(3,1).grab(true, true).minSize(200,150)
-				.applyTo(descartesBrowser);
+				.indent(0,5).applyTo(descartesBrowser);
 				
 				descartesBackButton.addSelectionListener(new SelectionAdapter() {
 					@Override
