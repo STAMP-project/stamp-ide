@@ -97,12 +97,15 @@ public class DSpotWizardPage1 extends WizardPage {
 	
     private StringValidationToolkit valKit = null;
     private final IFieldErrorMessageHandler errorMessageHandler;
+    
+    private final int VS;   // this will be the verticalIndent between rows in composite
 	
     private Combo configCombo;
     private Combo sourcePathCombo;
     private Combo sourceTestCombo;
     private Button projectSelectionbt;
     private Text filterText;
+    //private ValidatingField<String> filterField;   // TODO
     private Text outputText;
     private Combo versionCombo;
     private ValidatingField<String> configurationField;
@@ -141,6 +144,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	        pageValidator = new DSpotPage1Validator();
 	        sizeCalculator = new DSpotPageSizeCalculator();
 	        row = new DSpotRowSizeCalculator();
+	        VS = 8;
 	} // end of the constructor
  
 	@Override
@@ -151,8 +155,6 @@ public class DSpotWizardPage1 extends WizardPage {
 		GridLayout layout = new GridLayout();    // the layout of composite
 		layout.numColumns = 3;
 		composite.setLayout(layout);
-		
-		int VS = 8;   // this will be the verticalIndent between rows in composite
 		
 		DSpotPropertiesFile dspotFile = DSpotPropertiesFile.getInstance();
 		
@@ -288,7 +290,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		// get the date to create a sub output folder
 		Date date = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
-		String dateString = dateFormat.format(date);      // TODO
+		String dateString = dateFormat.format(date);      
 		dspotFile.outputDirectory = "dspot-out/" + dateString + "/";
 		
 		outputText.addKeyListener(new KeyListener() {
@@ -327,13 +329,15 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 		});
 		
-		Label lbFilter = new Label(gr,SWT.NONE);    // Label in (2,1)(gr)
+		/*Label lbFilter = new Label(gr,SWT.NONE);    // Label in (2,1)(gr)
 		lbFilter.setText("Filter :  ");
-		lbFilter.setToolTipText(tooltipsProperties.getProperty("lbFilter"));
+		lbFilter.setToolTipText(tooltipsProperties.getProperty("lbFilter"));*/
 		
-		filterText = new Text(gr,SWT.BORDER);    // Text in (2,2)(gr) for the filter
+		createFilterField(gr);
+		
+		/*filterText = new Text(gr,SWT.BORDER);    // Text in (2,2)(gr) for the filter
 		filterText.setText("");
-		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(filterText);
+		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(filterText); // TODO
 		filterText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
@@ -342,7 +346,7 @@ public class DSpotWizardPage1 extends WizardPage {
 				dspotFile.filter = filterText.getText();
 				pageValidator.validatePage();
 			}
-		});  // end of the KeyListener
+		});  // end of the KeyListener*/
 		row.addWidget(gr);
 		sizeCalculator.addRow(row);
 		DSpotSizeManager.getInstance().addPage(sizeCalculator);
@@ -457,7 +461,7 @@ public class DSpotWizardPage1 extends WizardPage {
 				List<ILaunchConfiguration> list = wConf.getLaunchConfigurations();
 				for(ILaunchConfiguration lau : list)
 					if(lau.getName().equalsIgnoreCase(content)) return true;
-				return false; }	// TODO
+				return false; }	
 		}, false, "Type_configuration_name");
 		
 		Text text = (Text)configurationField.getControl();
@@ -515,7 +519,7 @@ public class DSpotWizardPage1 extends WizardPage {
 	        	if(btNewConfig.getSelection()) {
 	        		configCombo.setEnabled(false);
 	        		text.setEnabled(true);
-	        		text.setText(" Type_configuration_name ");
+	        		text.setText("Type_configuration_name");
 	        		configCombo.setText("");
 	        		configurationComboField.validate();
 	        	} else {
@@ -539,7 +543,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 			@Override
 			public boolean isValid(String sr) {
-				if(configCombo.isEnabled() && configCombo.getText().equalsIgnoreCase("")) { // TODO
+				if(configCombo.isEnabled() && configCombo.getText().equalsIgnoreCase("")) { 
 					setPageComplete(false);
 					wizardContainer.updateButtons();
 					return false; 
@@ -649,6 +653,44 @@ public class DSpotWizardPage1 extends WizardPage {
 			    }
 				});
 	}
+	
+	private void createFilterField(Composite composite) { // TODO
+		createLabel(composite,"Filter : ","lbFilter");
+		
+		ValidatingField<String> filterField = 
+				valKit.createTextField(composite,new IFieldValidator<String>() {
+			@Override
+			public String getErrorMessage() {
+				return "Filter contains non allowed characters";
+			}
+			@Override
+			public String getWarningMessage() { return null; }
+			@Override
+			public boolean isValid(String arg0) {
+				DSpotPropertiesFile.getInstance().filter = filterText.getText();
+				pageValidator.validatePage();
+				String sr = filterText.getText().replaceAll("\\.", "");
+			if(!sr.equalsIgnoreCase(sr
+						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
+				return true;
+			}
+			@Override
+			public boolean warningExist(String arg0) { return false; }	
+		},false,"");
+		
+		filterText = (Text)filterField.getControl();
+		GridDataFactory.fillDefaults().grab(true,false).indent(0, VS).applyTo(filterText);
+		
+		pageValidator.addElement(new IDSpotPageElement() {
+			@Override
+			public boolean validate() {
+				String sr = filterText.getText().replaceAll("\\.", "");
+			if(!sr.equalsIgnoreCase(sr
+						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
+				return true;
+			}
+		});
+	}
 			
 	private void createLabel(Composite composite, String text,String tooltipKey) {
 		Label label = new Label(composite,SWT.NONE);
@@ -692,6 +734,9 @@ public class DSpotWizardPage1 extends WizardPage {
 			outputText.setText(output);
 		}
 		if(dspotFile.filter != null) filterText.setText(dspotFile.filter);
+		if(filterText.getText() == null 
+				|| filterText.getText().equalsIgnoreCase("null"))
+			filterText.setText("");
 		
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		IJavaProject theProject = null;
