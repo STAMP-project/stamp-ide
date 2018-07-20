@@ -3,12 +3,11 @@ package eu.stamp.wp4.dspot.wizard.utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import eu.stamp.eclipse.dspot.launch.configuration.DSpotButtonsInformation;
+
 public class DSpotMemory {
 
 	private HashMap<String,String> DSpotMap = new HashMap<String,String>();
-	
-	private boolean[] booleanParameters = {
-			false,false,false,false}; // [0] verbose [1] clean [2] comment [3] no minimize
 	
 	public static final String ITERATIONS_KEY = " -i ";
 	public static final String RANDOMSEED_KEY = " --randomSeed ";
@@ -47,10 +46,9 @@ public class DSpotMemory {
 		
 			information = information + key + value;
              }}
-		if(booleanParameters[0])information = information + " --verbose";
-		if(booleanParameters[1])information = information +" --clean";
-		if(booleanParameters[2])information = information + " --with-comment";
-		if(booleanParameters[3])information = information + " --no-minimize";
+		information = information 
+				+ DSpotButtonsInformation.getInstance().getButtonString();
+		
 		return information;
 	}
 	
@@ -63,10 +61,8 @@ public class DSpotMemory {
 			fragment = fragment.replaceAll(" ", "");
 			DSpotMap.put(key, fragment);
 		}
-		booleanParameters[0] = information.contains("--verbose");
-		booleanParameters[1] = information.contains("--clean");
-		booleanParameters[2] = information.contains("comment");
-		booleanParameters[3] = information.contains("no-minimize");
+		DSpotButtonsInformation.getInstance().reload(information);
+		
 		return this;
 	}
 	
@@ -75,22 +71,6 @@ public class DSpotMemory {
 	}
 	
 	public void setDSpotValue(String key,String value) {
-		if(key.contains("verbose")) {
-			booleanParameters[0] = value.contains("true");
-			return;
-		}
-		if(key.contains("clean")) {
-			booleanParameters[1] = value.contains("true");
-			return;
-		}
-		if(key.contains("comment")) {
-			booleanParameters[2] = value.contains("true");
-			return;
-		}
-		if(key.contains("no-minimize")) {
-			booleanParameters[3] = value.contains("true");
-			return;
-		}
 		if(DSpotMap.containsKey(key)) DSpotMap.put(key, value);
 	}
 	public String[] getSelectedCasesAsArray() {

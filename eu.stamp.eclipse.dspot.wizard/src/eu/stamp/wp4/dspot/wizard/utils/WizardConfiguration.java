@@ -46,6 +46,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.junit.Test;
 
+import eu.stamp.eclipse.dspot.launch.configuration.DSpotPropertiesFile;
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 
 @SuppressWarnings("restriction")

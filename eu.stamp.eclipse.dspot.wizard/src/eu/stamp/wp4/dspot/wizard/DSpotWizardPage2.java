@@ -67,6 +67,7 @@ import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 
+import eu.stamp.eclipse.dspot.launch.configuration.DSpotButtonsInformation;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotPageSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotRowSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotSizeManager;
@@ -93,10 +94,8 @@ public class DSpotWizardPage2 extends WizardPage {
 	private Spinner spin1; 
 	private List amplifiersList;
 	private Combo combo1;
-	private Button button;
 	private Button cleanButton;
-	private Button commentButton;
-	private Button noMinimizeButton;
+
 	
 	// Dialogs
 	private ArrayList<Object> testSelection = new ArrayList<Object>(1);
@@ -268,13 +267,6 @@ public class DSpotWizardPage2 extends WizardPage {
          *   Row 6 : Verbose
          */
 	    row.reStart();
-	    Label lb7 = new Label(composite,SWT.NONE); // A label in (6,1)
-	    lb7.setText("Verbose ");
-	    row.addWidget(lb7);
-	    
-	    button = new Button(composite,SWT.CHECK);  // check button in (6,2)
-        button.setToolTipText(tooltipsProperties.getProperty("button"));
-        row.addWidget(button);
 	    
 	    Label space = new Label(composite,SWT.NONE);
 	    space.setText("");
@@ -301,25 +293,15 @@ public class DSpotWizardPage2 extends WizardPage {
 	    /*
 	     *  Row 7 : check buttons
 	     */
+	    Label space2 = new Label(composite,SWT.NONE);
+	    space2.setText("");
+	    row.addWidget(space2);
+	    
 	    row.reStart();
 	    cleanButton = new Button(composite,SWT.CHECK);  // check button in (6,2)
 	    cleanButton.setText("clean ");
 	    cleanButton.setToolTipText(tooltipsProperties.getProperty("button2"));
 	    row.addWidget(cleanButton);
-	    
-	    Label space2 = new Label(composite,SWT.NONE);
-	    space2.setText("");
-	    row.addWidget(space2);
-	    
-	    // comment button 
-	    commentButton = new Button(composite,SWT.CHECK);
-	    commentButton.setText("with comment ");
-	    row.addWidget(commentButton);
-	    
-	    // no minimize button
-	    noMinimizeButton = new Button(composite,SWT.CHECK);
-	    noMinimizeButton.setText("no minimize");
-	    row.addWidget(noMinimizeButton);
 	    
 	    sizeCalculator.addRow(row);
 	    DSpotSizeManager.getInstance().addPage(sizeCalculator);
@@ -496,7 +478,8 @@ public class DSpotWizardPage2 extends WizardPage {
    	if(argument.contains("-m ")) {
         pathPitResult = dSpotMemory.getDSpotValue(DSpotMemory.PATH_PIT_RESULT_KEY);
      	} else pathPitResult = "";
-   	if(argument.contains("verbose")) { button.setSelection(true); dSpotMemory.setDSpotValue("verbose", "true"); }
+   	cleanButton.setSelection(DSpotButtonsInformation.getInstance().clean);
+   	/*if(argument.contains("verbose")) { button.setSelection(true); dSpotMemory.setDSpotValue("verbose", "true"); }
    	else { button.setSelection(false); dSpotMemory.setDSpotValue("verbose", "false"); }
    	if(argument.contains("clean")) {cleanButton.setSelection(true); dSpotMemory.setDSpotValue("clean", "true"); }
    	else { cleanButton.setSelection(false); dSpotMemory.setDSpotValue("clean", "false"); }
@@ -504,7 +487,7 @@ public class DSpotWizardPage2 extends WizardPage {
    	else { commentButton.setSelection(false); dSpotMemory.setDSpotValue("comment","false"); }
    	if(argument.contains("no-minimize")) { noMinimizeButton.setSelection(true); 
    	dSpotMemory.setDSpotValue("no-minimize", "true");
-   	} else { noMinimizeButton.setSelection(false); dSpotMemory.setDSpotValue("no-minimize","false"); }
+   	} else { noMinimizeButton.setSelection(false); dSpotMemory.setDSpotValue("no-minimize","false"); }*/
    	expDiag.setMemory(dSpotMemory);
    	expDiag.resetFromMemory();
    	wConf.setDSpotMemory(dSpotMemory);
@@ -536,12 +519,13 @@ public class DSpotWizardPage2 extends WizardPage {
  			amplList = amplList + WizardConfiguration.getSeparator() + selection[i];	
  		}
  		memory.setDSpotValue(DSpotMemory.AMPLIFIERS_KEY,amplList);}
+ 		DSpotButtonsInformation.getInstance().clean = cleanButton.getSelection();
  		//if(button.getSelection()) memory.setDSpotValue("verbose", "true");
  		//else memory.setDSpotValue("verbose", "false");
- 		 memory.setDSpotValue("verbose", String.valueOf(button.getSelection()));
+ 		/* memory.setDSpotValue("verbose", String.valueOf(button.getSelection()));
  	     memory.setDSpotValue("clean", String.valueOf(cleanButton.getSelection()));
  	     memory.setDSpotValue("comment", String.valueOf(commentButton.getSelection()));
- 	     memory.setDSpotValue("no-minimize",String.valueOf(noMinimizeButton.getSelection()));
+ 	     memory.setDSpotValue("no-minimize",String.valueOf(noMinimizeButton.getSelection()));*/
     	 wConf.setDSpotMemory(memory);	 
     	 return wConf;
      }
