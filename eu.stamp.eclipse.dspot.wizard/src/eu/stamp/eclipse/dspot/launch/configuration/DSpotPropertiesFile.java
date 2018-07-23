@@ -1,4 +1,4 @@
-package eu.stamp.wp4.dspot.wizard.utils;
+package eu.stamp.eclipse.dspot.launch.configuration;
 
 import java.io.BufferedWriter;
 import java.io.File;

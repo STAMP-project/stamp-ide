@@ -72,12 +72,12 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SegmentEvent;
 
+import eu.stamp.eclipse.dspot.launch.configuration.DSpotPropertiesFile;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotPageSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotRowSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotSizeManager;
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.dialogs.DspotWizardHelpDialog;
-import eu.stamp.wp4.dspot.wizard.utils.DSpotPropertiesFile;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
@@ -323,7 +323,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			public boolean validate() {
 				String sr = outputText.getText().replaceAll("\\.", "");
 				if(!sr.equalsIgnoreCase(sr
-						.replaceAll("[^A-za-z0-9_/\\- ]", ""))) return false;
+						.replaceAll("[^A-Za-z0-9_/\\- ]", ""))) return false;
 				return true;
 			}
 		});
@@ -340,7 +340,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			public boolean validate() {
 				String sr = filterText.getText().replaceAll("\\.", "");
 			if(!sr.equalsIgnoreCase(sr
-						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
+						.replaceAll("[^A-Za-z0-9_ ]", ""))) return false;
 				return true;
 			}
 		});
@@ -654,7 +654,7 @@ public class DSpotWizardPage1 extends WizardPage {
 				pageValidator.validatePage();
 				String sr = filterString.replaceAll("\\.", "");
 			if(!sr.equalsIgnoreCase(sr
-						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
+						.replaceAll("[^A-Za-z0-9_ ]", ""))) return false;
 				return true;
 			}
 			@Override
@@ -669,7 +669,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			public boolean validate() {
 				String sr = filterText.getText().replaceAll("\\.", "");
 			if(!sr.equalsIgnoreCase(sr
-						.replaceAll("[^A-za-z0-9_ ]", ""))) return false;
+						.replaceAll("[^A-Za-z0-9_ ]", ""))) return false;
 				return true;
 			}
 		});
