@@ -25,8 +25,8 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
+import eu.stamp.eclipse.dspot.launch.configuration.DSpotPropertiesFile;
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
-import eu.stamp.wp4.dspot.wizard.utils.DSpotPropertiesFile;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**

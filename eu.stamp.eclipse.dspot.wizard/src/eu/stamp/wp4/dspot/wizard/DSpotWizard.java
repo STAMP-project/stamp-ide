@@ -33,10 +33,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import eu.stamp.eclipse.dspot.launch.configuration.DSpotPropertiesFile;
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotEclipseJob;
-import eu.stamp.wp4.dspot.wizard.utils.DSpotPropertiesFile;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 

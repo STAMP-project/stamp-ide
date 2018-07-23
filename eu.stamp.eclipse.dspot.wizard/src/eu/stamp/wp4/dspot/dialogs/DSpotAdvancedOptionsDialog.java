@@ -50,6 +50,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 
+import eu.stamp.eclipse.dspot.launch.configuration.DSpotButtonsInformation;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotPageSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotRowSizeCalculator;
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
@@ -85,6 +86,9 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
 	private List list;
 	private ValidatingField<String> pathPitResultField;
 	private ValidatingField<String> mavenHomeField;
+	private Button nominimizeButton;
+	private Button commentsButton;
+	private Button verboseButton;
 	
 	// to compute size
 	private DSpotPageSizeCalculator sizeCalculator;
@@ -228,6 +232,29 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
     	 GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).indent(0, vSpace).applyTo(mavenHomeButton);
     	 
     	 createMavenHomeField(composite);
+    	 
+    	 /*
+    	  *   advanced buttons
+    	  */
+    	 DSpotButtonsInformation buttonsInfo = 
+    			 DSpotButtonsInformation.getInstance();
+    	 nominimizeButton = new Button(composite,SWT.CHECK);
+    	 nominimizeButton.setText("no minimize "); 
+    	 nominimizeButton.setSelection(buttonsInfo.nominimize);
+    	 GridDataFactory.swtDefaults()
+    	 .align(SWT.BEGINNING,SWT.BEGINNING).applyTo(nominimizeButton);
+    	 
+    	 commentsButton = new Button(composite,SWT.CHECK);
+    	 commentsButton.setText("with comment ");
+    	 commentsButton.setSelection(buttonsInfo.comments);
+    	 GridDataFactory.swtDefaults().
+    	 align(SWT.BEGINNING,SWT.BEGINNING).applyTo(commentsButton);
+
+    	 verboseButton = new Button(composite,SWT.CHECK);
+    	 verboseButton.setText("verbose ");
+    	 verboseButton.setSelection(buttonsInfo.verbose);
+    	 GridDataFactory.swtDefaults()
+    	 .align(SWT.CENTER,SWT.BEGINNING).applyTo(verboseButton);
     	 /*
     	  *   Compute page size
     	  */
@@ -295,10 +322,14 @@ public class DSpotAdvancedOptionsDialog extends TitleAreaDialog{
      @Override
      public void okPressed() {
     	 selection = list.getSelection();
-    	 //timeOut = timeOutSpinner.getSelection();
-    	 //randomSeed = randomSeedSpinner.getSelection();
-    	 //Text pathPitText = (Text)pathPitResultField.getControl();
-    	// pathPitResult = pathPitText.getText();
+    	 
+    	 // set the buttons information
+    	 DSpotButtonsInformation buttonsInfo = 
+    			 DSpotButtonsInformation.getInstance();
+    	 buttonsInfo.nominimize = nominimizeButton.getSelection();
+    	 buttonsInfo.comments = commentsButton.getSelection();
+    	 buttonsInfo.verbose = verboseButton.getSelection();
+
     	 mavenHome = ((Text)mavenHomeField.getControl()).getText();
     	 memory.setDSpotValue(DSpotMemory.MAVEN_HOME_KEY, mavenHome);
     	 String[] mySelection = new String[selection.length];
