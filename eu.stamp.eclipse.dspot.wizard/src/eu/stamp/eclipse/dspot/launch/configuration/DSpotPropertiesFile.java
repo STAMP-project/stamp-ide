@@ -16,10 +16,12 @@ public class DSpotPropertiesFile {
 	private final String separator;
 	private final String key;
 	
+	public static final String PROJECT_NAME_KEY = "projectName";
+	
 	private File file;
 	
 	private DSpotPropertiesFile() {
-		separator = "1f6l0nwq3";
+		separator = ":";
 		key = "dspotFileString";
 		file = null;
 	}
@@ -63,6 +65,12 @@ public class DSpotPropertiesFile {
     			  + separator + javaVersion + separator + outputDirectory + 
     			  separator + filter;
     	  copy.setAttribute(key, info);
+    	  
+    	  info = projectPath;
+    	  if(info.contains("\\")) info = info.replaceAll("\\","/");
+    	  info = info.substring(info.lastIndexOf("/")+1);
+    	  copy.setAttribute(PROJECT_NAME_KEY, info);
+    	  
     	  return copy;
       }
       public void writeTheFile(String configurationName) {

@@ -35,7 +35,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
@@ -107,9 +106,9 @@ public class DSpotWizardPage1 extends WizardPage {
     private Text filterText;
     private Text outputText;
     private Combo versionCombo;
+    private Button btNewConfig;
     private ValidatingField<String> configurationField;
     private ValidatingField<String> projectField;
-    private ValidatingField<String> configurationComboField;
     
     // to compute size
     private DSpotPageSizeCalculator sizeCalculator;
@@ -183,8 +182,22 @@ public class DSpotWizardPage1 extends WizardPage {
 				return true;
 			}
 		});
-		
-		createConfigurationComboValidator();  // this is to display an error message if no configuration is selected
+		configCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(configCombo.getText().equalsIgnoreCase("")) {
+					configCombo.setEnabled(false);
+					configurationField.getControl().setEnabled(true);
+					btNewConfig.setSelection(true);
+					((Text)configurationField.getControl()).setText("new_configuration");
+					return;
+				}
+				if(!loadConfigurations()) {
+					wizard.getWizardDialog().close();
+				}
+			}
+		});
+		//createConfigurationComboValidator();  // this is to display an error message if no configuration is selected
 		sizeCalculator.addRow(row);
 		/*
 		 *  Row 2 : New Configuration 
@@ -490,7 +503,7 @@ public class DSpotWizardPage1 extends WizardPage {
 			}
 		});
 		
-		Button btNewConfig = new Button(composite,SWT.CHECK); // button to enable the new dialog text
+		btNewConfig = new Button(composite,SWT.CHECK); // button to enable the new dialog text
 		GridDataFactory.swtDefaults().indent(0, 8).applyTo(btNewConfig);
 		btNewConfig.setToolTipText(tooltipsProperties.getProperty("btNewConfig"));
 		btNewConfig.setSelection(true);
@@ -504,43 +517,15 @@ public class DSpotWizardPage1 extends WizardPage {
 	        		text.setEnabled(true);
 	        		text.setText("Type_configuration_name");
 	        		configCombo.setText("");
-	        		configurationComboField.validate();
+	        		//configurationComboField.validate();
 	        	} else {
 	        		text.setEnabled(false);
 	        		configCombo.setEnabled(true);
 	        		text.setText("");
-	        		configurationComboField.validate();
+	        		//configurationComboField.validate();
 	        	}
 	        }
 });
-	}
-	private void createConfigurationComboValidator() {
-		
-		configurationComboField = valKit.createField(configCombo,new IFieldValidator<String>(){
-			@Override
-			public String getErrorMessage() {
-				return "Select a configuration or create a new one";
-			}
-			@Override
-			public String getWarningMessage() { return null;
-			}
-			@Override
-			public boolean isValid(String sr) {
-				if(configCombo.isEnabled() && configCombo.getText().equalsIgnoreCase("")) { 
-					setPageComplete(false);
-					wizardContainer.updateButtons();
-					return false; 
-					}
-				loadConfigurations();
-				setPageComplete(true);
-				wizardContainer.updateButtons();
-				return true;
-			}
-			@Override
-			public boolean warningExist(String sr) { return false;
-			}	
-			
-		},false,"");
 	}
 	private void createProjectField(Composite composite) {
 		
@@ -596,6 +581,11 @@ public class DSpotWizardPage1 extends WizardPage {
 			    	if(jPro != null) {
 			        try {
 						wConf = new WizardConfiguration(jPro);
+						// close the wizard if no compiled test
+						if(!wConf.getCanContinue()) {
+                        wizard.getWizardDialog().close();
+						return;
+						}
 					} catch (CoreException e1) {
 						e1.printStackTrace();
 					}
@@ -637,7 +627,7 @@ public class DSpotWizardPage1 extends WizardPage {
 				});
 	}
 	
-	private void createFilterField(Composite composite) { // TODO
+	private void createFilterField(Composite composite) {
 		createLabel(composite,"Filter : ","lbFilter");
 		
 		ValidatingField<String> filterField = 
@@ -683,10 +673,21 @@ public class DSpotWizardPage1 extends WizardPage {
 		row.addWidget(label);
 	}	
 	
-	private void loadConfigurations() {
+	private boolean loadConfigurations() {
 		if(!configCombo.getText().isEmpty()) {
 		try {
 			wConf.setIndexOfCurrentConfiguration(configCombo.getSelectionIndex());	
+		    String projectName = wConf.getCurrentConfiguration().getAttribute(
+		    		DSpotPropertiesFile.PROJECT_NAME_KEY,"");
+			
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		IJavaProject theProject = null;
+		for(IProject pro : projects) {
+		if(pro.getLocation().toString().contains(projectName)) theProject = new JavaProject(pro,null);
+}
+		if(theProject != null) wConf = new WizardConfiguration(theProject);
+		// check if tests are compiled
+		if(!wConf.getCanContinue()) return false;
 		/*
 		 *   Load properties file information
 		 */
@@ -707,13 +708,6 @@ public class DSpotWizardPage1 extends WizardPage {
 		if(filterText.getText() == null 
 				|| filterText.getText().equalsIgnoreCase("null"))
 			filterText.setText("");
-		
-		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		IJavaProject theProject = null;
-		for(IProject pro : projects) {
-		if(pro.getLocation().toString().contains(dspotFile.projectPath)) theProject = new JavaProject(pro,null);
-}
-		if(theProject != null) wConf = new WizardConfiguration(theProject);
 		wizard.setConfigurationName(configCombo.getText());
 		wizard.refreshPageTwo();
 		wizard.refreshConf(wConf);
@@ -724,6 +718,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		} 
 		}
 		pageValidator.validatePage();
+		return true;
 	}
 	/**
 	 *  inner class to handle the field validation error messages

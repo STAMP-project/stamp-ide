@@ -67,17 +67,30 @@ public class WizardConfiguration {
 	private boolean[] isTest; // true for that source files containing @Test
 	private ArrayList<String> testCases = new ArrayList<String>(1);
 	private ArrayList<String> testMethods = new ArrayList<String>(1);
-	private boolean projectSelected = false;
+	private boolean canContinue;
 	private List<ILaunchConfiguration> configurations;
 	private int indexOfCurrentConfiguration = 0;
 	
 	
 	private DSpotMemory dSpotMemory = new DSpotMemory(getSeparator());
 
-	public WizardConfiguration() throws CoreException{
-		
+	public WizardConfiguration() throws CoreException{	
+		canContinue = false;
 		 jproject = obtainProject();  // obtain the project
+         create(jproject);
+	}
+	
+	public WizardConfiguration(IJavaProject jproject) throws CoreException {
+		 canContinue = false;
+         create(jproject);
+	}
+	private void create(IJavaProject jproject) throws CoreException {
+		
+		this.jproject = jproject;
+		
 		 Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		 sources = findSour();  // obtain the sources
+		 isTest = findTest(); // obtain the boolean array (value true for the sources that contain @Test)
 		 
 			if (jproject == null) { 
 				MessageDialog.openInformation(
@@ -89,8 +102,12 @@ public class WizardConfiguration {
 				shell,
 				 "Execute DSpot",
 				 "The selected project must be a maven project");
+			} else if(isTest == null){
+				MessageDialog.openError(shell,"Error", // TODO
+						"CodeBase/TestSources could not be determined. Please, build the project "
+						+ jproject.getProject().getName() + " and open this dialog again");
 			}else {
-		 projectSelected = true;
+		 canContinue = true;  // this means that we can open the wizard
 	
 		// obtain project's path
         IProject project = jproject.getProject(); // Convert to project
@@ -98,48 +115,15 @@ public class WizardConfiguration {
 	    projectPath = pa.toString();      // put it into a string
 	    DSpotPropertiesFile.getInstance().projectPath = projectPath;
 	    
-	    sources = findSour();  // obtain the sources
-	    
-	    isTest = findTest(); // obtain the boolean array (value true for the sources that contain @Test)
-	    
 	    this.configurations = obtainLaunchConfigurations();
-			}
-	} 
-	
-	public WizardConfiguration(IJavaProject jPro) throws CoreException {
+			}	
 		
-		 jproject = jPro;  // obtain the project
-		 Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		 
-			if (jproject == null) {
-				 MessageDialog.openInformation(
-				shell,
-				 "Execute DSpot",
-				 "Please, select a Java Project in the Package Explorer");
-			} else if(!jproject.getProject().hasNature("org.eclipse.m2e.core.maven2Nature")){ 
-				 MessageDialog.openError(
-				shell,
-				 "Execute DSpot",
-				 "The selected project must be a maven project");
-			}else {
-		 projectSelected = true;
-	
-		// obtain project's path
-       IProject project = jproject.getProject(); // Convert to project
-       IPath pa = project.getLocation();         // get it's absolute path
-	    projectPath = pa.toString();      // put it into a string
-	    
-	    sources = findSour();  // obtain the sources
-	    
-	    isTest = findTest(); // obtain the boolean array (value true for the sources that contain @Test)
-	    
-	    this.configurations = obtainLaunchConfigurations();
-			}
 	}
 	// getter methods
+	public boolean getCanContinue() { return canContinue; }
 
 	public boolean projectSelected() {
-		return projectSelected;
+		return canContinue;
 	}
 
 	/**
@@ -225,6 +209,8 @@ public class WizardConfiguration {
 		} catch (MalformedURLException | CoreException e) {
 			e.printStackTrace();
 			return false;
+		} catch (ClassNotFoundException e) {
+			return false; //  TODO
 		}
 	}
 
@@ -441,7 +427,11 @@ public class WizardConfiguration {
 						TheSource = TheSource.substring(0, In);
 					}
 					String qname = pName + "." + TheSource;
+					try {
 					HasTest = analisis(qname, classLoader); // calling analysis to know if this source has the @Test
+					} catch(ClassNotFoundException e) {
+						return null;
+					}
 					if (allowed) {
 						testList.add(new Boolean(HasTest));
 						allowed = false;
@@ -504,10 +494,10 @@ public class WizardConfiguration {
 	 * @param cl
 	 *            : classLoader of the class project
 	 * @return boolean, true if the source has a Test annotation else false
+	 * @throws ClassNotFoundException 
 	 */
-	private boolean analisis(String qname, URLClassLoader cl) {
+	private boolean analisis(String qname, URLClassLoader cl) throws ClassNotFoundException {
 		// name : Package.Class path : path of the .class file
-		try {
 			Class<?> cls = cl.loadClass(qname); // loading the name class
 
 			Method[] methods = cls.getDeclaredMethods(); // Array with the methods in the class
@@ -522,11 +512,6 @@ public class WizardConfiguration {
 			} // end of the i for
 				// cl.close();
 			return count;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
 	}
 
 	/**
