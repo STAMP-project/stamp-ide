@@ -185,16 +185,7 @@ public class DSpotWizardPage1 extends WizardPage {
 		configCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(configCombo.getText().equalsIgnoreCase("")) {
-					configCombo.setEnabled(false);
-					configurationField.getControl().setEnabled(true);
-					btNewConfig.setSelection(true);
-					((Text)configurationField.getControl()).setText("new_configuration");
-					return;
-				}
-				if(!loadConfigurations()) {
-					wizard.getWizardDialog().close();
-				}
+                  configurationComboSelected();
 			}
 		});
 		//createConfigurationComboValidator();  // this is to display an error message if no configuration is selected
@@ -517,16 +508,21 @@ public class DSpotWizardPage1 extends WizardPage {
 	        		text.setEnabled(true);
 	        		text.setText("Type_configuration_name");
 	        		configCombo.setText("");
-	        		//configurationComboField.validate();
 	        	} else {
 	        		text.setEnabled(false);
 	        		configCombo.setEnabled(true);
 	        		text.setText("");
                     configCombo.select(0);
+                    configurationComboSelected();
 	                pageValidator.validatePage();
 	        	}
 	        }
 });
+		
+		if(wConf.getLaunchConfigurations().size() == 0) {
+			 btNewConfig.setSelection(true);
+			 btNewConfig.setEnabled(false);
+		}
 	}
 	private void createProjectField(Composite composite) {
 		
@@ -725,6 +721,18 @@ public class DSpotWizardPage1 extends WizardPage {
 		}
 		pageValidator.validatePage();
 		return true;
+	}
+	private void configurationComboSelected() {
+		if(configCombo.getText().equalsIgnoreCase("")) {
+			configCombo.setEnabled(false);
+			configurationField.getControl().setEnabled(true);
+			btNewConfig.setSelection(true);
+			((Text)configurationField.getControl()).setText("new_configuration");
+			return;
+		}
+		if(!loadConfigurations()) {
+			wizard.getWizardDialog().close();
+		}
 	}
 	/**
 	 *  inner class to handle the field validation error messages
