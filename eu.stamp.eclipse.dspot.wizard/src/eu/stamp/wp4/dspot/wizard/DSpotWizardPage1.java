@@ -676,7 +676,9 @@ public class DSpotWizardPage1 extends WizardPage {
 	private boolean loadConfigurations() {
 		if(!configCombo.getText().isEmpty()) {
 		try {
-			wConf.setIndexOfCurrentConfiguration(configCombo.getSelectionIndex());	
+			int index = configCombo.getSelectionIndex();
+			wConf.setIndexOfCurrentConfiguration(index);
+			System.out.println(configCombo.getSelectionIndex());
 		    String projectName = wConf.getCurrentConfiguration().getAttribute(
 		    		DSpotPropertiesFile.PROJECT_NAME_KEY,"");
 			
@@ -685,7 +687,10 @@ public class DSpotWizardPage1 extends WizardPage {
 		for(IProject pro : projects) {
 		if(pro.getLocation().toString().contains(projectName)) theProject = new JavaProject(pro,null);
 }
-		if(theProject != null) wConf = new WizardConfiguration(theProject);
+		if(theProject != null) {
+			wConf = new WizardConfiguration(theProject);
+			wConf.setIndexOfCurrentConfiguration(index);
+		}
 		// check if tests are compiled
 		if(!wConf.getCanContinue()) return false;
 		/*

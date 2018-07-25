@@ -47,14 +47,12 @@ public class DSpotPropertiesFile {
 		} catch (CoreException e) { e.printStackTrace(); }
     	if(!string.isEmpty())if(string.contains(separator)){
     		String[] strings = string.split(separator);
-    		if(strings.length > 4) {
     		this.projectPath = strings[0];
     		this.src = strings[1];
     		this.testSrc = strings[2];
     		this.javaVersion = strings[3];
     		this.outputDirectory = strings[4];
-    		}
-    		if(strings.length == 6) this.filter = strings[5];
+    		if(strings.length > 5) this.filter = strings[5];
     		else this.filter = "";
     	}
     }

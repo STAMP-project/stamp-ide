@@ -89,8 +89,6 @@ public class WizardConfiguration {
 		this.jproject = jproject;
 		
 		 Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		 sources = findSour();  // obtain the sources
-		 isTest = findTest(); // obtain the boolean array (value true for the sources that contain @Test)
 		 
 			if (jproject == null) { 
 				MessageDialog.openInformation(
@@ -102,7 +100,12 @@ public class WizardConfiguration {
 				shell,
 				 "Execute DSpot",
 				 "The selected project must be a maven project");
-			} else if(isTest == null){
+			} 
+			
+			sources = findSour();  // obtain the sources
+			isTest = findTest(); // obtain the boolean array (value true for the sources that contain @Test)
+			 
+			if(isTest == null){
 				MessageDialog.openError(shell,"Error", // TODO
 						"CodeBase/TestSources could not be determined. Please, build the project "
 						+ jproject.getProject().getName() + " and open this dialog again");
@@ -250,7 +253,8 @@ public class WizardConfiguration {
 	 * @return the ILaunchConfiguration to use
 	 */
 	public ILaunchConfiguration getCurrentConfiguration() {
-		return configurations.get(indexOfCurrentConfiguration);
+		ILaunchConfiguration confi = configurations.get(indexOfCurrentConfiguration);
+		return confi;
 	}
 
 	/**
