@@ -522,7 +522,8 @@ public class DSpotWizardPage1 extends WizardPage {
 	        		text.setEnabled(false);
 	        		configCombo.setEnabled(true);
 	        		text.setText("");
-	        		//configurationComboField.validate();
+                    configCombo.select(0);
+	                pageValidator.validatePage();
 	        	}
 	        }
 });

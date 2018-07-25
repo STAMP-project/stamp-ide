@@ -21,7 +21,7 @@ public class DSpotPropertiesFile {
 	private File file;
 	
 	private DSpotPropertiesFile() {
-		separator = ":";
+		separator = "*";
 		key = "dspotFileString";
 		file = null;
 	}
