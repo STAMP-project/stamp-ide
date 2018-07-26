@@ -22,7 +22,7 @@ import eu.stamp.wp4.dspot.view.tree.DSpotCompleteReportTree;
 
 public class DSpotView extends ViewPart {
 	
-	public static final String ID = "eu.stamp.wp4.dspot.view.DSpotView";
+	public static final String ID = "eu.stamp.wp4.dspot.wizard.view";
     
 	private TabFolder tabFolder;
 	

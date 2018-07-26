@@ -39,6 +39,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.IConsoleConstants;
 import org.osgi.framework.Bundle;
 
 import eu.stamp.wp4.dspot.view.DSpotView;
@@ -170,7 +171,10 @@ public class DSpotEclipseLaunchConfigurationDelegate extends JavaLaunchDelegate 
 					try {  // getting the DSpotView part
 						final DSpotView viw = (DSpotView) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 								.getActivePage().showView("eu.stamp.wp4.dspot.wizard.view");
-						 viw.parseJSON(outputDirectory); // TODO
+						 viw.parseJSON(outputDirectory);
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+						.showView(DSpotView.ID);
+
 					} catch (PartInitException | IOException e) { e.printStackTrace(); }
 				}
 			});
