@@ -18,6 +18,8 @@ import java.util.Date;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -50,9 +52,10 @@ protected IStatus run(IProgressMonitor monitor) {
  		//long start = System.currentTimeMillis();
  		executor.execute(new ExecutionEvent());
 	while(!executor.isFinished());  // wait until DSpod finish
+	conf.getPro().getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
  	//long time = System.currentTimeMillis() - start;
  	//System.out.println(time);
- 	} catch (ExecutionException e) {
+ 	} catch (ExecutionException | CoreException e) {
  		e.printStackTrace();
  	}
 	return Status.OK_STATUS;

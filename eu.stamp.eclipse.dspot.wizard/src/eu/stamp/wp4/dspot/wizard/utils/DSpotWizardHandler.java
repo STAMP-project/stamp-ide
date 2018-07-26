@@ -37,7 +37,9 @@ public class DSpotWizardHandler extends AbstractHandler {
 			e.printStackTrace();
 		}   // creating the object with the project's information
     	if(wConf.projectSelected()) {
-        WizardDialog wizDiag = new WizardDialog(HandlerUtil.getActiveShell(event),new DSpotWizard(wConf));
+    	DSpotWizard wizard = new DSpotWizard(wConf);
+        WizardDialog wizDiag = new WizardDialog(HandlerUtil.getActiveShell(event),wizard);
+        wizard.setWizardDialog(wizDiag);
         wizDiag.open();   // open the wizard
     	}
     	return null;

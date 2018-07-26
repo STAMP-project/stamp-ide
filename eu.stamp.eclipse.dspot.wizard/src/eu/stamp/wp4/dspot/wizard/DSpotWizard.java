@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -49,6 +50,7 @@ public class DSpotWizard extends Wizard{
 	protected DSpotWizardPage2 two;
 	private WizardConfiguration wConf;
 	private String configurationName = "DSpot";
+	private WizardDialog wizardDialog;
 	
 	
 	// [0] Dspot jar path, [1] project path, [2] number of iterations i, [3] -t test class, [4] -a Method
@@ -91,7 +93,12 @@ public class DSpotWizard extends Wizard{
 	}
 	
 	@Override
-	public boolean performFinish() {	
+	public boolean performFinish() { return performFinish(true); }
+	
+	public boolean performFinish(boolean execute) {
+		
+		if(!execute) return true;
+		
 		DSpotProperties.LAUNCH_CONF_NAME = configurationName;
 		if(System.getenv("MAVEN_HOME") == null) { // an error message if MAVEN_HOME is not set
 			MessageDialog.openError(shell, "Maven Home not set","Error the enviroment variable MAVEN_HOME is required, please set it in your computer or in the text in advanced options in page 2");
@@ -130,6 +137,11 @@ public class DSpotWizard extends Wizard{
 	public void setResetadv() {
 		two.setResetAdvancedOptions(true);
 	}
+	
+	public void setWizardDialog(WizardDialog wizardDialog) {
+		this.wizardDialog = wizardDialog;
+	}
+	public WizardDialog getWizardDialog() { return wizardDialog; }
 }
 	
 
