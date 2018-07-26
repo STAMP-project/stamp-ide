@@ -71,7 +71,6 @@ public class WizardConfiguration {
 	private List<ILaunchConfiguration> configurations;
 	private int indexOfCurrentConfiguration = 0;
 	
-	
 	private DSpotMemory dSpotMemory = new DSpotMemory(getSeparator());
 
 	public WizardConfiguration() throws CoreException{	
@@ -95,11 +94,13 @@ public class WizardConfiguration {
 				shell,
 				 "Execute DSpot",
 				 "Please, select a Java Project in the Package Explorer");
+				  return;
 			} else if(!jproject.getProject().hasNature("org.eclipse.m2e.core.maven2Nature")){ 
 				 MessageDialog.openError(
 				shell,
 				 "Execute DSpot",
 				 "The selected project must be a maven project");
+				 return;
 			} 
 			
 			sources = findSour();  // obtain the sources
@@ -109,7 +110,7 @@ public class WizardConfiguration {
 				MessageDialog.openError(shell,"Error", // TODO
 						"CodeBase/TestSources could not be determined. Please, build the project "
 						+ jproject.getProject().getName() + " and open this dialog again");
-			}else {
+			} else {
 		 canContinue = true;  // this means that we can open the wizard
 	
 		// obtain project's path
