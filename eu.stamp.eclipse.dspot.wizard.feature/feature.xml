@@ -18,7 +18,7 @@
    </license>
 
    <plugin
-         id="eu.stamp.wp4.dspot.wizard"
+         id="eu.stamp.eclipse.dspot.wizard"
          download-size="0"
          install-size="0"
          version="0.0.0"

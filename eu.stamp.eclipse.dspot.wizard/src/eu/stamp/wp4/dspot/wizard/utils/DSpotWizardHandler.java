@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	Ricardo Jose Tejada Garcia (Atos) - main developer
- * 	Jesús Gorroñogoitia (Atos) - architect
+ * Ricardo Jose Tejada Garcia (Atos) - main developer
+ * Jesús Gorroñogoitia (Atos) - architect
  * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
  *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard.utils;
@@ -26,23 +26,23 @@ import eu.stamp.wp4.dspot.wizard.DSpotWizard;
  *
  */
 public class DSpotWizardHandler extends AbstractHandler {
-	
-	private WizardConfiguration wConf;  // instance of the class with the project's information 
+
+private WizardConfiguration wConf;  // instance of the class with the project's information 
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-    	try {
-			wConf = new WizardConfiguration();
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}   // creating the object with the project's information
-    	if(wConf.projectSelected()) {
-    	DSpotWizard wizard = new DSpotWizard(wConf);
+    try {
+wConf = new WizardConfiguration(); 
+} catch (CoreException e) {
+e.printStackTrace();
+}   // creating the object with the project's information
+    if(wConf.projectSelected()) {
+    DSpotWizard wizard = new DSpotWizard(wConf);
         WizardDialog wizDiag = new WizardDialog(HandlerUtil.getActiveShell(event),wizard);
         wizard.setWizardDialog(wizDiag);
         wizDiag.open();   // open the wizard
-    	}
-    	return null;
+    }
+    return null;
     }
 
 }

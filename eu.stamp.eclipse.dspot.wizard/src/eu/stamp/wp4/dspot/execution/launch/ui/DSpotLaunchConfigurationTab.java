@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	Ricardo Jose Tejada Garcia (Atos) - main developer
- * 	Jesús Gorroñogoitia (Atos) - architect
+ * Ricardo Jose Tejada Garcia (Atos) - main developer
+ * Jesús Gorroñogoitia (Atos) - architect
  * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
  *******************************************************************************/
 package eu.stamp.wp4.dspot.execution.launch.ui;
@@ -55,164 +55,164 @@ import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 @SuppressWarnings("restriction")
 public class DSpotLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
-	private IJavaProject javaProject;
-	private String parameters;
-	private Text projectText;
-	private Text parametersText;
-	
-	@Override
-	public void createControl(Composite parent) {
+private IJavaProject javaProject;
+private String parameters;
+private Text projectText;
+private Text parametersText; 
 
-		Composite container = new Group(parent,SWT.BORDER);
-		setControl(container);
-		
-		GridLayoutFactory.swtDefaults().numColumns(3).applyTo(container);
-		
-		Label projectLabel = new Label(container,SWT.NONE);
-		projectLabel.setText("Project : ");
-		GridDataFactory.swtDefaults().applyTo(projectLabel);
-		
-		projectText = new Text(container,SWT.BORDER);
-		projectText.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent e) {}
+@Override
+public void createControl(Composite parent) {
 
-			@Override
-			public void keyReleased(KeyEvent e) {
-				parameters = projectText.getText();
-			}	
-		});
-		projectText.addSegmentListener(new SegmentListener() {
-			@Override
-			public void getSegments(SegmentEvent event) {
-				parameters = projectText.getText();
-			}	
-		});
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(projectText);
-		
-		Button projectButton = new Button(container,SWT.PUSH);
-		projectButton.setText("Browse");
-		GridDataFactory.swtDefaults().applyTo(projectButton);
-		projectButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				showProjectDialog();
-			}
-		});  // end of the selection listener
-		
-		Label parametersLabel = new Label(container,SWT.NONE);
-		parametersLabel.setText("Dspot execution parameters : ");
+Composite container = new Group(parent,SWT.BORDER);
+setControl(container);
+
+GridLayoutFactory.swtDefaults().numColumns(3).applyTo(container);
+
+Label projectLabel = new Label(container,SWT.NONE);
+projectLabel.setText("Project : ");
+GridDataFactory.swtDefaults().applyTo(projectLabel);
+
+projectText = new Text(container,SWT.BORDER);
+projectText.addKeyListener(new KeyListener() {
+@Override
+public void keyPressed(KeyEvent e) {}
+
+@Override
+public void keyReleased(KeyEvent e) {
+parameters = projectText.getText();
+}
+});
+projectText.addSegmentListener(new SegmentListener() {
+@Override
+public void getSegments(SegmentEvent event) {
+parameters = projectText.getText();
+}
+});
+GridDataFactory.fillDefaults().grab(true, false).applyTo(projectText);
+
+Button projectButton = new Button(container,SWT.PUSH);
+projectButton.setText("Browse");
+GridDataFactory.swtDefaults().applyTo(projectButton);
+projectButton.addSelectionListener(new SelectionAdapter() {
+@Override
+public void widgetSelected(SelectionEvent e) {
+showProjectDialog();
+}
+});  // end of the selection listener
+
+Label parametersLabel = new Label(container,SWT.NONE);
+parametersLabel.setText("Dspot execution parameters : ");
         GridDataFactory.swtDefaults().applyTo(parametersLabel);
-		
-        parametersText = new Text(container,SWT.BORDER);		
-		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(parametersText);
+
+        parametersText = new Text(container,SWT.BORDER);
+GridDataFactory.fillDefaults().span(2, 1).grab(true, false).applyTo(parametersText);
         parametersText.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent e) {		
-			}
-			@Override
-			public void keyReleased(KeyEvent e) {	
-				LaunchConfigurationDialog.getCurrentlyVisibleLaunchConfigurationDialog().updateButtons();
-			}	
+@Override
+public void keyPressed(KeyEvent e) {
+}
+@Override
+public void keyReleased(KeyEvent e) {
+LaunchConfigurationDialog.getCurrentlyVisibleLaunchConfigurationDialog().updateButtons();
+}
         });
-	}
+}
 
 
 
-	@Override
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		
-	}
+@Override
+public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+
+}
     @Override
     public boolean canSave() {
-    	return true;
+    return true;
     }
     @Override
     public boolean isDirty() {
-    	return true;
+    return true;
     }
-	@Override
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {	
-		
-		String arguments = parametersText.getText();  // obtain the string with DSpot arguments
+@Override
+public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 
-	      if(javaProject != null) {
+String arguments = parametersText.getText();  // obtain the string with DSpot arguments
+
+      if(javaProject != null) {
      configuration.setAttribute(
-		IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, 
-		javaProject.getElementName());
-		  }
-		  if(parameters != null && !parameters.isEmpty()) {
+IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, 
+javaProject.getElementName());
+  }
+  if(parameters != null && !parameters.isEmpty()) {
      configuration.setAttribute(
-		    IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
-		  }
-	}
+    IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
+  }
+}
 
-	@Override
-	public String getName() {
-		return " DSpot launch configuration tab ";
-	}
+@Override
+public String getName() {
+return " DSpot launch configuration tab ";
+}
 
-	@Override
-	public void initializeFrom(ILaunchConfiguration configuration) {
-		try {
-			projectText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""));
-			parametersText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""));
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-	}
-	/**
-	 * this method creates and opens the project selection dialog and handles the user selection
-	 */
-	private void showProjectDialog() {
-		
-		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class,IProject.class};
-		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,true);
-		ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
-			@Override
-			public boolean select(Viewer viewer,Object parentElement, Object element) {
-				if(element instanceof IProject) {
-					try {
-						return ((IProject)element).hasNature(DSpotWizardConstants.MAVEN_NATURE);
-					} catch (CoreException e) {
-						e.printStackTrace();
-					}
-				}
-				if(element instanceof IJavaProject) {
-					try {
-						return ((IJavaProject)element).getProject().hasNature(DSpotWizardConstants.MAVEN_NATURE);
-					} catch (CoreException e) {
-						e.printStackTrace();
-					}
-				}
-				return false;
-			}
-		};	
-		
-		  IWorkspaceRoot fWorkspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
-	        
-	        StandardJavaElementContentProvider provider= new StandardJavaElementContentProvider();
-	        ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
-	        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-	        ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(shell, labelProvider, provider);
-	        dialog.setValidator(validator);
-	        dialog.setComparator(new JavaElementComparator());
-	        dialog.setTitle(" Select a project ");
-	        dialog.setMessage(" Select a project ");
-	        dialog.setInput(JavaCore.create(fWorkspaceRoot));
-	        dialog.addFilter(filter);
-	        dialog.setHelpAvailable(false);
-	        
+@Override
+public void initializeFrom(ILaunchConfiguration configuration) {
+try {
+projectText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""));
+parametersText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""));
+} catch (CoreException e) {
+e.printStackTrace();
+}
+}
+/**
+ * this method creates and opens the project selection dialog and handles the user selection
+ */
+private void showProjectDialog() {
 
-	        if(dialog.open() == Window.OK) {
-	            Object[] results = dialog.getResult();
-	            for(Object ob : results) {
-	            	if(ob instanceof IJavaProject) { 
-	             javaProject =  (IJavaProject) ob;
-	             projectText.setText(javaProject.getElementName());}
-	            }
-	        }
-		
-	}
+Class<?>[] acceptedClasses = new Class[] {IJavaProject.class,IProject.class};
+TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,true);
+ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
+@Override
+public boolean select(Viewer viewer,Object parentElement, Object element) {
+if(element instanceof IProject) {
+try {
+return ((IProject)element).hasNature(DSpotWizardConstants.MAVEN_NATURE);
+} catch (CoreException e) {
+e.printStackTrace();
+}
+}
+if(element instanceof IJavaProject) {
+try {
+return ((IJavaProject)element).getProject().hasNature(DSpotWizardConstants.MAVEN_NATURE);
+} catch (CoreException e) {
+e.printStackTrace();
+}
+}
+return false;
+}
+};
+
+  IWorkspaceRoot fWorkspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
+        
+        StandardJavaElementContentProvider provider= new StandardJavaElementContentProvider();
+        ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
+        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(shell, labelProvider, provider);
+        dialog.setValidator(validator);
+        dialog.setComparator(new JavaElementComparator());
+        dialog.setTitle(" Select a project ");
+        dialog.setMessage(" Select a project ");
+        dialog.setInput(JavaCore.create(fWorkspaceRoot));
+        dialog.addFilter(filter);
+        dialog.setHelpAvailable(false);
+        
+
+        if(dialog.open() == Window.OK) {
+            Object[] results = dialog.getResult();
+            for(Object ob : results) {
+            if(ob instanceof IJavaProject) { 
+             javaProject =  (IJavaProject) ob;
+             projectText.setText(javaProject.getElementName());}
+            }
+        }
+
+}
 
 }

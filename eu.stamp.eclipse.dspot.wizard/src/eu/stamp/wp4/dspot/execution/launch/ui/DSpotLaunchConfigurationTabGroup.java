@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	Ricardo Jose Tejada Garcia (Atos) - main developer
- * 	Jesús Gorroñogoitia (Atos) - architect
+ * Ricardo Jose Tejada Garcia (Atos) - main developer
+ * Jesús Gorroñogoitia (Atos) - architect
  * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
  *******************************************************************************/
 package eu.stamp.wp4.dspot.execution.launch.ui;
@@ -19,12 +19,12 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 public class DSpotLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	public DSpotLaunchConfigurationTabGroup() {
-	}
+public DSpotLaunchConfigurationTabGroup() { 
+}
 
-	@Override
-	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
+@Override
+public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 setTabs(new ILaunchConfigurationTab[] {new DSpotLaunchConfigurationTab(), new CommonTab()});
-	}
+}
 
 }
