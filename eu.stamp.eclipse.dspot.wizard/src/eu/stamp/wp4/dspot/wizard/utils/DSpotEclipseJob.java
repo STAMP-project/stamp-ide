@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	Ricardo Jose Tejada Garcia (Atos) - main developer
- * 	Jesús Gorroñogoitia (Atos) - architect
+ * Ricardo Jose Tejada Garcia (Atos) - main developer
+ * Jesús Gorroñogoitia (Atos) - architect
  * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
  *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard.utils;
@@ -35,30 +35,30 @@ public class DSpotEclipseJob extends Job {
 
 private WizardConfiguration conf;
 private String Orders;
-	
+
 public DSpotEclipseJob(String path,
-		WizardConfiguration conf) {
+WizardConfiguration conf) {
    super("DSpot working");
 
-    this.Orders = " -p " + path +" "+ conf.getDSpotMemory().getAsString();
-	this.conf = conf;
+    this.Orders = " -p " + path +" "+ conf.getDSpotMemory().getAsString(); 
+this.conf = conf;
 } // end of the constructor
 
 @Override
 protected IStatus run(IProgressMonitor monitor) {
-	 
+ 
      DSpotExecutionHandler executor = new DSpotExecutionHandler(conf,Orders);
- 	try {	
- 		//long start = System.currentTimeMillis();
- 		executor.execute(new ExecutionEvent());
-	while(!executor.isFinished());  // wait until DSpod finish
-	conf.getPro().getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
- 	//long time = System.currentTimeMillis() - start;
- 	//System.out.println(time);
- 	} catch (ExecutionException | CoreException e) {
- 		e.printStackTrace();
- 	}
-	return Status.OK_STATUS;
+ try {
+ //long start = System.currentTimeMillis();
+ executor.execute(new ExecutionEvent());
+while(!executor.isFinished());  // wait until DSpod finish
+conf.getPro().getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+ //long time = System.currentTimeMillis() - start;
+ //System.out.println(time);
+ } catch (ExecutionException | CoreException e) {
+ e.printStackTrace();
+ }
+return Status.OK_STATUS;
 } // end of run
 
 }

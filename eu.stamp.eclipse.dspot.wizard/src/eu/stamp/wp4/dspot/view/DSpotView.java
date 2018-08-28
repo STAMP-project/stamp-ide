@@ -21,41 +21,41 @@ import eu.stamp.wp4.dspot.view.tree.DSpotCompleteReportTree;
 
 
 public class DSpotView extends ViewPart {
-	
-	public static final String ID = "eu.stamp.wp4.dspot.wizard.view";
+
+public static final String ID = "eu.stamp.wp4.dspot.wizard.view"; 
     
-	private TabFolder tabFolder;
-	
-	private List<Tree> trees;
+private TabFolder tabFolder;
 
-	@Inject IWorkbench workbench;
+private List<Tree> trees;
 
-	@Override
-	public void createPartControl(Composite parent) {
-		
-		GridLayoutFactory.fillDefaults().applyTo(parent);
-		tabFolder = new TabFolder(parent,SWT.NONE);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(tabFolder);
-	}
+@Inject IWorkbench workbench;
 
-	@Override
-	public void setFocus() {}
+@Override
+public void createPartControl(Composite parent) {
+
+GridLayoutFactory.fillDefaults().applyTo(parent);
+tabFolder = new TabFolder(parent,SWT.NONE);
+GridDataFactory.fillDefaults().grab(true, true).applyTo(tabFolder);
+}
+
+@Override
+public void setFocus() {}
     
-	public void parseJSON(String jsonFolderPath) throws IOException {
-		
-		if(tabFolder.getItemCount() > 0)if( !tabFolder.getItem(0).isDisposed()) {
-			TabItem[] items = tabFolder.getItems();
-			for(TabItem item : items) item.dispose();
-		}
-		
-		if(trees == null) trees = new LinkedList<Tree>();
-		if(!trees.isEmpty())if(!trees.get(0).isDisposed())
-			for(Tree tree : trees) tree.removeAll();
-		DSpotCompleteReportTree completeReport = new DSpotCompleteReportTree(
-				tabFolder,jsonFolderPath,trees);
-		completeReport.createTree();
-		trees = completeReport.getTrees();
+public void parseJSON(String jsonFolderPath) throws IOException {
 
-	}
-	
+if(tabFolder.getItemCount() > 0)if( !tabFolder.getItem(0).isDisposed()) {
+TabItem[] items = tabFolder.getItems();
+for(TabItem item : items) item.dispose();
+}
+
+if(trees == null) trees = new LinkedList<Tree>();
+if(!trees.isEmpty())if(!trees.get(0).isDisposed())
+for(Tree tree : trees) tree.removeAll();
+DSpotCompleteReportTree completeReport = new DSpotCompleteReportTree(
+tabFolder,jsonFolderPath,trees);
+completeReport.createTree();
+trees = completeReport.getTrees();
+
+}
+
 }
