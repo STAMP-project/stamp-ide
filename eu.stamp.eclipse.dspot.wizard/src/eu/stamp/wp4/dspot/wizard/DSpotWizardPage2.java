@@ -438,7 +438,6 @@ e.printStackTrace();
    for(IJavaElement child : children) {
    if(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY)
    .contains(child.getElementName().replaceAll(".java", ""))) testSelection.add(child);
-
    }} else { executionClassesText.setText("");}
 
    ArrayList<Integer> indices = new ArrayList<Integer>(1);
