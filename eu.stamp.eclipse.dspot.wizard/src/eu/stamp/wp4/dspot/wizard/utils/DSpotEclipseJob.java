@@ -24,8 +24,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 import eu.stamp.wp4.dspot.execution.handlers.DSpotExecutionHandler;
+import eu.stamp.wp4.dspot.view.DSpotView;
 
 /**
  *  This class describes the background invocation of Dspot 
@@ -58,6 +65,19 @@ conf.getPro().getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
  } catch (ExecutionException | CoreException e) {
  e.printStackTrace();
  }
+ 
+ Display.getDefault().asyncExec(new Runnable() {
+	@Override
+	public void run() {
+ try {		
+	PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+	.showView(DSpotView.ID);
+} catch (PartInitException e) {
+	e.printStackTrace();
+}
+		}	 
+	 });
+
 return Status.OK_STATUS;
 } // end of run
 

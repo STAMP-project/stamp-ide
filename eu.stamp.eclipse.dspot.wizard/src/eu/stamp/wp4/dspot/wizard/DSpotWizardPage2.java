@@ -438,7 +438,7 @@ e.printStackTrace();
    for(IJavaElement child : children) {
    if(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY)
    .contains(child.getElementName().replaceAll(".java", ""))) testSelection.add(child);
-   }}
+   }} else { executionClassesText.setText("");}
 
    ArrayList<Integer> indices = new ArrayList<Integer>(1);
    for(int i = 0; i < amplifiers.length; i++) {
@@ -469,6 +469,7 @@ if(argument.contains(DSpotMemory.CRITERION_KEY)) {
         casesToTest = dSpotMemory.getDSpotValue(DSpotMemory.TEST_CASES_KEY);
         String[] allCases = wConf.getTestMethods();
         ArrayList<String> casesList = new ArrayList<String>(1);
+        if(argument.contains(DSpotMemory.TEST_CLASSES_KEY))
         for(String sr : allCases) {
         if(casesToTest.contains(sr)) casesList.add(sr);
         }
