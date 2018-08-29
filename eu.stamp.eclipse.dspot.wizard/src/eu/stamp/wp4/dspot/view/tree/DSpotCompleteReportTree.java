@@ -2,7 +2,9 @@ package eu.stamp.wp4.dspot.view.tree;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,16 +48,22 @@ File file = new File(jsonFolderPath);  // the output folder
 System.out.println(file.exists()); // TODO
 System.out.println(file.isDirectory());
 // get the files
-     ArrayList<String> fileList = new ArrayList<String>(Arrays.asList(file.list()));
-       /* // only JSON
-    for(int i = 0; i < fileList.size(); i++)if(!fileList.get(i).contains(".json")) {
-    fileList.remove(i); i--;
-    }*/
+     FileFilter filter = new FileFilter() {
+    	 public boolean accept(File file) {
+    		 if(file.isDirectory()) return false;
+    		 if(file.getName().endsWith(".json")) return true;
+    		 if(file.getName().contains("clover") 
+    				 && file.getName().endsWith(".txt")) return true;
+    		 return false;
+    	 }
+     }; 
+     ArrayList<File> fileList = new ArrayList<File>(Arrays.asList(file.listFiles(filter)));
+
 // look for the time file and parseIt it
     BufferedReader json = null;
-    String timeFile = "";
+    File timeFile = null;
 for(int i = 0; i < fileList.size(); i++) {
-json = new BufferedReader(new FileReader(new File(jsonFolderPath + fileList.get(i))));
+json = new BufferedReader(new FileReader(fileList.get(i)));
 json.readLine();
 if(json.readLine().contains("classTimes")) {
 timeFile = fileList.get(i);
@@ -64,37 +72,36 @@ break;
 }
 }
 // parse time json
-File myFile = new File(jsonFolderPath+timeFile);
+//File myFile = new File(jsonFolderPath+timeFile);
 Gson gson = new Gson();
-if(myFile.exists() && !timeFile.isEmpty()) {
-    json = new BufferedReader(new FileReader(myFile));
+if(timeFile != null)if(timeFile.exists()) {
+    json = new BufferedReader(new FileReader(timeFile));
     this.time = gson.fromJson(json, DSpotTimeJSON.class);}
     
     // generate the partial report trees
-    for(String name : fileList) createDSpotReportTree(jsonFolderPath,name,gson);
+    for(File f : fileList) createDSpotReportTree(f,gson);
 }
 
-private void createDSpotReportTree(String folder,String file,Gson gson) 
+private void createDSpotReportTree(File file,Gson gson) 
 throws IOException {
 
-if(!file.contains(".json") && !file.contains("clover")) return;
+//if(!file.contains(".json") && !file.contains("clover")) return;
 
-if(file.contains("clover")) {
-	partialReportTrees.add(new CloverCoverageReportsTree(
-			new File(folder + file)));
+if(file.getName().contains("clover")) {
+	partialReportTrees.add(new CloverCoverageReportsTree(file));
 	return;
 }
 
-BufferedReader json = new BufferedReader(new FileReader(new File(folder + file)));
+BufferedReader json = new BufferedReader(new FileReader(file));
 DSpotTestClassJSON info = gson.fromJson(json, DSpotTestClassJSON.class);
 
-if(file.contains("jacoco")) {
-File txtReport = new File(folder);
+if(file.getName().contains("jacoco")) {
+File txtReport = file.getParentFile();
 String[] names = txtReport.list();
 // find the jacoco txt report
 for(String name : names)if(name.contains(info.name) &&
 name.contains("report.txt") && name.contains("jacoco")) {
-txtReport = new File(folder + name); break;
+txtReport = new File(txtReport.getAbsolutePath()+ "/" + name); break;
 }
 // read the jacoco txt report to find the number of amplified tests
 int nbAmplifiedTest = 0;
