@@ -433,11 +433,14 @@ e.printStackTrace();
    
    if(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY) != null) {
    executionClassesText.setText(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY));
-   IJavaElement[] children = wConf.getFinalChildren(wConf.getPro());
+  
+   java.util.List<String> testNames = wConf.getLocator().getTestsNames();
+   
+   
    testSelection = new ArrayList<Object>(1);
-   for(IJavaElement child : children) {
+   for(String testName : testNames) {
    if(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY)
-   .contains(child.getElementName().replaceAll(".java", ""))) testSelection.add(child);
+   .contains(testName)) testSelection.add(testName);
    }} else { executionClassesText.setText("");}
 
    ArrayList<Integer> indices = new ArrayList<Integer>(1);

@@ -47,6 +47,7 @@ import org.eclipse.ui.internal.Workbench;
 import org.junit.Test;
 
 import eu.stamp.eclipse.dspot.launch.configuration.DSpotPropertiesFile;
+import eu.stamp.eclipse.dspot.test.detection.DSpotPluginSourcesLocator;
 import eu.stamp.wp4.dspot.execution.launch.DSpotProperties;
 
 @SuppressWarnings("restriction")
@@ -62,16 +63,21 @@ public class WizardConfiguration {
 
 private IJavaProject jproject; // the project to test 
 private String projectPath;
+
 private IWorkbenchWindow activeWindow;
-private String[] sources; // the files with code in the project to test
-private boolean[] isTest; // true for that source files containing @Test
+
+
 private ArrayList<String> testCases = new ArrayList<String>(1);
 private ArrayList<String> testMethods = new ArrayList<String>(1);
+
 private boolean canContinue;
+
 private List<ILaunchConfiguration> configurations;
 private int indexOfCurrentConfiguration = 0;
 
 private DSpotMemory dSpotMemory = new DSpotMemory(getSeparator());
+
+private DSpotPluginSourcesLocator locator;
 
 public WizardConfiguration() throws CoreException{
 canContinue = false;
@@ -103,15 +109,17 @@ shell,
  return;
 } 
 
-sources = findSour();  // obtain the sources
-isTest = findTest(); // obtain the boolean array (value true for the sources that contain @Test)
- 
+// TODO Experiment
+locator = new DSpotPluginSourcesLocator();
+locator.inspectProject(jproject);
+
+ /*
 if(isTest == null){
 MessageDialog.openError(shell,"Error", // TODO
 "CodeBase/TestSources could not be determined. Please, build the project "
 + jproject.getProject().getName() + " and open this dialog again");
 } else {
- canContinue = true;  // this means that we can open the wizard
+ canContinue = true;  // this means that we can open the wizard*/
 
 // obtain project's path
         IProject project = jproject.getProject(); // Convert to project
@@ -120,16 +128,21 @@ MessageDialog.openError(shell,"Error", // TODO
     DSpotPropertiesFile.getInstance().projectPath = projectPath;
     
     this.configurations = obtainLaunchConfigurations();
-}
-
+//}
 }
 // getter methods
 public boolean getCanContinue() { return canContinue; }
 
-public boolean projectSelected() {
-return canContinue;
-}
+public boolean projectSelected() { return canContinue; } // TODO duplicity
 
+public void setDSpotMemory(DSpotMemory dSpotMemory) { 
+	this.dSpotMemory = dSpotMemory; }
+
+public DSpotMemory getDSpotMemory() { return dSpotMemory; }
+/**
+ * @return the object that locates sources and tests
+ */
+ public DSpotPluginSourcesLocator getLocator() { return locator; }
 /**
  * @return the selected project
  */
@@ -142,22 +155,6 @@ return jproject;
  */
 public String getProjectPath() {
 return projectPath;
-}
-
-/**
- * @return a String array containing the names of the source files in the
- *         project
- */
-public String[] getSources() {
-return sources;
-}
-
-/**
- * @return a boolean array containing true in the positions of the test classes
- *         of the array obtain with getSources()
- */
-public boolean[] getIsTest() {
-return isTest;
 }
 
 /**
@@ -202,11 +199,12 @@ return ";";
 return ":";
 }
 
-/**
+/*
  * @param qname
  *            : complete qualified name of a class
  * @return true if the class contains a test annotation
  */
+/*
 public boolean lookForTest(String qname) {
 try {
 return analisis(qname, getProjectClassLoader(jproject));
@@ -216,7 +214,7 @@ return false;
 } catch (ClassNotFoundException e) {
 return false; //  TODO
 }
-}
+}*/
 
 /**
  * @param partOfTheName
@@ -226,6 +224,7 @@ return false; //  TODO
  *         whose name contains the given string
  * @throws JavaModelException
  */
+/*
 public String getqName(String partOfTheName) throws JavaModelException {
 IPackageFragment[] packs = jproject.getPackageFragments(); // An array with the packages in the project
 IPackageFragment p;
@@ -249,7 +248,7 @@ return qname;
 }
 return null;
 }
-
+*/
 /**
  * @return the ILaunchConfiguration to use
  */
@@ -331,6 +330,7 @@ return null;
  * @return an String array with the paths of the source files (relatives to the
  *         project)
  */
+/*
 private String[] findSour() {
 
 ArrayList<String> MyS = new ArrayList<String>(1);
@@ -369,6 +369,7 @@ return MyS.toArray(new String[MyS.size()]);
  * @return an array with all the final files without taking into consideration
  *         the sub-folder/s they belong to
  */
+/*
 public IJavaElement[] getFinalChildren(IParent p) {
 ArrayList<IJavaElement> myJEList = new ArrayList<IJavaElement>(1);
 try {
@@ -407,6 +408,7 @@ this.dSpotMemory = dSpotMemory;
  * @throws JavaModelException,
  *             MalformedURLException, CoreException
  */
+/*
 private boolean[] findTest() {
 
 // @Test sources
@@ -414,9 +416,8 @@ ArrayList<Boolean> testList = new ArrayList<Boolean>(1);
 
 try {
 URLClassLoader classLoader = getProjectClassLoader(jproject);
-
-// the path of the folder with the .class files
 IPackageFragment[] packs = jproject.getPackageFragments(); // An array with the packages in the project
+// the path of the folder with the .class files
 
 IPackageFragment p;
 for (int i = 0; i < packs.length; i++) { // we look the compilation units in each package
@@ -427,15 +428,16 @@ IJavaElement[] Com = p.getCompilationUnits(); // the array with the compilation 
 String pName = p.getElementName(); // name = Package.Class
 for (IJavaElement myJ : Com) { // we look all the sources in the package p
 String TheSource = myJ.getElementName();
-int In = TheSource.indexOf('.'); // we remove the .Java
+//System.out.println(TheSource);
+int In = TheSource.indexOf('.'); // out.println(we remove the .Java
 if (In > 0) {
 TheSource = TheSource.substring(0, In);
 }
 String qname = pName + "." + TheSource;
 try {
 HasTest = analisis(qname, classLoader); // calling analysis to know if this source has the @Test
-} catch(ClassNotFoundException e) {
-return null;
+} catch(ClassNotFoundException e) {// TODO
+testList.add(new Boolean(false));
 }
 if (allowed) {
 testList.add(new Boolean(HasTest));
@@ -458,15 +460,36 @@ e.printStackTrace();
 } catch (CoreException e) {
 e.printStackTrace();
 }
-
+boolean noTest = true;
 boolean[] isTest = new boolean[testList.size()];
 for (int i = 0; i < testList.size(); i++) {
 isTest[i] = testList.get(i).booleanValue();
+noTest = noTest && (!isTest[i]);
+System.out.println(isTest[i]);
 }
-return isTest;
-}
+if(noTest) return null;
+IPackageFragmentRoot[] packs;
+try {
+	packs = jproject.getPackageFragmentRoots();
+boolean[] result = new boolean[sources.length];
+	for(int i = 0; i < packs.length; i++) {
+		if(isTest[i]) {
+			for(int j = 0; j < sources.length; j++) {
+			if(packs[i].getParent().getPath().toString().contains(sources[j]))
+				result[j] = true;
+			}
+		}
+	}
+	return result;
+} catch (JavaModelException e) {
+	// TODO Auto-generated catch block
+	e.printStackTrace();
+} 
 
-/**
+return null;
+}*/
+
+/*
  * getProjectClassLoader
  * 
  * @param jproject
@@ -474,6 +497,7 @@ return isTest;
  * @throws MalformedURLException,
  *             CoreException
  */
+/*
 private URLClassLoader getProjectClassLoader(IJavaProject jproject) throws CoreException, MalformedURLException {
 // Retrieve the class loader of the Java Project
 String[] classPathEntries = JavaRuntime.computeDefaultRuntimeClassPath(jproject);
@@ -501,6 +525,7 @@ return classLoader;
  * @return boolean, true if the source has a Test annotation else false
  * @throws ClassNotFoundException 
  */
+/*
 private boolean analisis(String qname, URLClassLoader cl) throws ClassNotFoundException {
 // name : Package.Class path : path of the .class file
 Class<?> cls = cl.loadClass(qname); // loading the name class
@@ -528,6 +553,7 @@ return count;
  *            : annotation we are looking for
  * @return boolean, true if the annotation is present
  */
+/*
 private boolean isAnnotationPresent(Method m, Class<? extends Annotation> annotation) {
 // customized isAnnotation present to detect correctly @Test
 Annotation[] annot = m.getDeclaredAnnotations();
@@ -539,7 +565,7 @@ return true;
 
 return false;
 }
-
+*/
 /**
  * @return an array with DSpot launchConfigurations
  * @throws CoreException
