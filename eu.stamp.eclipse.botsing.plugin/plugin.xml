@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="eu.stamp.eclipse.botsing.wizard.handler.BootsingWizardHandler"
+            id="eu.stamp.eclipse.botsing.plugin.command"
+            name="OpenBotsingWizard">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="stamp.menu.main"
+               label="STAMP">
+            <command
+                  commandId="eu.stamp.eclipse.botsing.plugin.command"
+                  label="Bootsing"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            id="eu.stamp.eclipse.botsing.plugin.launchConfigurationType"
+            modes="run,debug"
+            name="Bosting Launch Configuration">
+      </launchConfigurationType>
+   </extension>
+
+</plugin>
