@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/eu.stamp.wp4.dspot.wizard.feature_1.0.0.qualifier.jar" id="eu.stamp.wp4.dspot.wizard.feature" version="1.0.0.qualifier">
-      <category name="Stamp"/>
-   </feature>
-   <category-def name="Stamp" label="Stamp"/>
-</site>
