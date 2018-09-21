@@ -10,6 +10,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 
+import eu.stamp.botsing.Botsing;
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 
 public class BostingJob extends Job {
@@ -39,9 +40,13 @@ public class BostingJob extends Job {
 				info.appendToConfiguration(wc);
 				wc.doSave();
 				
-				// TODO execute botsing
-				String[] strings = info.getCommand();
-				for(String sr : strings) System.out.println(sr);
+				String[] command = info.getCommand();
+				for(String sr : command) System.out.println(sr);
+				/*
+				 *  Execute Botsing
+				 */
+				Botsing botsing = new Botsing();
+				botsing.parseCommandLine(command);
 				
 			} catch (CoreException e) {
 				e.printStackTrace();

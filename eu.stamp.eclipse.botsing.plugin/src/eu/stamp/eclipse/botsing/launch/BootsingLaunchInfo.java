@@ -1,5 +1,6 @@
 package eu.stamp.eclipse.botsing.launch;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -19,12 +20,17 @@ public class BootsingLaunchInfo {
 	}
 	
 	public String[] getCommand() {
-		String[] result = new String[properties.size()];
-		int i = 0;
+		List<String> resultList = new LinkedList<String>();
 		for(IBotsingProperty property : properties) {
-			result[i] = property.getPropertyString();
-			i++;
+			String[] strings = property.getPropertyString();
+			for(String sr : strings) resultList.add(sr);
 		}
+		String[] result = new String[resultList.size()];
+	    int i = 0;
+	    for(String sr : resultList) {
+	    	result[i] = sr;
+	    	i++;
+	    }
 		return result;
 	}
 

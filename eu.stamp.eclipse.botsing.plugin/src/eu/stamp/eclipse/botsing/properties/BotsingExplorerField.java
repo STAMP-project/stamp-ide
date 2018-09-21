@@ -15,30 +15,22 @@ public abstract class BotsingExplorerField extends AbstractBotsingProperty {
 
 	private Text text;
 	
-	private String data;
-	
 	protected BotsingExplorerField(String defaultValue, String key, String name) {
 		super(defaultValue, key, name);
 	}
 
 	@Override
-	protected String getData() { 
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				data = text.getText();
-			}
-		});
-		return data; 
-		}
+	protected String getData() { return data; }
 
 	@Override
 	protected void setData(String data) { 
-		this.data = data;
+		super.data = data;
+		if(text == null) return;
+		if(text.isDisposed()) return;
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				text.setData(data);
+				text.setText(data);
 			}
 		});
 	 }
@@ -50,11 +42,12 @@ public abstract class BotsingExplorerField extends AbstractBotsingProperty {
        label.setText(name);
 		
 	   text = new Text(composite,SWT.READ_ONLY | SWT.BORDER);
+	   text.setText(data);
 
 	   int n = ((GridLayout)composite.getLayout()).numColumns;
-	   GridData data = new GridData(SWT.FILL,SWT.FILL,true,false);
-	   data.horizontalSpan = n - 2;
-	   text.setLayoutData(data);
+	   GridData gridData = new GridData(SWT.FILL,SWT.FILL,true,false);
+	   gridData.horizontalSpan = n - 2;
+	   text.setLayoutData(gridData);
 	   
 	   Button button = new Button(composite,SWT.PUSH);
 	   button.setText(" Select ");
@@ -66,9 +59,13 @@ public abstract class BotsingExplorerField extends AbstractBotsingProperty {
 		   @Override
 		   public void widgetSelected(SelectionEvent e) {
 			   String selection = openExplorer();
-			   if(selection != null) text.setText(selection);
+			   if(selection != null){
+				   text.setText(selection);
+			       data = selection;
+			   }
 		   }
 	   });
 	}
+	
        protected abstract String openExplorer();
 }

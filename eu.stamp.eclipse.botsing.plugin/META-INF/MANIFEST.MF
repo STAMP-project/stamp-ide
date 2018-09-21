@@ -10,6 +10,8 @@ Require-Bundle: org.eclipse.jface,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.debug.core,
- org.eclipse.core.jobs
+ org.eclipse.core.jobs,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui
 Bundle-ClassPath: .,
  lib/botsing-reproduction-0.0.1-SNAPSHOT-jar-with-dependencies.jar

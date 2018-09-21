@@ -21,15 +21,11 @@ public class ConfigurationsManager {
 		try {
 		ILaunchManager manager = DebugPlugin.getDefault()
 				.getLaunchManager();
-		ILaunchConfiguration[] provisionalConfigurations = 
+		configurations = 
 				manager.getLaunchConfigurations(
 				manager.getLaunchConfigurationType(
 						BotsingPluginConstants.BOTSING_LAUNCH_ID));
-		
-		for(int i = 0; i < provisionalConfigurations.length; i++)
-				configurations[i] = 
-				provisionalConfigurations[i].getWorkingCopy();
-			
+				
 		} catch (CoreException e) {
 				e.printStackTrace();
 			}

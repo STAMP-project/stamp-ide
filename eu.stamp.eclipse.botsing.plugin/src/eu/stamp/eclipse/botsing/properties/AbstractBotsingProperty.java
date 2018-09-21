@@ -9,17 +9,20 @@ import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
 
 public abstract class AbstractBotsingProperty 
      implements IBotsingProperty, IBotsingConfigurablePart {
-
+	
 	protected final String defaultValue;
 	
 	protected final String key;
 	
 	protected final String name;
 	
+	protected String data;
+	
 	protected AbstractBotsingProperty(String defaultValue,String key,String name) {
 		this.defaultValue = defaultValue;
 		this.key = key;
 		this.name = name;
+		this.data = defaultValue;
 	}
 	
 	@Override
@@ -38,8 +41,8 @@ public abstract class AbstractBotsingProperty
 	}
 
 	@Override
-	public String getPropertyString() {
-		return key + "=" + getData();
+	public String[] getPropertyString() {
+		return new String[] {key + "=" + getData()};
 	}
 	
 	protected abstract String getData();

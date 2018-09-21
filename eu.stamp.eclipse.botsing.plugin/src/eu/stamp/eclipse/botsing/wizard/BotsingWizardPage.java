@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -19,13 +20,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
+import eu.stamp.eclipse.botsing.interfaces.IProjectRelated;
 import eu.stamp.eclipse.botsing.launch.BootsingLaunchInfo;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
+import eu.stamp.eclipse.botsing.properties.ClassPathProperty;
 import eu.stamp.eclipse.botsing.properties.StackTraceProperty;
 
 public class BotsingWizardPage extends WizardPage 
-                     implements IBotsingConfigurablePart{
+             implements IBotsingConfigurablePart, IProjectRelated {
 
 	private List<AbstractBotsingProperty> botsingProperties;
 	
@@ -45,7 +48,7 @@ public class BotsingWizardPage extends WizardPage
 	@Override
 	public void createControl(Composite parent) {
 		
-		// create the composite
+	// create the composite
 	Composite composite = new Composite(parent,SWT.NONE);
 	GridLayout layout = new GridLayout();    // the layout of composite
 	int n = 4;
@@ -120,17 +123,23 @@ public class BotsingWizardPage extends WizardPage
 		}
 	});
 	
-	// Spinner for the frame level
-	BotsingSpinnerProperty frameLevel = 
-    new BotsingSpinnerProperty("2","-Dtarget_frame","Frame level : ");
-	frameLevel.createControl(composite);
-	botsingProperties.add(frameLevel);
-	
 	// Field for the log directory
 	StackTraceProperty stackProperty = 
 			new StackTraceProperty("","-Dcrash_log","Log directory : ");
 	stackProperty.createControl(composite);
 	botsingProperties.add(stackProperty);
+	
+	// Spinner for the frame level
+	BotsingSpinnerProperty frameLevel = 
+    new BotsingSpinnerProperty("2","-Dtarget_frame","Frame level : ");
+	frameLevel.createControl(composite);
+	botsingProperties.add(frameLevel);
+    
+	// Field for the classpath
+	ClassPathProperty classPathProperty = 
+			new ClassPathProperty("","-projectCP","Class Path : ",this);
+	classPathProperty.createControl(composite);
+	botsingProperties.add(classPathProperty);
 
 	// required
 	setControl(composite);
@@ -151,5 +160,12 @@ public class BotsingWizardPage extends WizardPage
    
 	public BootsingLaunchInfo generateBotsingLaunchInfo() {
 		return new BootsingLaunchInfo(configurationName,botsingProperties);
+	}
+
+	@Override
+	public void projectChanged(IJavaProject newProject) {
+		for(AbstractBotsingProperty property : botsingProperties)
+			if(property instanceof IProjectRelated)
+				((IProjectRelated)property).projectChanged(newProject);
 	}
 }

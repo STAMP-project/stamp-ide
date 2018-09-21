@@ -1,6 +1,8 @@
 package eu.stamp.eclipse.botsing.properties;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -15,8 +17,6 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 	private final int step;
 	private final int minimun;
 	private final int maximun;
-	
-	private String data;
 	
 	public BotsingSpinnerProperty(String defaultValue,
 			String key,String name) {
@@ -33,19 +33,13 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 	}
 
 	@Override
-	protected String getData() { 
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				data = spinner.getText();
-			}
-		});
-		return data; 
-		}
+	protected String getData() { return data; }
 
 	@Override
 	protected void setData(String data) {
-		this.data = data;
+		super.data = data;
+		if(spinner == null) return;
+		if(spinner.isDisposed()) return;
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -64,12 +58,20 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
         spinner.setMinimum(minimun);
         if(maximun > minimun + 1) spinner.setMaximum(maximun);
         spinner.setIncrement(step);
+        //spinner.setSelection(Integer.parseInt(data));
         
-        GridData data = 
+        GridData gridData = 
         		new GridData(SWT.FILL,SWT.FILL,true,false);
         int n = ((GridLayout)composite.getLayout()).numColumns;
-        data.horizontalSpan = n -1;
-       spinner.setLayoutData(data);
+        gridData.horizontalSpan = n -1;
+       spinner.setLayoutData(gridData);
+
+       spinner.addSelectionListener(new SelectionAdapter() {
+    	   @Override
+    	   public void widgetSelected(SelectionEvent e) {
+    		   data = spinner.getText();
+    	   }
+       });
 	}
 
 }
