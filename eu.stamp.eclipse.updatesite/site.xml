@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/eu.stamp.eclipse.descartes.wizard.feature_1.0.0.201809201413.jar" id="eu.stamp.eclipse.descartes.wizard.feature" version="1.0.0.201809201413">
+   <feature url="features/eu.stamp.eclipse.dspot.wizard.feature_1.0.0.201809201413.jar" id="eu.stamp.eclipse.dspot.wizard.feature" version="1.0.0.201809201413">
       <category name="STAMP"/>
    </feature>
-   <feature url="features/eu.stamp.eclipse.dspot.wizard.feature_1.0.0.201809201413.jar" id="eu.stamp.eclipse.dspot.wizard.feature" version="1.0.0.201809201413">
+   <feature url="features/eu.stamp.eclipse.descartes.wizard.feature_1.0.0.201809241645.jar" id="eu.stamp.eclipse.descartes.wizard.feature" version="1.0.0.201809241645">
       <category name="STAMP"/>
    </feature>
    <category-def name="STAMP" label="STAMP">
