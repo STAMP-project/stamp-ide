@@ -16,19 +16,17 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.m2e.actions.MavenLaunchConstants;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import eu.stamp.wp4.descartes.wizard.utils.*;
+import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
+import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardPomParser;
 
 @SuppressWarnings("restriction")
 public class DescartesWizardConfiguration {
@@ -39,7 +37,7 @@ public class DescartesWizardConfiguration {
 	/**
 	 *  this object contains information of the pom and the methods to it's manipulation
 	 */
-	private DescartesWizardPomParser descartesParser;
+	private DescartesWizardPomParser descartesParser; 
 	
 	/**
 	 *  an array with all the saved configurations of Descartes type
@@ -153,14 +151,7 @@ public class DescartesWizardConfiguration {
 		}
 		
 	  // get the project path and name	
-	  projectPath = configuration.getAttribute(MavenLaunchConstants.ATTR_POM_DIR, ""); // the pom is in the project's folder
-	  String projectName;  // get the name of the project corresponding to the new configuration
-	  if(projectPath.contains("/"))projectName = projectPath.substring(projectPath.lastIndexOf("/"));
-	  else projectName = projectPath.substring(projectPath.lastIndexOf("\\")); // windows path separator
-	  
-	  // now find the project object using the name
-	  IProject theProject = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-	  jProject = new JavaProject(theProject,null); // use the project object to create the IJavaProject
+	  projectPath = configuration.getAttribute(MavenLaunchConstants.ATTR_POM_DIR, ""); 
 	  String pomName = configuration.getAttribute(MavenLaunchConstants.ATTR_GOALS,"");
 	  pomName = pomName.substring(pomName.indexOf("-f ")+3);  // ... -f pomName
 	  

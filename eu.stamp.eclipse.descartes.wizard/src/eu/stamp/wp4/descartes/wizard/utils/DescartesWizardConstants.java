@@ -19,7 +19,7 @@ public abstract class DescartesWizardConstants {
 	public static final String PITEST_ARTIFACT_ID = "pitest-maven";
 	public static final String PITEST_DEPENDENCY_ID = "eu.stamp-project";
 	public static final String PITEST_DEPENDENCY_ARTIFACT = "descartes";
-	public static final String PITEST_DEPENDENCY_VERSION = "1.2";
+	public static final String PITEST_DEPENDENCY_VERSION = "1.2.4";
 	public static final String POM_NAME_LAUNCH_CONSTANT = "pom name";
 	public static final String PITEST_VERSION = "1.4.0";
 	public static final String DESCARTES_VIEW_ID =
