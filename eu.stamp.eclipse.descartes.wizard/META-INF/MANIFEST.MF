@@ -19,3 +19,5 @@ Require-Bundle: org.eclipse.jdt.core,
 Bundle-Vendor: Atos Spain S.A.
 Bundle-ClassPath: .,
  lib/rcptoolbox.1.0.10.jar
+Automatic-Module-Name: eu.stamp.eclipse.descartes.wizard
+

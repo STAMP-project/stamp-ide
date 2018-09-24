@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo Jose Tejada Garcia (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.wp4.descartes.wizard.utils;
 
 import java.io.File;
@@ -49,21 +61,24 @@ public class DescartesWizardPomParser {
 	
 	public DescartesWizardPomParser(IJavaProject jProject) 
 			throws ParserConfigurationException, SAXException, IOException {
-		constructPomParser(jProject.getProject().getLocation().toString()
-				,"pom.xml");
+		this(jProject,"pom.xml");
 	}
 	
-	public DescartesWizardPomParser(String projectPath, String pom) 
+	public DescartesWizardPomParser(IJavaProject jProject, String pom) 
 			throws ParserConfigurationException, SAXException, IOException {
-		constructPomParser(projectPath,pom);
+		projectPath = jProject.getProject().getLocation().toString();
+		constructPomParser(pom);
 		pomName = pom;
 	}
 	
-	private void constructPomParser(String projectPath, String pom) 
+	public DescartesWizardPomParser(String projectLocation,String pom) throws ParserConfigurationException, SAXException, IOException {
+		this.projectPath = projectLocation;
+		constructPomParser(pom);
+	}
+	
+	private void constructPomParser(String pom) 
 			throws ParserConfigurationException, SAXException, IOException {
 		
-		//projectPath = jProject.getProject().getLocation().toString();
-		this.projectPath = projectPath;
 		File pomFile = new File(projectPath +"/"+ pom);  // the pom file in every maven project
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	    pomDocument = builder.parse(pomFile);  // use DOM to parse the pom.xml
@@ -268,10 +283,9 @@ public class DescartesWizardPomParser {
 			putNodeWithText("groupId",DescartesWizardConstants.PITEST_DEPENDENCY_ID,dependencyNode);
 			putNodeWithText("artifactId",DescartesWizardConstants.PITEST_DEPENDENCY_ARTIFACT,dependencyNode);
 			putNodeWithText("version",DescartesWizardConstants.PITEST_DEPENDENCY_VERSION,dependencyNode);
-	
+			
 			dependenciesNode.appendChild(dependencyNode);
 			pitestTree.appendChild(dependenciesNode);
-			
 			
 			Node configurationNode = pomDocument.createElement("configuration");
 			putNodeWithText("mutationEngine","descartes",configurationNode);
@@ -281,14 +295,6 @@ public class DescartesWizardPomParser {
 				configurationNode.appendChild(mutatorsNode);
 				
 				mutators = new Node[1]; mutators[0] = mutatorsNode.getFirstChild();
-				
-				// output formats
-				Node formatsNode = pomDocument.createElement("outputFormats");
-				putNodeWithText("value","HTML",formatsNode);
-				putNodeWithText("value","ISSUES",formatsNode); 
-				//putNodeWithText("value","METHODS",formatsNode);
-				
-				configurationNode.appendChild(formatsNode);
 			
 			pitestTree.appendChild(configurationNode);
 			
@@ -318,7 +324,6 @@ public class DescartesWizardPomParser {
 		   pluginsNode.appendChild(pitestTree);
 		
 		   list = findNodeList("build",parent);
-		   
 		
 		   if(list.item(0) != null) {
 			list.item(0).appendChild(pluginsNode); return;

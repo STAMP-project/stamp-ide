@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo Jose Tejada Garcia (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.wp4.descartes.wizard;
 
 import java.io.IOException;
@@ -125,7 +137,7 @@ public class DescartesWizardPage1 extends WizardPage
 		Composite composite = new Composite(parent,SWT.NONE);
 		GridLayout layout = new GridLayout();    // the layout of composite
 		layout.numColumns = 3;
-		layout.makeColumnsEqualWidth = false;
+		layout.makeColumnsEqualWidth = true;
 		composite.setLayout(layout);
 		
         // ROW 1 : Load configuration
@@ -174,7 +186,7 @@ public class DescartesWizardPage1 extends WizardPage
 		 */
 		mutatorsTree = new Tree(composite,SWT.V_SCROLL | SWT.CHECK);
 		GridDataFactory.fillDefaults().grab(true, true).span(2, 6)
-		.minSize(100,200).applyTo(mutatorsTree);
+		.minSize(200,200).applyTo(mutatorsTree);
         mutatorsTree.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
         GridLayout Layforgr1 = new GridLayout();
         mutatorsTree.setLayout(Layforgr1);
