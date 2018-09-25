@@ -15,6 +15,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.launch.BostingJob;
+import eu.stamp.eclipse.botsing.launch.BotsingAlternativeJob;
 import eu.stamp.eclipse.botsing.launch.ConfigurationsManager;
 
 public class BotsingWizard extends Wizard{
@@ -51,8 +52,11 @@ public class BotsingWizard extends Wizard{
 	
 	@Override
 	public boolean performFinish() {
+	      //BotsingAlternativeJob job = 
+	//			new BotsingAlternativeJob(page.generateBotsingLaunchInfo());
+	//	job.run();
 		BostingJob job = new BostingJob(page.generateBotsingLaunchInfo());
-		job.schedule();;
+		job.schedule();
 		return true;
 	}
 	

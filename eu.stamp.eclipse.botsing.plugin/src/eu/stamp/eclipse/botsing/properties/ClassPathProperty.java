@@ -1,51 +1,36 @@
 package eu.stamp.eclipse.botsing.properties;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
-import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
-import org.eclipse.jdt.ui.JavaElementComparator;
-import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 
-import eu.stamp.eclipse.botsing.wizard.BotsingWizardPage;
+import eu.stamp.botsing.Main;
 
-@SuppressWarnings("restriction")
 public class ClassPathProperty extends BotsingExplorerField {
-
-	private final String separator;
-	private final String pathSeparator;
 	
-	private final BotsingWizardPage wizardPage;
+	private String folderPath;
+	
+	private final String folderKey;
 	
 	public ClassPathProperty(String defaultValue, 
-			String key, String name,BotsingWizardPage wizardPage) {
+			String key, String name) {
 		super(defaultValue, key, name);
-		if(System.getProperty("os.name").contains("indows")) {
-			separator = ";";
-			pathSeparator = "\\";
-		}
-		else{
-			separator = ":";
-			pathSeparator = "/";
-		}
-		this.wizardPage = wizardPage;
+		folderKey = "folderKey";
 	}
 	@Override
 	protected String openExplorer() {
 		
+		final DirectoryDialog dialog = new DirectoryDialog(
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getShell());
+		
+		folderPath = dialog.open();
+		
+		Main.bin_path = folderPath;
+		return Main.getListOfDeps();
+		
+		/*
 		IJavaProject project = showProjectDialog();
 		if(project == null) return "";
 		wizardPage.projectChanged(project);
@@ -61,10 +46,9 @@ public class ClassPathProperty extends BotsingExplorerField {
 			return result;
 		} catch (JavaModelException e) {
 			e.printStackTrace();
-		}
-		return "";
+		}*/
 	}
-	
+	/*
 	private IJavaProject showProjectDialog() {
 		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class,IProject.class};
 		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,true);
@@ -101,9 +85,24 @@ public class ClassPathProperty extends BotsingExplorerField {
 	            }
 	        }     
 		return null;
-	}
+	}*/
 	@Override
 	public String[] getPropertyString() { 
+		System.setProperty("user.dir",folderPath);
 		return new String[] {key, data};
 		}
+	@Override
+	public void appendToConfiguration(ILaunchConfigurationWorkingCopy copy) {
+		super.appendToConfiguration(copy);
+		copy.setAttribute(folderKey,folderPath);
+	}
+	@Override
+	public void load(ILaunchConfigurationWorkingCopy copy) {
+		super.load(copy);
+		try {
+			folderPath = copy.getAttribute(folderKey, "");
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	}
 }

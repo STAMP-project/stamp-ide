@@ -125,7 +125,7 @@ public class BotsingWizardPage extends WizardPage
 	
 	// Field for the log directory
 	StackTraceProperty stackProperty = 
-			new StackTraceProperty("","-Dcrash_log","Log directory : ");
+			new StackTraceProperty("","-Dcrash_log","Log file : ");
 	stackProperty.createControl(composite);
 	botsingProperties.add(stackProperty);
 	
@@ -137,7 +137,7 @@ public class BotsingWizardPage extends WizardPage
     
 	// Field for the classpath
 	ClassPathProperty classPathProperty = 
-			new ClassPathProperty("","-projectCP","Class Path : ",this);
+			new ClassPathProperty("","-projectCP","Class Path : ");
 	classPathProperty.createControl(composite);
 	botsingProperties.add(classPathProperty);
 
