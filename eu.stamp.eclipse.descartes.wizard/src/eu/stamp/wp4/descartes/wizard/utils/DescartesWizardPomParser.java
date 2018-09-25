@@ -278,6 +278,9 @@ public class DescartesWizardPomParser {
 			/*
 			 *   create pitest plugin tree
 			 */
+			
+			eliminateRepetitiveDeclarations();
+			
 			Node dependenciesNode = pomDocument.createElement("dependencies");
 			Node dependencyNode = pomDocument.createElement("dependency");
 			putNodeWithText("groupId",DescartesWizardConstants.PITEST_DEPENDENCY_ID,dependencyNode);
@@ -333,4 +336,16 @@ public class DescartesWizardPomParser {
 		  parent.appendChild(buildNode);
 		
 	  }
+		private void eliminateRepetitiveDeclarations() {
+			
+         NodeList nodeList = pomDocument.getElementsByTagName("artifactId");
+         
+		 for(int i = 0; i < nodeList.getLength(); i++) {
+			 String text = nodeList.item(i).getTextContent();
+			 if(text.equalsIgnoreCase(
+					 DescartesWizardConstants.PITEST_DEPENDENCY_ARTIFACT) ||
+			 text.equalsIgnoreCase(DescartesWizardConstants.PITEST_ARTIFACT_ID))
+				 pomDocument.removeChild(nodeList.item(i).getParentNode());
+		 }
+		 }
 	}
