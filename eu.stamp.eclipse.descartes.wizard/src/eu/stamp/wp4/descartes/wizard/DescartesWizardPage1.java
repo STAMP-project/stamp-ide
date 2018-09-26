@@ -755,6 +755,7 @@ public class DescartesWizardPage1 extends WizardPage
 		if(mutators == "") return;
 		mutatorsTexts = new LinkedList<String>();
 		String[] muts = mutators.split("////");
+		initialNames = muts;
 		for(String sr : muts)
 			mutatorsTexts.add(sr);
 		if(mutatorsTree != null)if(!mutatorsTree.isDisposed()){
