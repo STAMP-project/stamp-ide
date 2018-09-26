@@ -368,12 +368,7 @@ setPageComplete(true);
             }
 
             private boolean isTestClass(IJavaElement child) {
-                // Detect test class by inspecting JUnit annotations
-            try {
-return wConf.lookForTest(wConf.getqName(child.getElementName()));
-} catch (JavaModelException e) {
-e.printStackTrace(); return child.getElementName().toLowerCase().contains("test");
-}
+                return  !(wConf.getLocator().getQName(child.getElementName())).isEmpty();
             }
         };
         
@@ -406,8 +401,8 @@ e.printStackTrace(); return child.getElementName().toLowerCase().contains("test"
             if(ob instanceof ICompilationUnit) { 
             if(!selection.isEmpty()) {
              selection = selection + WizardConfiguration
-             .getSeparator() + wConf.getqName(((ICompilationUnit)ob).getElementName());}
-            else{ selection = wConf.getqName(((ICompilationUnit)ob).getElementName()); }}
+             .getSeparator() + wConf.getLocator().getQName(((ICompilationUnit)ob).getElementName());}
+            else{ selection = wConf.getLocator().getQName(((ICompilationUnit)ob).getElementName()); }}
             }
             executionClassesText.setText(selection);
         }

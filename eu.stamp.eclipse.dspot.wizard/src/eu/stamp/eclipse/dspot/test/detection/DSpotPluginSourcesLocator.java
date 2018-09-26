@@ -149,6 +149,11 @@ private List<SourceFolder> generateSourceFolders(List<SourceFile> files) {
 		}
 	}
 	
+	public String getQName(String name) {
+		for(String sr : testNames)if(sr.contains(name)) return sr;
+		return "";
+	}
+	
 	private class SourceFolder {
 		
 		File folder;

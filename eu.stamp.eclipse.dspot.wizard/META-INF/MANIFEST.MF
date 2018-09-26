@@ -25,3 +25,4 @@ Require-Bundle: org.eclipse.jdt.core,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
   javax.inject;version="1.0.0"
+Automatic-Module-Name: eu.stamp.eclipse.dspot.wizard
