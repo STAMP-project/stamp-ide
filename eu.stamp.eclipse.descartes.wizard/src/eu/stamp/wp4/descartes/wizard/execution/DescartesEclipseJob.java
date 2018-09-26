@@ -26,6 +26,7 @@ import org.eclipse.debug.core.ILaunchManager;
 
 import org.eclipse.m2e.actions.MavenLaunchConstants;
 
+import eu.stamp.wp4.descartes.wizard.DescartesWizard;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
 @SuppressWarnings("restriction")
@@ -34,9 +35,13 @@ public class DescartesEclipseJob extends Job {
 	private String projectPath;
 	private String pomName;
 	private String configurationName;
+	
+	private DescartesWizard wizard;
 
-	public DescartesEclipseJob(String projectPath,String pomName,String configurationName) {
+	public DescartesEclipseJob(String projectPath,String pomName,
+			String configurationName,DescartesWizard wizard) {
 		super("Descartes working");
+		this.wizard = wizard;
 		this.projectPath = projectPath;
 		this.pomName = pomName;
 		this.configurationName = configurationName;
@@ -59,6 +64,10 @@ public class DescartesEclipseJob extends Job {
 			ILaunchConfigurationWorkingCopy wc = t.newInstance(
 				        null, configurationName);
 			
+			/*
+			 *  append parts data to configuration
+			 */
+			wizard.appendToConfiguration(wc);
 			/* give the parameters of this Descartes launch 
 			 * to the ILaunchConfigurationWorkingCopy object
 			 */

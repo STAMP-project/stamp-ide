@@ -1,4 +1,4 @@
-package eu.stamp.eclipse.descartes.wizard.validation;
+package eu.stamp.eclipse.descartes.wizard.interfaces;
 /**
  * this interface allows to give the error handler instances with the required methods, WizardPage
  * and TitleAreaDialog have the same methods to set the messages but they don't belong to the same

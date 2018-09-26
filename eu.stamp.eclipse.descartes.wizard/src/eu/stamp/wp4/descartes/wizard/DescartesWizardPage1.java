@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -27,6 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
@@ -43,13 +46,13 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-//import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
@@ -63,15 +66,17 @@ import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 import com.richclientgui.toolbox.validation.validator.IFieldValidator;
 import com.richclientgui.toolbox.validation.IQuickFixProvider;
 
+import eu.stamp.eclipse.descartes.wizard.dialogs.AddMutatorDialog;
+import eu.stamp.eclipse.descartes.wizard.dialogs.OutputFormatsDialog;
+import eu.stamp.eclipse.descartes.wizard.interfaces.IDescartesConfigurablePart;
+import eu.stamp.eclipse.descartes.wizard.interfaces.IDescartesPage;
 import eu.stamp.eclipse.descartes.wizard.validation.DescartesWizardErrorHandler;
-import eu.stamp.eclipse.descartes.wizard.validation.IDescartesPage;
 import eu.stamp.wp4.descartes.wizard.configuration.DescartesWizardConfiguration;
-import eu.stamp.wp4.descartes.wizard.configuration.IDescartesWizardPart;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
 @SuppressWarnings("restriction")
 public class DescartesWizardPage1 extends WizardPage 
-                           implements IDescartesWizardPart, IDescartesPage{
+                           implements IDescartesPage, IDescartesConfigurablePart {
 	/**
 	 *  An instance for the wizard to call the update method 
 	 *  and get access to the only DescartesWizardConfiguration object
@@ -83,7 +88,7 @@ public class DescartesWizardPage1 extends WizardPage
 	 *  each mutator is defined by a string and will be declared in the xml file
 	 *  as <mutator>string<mutator>
 	 */
-	private String[] mutatorsTexts;
+	private List<String> mutatorsTexts;
 	
 	private String configurationName = "Descartes Launch";
 	
@@ -110,12 +115,17 @@ public class DescartesWizardPage1 extends WizardPage
     private StringValidationToolkit valKit = null;
     private final IFieldErrorMessageHandler errorHandler;
     private boolean[] check = {true,false,false};
+    
+    private OutputFormatsDialog outputsDialog;
 
-	public DescartesWizardPage1(DescartesWizard wizard) {
+	public DescartesWizardPage1(DescartesWizard wizard,OutputFormatsDialog outputsDialog) {
 		super("Descartes configuration");
+		this.outputsDialog = outputsDialog;
 		this.wizard = wizard;
 		setTitle("Descartes configuration");
 		setDescription("Configuration of Descartes mutators");
+		
+		mutatorsTexts = new LinkedList<String>();
 		
 		/*  loading the properties for the tooltip, the name of each property is
 		 *  the name of its corresponding widget   
@@ -155,6 +165,7 @@ public class DescartesWizardPage1 extends WizardPage
 		createLabel(composite,"path of the project : ","projectLabel");
 		
 		projectText = new Text(composite,SWT.BORDER | SWT.READ_ONLY);
+		if(projectPath == null) projectPath = wizard.getWizardConfiguration().getProjectPath();
 		projectText.setText(projectPath);
 		GridDataFactory.fillDefaults().span(1, 1).indent(10, 0).applyTo(projectText);
 		
@@ -192,9 +203,9 @@ public class DescartesWizardPage1 extends WizardPage
         mutatorsTree.setLayout(Layforgr1);
         mutatorsTree.setToolTipText(tooltipsProperties.getProperty("mutatorsTree"));
         
-        for(int i = 0; i < mutatorsTexts.length; i++) {
+        for(String text : mutatorsTexts) {
          TreeItem item = new TreeItem(mutatorsTree,SWT.NONE);	
-         item.setText(mutatorsTexts[i]);
+         item.setText(text);
          items.add(item);
         }
 
@@ -258,7 +269,24 @@ public class DescartesWizardPage1 extends WizardPage
         	}
         });
         
+        if(pomName != null)if(!pomName.isEmpty())
+        	((Text)pomField.getControl()).setText(pomName);
+        
+        /*
+         *  outputs dialog
+         */
+        Link outputsLink = new Link(composite,SWT.NONE);
+        outputsLink.setText("<A>Output formats</A>");
+        
         // listeners
+        outputsLink.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent e) {
+        		outputsDialog.open();
+        	}
+        });
+        
+        
         configurationCombo.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
@@ -271,7 +299,7 @@ public class DescartesWizardPage1 extends WizardPage
 					conf.setCurrentConfiguration(configurationCombo.getText()); 
 					wizard.setWizardConfiguration(conf);
 					// now the wizard configuration is updated ready to update all the wizard parts
-					wizard.updateWizardParts();
+					wizard.load(conf.getCurrentConfiguration().getWorkingCopy());
 				} catch (CoreException e1) {
 					e1.printStackTrace();
 				}}
@@ -295,6 +323,7 @@ public class DescartesWizardPage1 extends WizardPage
         	  if(sr != null) { 
         		  items.add(new TreeItem(mutatorsTree,SWT.NONE));
         		  items.get(items.size()-1).setText(sr);
+        		  mutatorsTexts.add(sr);
         	  }
         	}
         });
@@ -303,6 +332,7 @@ public class DescartesWizardPage1 extends WizardPage
         	public void widgetSelected(SelectionEvent e) {
         		for(int i = items.size()-1; i >= 0; i--) items.remove(i);
         		mutatorsTree.removeAll();
+        		mutatorsTexts = new LinkedList<String>();
         	}
         });
         initialListButton.addSelectionListener(new SelectionAdapter() {
@@ -310,10 +340,13 @@ public class DescartesWizardPage1 extends WizardPage
         	public void widgetSelected(SelectionEvent e) {
         		for(int i = items.size()-1; i >= 0; i--) items.remove(i);
         		mutatorsTree.removeAll();
+        		mutatorsTexts = new LinkedList<String>();
         		for(int i = 0; i < initialNames.length; i++) {
         		TreeItem it = new TreeItem(mutatorsTree,SWT.NONE);
         		it.setText(initialNames[i]);
-        		items.add(it);}
+        		mutatorsTexts.add(initialNames[i]);
+        		items.add(it);
+        		}
         	}
         });
 
@@ -326,9 +359,11 @@ public class DescartesWizardPage1 extends WizardPage
         	public void widgetSelected(SelectionEvent e) {
         		for(int i = items.size()-1; i >= 0; i--) items.remove(i);
         		mutatorsTree.removeAll();
+        		mutatorsTexts = new LinkedList<String>();
         		for(int i = 0; i < finalDefaultMutators.length; i++) {
         		TreeItem it = new TreeItem(mutatorsTree,SWT.NONE);
         		it.setText(finalDefaultMutators[i]);
+        		mutatorsTexts.add(finalDefaultMutators[i]);
         		items.add(it);}
         	}
         });
@@ -549,41 +584,8 @@ public class DescartesWizardPage1 extends WizardPage
 		GridDataFactory.swtDefaults().grab(false, false).applyTo(label);
 		label.setToolTipText(tooltipsProperties.getProperty(propertyKey));
 	}
-    
-   @Override
-   public void updateDescartesWizardPart(DescartesWizardConfiguration wConf) {
-	   //TODO
-	  
-	// update project path
-	   projectPath = wConf.getProjectPath();
-		// update mutators
-		mutatorsTexts = wConf.getMutatorsTexts();
-	   
-	   if(projectText == null) return;
-	   if(projectText.isDisposed()) return;
-	   
-			projectText.setText(projectPath);
-		 
-		// set the updated mutators in the tree	
-		for(int i = items.size()-1; i >= 0; i--) items.remove(i);
-		mutatorsTree.removeAll();
-		
-        for(int i = 0; i < mutatorsTexts.length; i++) {
-            TreeItem item = new TreeItem(mutatorsTree,SWT.NONE);
-            item.setText(mutatorsTexts[i]);
-            items.add(item);
-        }
-            initialNames = new String[items.size()];
-            for(int i = 0; i < items.size(); i++) initialNames[i] = items.get(i).getText();
-            
-		    // update pom's name
-		    ((Text)pomField.getControl()).setText(wConf.getPomName());
-	}
+
 	
-	@Override
-	public void updateWizardReference(DescartesWizard wizard) {
-		this.wizard = wizard;
-	}
     /**
      * @return an string array with the mutators contents
      */
@@ -725,5 +727,49 @@ public class DescartesWizardPage1 extends WizardPage
 	public void error(String mess) { setErrorMessage(mess); }
 	@Override
 	public void message(String mess, int style) { setMessage(mess,style); }
+
+	@Override
+	public void appendToConfiguration(ILaunchConfigurationWorkingCopy copy) {
+		copy.setAttribute("projectPath",projectPath);
+		copy.setAttribute("pomName",pomName);
+		String mutators = "";
+		int i = 0;
+		for(String mutator : mutatorsTexts) {
+			if(i == 0) mutators = mutator;
+			else mutators += "////" + mutator;
+		    i++;
+		}
+		copy.setAttribute("mutators",mutators);
+	}
+
+	@Override
+	public void load(ILaunchConfigurationWorkingCopy copy) {
+		String mutators = "";
+		try {
+			 projectPath = copy.getAttribute("projectPath",projectPath);
+		     pomName = copy.getAttribute("pomName",pomName);
+			 mutators = copy.getAttribute("mutators","");
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		if(mutators == "") return;
+		mutatorsTexts = new LinkedList<String>();
+		String[] muts = mutators.split("////");
+		for(String sr : muts)
+			mutatorsTexts.add(sr);
+		if(mutatorsTree != null)if(!mutatorsTree.isDisposed()){
+			mutatorsTree.removeAll();
+			for(String sr : mutatorsTexts) {
+      		  items.add(new TreeItem(mutatorsTree,SWT.NONE));
+      		  items.get(items.size()-1).setText(sr);
+			}
+		if(projectPath != null)
+			if(!projectPath.isEmpty() && !projectText.isDisposed())
+				projectText.setText(projectPath);
+		if(pomName != null)
+			if(!pomName.isEmpty() && !pomField.getControl().isDisposed())
+				((Text)pomField.getControl()).setText(pomName);
+		}
+	}
 	
 }

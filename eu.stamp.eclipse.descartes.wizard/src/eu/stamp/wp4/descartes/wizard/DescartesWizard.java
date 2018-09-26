@@ -13,21 +13,27 @@
 package eu.stamp.wp4.descartes.wizard;
 
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
 
+import eu.stamp.eclipse.descartes.wizard.dialogs.AddMutatorDialog;
+import eu.stamp.eclipse.descartes.wizard.dialogs.OutputFormatsDialog;
+import eu.stamp.eclipse.descartes.wizard.interfaces.IDescartesConfigurablePart;
 import eu.stamp.wp4.descartes.wizard.configuration.DescartesWizardConfiguration;
-import eu.stamp.wp4.descartes.wizard.configuration.IDescartesWizardPart;
 import eu.stamp.wp4.descartes.wizard.execution.DescartesEclipseJob;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
-public class DescartesWizard extends Wizard {
+public class DescartesWizard extends Wizard 
+                        implements IDescartesConfigurablePart {
 	
 	/**
 	 *  Instance of the information container class
@@ -37,8 +43,10 @@ public class DescartesWizard extends Wizard {
     /**
      *   List with the updatable parts of the wizard
      */
-	private ArrayList<IDescartesWizardPart> partsList = new ArrayList<IDescartesWizardPart>(1);
-	
+	//private ArrayList<IDescartesWizardPart> partsList = new ArrayList<IDescartesWizardPart>(1);
+
+	private List<IDescartesConfigurablePart> parts;
+	private OutputFormatsDialog outputsDialog;
 	/**
 	 *  Page 1
 	 */
@@ -49,14 +57,20 @@ public class DescartesWizard extends Wizard {
 		setNeedsProgressMonitor(true);
 		setHelpAvailable(true);
 		this.wConf = wConf;
+		parts = new LinkedList<IDescartesConfigurablePart>();
 	}
 	
 	@Override
 	public void addPages() {
-		one = new DescartesWizardPage1(this);
+		outputsDialog = 
+				new OutputFormatsDialog(PlatformUI
+						.getWorkbench().getActiveWorkbenchWindow()
+						.getShell());
+		one = new DescartesWizardPage1(this,outputsDialog);
 		addPage(one);
-		partsList.add(one);
-		updateWizardParts();
+		parts.add(one);
+		parts.add(outputsDialog);
+		//partsList.add(one);
 	}
 	@Override
 	public String getWindowTitle() { 
@@ -75,32 +89,37 @@ public class DescartesWizard extends Wizard {
 	public boolean performFinish() {
 		String pomName = one.getPomName();
 		String configurationName = one.getConfigurationName();
-		DescartesEclipseJob job = new DescartesEclipseJob(wConf.getProjectPath(),pomName,configurationName);
+		DescartesEclipseJob job = new DescartesEclipseJob(wConf.getProjectPath(),
+				                          pomName,configurationName,this);
 		String[] texts = one.getMutatorsSelection();
-		wConf.getDescartesParser().preparePom(texts,pomName);
+		wConf.getDescartesParser().preparePom(texts,pomName,outputsDialog);
 		job.schedule();
 		return true;
 	}
-	/**
-	 *  This method updates the wizard taking the updatable parts list and calling the 
-	 *  update method of each element in the list, this method is used 
-	 *  when the user changes of project
-	 */
-	public void updateWizardParts() {
-		for(int i = 0; i < partsList.size(); i++) partsList.get(i).updateDescartesWizardPart(wConf);
-	}
+
 	/**
 	 * This method allows to change the information container class and refresh the wizard
 	 * @param wConf : the new configuration
 	 */
 	public void setWizardConfiguration(DescartesWizardConfiguration wConf) {
 		this.wConf = wConf;
-		updateWizardParts();
 	}
 	/**
 	 * @return the DescartesWizardConfiguration object
 	 */
 	public DescartesWizardConfiguration getWizardConfiguration() {
 		return wConf;
+	}
+
+	@Override
+	public void appendToConfiguration(ILaunchConfigurationWorkingCopy copy) {
+		for(IDescartesConfigurablePart part : parts)
+			part.appendToConfiguration(copy);
+	}
+
+	@Override
+	public void load(ILaunchConfigurationWorkingCopy copy) {
+		for(IDescartesConfigurablePart part : parts)
+			part.load(copy);
 	}
 }
