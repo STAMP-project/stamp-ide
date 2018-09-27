@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -41,7 +42,7 @@ public class BotsingLaunchDelegate extends JavaLaunchDelegate{
 	return;
 	}
 	try {
-	monitor.subTask("Executing DSpot: verifying launch attributes"); 
+	monitor.subTask("Executing Botsing: verifying launch attributes"); 
 
 	String mainTypeName = verifyMainTypeName(configuration);
 	IVMRunner runner = getVMRunner(configuration, mode);
@@ -67,18 +68,21 @@ public class BotsingLaunchDelegate extends JavaLaunchDelegate{
 	String[][] paths = getClasspathAndModulepath(configuration);
 
 	// Create VM config
-	//Modify classpath: remove project entries in classpath for correct DSpot execution
 	String[] classpath = getClasspath(configuration);
-	ArrayList<String> collection = new ArrayList<>();
-	for (String s: classpath) {
-	if (!s.contains(workingDirName) && !s.contains(".m2")) {
-	collection.add (s);
-	}
+	List<String> collection = new LinkedList<String>();
+	for(String entry : classpath) {
+		collection.add(entry);
 	}
 
 	//Add Botsing library
 	URL url = new URL(BotsingPluginConstants.BOTSING_JAR_URL);
 	collection.add (FileLocator.toFileURL(url).getPath());
+	
+	url = new URL(BotsingPluginConstants.JUNIT_JAR_URL);
+	collection.add(FileLocator.toFileURL(url).getPath());
+	
+	url = new URL(BotsingPluginConstants.HAMCREST_JAR_URL);
+	collection.add(FileLocator.toFileURL(url).getPath());
 
 	classpath = new String[collection.size()];
 	classpath = collection.toArray(classpath);
@@ -124,7 +128,7 @@ public class BotsingLaunchDelegate extends JavaLaunchDelegate{
 	// done the verification phase
 	monitor.worked(1);
 
-	monitor.subTask("\"Executing DSpot: creating source locator");
+	monitor.subTask("\"Executing Botsing : creating source locator");
 	// set the default source locator if required
 	setDefaultSourceLocator(launch, configuration);
 	monitor.worked(1);

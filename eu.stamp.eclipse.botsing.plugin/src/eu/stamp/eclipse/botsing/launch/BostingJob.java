@@ -3,28 +3,24 @@ package eu.stamp.eclipse.botsing.launch;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
-import eu.stamp.botsing.Botsing;
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 
 public class BostingJob extends Job {
     
 	private final BootsingLaunchInfo info;
 	
-	private final String separator;
-	
 	public BostingJob(BootsingLaunchInfo info) {
 		super("Bosting working");
         this.info = info;
-        if(System.getProperty("os.name").contains("indows")) separator = "\\";
-        else separator = "/";
 	}
 
 	@Override
@@ -41,13 +37,13 @@ public class BostingJob extends Job {
 		ILaunchConfigurationType launchType = manager
 	               .getLaunchConfigurationType(
 	            		   BotsingPluginConstants.BOTSING_LAUNCH_ID);
+	          
         
 				// create an ILaunchConfigurationWorkingCopy
 			try {
 				ILaunchConfigurationWorkingCopy wc = launchType.newInstance(
 					        null, info.getName());
 				info.appendToConfiguration(wc);
-				wc.doSave();
 				
 				String[] infoCommand = info.getCommand();
 				String[] extraCommand = {
@@ -65,12 +61,21 @@ public class BostingJob extends Job {
                 	command[i] = extraCommand[j];
                 	j++;
                 }
-				for(String sr : command) System.out.println(sr);
+                String line = "";
+				for(String sr : command) line += sr + " ";
 				/*
 				 *  Execute Botsing
-				 */		
-				Botsing botsing = new Botsing();
-				botsing.parseCommandLine(command);
+				 */	
+				wc.setAttribute(
+						IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, 
+						BotsingPluginConstants.BOTSING_MAIN);
+				wc.setAttribute(
+						IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
+						line);
+				ILaunchConfiguration configuration = wc.doSave();
+				configuration.launch(ILaunchManager.RUN_MODE, null);
+				//Botsing botsing = new Botsing();
+				//botsing.parseCommandLine(command);
 
 				
 			} catch (CoreException e) {
