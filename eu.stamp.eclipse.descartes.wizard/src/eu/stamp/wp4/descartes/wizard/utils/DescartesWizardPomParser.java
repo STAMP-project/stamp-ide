@@ -17,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,6 +44,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import eu.stamp.eclipse.descartes.wizard.dialogs.OutputFormatsDialog;
+
 import org.w3c.dom.Text;
 
 @SuppressWarnings("restriction")
@@ -103,8 +107,8 @@ public class DescartesWizardPomParser {
      * @param texts : the text of all the mutators that will be declared in the pom
      * @param pomName : the name of the file projectPath/pomName.xml
      */
-	public void preparePom(String[] texts,String pomName) {
-		if(mutators.length < 1) createPitestPluginTree();     //createPomDescartesStructure();
+	public void preparePom(String[] texts,String pomName,OutputFormatsDialog outputsDialog) {
+		if(mutators.length < 1) createPitestPluginTree(outputsDialog);     //createPomDescartesStructure();
 		Node parent = mutators[0].getParentNode();
 		if(mutators.length > 0) removeMutators(texts,parent);
 		addMutators(texts,parent);
@@ -271,13 +275,16 @@ public class DescartesWizardPomParser {
 	     * configuration for Descartes execution and replaces the pitest declaration in the tree
 	     * that will be used to create the Descartes pom
 		 */
-		private void createPitestPluginTree(){
+		private void createPitestPluginTree(OutputFormatsDialog dialog){
 			Node parent = findBaseNode();
 			Node pitestTree = pomDocument.createElement("plugin");
 			
 			/*
 			 *   create pitest plugin tree
 			 */
+			
+			eliminateRepetitiveDeclarations();
+			
 			Node dependenciesNode = pomDocument.createElement("dependencies");
 			Node dependencyNode = pomDocument.createElement("dependency");
 			putNodeWithText("groupId",DescartesWizardConstants.PITEST_DEPENDENCY_ID,dependencyNode);
@@ -295,6 +302,13 @@ public class DescartesWizardPomParser {
 				configurationNode.appendChild(mutatorsNode);
 				
 				mutators = new Node[1]; mutators[0] = mutatorsNode.getFirstChild();
+				
+				// TODO test
+				Node outputsNode = pomDocument.createElement("outputFormats");
+				List<String> formats = dialog.getFormatList();
+				for(String format : formats)
+				putNodeWithText("value",format,outputsNode);
+				configurationNode.appendChild(outputsNode);
 			
 			pitestTree.appendChild(configurationNode);
 			
@@ -333,4 +347,20 @@ public class DescartesWizardPomParser {
 		  parent.appendChild(buildNode);
 		
 	  }
+		private void eliminateRepetitiveDeclarations() {
+			
+         NodeList nodeList = pomDocument.getElementsByTagName("artifactId");
+         
+		 for(int i = 0; i < nodeList.getLength(); i++) {
+			 String text = nodeList.item(i).getTextContent();
+			 if(text.equalsIgnoreCase(
+					 DescartesWizardConstants.PITEST_DEPENDENCY_ARTIFACT) ||
+			 text.equalsIgnoreCase(DescartesWizardConstants.PITEST_ARTIFACT_ID))
+				 pomDocument.removeChild(nodeList.item(i).getParentNode());
+		 }
+		 
+		 nodeList = pomDocument.getElementsByTagName("outputFormats");
+		 if(nodeList != null)if(nodeList.getLength() == 1) 
+			 pomDocument.removeChild(nodeList.item(0));
+		 }
 	}

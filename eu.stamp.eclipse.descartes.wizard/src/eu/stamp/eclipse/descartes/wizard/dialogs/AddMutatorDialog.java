@@ -1,4 +1,4 @@
-package eu.stamp.wp4.descartes.wizard;
+package eu.stamp.eclipse.descartes.wizard.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -20,8 +20,8 @@ import com.richclientgui.toolbox.validation.ValidatingField;
 import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 import com.richclientgui.toolbox.validation.validator.IFieldValidator;
 
+import eu.stamp.eclipse.descartes.wizard.interfaces.IDescartesPage;
 import eu.stamp.eclipse.descartes.wizard.validation.DescartesWizardErrorHandler;
-import eu.stamp.eclipse.descartes.wizard.validation.IDescartesPage;
 
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionAdapter;

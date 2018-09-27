@@ -2,6 +2,8 @@ package eu.stamp.eclipse.descartes.wizard.validation;
 
 import org.eclipse.jface.dialogs.DialogPage;
 import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
+
+import eu.stamp.eclipse.descartes.wizard.interfaces.IDescartesPage;
 /**
  * instances of this class are responsible to display the page messages
  * about the validation of a field
