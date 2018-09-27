@@ -31,7 +31,9 @@
             delegate="eu.stamp.eclipse.botsing.launch.BotsingLaunchDelegate"
             id="eu.stamp.eclipse.botsing.plugin.launchConfigurationType"
             modes="run,debug"
-            name="Bosting Launch Configuration">
+            name="Bosting Launch Configuration"
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
       </launchConfigurationType>
    </extension>
 

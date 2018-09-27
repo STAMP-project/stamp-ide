@@ -31,7 +31,6 @@ public class BotsingLaunchDelegate extends JavaLaunchDelegate{
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 	throws CoreException {
-
 	if (monitor == null) {
 	monitor = new NullProgressMonitor(); 
 	}
