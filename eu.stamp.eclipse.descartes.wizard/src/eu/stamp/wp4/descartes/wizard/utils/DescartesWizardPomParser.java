@@ -356,11 +356,20 @@ public class DescartesWizardPomParser {
 			 if(text.equalsIgnoreCase(
 					 DescartesWizardConstants.PITEST_DEPENDENCY_ARTIFACT) ||
 			 text.equalsIgnoreCase(DescartesWizardConstants.PITEST_ARTIFACT_ID))
-				 pomDocument.removeChild(nodeList.item(i).getParentNode());
+                         removeParent(nodeList.item(i));
 		 }
 		 
 		 nodeList = pomDocument.getElementsByTagName("outputFormats");
 		 if(nodeList != null)if(nodeList.getLength() == 1) 
-			 pomDocument.removeChild(nodeList.item(0));
+                     removeParent(nodeList.item(0));
 		 }
+		
+		private void removeParent(Node node) {
+			Node parent = node.getParentNode();
+			if(parent != null) {
+				Node grandParent = parent.getParentNode();
+				if(grandParent != null)
+                       grandParent.removeChild(parent);
+			}
+		}
 	}
