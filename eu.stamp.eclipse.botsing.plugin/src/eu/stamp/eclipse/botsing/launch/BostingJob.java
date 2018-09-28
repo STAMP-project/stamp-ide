@@ -13,6 +13,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
+import eu.stamp.eclipse.botsing.invocation.Invocation;
 
 public class BostingJob extends Job {
     
@@ -47,36 +48,40 @@ public class BostingJob extends Job {
 				
 				String[] infoCommand = info.getCommand();
 				String[] extraCommand = {
-						        "population = 100",
-								"search_budget = 1800",
-								"max_recursion = 30",
-								"test_dir = crash_Reproduction_Tests"
+						        "population=100",
+								"search_budget=1800",
+								"max_recursion=30",
+								"test_dir=/home/ricardo/Tests/crash"
 				};
 				String[] command = 
 						new String[infoCommand.length + extraCommand.length];
-                for(int i = 0; i < infoCommand.length; i++) 
-                	command[i] = infoCommand[i];
+                for(int i = 0; i < extraCommand.length; i++) 
+                	command[i] = extraCommand[i];
                 int j = 0;
-                for(int i = infoCommand.length; i < command.length; i++) {
-                	command[i] = extraCommand[j];
+                for(int i = extraCommand.length; i < command.length; i++) {
+                	command[i] = infoCommand[j];
                 	j++;
                 }
-                String line = "";
-				for(String sr : command) line += sr + " ";
+                
+                String line = command[0];
+				for(int i = 1; i < command.length; i++) {
+					line += Invocation.INVOCATION_SEPARATOR + command[i];
+				}
 				/*
 				 *  Execute Botsing
 				 */	
 				wc.setAttribute(
 						IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, 
 						BotsingPluginConstants.BOTSING_MAIN);
+				System.out.println(line);
 				wc.setAttribute(
 						IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
 						line);
 				ILaunchConfiguration configuration = wc.doSave();
+				System.setProperty(
+						"user.dir","/home/ricardo/Repositorios/BotsingPlugin/stamp-gui/eu.stamp.eclipse.botsing.plugin");
+				
 				configuration.launch(ILaunchManager.RUN_MODE, null);
-				//Botsing botsing = new Botsing();
-				//botsing.parseCommandLine(command);
-
 				
 			} catch (CoreException e) {
 				e.printStackTrace();

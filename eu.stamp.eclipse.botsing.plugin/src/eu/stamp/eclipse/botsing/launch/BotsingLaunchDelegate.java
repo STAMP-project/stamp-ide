@@ -83,6 +83,9 @@ public class BotsingLaunchDelegate extends JavaLaunchDelegate{
 	
 	url = new URL(BotsingPluginConstants.HAMCREST_JAR_URL);
 	collection.add(FileLocator.toFileURL(url).getPath());
+	
+	url = new URL(BotsingPluginConstants.BOTSING_INVOCATION_JAR_URL);
+	collection.add(FileLocator.toFileURL(url).getPath());
 
 	classpath = new String[collection.size()];
 	classpath = collection.toArray(classpath);

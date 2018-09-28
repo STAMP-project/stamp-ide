@@ -15,7 +15,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.launch.BostingJob;
-import eu.stamp.eclipse.botsing.launch.BotsingAlternativeJob;
 import eu.stamp.eclipse.botsing.launch.ConfigurationsManager;
 
 public class BotsingWizard extends Wizard{
