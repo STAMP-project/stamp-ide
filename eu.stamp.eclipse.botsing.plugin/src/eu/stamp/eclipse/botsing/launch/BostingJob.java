@@ -48,10 +48,10 @@ public class BostingJob extends Job {
 				
 				String[] infoCommand = info.getCommand();
 				String[] extraCommand = {
-						        "population=100",
-								"search_budget=1800",
-								"max_recursion=30",
-								"test_dir=/home/ricardo/Tests/crash"
+						        "-Dpopulation=100",
+								"-Dsearch_budget=1800",
+								"-Dmax_recursion=30",
+								"-Dtest_dir=/home/ricardo/Tests/crash"
 				};
 				String[] command = 
 						new String[infoCommand.length + extraCommand.length];
@@ -64,7 +64,9 @@ public class BostingJob extends Job {
                 }
                 
                 String line = command[0];
+                System.out.println(command[0]);
 				for(int i = 1; i < command.length; i++) {
+					System.out.println(command[i]);
 					line += Invocation.INVOCATION_SEPARATOR + command[i];
 				}
 				/*
