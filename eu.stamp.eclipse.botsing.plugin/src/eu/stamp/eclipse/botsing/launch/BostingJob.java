@@ -1,8 +1,12 @@
 package eu.stamp.eclipse.botsing.launch;
 
+import java.io.IOException;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -30,10 +34,6 @@ public class BostingJob extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-	
-		
-		String userDir = System.getProperty("user.dir");
-	
 		/*  
          * getting the launch configuration type
          */
@@ -53,14 +53,22 @@ public class BostingJob extends Job {
 				String[] command = info.getCommand();
 
                 String line = command[0];
-                System.out.println(command[0]);
+               // System.out.println(command[0]);
 				for(int i = 1; i < command.length; i++) {
-					System.out.println(command[i]);
+					// System.out.println(command[i]);
 					line += Invocation.INVOCATION_SEPARATOR + command[i];
 				}
 				/*
 				 *  Execute Botsing
 				 */	
+				String userDir = FileLocator.getBundleFile(
+						Platform.getBundle(
+								BotsingPluginConstants.BOTSING_PLUGIN_ID))
+				.getAbsolutePath();
+				// System.out.println("User dir : " + userDir);
+				wc.setAttribute(
+						IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
+						userDir);
 				wc.setAttribute(
 						IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, 
 						BotsingPluginConstants.BOTSING_MAIN);
@@ -69,15 +77,12 @@ public class BostingJob extends Job {
 						IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
 						line);
 				ILaunchConfiguration configuration = wc.doSave();
-				System.setProperty(
-						"user.dir","/home/ricardo/Repositorios/BotsingPlugin/stamp-gui/eu.stamp.eclipse.botsing.plugin");
 				
 				configuration.launch(ILaunchManager.RUN_MODE, null);
 				
-			} catch (CoreException e) {
+			} catch (CoreException | IOException e) {
 				e.printStackTrace();
 			}
-		System.setProperty("user.dir",userDir);
 		return Status.OK_STATUS;
 	}
 
