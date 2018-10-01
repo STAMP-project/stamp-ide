@@ -58,6 +58,7 @@ public class BotsingWizard extends Wizard
 				new Path("images/stamp.png"),null);
 		ImageDescriptor descriptor = ImageDescriptor.createFromURL(iconStampURL);
 		Image image = descriptor.createImage();
+		BotsingAdvancedOptionsDialog.image = image;
 		return image;
 	}
 	

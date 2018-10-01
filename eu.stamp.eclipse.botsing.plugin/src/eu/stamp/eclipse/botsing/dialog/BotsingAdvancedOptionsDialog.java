@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -22,6 +24,8 @@ import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 public class BotsingAdvancedOptionsDialog extends TitleAreaDialog 
               implements IBotsingConfigurablePart, IBotsingInfoSource{
 
+	public static Image image;
+	
 	private final List<BotsingDialogProperty> properties;
 	
 	public BotsingAdvancedOptionsDialog(Shell parentShell) {
@@ -38,6 +42,7 @@ public class BotsingAdvancedOptionsDialog extends TitleAreaDialog
 		super.create();
 		setTitle("Botsing configuration");
 		setMessage("Botsing configuration options");
+		if(image != null) setTitleImage(image);
 	}
     @Override
     protected Control createDialogArea(Composite parent) {
@@ -46,8 +51,9 @@ public class BotsingAdvancedOptionsDialog extends TitleAreaDialog
 		 GridLayout layout = new GridLayout(3,true);
 		 composite.setLayout(layout);
 		 
-		 Label space = new Label(composite,SWT.NONE);
-		 space.setText("");
+		Label space = new Label(composite,SWT.NONE);
+		space.setText("");
+		GridDataFactory.fillDefaults().span(2,1).applyTo(space);
 		 
 		 for(BotsingDialogProperty property : properties) {
 			 property.setData(property.getData());
@@ -55,6 +61,12 @@ public class BotsingAdvancedOptionsDialog extends TitleAreaDialog
 		 }
     	
     	return composite;
+    }
+    
+    @Override
+    public void configureShell(Shell shell) {
+    	super.configureShell(shell);
+    	shell.setText("Botsing configuration");
     }
     
     private void addSpinner(String defaultValue,String key,
