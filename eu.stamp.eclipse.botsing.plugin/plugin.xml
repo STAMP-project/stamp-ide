@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="eu.stamp.eclipse.botsing.wizard.handler.BootsingWizardHandler"
+            defaultHandler="eu.stamp.eclipse.botsing.wizard.handler.BotsingWizardHandler"
             id="eu.stamp.eclipse.botsing.plugin.command"
             name="OpenBotsingWizard">
       </command>

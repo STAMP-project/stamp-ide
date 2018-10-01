@@ -45,6 +45,12 @@ public abstract class AbstractBotsingProperty
 		return new String[] {key + "=" + getData()};
 	}
 	
+	protected String getKey() { return key; }
+	
+	protected String getName() { return name; }
+	
+	protected String getDefaultValue() { return defaultValue; }
+	
 	protected abstract String getData();
 	
 	protected abstract void setData(String data);

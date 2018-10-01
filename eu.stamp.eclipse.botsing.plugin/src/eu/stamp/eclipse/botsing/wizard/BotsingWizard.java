@@ -9,15 +9,21 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
+import eu.stamp.eclipse.botsing.dialog.BotsingAdvancedOptionsDialog;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
+import eu.stamp.eclipse.botsing.interfaces.IBotsingInfoSource;
+import eu.stamp.eclipse.botsing.launch.BootsingLaunchInfo;
 import eu.stamp.eclipse.botsing.launch.BostingJob;
+import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.launch.ConfigurationsManager;
 
-public class BotsingWizard extends Wizard{
+public class BotsingWizard extends Wizard
+                      implements IBotsingConfigurablePart {
 
 	protected BotsingWizardPage page; 
 	
@@ -32,7 +38,13 @@ public class BotsingWizard extends Wizard{
 	
 	@Override
 	public void addPages() {
-		page = new BotsingWizardPage(this);
+		BotsingAdvancedOptionsDialog dialog = 
+				new BotsingAdvancedOptionsDialog(
+						PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell());
+		configurableParts.add(dialog);
+		
+		page = new BotsingWizardPage(this,dialog);
 		addPage(page);
 		configurableParts.add(page);
 	}
@@ -51,10 +63,15 @@ public class BotsingWizard extends Wizard{
 	
 	@Override
 	public boolean performFinish() {
-	      //BotsingAlternativeJob job = 
-	//			new BotsingAlternativeJob(page.generateBotsingLaunchInfo());
-	//	job.run();
-		BostingJob job = new BostingJob(page.generateBotsingLaunchInfo());
+		List<BotsingPartialInfo> partialInfos = 
+				new LinkedList<BotsingPartialInfo>();
+		
+        for(IBotsingConfigurablePart part : configurableParts)
+        	if(part instanceof IBotsingInfoSource)
+        	   partialInfos.add(((IBotsingInfoSource)part).getInfo());
+        		
+		BostingJob job = new BostingJob(
+				new BootsingLaunchInfo(partialInfos),this);
 		job.schedule();
 		return true;
 	}
@@ -63,12 +80,22 @@ public class BotsingWizard extends Wizard{
 		configurationsManager.setConfigurationInUse(configurationName);
 		ILaunchConfigurationWorkingCopy copy =
 				configurationsManager.getCopy();
-		for(IBotsingConfigurablePart part : configurableParts)
-			part.load(copy);
+        this.load(copy);
 	}
 	
 	public String[] getConfigurationNames() { 
 		return configurationsManager.getConfigurationNames();
 	}
 
+	@Override
+	public void appendToConfiguration(ILaunchConfigurationWorkingCopy configuration) {
+		for(IBotsingConfigurablePart part : configurableParts)
+			part.appendToConfiguration(configuration);
+	}
+
+	@Override
+	public void load(ILaunchConfigurationWorkingCopy configuration) {
+		for(IBotsingConfigurablePart part : configurableParts)
+			part.load(configuration);
+	}
 }

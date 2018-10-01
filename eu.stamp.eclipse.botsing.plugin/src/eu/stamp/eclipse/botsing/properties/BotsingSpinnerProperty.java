@@ -58,7 +58,7 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
         spinner.setMinimum(minimun);
         if(maximun > minimun + 1) spinner.setMaximum(maximun);
         spinner.setIncrement(step);
-        //spinner.setSelection(Integer.parseInt(data));
+        spinner.setSelection(Integer.parseInt(data));
         
         GridData gridData = 
         		new GridData(SWT.FILL,SWT.FILL,true,false);
@@ -69,9 +69,15 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
        spinner.addSelectionListener(new SelectionAdapter() {
     	   @Override
     	   public void widgetSelected(SelectionEvent e) {
-    		   data = spinner.getText();
+    		   spinnerSelected();
     	   }
        });
 	}
-
+	
+	protected void spinnerSelected() {
+		data = spinner.getText();
+	}
+	protected Spinner getSpinner() {
+		return spinner;
+	}
 }

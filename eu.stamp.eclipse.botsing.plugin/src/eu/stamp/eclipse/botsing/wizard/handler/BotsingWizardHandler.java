@@ -8,7 +8,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import eu.stamp.eclipse.botsing.wizard.BotsingWizard;
 
-public class BootsingWizardHandler extends AbstractHandler {
+public class BotsingWizardHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

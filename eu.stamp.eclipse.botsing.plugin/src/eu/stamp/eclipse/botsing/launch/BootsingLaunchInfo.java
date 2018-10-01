@@ -3,8 +3,6 @@ package eu.stamp.eclipse.botsing.launch;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-
 import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 
@@ -17,6 +15,20 @@ public class BootsingLaunchInfo {
 	public BootsingLaunchInfo(String name,List<AbstractBotsingProperty> properties) {
 		this.name = name;
 		this.properties = properties;
+	}
+	
+	public BootsingLaunchInfo (List<BotsingPartialInfo> partialInfos) {
+		String name = "new_configuration"; // default
+		properties = new LinkedList<AbstractBotsingProperty>();
+		
+		for(BotsingPartialInfo partialInfo : partialInfos) {
+			if(partialInfo.nameIsSet()) name = partialInfo.getName();
+			List<AbstractBotsingProperty> list = partialInfo.getProperties();
+			for(AbstractBotsingProperty property : list)
+				properties.add(property);
+		}
+	
+		this.name = name;
 	}
 	
 	public String[] getCommand() {
@@ -32,11 +44,6 @@ public class BootsingLaunchInfo {
 	    	i++;
 	    }
 		return result;
-	}
-
-	public void appendToConfiguration(ILaunchConfigurationWorkingCopy configuration) {
-		for(AbstractBotsingProperty property : properties)
-			property.appendToConfiguration(configuration);
 	}
 	
 	public String getName() { return name; }

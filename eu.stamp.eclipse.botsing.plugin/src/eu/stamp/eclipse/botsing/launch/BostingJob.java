@@ -14,14 +14,18 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.invocation.Invocation;
+import eu.stamp.eclipse.botsing.wizard.BotsingWizard;
 
 public class BostingJob extends Job {
     
 	private final BootsingLaunchInfo info;
 	
-	public BostingJob(BootsingLaunchInfo info) {
+	private final BotsingWizard wizard;
+	
+	public BostingJob(BootsingLaunchInfo info,BotsingWizard wizard) {
 		super("Bosting working");
         this.info = info;
+        this.wizard = wizard;
 	}
 
 	@Override
@@ -44,25 +48,10 @@ public class BostingJob extends Job {
 			try {
 				ILaunchConfigurationWorkingCopy wc = launchType.newInstance(
 					        null, info.getName());
-				info.appendToConfiguration(wc);
+				wizard.appendToConfiguration(wc);
 				
-				String[] infoCommand = info.getCommand();
-				String[] extraCommand = {
-						        "-Dpopulation=100",
-								"-Dsearch_budget=1800",
-								"-Dmax_recursion=30",
-								"-Dtest_dir=/home/ricardo/Tests/crash"
-				};
-				String[] command = 
-						new String[infoCommand.length + extraCommand.length];
-                for(int i = 0; i < extraCommand.length; i++) 
-                	command[i] = extraCommand[i];
-                int j = 0;
-                for(int i = extraCommand.length; i < command.length; i++) {
-                	command[i] = infoCommand[j];
-                	j++;
-                }
-                
+				String[] command = info.getCommand();
+
                 String line = command[0];
                 System.out.println(command[0]);
 				for(int i = 1; i < command.length; i++) {

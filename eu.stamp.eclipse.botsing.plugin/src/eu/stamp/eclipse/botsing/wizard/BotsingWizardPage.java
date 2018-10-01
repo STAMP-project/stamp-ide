@@ -17,18 +17,22 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
+import eu.stamp.eclipse.botsing.dialog.BotsingAdvancedOptionsDialog;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
+import eu.stamp.eclipse.botsing.interfaces.IBotsingInfoSource;
 import eu.stamp.eclipse.botsing.interfaces.IProjectRelated;
-import eu.stamp.eclipse.botsing.launch.BootsingLaunchInfo;
+import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 import eu.stamp.eclipse.botsing.properties.ClassPathProperty;
 import eu.stamp.eclipse.botsing.properties.StackTraceProperty;
+import eu.stamp.eclipse.botsing.properties.TestDirectoryProperty;
 
 public class BotsingWizardPage extends WizardPage 
-             implements IBotsingConfigurablePart, IProjectRelated {
+             implements IBotsingConfigurablePart, IProjectRelated, IBotsingInfoSource {
 
 	private List<AbstractBotsingProperty> botsingProperties;
 	
@@ -36,12 +40,16 @@ public class BotsingWizardPage extends WizardPage
     
 	private BotsingWizard wizard;
 	
-	protected BotsingWizardPage(BotsingWizard wizard) {
+	private final BotsingAdvancedOptionsDialog dialog;
+	
+	protected BotsingWizardPage(
+			BotsingWizard wizard,BotsingAdvancedOptionsDialog dialog) {
 		super("First page"); 
 		setTitle("First Page");
 		setDescription("Botsing Configuration");
 		configurationName = "new_configuration";
 		this.wizard = wizard;
+		this.dialog = dialog;
 		botsingProperties = new LinkedList<AbstractBotsingProperty>();
 	}
 
@@ -123,6 +131,12 @@ public class BotsingWizardPage extends WizardPage
 		}
 	});
 	
+	 //Field for the tests directory
+	TestDirectoryProperty testDirectory = 
+			new TestDirectoryProperty("","-Dtest_dir","Test directory : ");
+	testDirectory.createControl(composite,false); // no only read
+	botsingProperties.add(testDirectory);
+	
 	// Field for the log directory
 	StackTraceProperty stackProperty = 
 			new StackTraceProperty("","-Dcrash_log","Log file : ");
@@ -140,6 +154,16 @@ public class BotsingWizardPage extends WizardPage
 			new ClassPathProperty("","-projectCP","Class Path : ");
 	classPathProperty.createControl(composite);
 	botsingProperties.add(classPathProperty);
+	
+	// dialog link
+	Link link = new Link(composite,SWT.NONE);
+	link.setText("<A>Advanced options</A>");
+	link.addSelectionListener(new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			dialog.open();
+		}
+	});
 
 	// required
 	setControl(composite);
@@ -157,15 +181,16 @@ public class BotsingWizardPage extends WizardPage
 		for(AbstractBotsingProperty property : botsingProperties)
 			property.load(configuration);
 	}
-   
-	public BootsingLaunchInfo generateBotsingLaunchInfo() {
-		return new BootsingLaunchInfo(configurationName,botsingProperties);
-	}
 
 	@Override
 	public void projectChanged(IJavaProject newProject) {
 		for(AbstractBotsingProperty property : botsingProperties)
 			if(property instanceof IProjectRelated)
 				((IProjectRelated)property).projectChanged(newProject);
+	}
+
+	@Override
+	public BotsingPartialInfo getInfo() {
+		return new BotsingPartialInfo(configurationName,botsingProperties);
 	}
 }

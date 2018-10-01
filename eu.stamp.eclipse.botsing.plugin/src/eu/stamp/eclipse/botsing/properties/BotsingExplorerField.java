@@ -1,6 +1,8 @@
 package eu.stamp.eclipse.botsing.properties;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -34,14 +36,29 @@ public abstract class BotsingExplorerField extends AbstractBotsingProperty {
 			}
 		});
 	 }
-
+    
 	@Override
 	public void createControl(Composite composite) {
+		createControl(composite,true);
+	}
+	
+	public void createControl(Composite composite,boolean readOnly) {
 
        Label label = new Label(composite,SWT.NONE);
        label.setText(name);
 		
-	   text = new Text(composite,SWT.READ_ONLY | SWT.BORDER);
+	   if(readOnly) text = new Text(composite,SWT.READ_ONLY | SWT.BORDER);
+	   else {
+		   text = new Text(composite,SWT.BORDER);
+		   text.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				data = text.getText();
+			}	   
+		   });
+	   }
 	   text.setText(data);
 
 	   int n = ((GridLayout)composite.getLayout()).numColumns;
