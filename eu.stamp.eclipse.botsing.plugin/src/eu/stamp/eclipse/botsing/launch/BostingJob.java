@@ -1,12 +1,11 @@
 package eu.stamp.eclipse.botsing.launch;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -61,11 +60,28 @@ public class BostingJob extends Job {
 				/*
 				 *  Execute Botsing
 				 */	
-				String userDir = FileLocator.getBundleFile(
-						Platform.getBundle(
-								BotsingPluginConstants.BOTSING_PLUGIN_ID))
-				.getAbsolutePath();
-				// System.out.println("User dir : " + userDir);
+				String userDir = "";
+				for(String sr : command)if(sr.contains("crash_log")) {
+					userDir = sr.substring(sr.lastIndexOf("=")+1);
+					break;
+				}
+				if(userDir.contains("\\")) userDir.replaceAll("\\","/");
+				userDir = userDir.substring(0,userDir.lastIndexOf("/"));
+				
+				/*
+				 *  Avoid file not found exception
+				 */
+				//System.out.println(userDir);
+				File config = new File(userDir +
+						"/src/main/java/eu/stamp/botsing");
+				
+				if(!config.exists()) config.mkdirs();
+				config = new File(config.getAbsolutePath()
+						+  "/" + "config.properties");
+				if(!config.exists()) config.createNewFile();
+				
+			  //  System.out.println("User dir : " + userDir);
+			    
 				wc.setAttribute(
 						IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 						userDir);
@@ -82,7 +98,7 @@ public class BostingJob extends Job {
 				
 			} catch (CoreException | IOException e) {
 				e.printStackTrace();
-			}
+			} 
 		return Status.OK_STATUS;
 	}
 
