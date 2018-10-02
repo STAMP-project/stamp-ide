@@ -34,7 +34,7 @@ public class BostingJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		/*  
-         * getting the launch configuration type
+         *  getting the launch configuration type
          */
 		DebugPlugin plugin = DebugPlugin.getDefault();
 		ILaunchManager manager = plugin.getLaunchManager();
@@ -65,7 +65,13 @@ public class BostingJob extends Job {
 					userDir = sr.substring(sr.lastIndexOf("=")+1);
 					break;
 				}
-				if(userDir.contains("\\")) userDir.replaceAll("\\","/");
+				// Windows (a path can contain both \\ and /)
+				if(userDir.contains("\\")) {
+					int n = userDir.lastIndexOf("\\");
+					if(userDir.contains("/"))
+						if(userDir.lastIndexOf("/") > n) n = userDir.lastIndexOf("/");
+					userDir = userDir.substring(0,n);
+				}
 				userDir = userDir.substring(0,userDir.lastIndexOf("/"));
 				
 				/*
