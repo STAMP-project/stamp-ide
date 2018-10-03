@@ -6,6 +6,7 @@ This repository contains the code of number of plugins for Eclipse that provides
 
 - DSpot: see [DSpot Getting Started guide](README_DSpot.md) for information to install and use DSpot tool.
 - Descartes: see [Descartes Getting Started guide](README_Descartes.md) for information to install and use Descartes tool.
+- Botsing: see [Botsing Getting Started guide](README_Botsing.md) for information to install and use Botsing tool.
 
 ## Installation
 The installation of the STAMP Eclipse plugins follows the standard Eclipse plugin installation precedure.
