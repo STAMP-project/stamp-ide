@@ -287,9 +287,9 @@ public class DescartesWizardPomParser {
 			
 			Node dependenciesNode = pomDocument.createElement("dependencies");
 			Node dependencyNode = pomDocument.createElement("dependency");
-			putNodeWithText("groupId",DescartesWizardConstants.PITEST_DEPENDENCY_ID,dependencyNode);
-			putNodeWithText("artifactId",DescartesWizardConstants.PITEST_DEPENDENCY_ARTIFACT,dependencyNode);
-			putNodeWithText("version",DescartesWizardConstants.PITEST_DEPENDENCY_VERSION,dependencyNode);
+			putNodeWithText("groupId",DescartesWizardConstants.DESCARTES_ID,dependencyNode);
+			putNodeWithText("artifactId",DescartesWizardConstants.DESCARTES_ARTIFACT,dependencyNode);
+			putNodeWithText("version",DescartesWizardConstants.DESCARTES_VERSION,dependencyNode);
 			
 			dependenciesNode.appendChild(dependencyNode);
 			pitestTree.appendChild(dependenciesNode);
@@ -354,7 +354,7 @@ public class DescartesWizardPomParser {
 		 for(int i = 0; i < nodeList.getLength(); i++) {
 			 String text = nodeList.item(i).getTextContent();
 			 if(text.equalsIgnoreCase(
-					 DescartesWizardConstants.PITEST_DEPENDENCY_ARTIFACT) ||
+					 DescartesWizardConstants.DESCARTES_ARTIFACT) ||
 			 text.equalsIgnoreCase(DescartesWizardConstants.PITEST_ARTIFACT_ID))
                          removeParent(nodeList.item(i));
 		 }
