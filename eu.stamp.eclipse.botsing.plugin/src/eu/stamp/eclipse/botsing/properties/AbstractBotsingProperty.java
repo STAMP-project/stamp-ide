@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Ricardo José Tejada García (Atos) - main developer
+ * Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.eclipse.botsing.properties;
 
 import org.eclipse.core.runtime.CoreException;
@@ -7,6 +19,15 @@ import org.eclipse.swt.widgets.Composite;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
 
+/**
+ * Abstract implementation IBotsingProperty
+ * the Botsing properties contains configuration information so this class implements
+ * IBotsingConfigurablePart, the main differences between the subclasses will come from
+ * the kind of widget associate to each subclass (text, spinner ...)
+ * 
+ * @see eu.stamp.eclipse.botsing.interfaces.IBotsingProperty
+ * @see eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart
+ */
 public abstract class AbstractBotsingProperty 
      implements IBotsingProperty, IBotsingConfigurablePart {
 	

@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Ricardo José Tejada García (Atos) - main developer
+ * Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.eclipse.botsing.launch;
 
 import java.io.File;
@@ -21,11 +33,11 @@ import eu.stamp.eclipse.botsing.wizard.BotsingWizard;
 
 public class BostingJob extends Job {
     
-	private final BootsingLaunchInfo info;
+	private final BotsingLaunchInfo info;
 	
 	private final BotsingWizard wizard;
 	
-	public BostingJob(BootsingLaunchInfo info,BotsingWizard wizard) {
+	public BostingJob(BotsingLaunchInfo info,BotsingWizard wizard) {
 		super("Bosting working");
         this.info = info;
         this.wizard = wizard;
@@ -72,7 +84,7 @@ public class BostingJob extends Job {
 						if(userDir.lastIndexOf("/") > n) n = userDir.lastIndexOf("/");
 					userDir = userDir.substring(0,n);
 				}
-				userDir = userDir.substring(0,userDir.lastIndexOf("/"));
+				else userDir = userDir.substring(0,userDir.lastIndexOf("/"));
 				
 				/*
 				 *  Avoid file not found exception

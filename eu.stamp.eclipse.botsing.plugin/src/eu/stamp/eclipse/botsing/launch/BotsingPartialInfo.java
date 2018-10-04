@@ -1,9 +1,29 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Ricardo José Tejada García (Atos) - main developer
+ * Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.eclipse.botsing.launch;
 
 import java.util.List;
 
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 
+/**
+ * objects of this class are produced by objects that contains Botsing properties
+ * this object carries a list of properties and one of these objects contains the
+ * name of the configuration
+ * 
+ * @see eu.stamp.eclipse.botsing.interfaces.IBotsingInfoSource
+ * @see eu.stamp.eclipse.botsing.launch.BotsingLaunchInfo
+ */
 public class BotsingPartialInfo {
 
 	private final String name;

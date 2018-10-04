@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Ricardo José Tejada García (Atos) - main developer
+ * Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.eclipse.botsing.wizard;
 
 import java.net.URL;
@@ -17,7 +29,7 @@ import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.dialog.BotsingAdvancedOptionsDialog;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingInfoSource;
-import eu.stamp.eclipse.botsing.launch.BootsingLaunchInfo;
+import eu.stamp.eclipse.botsing.launch.BotsingLaunchInfo;
 import eu.stamp.eclipse.botsing.launch.BostingJob;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.launch.ConfigurationsManager;
@@ -27,8 +39,19 @@ public class BotsingWizard extends Wizard
 
 	protected BotsingWizardPage page; 
 	
+	/**
+	 * The pages and dialog of the wizard are configurable parts 
+	 * (and they are composed by configurable parts)
+	 * 
+	 * @see eu.stamp.eclipse.botsing.interfaces.IConfigurablePart
+	 */
 	private List<IBotsingConfigurablePart> configurableParts;
 	
+	/**
+	 * The object to manage the launch configurations
+	 * 
+	 * @see eu.stamp.eclipse.botsing.launch.ConfigurationsManager
+	 */
 	private final ConfigurationsManager configurationsManager;
 	
 	public BotsingWizard() {
@@ -67,12 +90,13 @@ public class BotsingWizard extends Wizard
 		List<BotsingPartialInfo> partialInfos = 
 				new LinkedList<BotsingPartialInfo>();
 		
+		// get the partial information objects from their sources
         for(IBotsingConfigurablePart part : configurableParts)
         	if(part instanceof IBotsingInfoSource)
         	   partialInfos.add(((IBotsingInfoSource)part).getInfo());
         		
 		BostingJob job = new BostingJob(
-				new BootsingLaunchInfo(partialInfos),this);
+				new BotsingLaunchInfo(partialInfos),this);
 		job.schedule();
 		return true;
 	}

@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Ricardo José Tejada García (Atos) - main developer
+ * Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.eclipse.botsing.wizard;
 
 import java.util.LinkedList;
@@ -33,11 +45,17 @@ import eu.stamp.eclipse.botsing.properties.TestDirectoryProperty;
 
 public class BotsingWizardPage extends WizardPage 
              implements IBotsingConfigurablePart, IProjectRelated, IBotsingInfoSource {
-
+    
+	/**
+	 * List with the properties in this page
+	 */
 	private List<AbstractBotsingProperty> botsingProperties;
 	
 	private String configurationName;
     
+	/**
+	 * Access to the wizard object is required in order to load configurations
+	 */
 	private BotsingWizard wizard;
 	
 	private final BotsingAdvancedOptionsDialog dialog;
