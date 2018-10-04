@@ -24,6 +24,8 @@ the load configuration combo will become enabled, select the configuration to lo
 
 ### Selecting the execution parameters
 
+<center>![Botsing wizard page](images/BotsingWizardPage.png)</center>
+
 #### Generated tests directory
 
 Select a folder to store the generated tests in the row "Test directory", the button select
@@ -49,6 +51,8 @@ and select the folder wich contains the jar of the exception and it's dependenci
 The class path will appear in the text box of the classpath row.
 
 ### Botsing configuration (optional)
+
+<center>![Botsing dvanced options dialog](images/BotsingWizardDialog.png)</center>
 
 In the botton of the wizard page there is a link called "Advanced options", 
 it opens a dialog with spinners to set some config.properties Botsing parameters.
