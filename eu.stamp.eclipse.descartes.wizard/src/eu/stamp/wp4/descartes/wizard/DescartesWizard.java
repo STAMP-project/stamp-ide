@@ -12,9 +12,12 @@
  *******************************************************************************/
 package eu.stamp.wp4.descartes.wizard;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -24,7 +27,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
+import org.xml.sax.SAXException;
 
+import eu.stamp.eclipse.descartes.plugin.pom.DescartesPomParser;
 import eu.stamp.eclipse.descartes.wizard.dialogs.AddMutatorDialog;
 import eu.stamp.eclipse.descartes.wizard.dialogs.OutputFormatsDialog;
 import eu.stamp.eclipse.descartes.wizard.interfaces.IDescartesConfigurablePart;
@@ -91,8 +96,14 @@ public class DescartesWizard extends Wizard
 		String configurationName = one.getConfigurationName();
 		DescartesEclipseJob job = new DescartesEclipseJob(wConf.getProjectPath(),
 				                          pomName,configurationName,this);
-		String[] texts = one.getMutatorsSelection();
-		wConf.getDescartesParser().preparePom(texts,pomName,outputsDialog);
+		//String[] texts = one.getMutatorsSelection();
+		try {
+			DescartesPomParser parser = new DescartesPomParser(wConf.getProjectPath(),pomName);
+		    parser.preparePom(one.getMutatorsList(),outputsDialog.getFormatList());
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			e.printStackTrace();
+		}
+		//wConf.getDescartesParser().preparePom(texts,pomName,outputsDialog);
 		job.schedule();
 		return true;
 	}

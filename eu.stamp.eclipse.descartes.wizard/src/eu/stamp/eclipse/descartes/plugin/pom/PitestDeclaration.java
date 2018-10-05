@@ -28,7 +28,7 @@ public void appendDeclaration(Node pluginsNode, Document document) {
     
     Node dependenciesNode = document.createElement("dependencies");
     Node dependencyNode = document.createElement("dependency");
-    putNodeWithText("groutId",DescartesWizardConstants.DESCARTES_ID,dependencyNode,document);
+    putNodeWithText("groupId",DescartesWizardConstants.DESCARTES_ID,dependencyNode,document);
     putNodeWithText("artifactId",DescartesWizardConstants.DESCARTES_ARTIFACT,dependencyNode,document);
     putNodeWithText("version",DescartesWizardConstants.DESCARTES_VERSION,dependencyNode,document);
     dependenciesNode.appendChild(dependencyNode);

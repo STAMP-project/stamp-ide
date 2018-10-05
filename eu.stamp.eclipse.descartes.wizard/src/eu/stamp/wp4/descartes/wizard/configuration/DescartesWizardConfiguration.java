@@ -16,34 +16,77 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.internal.core.JavaProject;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.m2e.actions.MavenLaunchConstants;
-import org.w3c.dom.Node;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.internal.Workbench;
 import org.xml.sax.SAXException;
 
+import eu.stamp.eclipse.descartes.plugin.pom.DescartesPomReader;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
-import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardPomParser;
 
 @SuppressWarnings("restriction")
 public class DescartesWizardConfiguration {
 
 	private IJavaProject jProject;
 	private String projectPath;
+	private String pomName;
 	
 	/**
 	 *  this object contains information of the pom and the methods to it's manipulation
 	 */
-	private DescartesWizardPomParser descartesParser; 
+	private DescartesPomReader pomReader; 
 	
 	/**
 	 *  an array with all the saved configurations of Descartes type
 	 */
 	private ILaunchConfiguration[] configurations;
 	private int indexOfCurrentConfiguration = 0;  // to set and get the configuration in use
+	
+	private static IJavaProject obtainProject() {
+		ISelectionService selectionService = Workbench.getInstance()
+				.getActiveWorkbenchWindow().getSelectionService();
+		ISelection selection = selectionService.getSelection();
+		IJavaProject jProject = null;
+		Object element;
+		
+		if(selection instanceof IStructuredSelection) {
+			element = ((IStructuredSelection)selection).getFirstElement();
+			
+			if(element instanceof IJavaElement) {
+				jProject = ((IJavaElement) element).getJavaProject();
+				return jProject;
+			}
+			if(element instanceof IProject) {
+				IProject pro = (IProject) element;
+				jProject = new JavaProject(pro,null);
+				return jProject;
+			}
+		}
+		if(jProject == null) {
+			selection = selectionService.getSelection("org.eclipse.ui.navigator.ProjectExplorer");
+		if(selection instanceof IStructuredSelection) {
+			element = ((IStructuredSelection)selection).getFirstElement();
+			if(element instanceof IProject) {
+				IProject pro = (IProject) element;
+				jProject = new JavaProject(pro,null);
+				return jProject;
+			}
+		}
+		
+		}
+		return null;
+	}
+	
 	
 	/**
 	 *  this is the constructor called when the wizard is open, it takes the project
@@ -52,12 +95,13 @@ public class DescartesWizardConfiguration {
 	public DescartesWizardConfiguration(){
 		
 		// get the project and check that it's maven
-		jProject = DescartesWizardPomParser.obtainProject();
+		jProject = obtainProject();
 		if(jProject != null) { 
 			try {
 				if(jProject.getProject().hasNature(DescartesWizardConstants.MAVEN_NATURE_ID)) {
          try {
-			descartesParser = new DescartesWizardPomParser(jProject);
+			pomReader = new DescartesPomReader(jProject
+					.getProject().getLocation().toString());
 		} catch (SAXException | IOException e) {
 			e.printStackTrace();
 		}
@@ -79,7 +123,8 @@ public class DescartesWizardConfiguration {
 	public DescartesWizardConfiguration(IJavaProject jProject) {
 		this.jProject = jProject;
 		try {
-			descartesParser = new DescartesWizardPomParser(jProject);
+			pomReader = new DescartesPomReader(jProject
+					.getProject().getLocation().toString());
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
 		}
@@ -98,14 +143,9 @@ public class DescartesWizardConfiguration {
 	 * @return an array with the mutators names
 	 */
 	public String[] getMutatorsNames() {
-		String[] names = {""}; 
-		Node[] mutators = descartesParser.getMutators();
-		if(mutators != null) {
-	    names = new String[mutators.length];
-		for(int i = 0; i < mutators.length; i++) names[i] = mutators[i].getNodeName();}
-		return names;
+		return pomReader.getMutators();
 	}
-
+/*
 	public String[] getMutatorsTexts() {
 		String[] texts = {""};
 		Node[] mutators = descartesParser.getMutators();
@@ -116,14 +156,15 @@ public class DescartesWizardConfiguration {
 	}
 	public DescartesWizardPomParser getDescartesParser() {
 		return descartesParser;
-	}
+	}*/
 	/*
 	 *  setter methods
 	 */
 	public void setProject(IJavaProject jProject) {
 		this.jProject = jProject;
 		try {
-			descartesParser = new DescartesWizardPomParser(jProject);
+			pomReader = new DescartesPomReader(jProject
+					.getProject().getLocation().toString());
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
 		}
@@ -152,12 +193,12 @@ public class DescartesWizardConfiguration {
 		
 	  // get the project path and name	
 	  projectPath = configuration.getAttribute(MavenLaunchConstants.ATTR_POM_DIR, ""); 
-	  String pomName = configuration.getAttribute(MavenLaunchConstants.ATTR_GOALS,"");
+	  pomName = configuration.getAttribute(MavenLaunchConstants.ATTR_GOALS,"");
 	  pomName = pomName.substring(pomName.indexOf("-f ")+3);  // ... -f pomName
 	  
 	  // parse the pom of the configuration
 	  try {
-		descartesParser = new DescartesWizardPomParser(projectPath,pomName);
+		pomReader = new DescartesPomReader(projectPath);
 	} catch (ParserConfigurationException | SAXException | IOException e) {
 		e.printStackTrace();
 	}
@@ -174,7 +215,7 @@ public class DescartesWizardConfiguration {
 	 * @return the name of the file use as pom by the current configuration 
 	 */
 	public String getPomName() {
-		String result = descartesParser.getPomName();
+		String result = pomName;
 		if(result == null && configurations != null) {
 			try {
 				result = getCurrentConfiguration()

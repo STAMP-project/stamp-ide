@@ -67,7 +67,7 @@ public class DescartesPomParser extends AbstractDescartesPomParser {
 		if(pluginList != null)if(pluginList.getLength() > 0) {
 			Node pitNode = getPitNode(pluginList);
 			if(pitNode != null)
-				document.removeChild(pitNode);
+				pitNode.getParentNode().removeChild(pitNode);
 		}
 	}
 	
@@ -75,19 +75,22 @@ public class DescartesPomParser extends AbstractDescartesPomParser {
 		
         for(int i = 0; i < pluginList.getLength(); i++) {
         	NodeList groupList = findNodeList("groupId",pluginList.item(i));
-        	if(groupList != null)if(groupList.getLength() > 0)
-        	if(groupList.item(0).getTextContent()
-        			.equalsIgnoreCase(DescartesWizardConstants.PITEST_PLUGIN_ID)){
-        		
-        	NodeList artifacts = findNodeList("artifactId",pluginList.item(i));
-        		if(artifacts != null)if(artifacts.getLength() > 0)
-        		if(artifacts.item(0).getTextContent()
-        					.equalsIgnoreCase(DescartesWizardConstants.PITEST_ARTIFACT_ID))
-        				return pluginList.item(i);	
-        	}
-        }
-		
+            if(examine(groupList,DescartesWizardConstants.PITEST_PLUGIN_ID)) {
+            	NodeList artifactList = findNodeList("artifactId",pluginList.item(i));
+            	if(examine(artifactList,DescartesWizardConstants.PITEST_ARTIFACT_ID))
+            		return pluginList.item(i);
+            }
+        }	
 		return null;
 	}
-	
+	private boolean examine(NodeList list,String text) {
+		if(list == null) return false;
+		if(list.getLength() < 1) return false;
+		
+		for(int i = 0; i < list.getLength(); i++)
+			if(list.item(i).getTextContent().equalsIgnoreCase(text))
+				return true;
+		
+		return false;
+	}
 }
