@@ -145,18 +145,6 @@ public class DescartesWizardConfiguration {
 	public String[] getMutatorsNames() {
 		return pomReader.getMutators();
 	}
-/*
-	public String[] getMutatorsTexts() {
-		String[] texts = {""};
-		Node[] mutators = descartesParser.getMutators();
-		if(mutators != null) {
-		texts = new String[mutators.length];
-		for(int i = 0; i < mutators.length; i++) texts[i] = mutators[i].getTextContent();}
-		return texts;
-	}
-	public DescartesWizardPomParser getDescartesParser() {
-		return descartesParser;
-	}*/
 	/*
 	 *  setter methods
 	 */

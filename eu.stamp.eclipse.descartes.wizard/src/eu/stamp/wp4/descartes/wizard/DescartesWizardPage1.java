@@ -604,7 +604,7 @@ public class DescartesWizardPage1 extends WizardPage
 	}
 	public List<String> getMutatorsList(){
 		List<String> list = new LinkedList<String>();
-		for(TreeItem item : items)
+		for(TreeItem item : items)if(!item.isDisposed())
 			list.add(item.getText());
 		return list;
 	}
