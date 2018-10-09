@@ -589,6 +589,7 @@ public class DescartesWizardPage1 extends WizardPage
     /**
      * @return an string array with the mutators contents
      */
+    @Deprecated
 	public String[] getMutatorsSelection() {
 		String[] texts = new String[items.size()];
 		for(int i = 0; i < items.size(); i++) texts[i] = items.get(i).getText();
@@ -600,6 +601,12 @@ public class DescartesWizardPage1 extends WizardPage
 			configurationName =  ((Text)configurationField.getControl()).getText();
 		if(configurationName.isEmpty())configurationName = configurationCombo.getText();
 		return configurationName;
+	}
+	public List<String> getMutatorsList(){
+		List<String> list = new LinkedList<String>();
+		for(TreeItem item : items)if(!item.isDisposed())
+			list.add(item.getText());
+		return list;
 	}
 	/**
 	 * @return the name of the POM file to write

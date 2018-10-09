@@ -18,6 +18,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import eu.stamp.eclipse.descartes.wizard.interfaces.IDescartesConfigurablePart;
 
+/**
+ *  This class describes a dialog with buttons 
+ *  to choose the output options that will appear in the pom to use
+ */
 public class OutputFormatsDialog extends TitleAreaDialog 
                          implements IDescartesConfigurablePart{
 	
