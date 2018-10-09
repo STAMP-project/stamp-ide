@@ -17,6 +17,8 @@ STAMP Eclipse plugins require the following software requirements:
 - Java JDK 8 or above
 - Eclipse Oxygen or above
 
+Note: Eclipse needs to be configure with a default JRE instalation pointed to a JDK (not to a JRE)
+
 ### Installation precedure
 1. In a command line interface (CMI), pull STAMP eclipse-ide repository to get the update site locally:
 `git clone https://github.com/STAMP-project/eclipse-ide.git`
