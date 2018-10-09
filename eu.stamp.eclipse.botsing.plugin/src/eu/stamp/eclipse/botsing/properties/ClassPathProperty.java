@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Ricardo José Tejada García (Atos) - main developer
+ * Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.eclipse.botsing.properties;
 
 import org.eclipse.core.runtime.CoreException;
@@ -7,6 +19,9 @@ import org.eclipse.ui.PlatformUI;
 
 import eu.stamp.botsing.Main;
 
+/**
+ * @see eu.stamp.eclipse.botsing.properties.BotsingExplorerField
+ */
 public class ClassPathProperty extends BotsingExplorerField {
 	
 	private String folderPath;
@@ -27,65 +42,17 @@ public class ClassPathProperty extends BotsingExplorerField {
 		
 		folderPath = dialog.open();
 		
+		// the class Main in Botsing contains a method to get the
+		// class path from a folder
 		Main.bin_path = folderPath;
 		return Main.getListOfDeps();
 		
-		/*
-		IJavaProject project = showProjectDialog();
-		if(project == null) return "";
-		wizardPage.projectChanged(project);
-		try {
-			IClasspathEntry[] entries = project.getResolvedClasspath(true);
-		    if(entries == null) return "";
-		    if(entries.length < 1) return "";
-			String result = entries[0].getPath().toString();
-			String location = project.getProject().getLocation().toString();
-			for(int i = 1; i < entries.length; i++)
-		    	result += separator + location + pathSeparator +
-		    	entries[i].getPath().toString();
-			return result;
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		}*/
 	}
-	/*
-	private IJavaProject showProjectDialog() {
-		Class<?>[] acceptedClasses = new Class[] {IJavaProject.class,IProject.class};
-		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses,true);
-		
-		ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
-			@Override
-			public boolean select(Viewer viewer,Object parentElement, Object element) {
-			return element instanceof IJavaProject ||
-					element instanceof IProject;	
-			}
-		};
-		
-		    IWorkspaceRoot fWorkspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
-	        
-	        StandardJavaElementContentProvider provider= new StandardJavaElementContentProvider();
-	        ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
-	        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-	        ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(shell, labelProvider, provider);
-	        dialog.setValidator(validator);
-	        dialog.setComparator(new JavaElementComparator());
-	        dialog.setTitle(" Select a project ");
-	        dialog.setMessage(" Select a project ");
-	        dialog.setInput(JavaCore.create(fWorkspaceRoot));
-	        dialog.addFilter(filter);
-	        dialog.setHelpAvailable(false);
-		
-	        if(dialog.open() == Window.OK) {
-	            Object[] results = dialog.getResult();
-	            for(Object ob : results) {
-	            if(ob instanceof IJavaProject) { 
-	            IJavaProject jProject = (IJavaProject)ob;
-	            return jProject;
-	             }
-	            }
-	        }     
-		return null;
-	}*/
+	
+	/**
+	 * in this case the array key is the elemnt 0 in the array
+	 * and the value the element 1
+	 */
 	@Override
 	public String[] getPropertyString() { 
 		System.setProperty("user.dir",folderPath);
