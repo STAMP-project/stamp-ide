@@ -45,7 +45,7 @@ public void appendDeclaration(Node pluginsNode, Document document) {
     }
     
     if(outputFormats.size() > 0) {
-    	Node formatsNode = document.createElement("outPutFormats");
+    	Node formatsNode = document.createElement("outputFormats");
     	for(String format : outputFormats)
     		putNodeWithText("value",format,formatsNode,document);
     	configurationNode.appendChild(formatsNode);
