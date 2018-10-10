@@ -14,7 +14,7 @@ is displayed in the Eclipse console.
 
 ## User's manual
 
-<center>![DescartesWizard](images/DescartesWizard.png)</center>
+![DescartesWizard](images/DescartesWizard.png)
 
 ### Opening the Wizard
 
@@ -28,14 +28,14 @@ A Descartes configuration consists of the path of a project, a set of mutators t
 To create a new configuration select the check button in the right of the "create new configuration" row and write a name for the configuration in the text,
 after this select the project mutators and pom file to use, when you press finish your new configuration will be saved and executed.
 
-<center>![configurations](images/conf.png)</center>
+![configurations](images/conf.png)
 
 ### Descartes field validation and quick fixers
 
 Descartes wizard includes validation of the text fields, if the text is empty or the content is wrong a red signal will be displayed in the wizard page's head
 in the top left corner there will be another signal, click right on it to open a quick fixer menu and push the fix problems option to correct the text.
 
-<center>![quick fixer](images/DescartesValidation.png)</center> 
+![quick fixer](images/DescartesValidation.png) 
 
 ### Loading a stored configuration
 
@@ -48,7 +48,7 @@ this parameters the changes will be saved after pressing the finish button.
 Push the select project button to open a project selection dialog, select a project and press the OK button, you will see the path of the new project
 in the "path of the project" text, you can also write the path of the project directly in the text box.
 
-<center>![project selection](images/projectSelection.png)</center>
+![project selection](images/projectSelection.png)
 
 ### Create a list of mutators
 
@@ -63,7 +63,7 @@ and press ok, the necessary sintax like "" for strings, '' for chars or key word
 validation when necessary and a quick fixer for some of the possible problems (open the quick fixer by right
 clicking on the error signal on the top left corner of the text).
 
-<center>![adding a mutator](images/add.png)</center>
+![adding a mutator](images/add.png)
 
 #### Remove mutators
 
@@ -72,14 +72,14 @@ the "Remove selected mutators" button (that's the only purpose of the check butt
 
 If you want to remove all, push the "Remove all" button.
 
-<center>![removing mutators](images/remove.png)</center>
+![removing mutators](images/remove.png)
 
 #### Set the initial list of mutators
 
 The initial mutators are those declared in the pom.xml file of the project, when you open the wizard (or when you select a new project)
 the initial list is shown in the mutators area, if you want to come back to the initial list, press the "Set initial mutators button".
 
-<center>![set initial mutators](images/initial.png)</center>
+![set initial mutators](images/initial.png)
 
 #### Set default mutators
 
@@ -89,14 +89,14 @@ The default list is taken from a properties file  <path of the project>/files/de
 so you can edit it easily, the list is shown in the wizard, using the alphabetical order of the properties keys,
 the mutator with the key ab will be under the mutator with the key aa. 
 
-<center>![default mutators](images/default.png)</center>
+![default mutators](images/default.png)
 
 ### Set the name of the Descartes pom file
 
 To execute Descartes the plugin writes an .xml file to use it as pom file in order not to touch the pom.xml of the project,
 you can set the name of this file writing a name (it must end with .xml) in the "name of the POM file" text box in the bottom of the page.
 
-<center>![pom name row](images/pom.png)</center>
+![pom name row](images/pom.png)
 
 ### Result
 
@@ -105,4 +105,4 @@ Press the finish button to execute Descartes, you will see the information about
 At the end you will see the summary in the console and the Descartes view will be opened to show the information in the html summaries 
 produced by Descartes, there will be several tab items, showing the different html documents.
 
-<center>![Descartes views](images/DescartesView.png)</center>
+![Descartes views](images/DescartesView.png)

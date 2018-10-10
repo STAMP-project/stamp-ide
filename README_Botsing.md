@@ -24,7 +24,7 @@ the load configuration combo will become enabled, select the configuration to lo
 
 ### Selecting the execution parameters
 
-<center>![Botsing wizard page](images/BotsingWizardPage.png)</center>
+![Botsing wizard page](images/BotsingWizardPage.png)
 
 #### Generated tests directory
 
@@ -52,7 +52,7 @@ The class path will appear in the text box of the classpath row.
 
 ### Botsing configuration (optional)
 
-<center>![Botsing dvanced options dialog](images/BotsingWizardDialog.png)</center>
+![Botsing dvanced options dialog](images/BotsingWizardDialog.png)
 
 In the botton of the wizard page there is a link called "Advanced options", 
 it opens a dialog with spinners to set some config.properties Botsing parameters.
