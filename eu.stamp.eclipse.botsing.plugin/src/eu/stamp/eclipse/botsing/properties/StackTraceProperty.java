@@ -47,6 +47,8 @@ public class StackTraceProperty
 		 dialog.setFilterPath(filterPath);
 	     
 	      String result = dialog.open();
+	      
+	      callListeners();
 	      return result;
 	}
 	@Override

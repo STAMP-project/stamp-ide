@@ -12,12 +12,16 @@
  *******************************************************************************/
 package eu.stamp.eclipse.botsing.properties;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.widgets.Composite;
 
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
+import eu.stamp.eclipse.botsing.interfaces.IBotsingPropertyListener;
 
 /**
  * Abstract implementation IBotsingProperty
@@ -39,11 +43,14 @@ public abstract class AbstractBotsingProperty
 	
 	protected String data;
 	
+	protected final List<IBotsingPropertyListener> listeners;
+	
 	protected AbstractBotsingProperty(String defaultValue,String key,String name) {
 		this.defaultValue = defaultValue;
 		this.key = key;
 		this.name = name;
 		this.data = defaultValue;
+		listeners = new LinkedList<IBotsingPropertyListener>();
 	}
 	
 	@Override
@@ -59,6 +66,16 @@ public abstract class AbstractBotsingProperty
 	} catch (CoreException e) { 
 		e.printStackTrace(); 
 		}
+	}
+	
+	public void addListener(IBotsingPropertyListener listener) {
+		listeners.add(listener);
+	}
+	
+	protected void callListeners() {
+		if(listeners.size() < 1) return;
+		for(IBotsingPropertyListener listener : listeners)
+			listener.activate();
 	}
 
 	@Override

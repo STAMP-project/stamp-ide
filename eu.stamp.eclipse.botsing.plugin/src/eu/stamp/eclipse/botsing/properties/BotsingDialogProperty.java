@@ -37,6 +37,7 @@ public class BotsingDialogProperty extends AbstractBotsingProperty {
 	@Override
 	public void setData(String data) {
         property.setData(data);
+        callListeners();
 	}
 
 	@Override
