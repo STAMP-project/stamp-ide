@@ -12,10 +12,6 @@
  *******************************************************************************/
 package eu.stamp.eclipse.botsing.properties;
 
-import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -44,40 +40,7 @@ public class ClassPathProperty extends BotsingExplorerField {
 		
 		folderPath = dialog.open();
 		
-		return getJarsString(folderPath);
-	}
-	
-	private String getJarsString(String folderPath) {
-		
-		String result = "";
-		List<String> paths = getJars(new File(folderPath));
-		
-		if(paths != null)if(paths.size() > 0) {
-		String separator = System.getProperty("path.separator");
-        for(String path : paths)
-        	result += path + separator;
-		}
-		
-		if(result.length() < 2) return folderPath; // empty or only a separator
-		return result;
-	}
-	
-	private List<String> getJars(File folder) {
-		
-		LinkedList<String> jars = new LinkedList<String>();
-		File[] files = folder.listFiles();
-		
-		for(File file : files) {
-			
-			if(file.isDirectory())
-				jars.addAll(getJars(file)); // recursive call
-			
-			else if(file.getPath().endsWith(".jar"))
-				jars.add(file.getAbsolutePath());
-		}
-		
-		callListeners();
-		return jars;
+		return folderPath;
 	}
 	
 	/**
