@@ -36,6 +36,8 @@ public class TestDirectoryProperty extends BotsingExplorerField {
 		dialog.setText(" Test directory selection ");
 		
 		String result = dialog.open();
+		
+		callListeners();
 		return result;
 	}
 

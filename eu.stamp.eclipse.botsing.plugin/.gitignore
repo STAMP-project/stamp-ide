@@ -27,6 +27,7 @@ target/
 .settings/
 #.classpath
 #.project
+bin/
 
 # OS
 .DS_Store

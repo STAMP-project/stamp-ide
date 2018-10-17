@@ -36,7 +36,7 @@ public class StackTraceProperty
 		super(defaultValue, key, name);
 	}
 	@Override
-	protected String openExplorer() {
+	protected String openExplorer() { 
 		 
 		 dialog = new FileDialog(
 				 PlatformUI.getWorkbench().getActiveWorkbenchWindow()
@@ -47,6 +47,8 @@ public class StackTraceProperty
 		 dialog.setFilterPath(filterPath);
 	     
 	      String result = dialog.open();
+	      
+	      callListeners();
 	      return result;
 	}
 	@Override

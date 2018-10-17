@@ -17,8 +17,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.ui.PlatformUI;
 
-import eu.stamp.botsing.Main;
-
 /**
  * @see eu.stamp.eclipse.botsing.properties.BotsingExplorerField
  */
@@ -42,11 +40,7 @@ public class ClassPathProperty extends BotsingExplorerField {
 		
 		folderPath = dialog.open();
 		
-		// the class Main in Botsing contains a method to get the
-		// class path from a folder
-		Main.bin_path = folderPath;
-		return Main.getListOfDeps();
-		
+		return folderPath;
 	}
 	
 	/**

@@ -62,6 +62,7 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 				   spinner.setSelection(Integer.parseInt(data));
 			}
 		});
+		
 	}
 
 	@Override
@@ -92,6 +93,7 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 	
 	protected void spinnerSelected() {
 		data = spinner.getText();
+		callListeners();
 	}
 	protected Spinner getSpinner() {
 		return spinner;
