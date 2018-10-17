@@ -35,5 +35,13 @@
             name="Botsing">
       </launchConfigurationType>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="eu.stamp.eclipse.botsing.launch.ui.BotsingLaunchConfigurationTabGroup"
+            id="eu.stamp.eclipse.botsing.plugin.launchConfigurationTabGroup"
+            type="eu.stamp.eclipse.botsing.plugin.launchConfigurationType2">
+      </launchConfigurationTabGroup>
+   </extension>
 
 </plugin>
