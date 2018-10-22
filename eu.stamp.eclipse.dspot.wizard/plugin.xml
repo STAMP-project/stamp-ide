@@ -128,7 +128,7 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            name="DSpot Launch Configuration"
+            name="DSpot"
             delegate="eu.stamp.wp4.dspot.execution.launch.DSpotEclipseLaunchConfigurationDelegate"
             modes="run, debug"
             id="eu.stamp.launchEclipseConfigurationDSpot">
