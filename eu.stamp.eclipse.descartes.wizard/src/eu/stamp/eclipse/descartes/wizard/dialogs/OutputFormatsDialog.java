@@ -70,7 +70,7 @@ public class OutputFormatsDialog extends TitleAreaDialog
 	@Override
  	protected void configureShell(Shell shell) {  // set the title
  		super.configureShell(shell);
- 		shell.setText(" Add mutator ");
+ 		shell.setText(" Output formats ");
  	}
 	
 	private void createFormat(String name) {

@@ -2,7 +2,10 @@ package eu.stamp.wp4.descartes.wizard.utils;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
+
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -10,6 +13,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import eu.stamp.wp4.descartes.view.DescartesHTML;
 import eu.stamp.wp4.descartes.view.DescartesView;
 /**
  *  an instance of this class stores the file objects of the html documents in a folder system
@@ -35,21 +39,27 @@ public class DescartesHtmlManager {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				String[] urls = new String[htmls.length];
+				List<String> urls = new LinkedList<String>();
 				try {
 				for(int i = 0; i < htmls.length; i++) 
-					urls[i] = htmls[i].toURI().toURL().toString();
+					urls.add(htmls[i].toURI().toURL().toString());
 				IWorkbench work = PlatformUI.getWorkbench();
 				IWorkbenchWindow wi = work.getActiveWorkbenchWindow();
 				IWorkbenchPage page = wi.getActivePage();
 				DescartesView viw = (DescartesView) page.showView(DescartesWizardConstants.DESCARTES_VIEW_ID);
-				viw.setUrls(urls);
+				List<DescartesHTML> list = createList(urls);
+				viw.setFiles(list);
 				 }catch (MalformedURLException | PartInitException e) {
 					e.printStackTrace();
 				}
 			}
 		});
-
+	}
+     private List<DescartesHTML> createList(List<String> urls){
+    	 List<DescartesHTML> result = new LinkedList<DescartesHTML>();
+    	 for(String url : urls)
+    		 result.add(new DescartesHTML(url));
+    	 return result;
 	}
 	/**
 	 * finds the Descartes html files
@@ -60,7 +70,7 @@ public class DescartesHtmlManager {
     	File[] files = folder.listFiles();
     	ArrayList<File> result = new ArrayList<File>(1);
     	for(File file : files) {
-    		if(!file.isDirectory() && file.getPath().endsWith(".html")) 
+    		if(!file.isDirectory() && file.getPath().endsWith("index.html")) 
     			result.add(file);
     		else if(file.isDirectory()) {
     			File[] provisionalList = findHtmls(file);
