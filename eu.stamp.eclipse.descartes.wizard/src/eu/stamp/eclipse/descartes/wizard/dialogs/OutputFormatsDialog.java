@@ -125,6 +125,8 @@ public class OutputFormatsDialog extends TitleAreaDialog
 			try {
 				String sr = copy.getAttribute(format.name,"true");
 				boo = sr.contains("ru");
+				format.selected = boo;
+				format.provisionalSelection = boo;
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
