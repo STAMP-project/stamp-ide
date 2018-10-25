@@ -35,14 +35,15 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 	private final int maximun;
 	
 	public BotsingSpinnerProperty(String defaultValue,
-			String key,String name) {
-		this(defaultValue,key,name,1,1,0);
+			String key,String name,boolean compulsory) {
+		this(defaultValue,key,name,1,1,0,compulsory);
 	}
 	
 	public BotsingSpinnerProperty(String defaultValue,
-			String key,String name,int step,int minimun,int maximun) {
+			String key,String name,int step,int minimun,
+			int maximun,boolean compulsory) {
 		
-		super(defaultValue,key,name);
+		super(defaultValue,key,name,compulsory);
 		this.step = step;
 		this.minimun = minimun;
 		this.maximun = maximun;

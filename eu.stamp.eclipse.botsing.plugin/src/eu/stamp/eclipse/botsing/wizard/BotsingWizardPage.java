@@ -157,13 +157,13 @@ public class BotsingWizardPage extends WizardPage
 	
 	// Field for the log directory
 	StackTraceProperty stackProperty = 
-			new StackTraceProperty("","-Dcrash_log","Log file : ");
+			new StackTraceProperty("","-crash_log","Log file : ");
 	stackProperty.createControl(composite);
 	botsingProperties.add(stackProperty);
 	
 	// Spinner for the frame level
 	BotsingSpinnerProperty frameLevel = 
-    new BotsingSpinnerProperty("2","-Dtarget_frame","Frame level : ");
+    new BotsingSpinnerProperty("2","-target_frame","Frame level : ",true);
 	frameLevel.createControl(composite);
 	botsingProperties.add(frameLevel);
     
