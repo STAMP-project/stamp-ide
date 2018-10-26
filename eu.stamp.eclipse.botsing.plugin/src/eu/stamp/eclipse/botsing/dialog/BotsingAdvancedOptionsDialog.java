@@ -86,7 +86,7 @@ public class BotsingAdvancedOptionsDialog extends TitleAreaDialog
     	
     	BotsingSpinnerProperty spinnerProperty = 
     			new BotsingSpinnerProperty(defaultValue,
-                          key,name,step,minimun,maximun);
+                          key,name,step,minimun,maximun,false);
     	
     	properties.add(new BotsingDialogProperty(spinnerProperty));
     }

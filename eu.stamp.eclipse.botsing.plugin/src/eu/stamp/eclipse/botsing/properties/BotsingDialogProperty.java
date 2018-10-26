@@ -25,7 +25,8 @@ public class BotsingDialogProperty extends AbstractBotsingProperty {
 	private AbstractBotsingProperty property;
 	
 	public BotsingDialogProperty(AbstractBotsingProperty property) {
-		super(property.getDefaultValue(),property.getKey(),property.getName());
+		super(property.getDefaultValue(),
+				property.getKey(),property.getName(),false); // properties in the dialog are optional
 		this.property = property;
 	}
 

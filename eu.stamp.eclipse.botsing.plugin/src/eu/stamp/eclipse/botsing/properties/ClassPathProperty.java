@@ -28,7 +28,7 @@ public class ClassPathProperty extends BotsingExplorerField {
 	
 	public ClassPathProperty(String defaultValue, 
 			String key, String name) {
-		super(defaultValue, key, name);
+		super(defaultValue, key, name,true);
 		folderKey = "folderKey";
 	}
 	@Override
@@ -42,16 +42,6 @@ public class ClassPathProperty extends BotsingExplorerField {
 		
 		return folderPath;
 	}
-	
-	/**
-	 * in this case the array key is the elemnt 0 in the array
-	 * and the value the element 1
-	 */
-	@Override
-	public String[] getPropertyString() { 
-		System.setProperty("user.dir",folderPath);
-		return new String[] {key, data};
-		}
 	@Override
 	public void appendToConfiguration(ILaunchConfigurationWorkingCopy copy) {
 		super.appendToConfiguration(copy);

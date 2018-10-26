@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Group;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingPropertyListener;
-import eu.stamp.eclipse.botsing.invocation.Invocation;
+import eu.stamp.eclipse.botsing.invocation.BotsingInvocation;
 import eu.stamp.eclipse.botsing.launch.BotsingLaunchInfo;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
@@ -64,7 +64,7 @@ public class BotsingLaunchConfigurationTab
 		
 		// Spinner for the frame level
 		BotsingSpinnerProperty frameLevel = 
-	    new BotsingSpinnerProperty("2","-Dtarget_frame","Frame level : ");
+	    new BotsingSpinnerProperty("2","-Dtarget_frame","Frame level : ",true);
 		frameLevel.createControl(composite);
 		botsingProperties.add(frameLevel);
 	    
@@ -172,7 +172,7 @@ public class BotsingLaunchConfigurationTab
 		
 		String line = "";
 		for(int i = 1; i < command.length; i++)
-			line += Invocation.INVOCATION_SEPARATOR + command[i];
+			line += BotsingInvocation.INVOCATION_SEPARATOR + command[i];
 		
 		configuration.setAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
@@ -211,7 +211,7 @@ public class BotsingLaunchConfigurationTab
 		
     	BotsingSpinnerProperty property = 
     			new BotsingSpinnerProperty(defaultValue,
-                          key,name,step,minimun,maximun);
+                          key,name,step,minimun,maximun,false);
     	
     	list.add(property);	
 	}

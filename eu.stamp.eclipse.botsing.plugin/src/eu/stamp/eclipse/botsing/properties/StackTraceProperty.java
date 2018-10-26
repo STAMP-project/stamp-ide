@@ -33,7 +33,7 @@ public class StackTraceProperty
     private FileDialog dialog;
 	
 	public StackTraceProperty(String defaultValue, String key, String name) {
-		super(defaultValue, key, name);
+		super(defaultValue, key, name,true);
 	}
 	@Override
 	protected String openExplorer() { 
