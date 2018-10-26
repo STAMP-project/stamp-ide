@@ -43,13 +43,18 @@ public abstract class AbstractBotsingProperty
 	
 	protected String data;
 	
+	protected final boolean compulsory;
+	
 	protected final List<IBotsingPropertyListener> listeners;
 	
-	protected AbstractBotsingProperty(String defaultValue,String key,String name) {
+	protected AbstractBotsingProperty(String defaultValue,String key,
+			String name,boolean compulsory) {
+		
 		this.defaultValue = defaultValue;
 		this.key = key;
 		this.name = name;
 		this.data = defaultValue;
+		this.compulsory = compulsory;
 		listeners = new LinkedList<IBotsingPropertyListener>();
 	}
 	
@@ -80,8 +85,12 @@ public abstract class AbstractBotsingProperty
 
 	@Override
 	public String[] getPropertyString() {
-		return new String[] {key + "=" + getData()};
+		
+	    if(compulsory) return new String[] {key,getData()};
+	    else return new String[] {key + "=" + getData()};
 	}
+	
+	public boolean isCompulsory() { return compulsory; }
 	
 	protected String getKey() { return key; }
 	

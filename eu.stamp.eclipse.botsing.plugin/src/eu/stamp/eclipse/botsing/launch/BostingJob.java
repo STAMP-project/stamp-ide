@@ -28,7 +28,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
-import eu.stamp.eclipse.botsing.invocation.Invocation;
+import eu.stamp.eclipse.botsing.invocation.BotsingInvocation;
 import eu.stamp.eclipse.botsing.wizard.BotsingWizard;
 
 public class BostingJob extends Job {
@@ -67,15 +67,20 @@ public class BostingJob extends Job {
                // System.out.println(command[0]);
 				for(int i = 1; i < command.length; i++) {
 					// System.out.println(command[i]);
-					line += Invocation.INVOCATION_SEPARATOR + command[i];
+					line += BotsingInvocation.INVOCATION_SEPARATOR + command[i];
 				}
 				/*
 				 *  Execute Botsing
 				 */	
 				String userDir = "";
-				for(String sr : command)if(sr.contains("crash_log")) {
-					userDir = sr.substring(sr.lastIndexOf("=")+1);
-					break;
+				boolean setUserDir = false;
+				for(String sr : command) {
+					if(setUserDir) {
+						userDir = sr;
+						break;
+					}
+					if(sr.contains("crash_log"))
+						setUserDir = true;
 				}
 				// Windows (a path can contain both \\ and /)
 				if(userDir.contains("\\")) {
@@ -97,8 +102,6 @@ public class BostingJob extends Job {
 				config = new File(config.getAbsolutePath()
 						+  "/" + "config.properties");
 				if(!config.exists()) config.createNewFile();
-				
-			  //  System.out.println("User dir : " + userDir);
 			    
 				wc.setAttribute(
 						IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
@@ -106,7 +109,6 @@ public class BostingJob extends Job {
 				wc.setAttribute(
 						IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, 
 						BotsingPluginConstants.BOTSING_MAIN);
-				System.out.println(line);
 				wc.setAttribute(
 						IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
 						line);
