@@ -201,8 +201,8 @@ sizeCalculator.addRow(row);
  */ 
 row.reStart();
 // Obtain the path of the project
-String[] sour = wConf.getSources();  
-boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
+//String[] sour = wConf.getSources();  
+//boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
 
 createProjectField(composite);
 sizeCalculator.addRow(row);
@@ -231,10 +231,13 @@ createLabel(composite,"Path of the source : ","lb2"); // Label in (4,1)
         sourceTestCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);
         GridDataFactory.fillDefaults().grab(true,false).span(2, 1).indent(0, VS).applyTo(sourceTestCombo);
         row.addWidget(sourceTestCombo);
-        for(int i = 0; i < sour.length; i++) {  // add the sources to the combo
-        if(isTest[i]) {  // if it is not a test package
-        sourceTestCombo.add(sour[i]);} else { sourcePathCombo.add(sour[i]); }
-        } // end of the for
+        
+        // add the sources to the combo
+        List<String> sources = wConf.getLocator().getSources();
+        for(String entry : sources) sourcePathCombo.add(entry);
+        // and the test to the test combo
+        sources = wConf.getLocator().getTests();
+        for(String entry : sources) sourceTestCombo.add(entry);
         
         if(sourcePathCombo.getItems().length > 0) {
         sourcePathCombo.setText(sourcePathCombo.getItem(0));
@@ -588,25 +591,24 @@ e1.printStackTrace();
 }
     text.setText(wConf.getProjectPath());
     DSpotPropertiesFile.getInstance().projectPath = wConf.getProjectPath();
-                sourcePathCombo.removeAll(); sourceTestCombo.removeAll();
-        for(int i = 0; i < wConf.getSources().length; i++) {  // add the sources to the combo
-        if(wConf.getIsTest()[i]) {  // if it is not a test package
-        sourceTestCombo.add( wConf.getSources()[i]);} else { sourcePathCombo.add( wConf.getSources()[i]); }
-        } // end of the for
+ 
     wizard.refreshConf(wConf);
     configCombo.setEnabled(false);
     configCombo.setText("");
     configurationField.getControl().setEnabled(true);
     ((Text)configurationField.getControl()).setText("Type_configuration_name");
-    String[] sour = wConf.getSources(); 
-boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
-sourcePathCombo.removeAll();
-sourceTestCombo.removeAll();
-        for(int i = 0; i < sour.length; i++) {  // add the sources to the combo
-        if(isTest[i]) {  // if it is not a test package
-        sourceTestCombo.add(sour[i]);} else { sourcePathCombo.add(sour[i]); }
-        } // end of the for
-        
+    //String[] sour = wConf.getSources(); 
+//boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
+     sourcePathCombo.removeAll();
+     sourceTestCombo.removeAll();
+     
+     // add sources to the combo
+     List<String> sources = wConf.getLocator().getSources();
+     for(String entry : sources) sourcePathCombo.add(entry);
+     // and tests
+     sources = wConf.getLocator().getTests();
+     for(String entry : sources) sourceTestCombo.add(entry);
+
         if(sourcePathCombo.getItems().length > 0) {
         sourcePathCombo.setText(sourcePathCombo.getItem(0));
     // the path of the source
