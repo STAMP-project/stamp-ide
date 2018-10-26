@@ -99,7 +99,7 @@
             delegate="eu.stamp.wp4.descartes.wizard.execution.DescartesDelegate"
             id="eu.stamp.wp4.descartes.wizard.launchConfiguration"
             modes="run,debug"
-            name="Descartes Launch"
+            name="Descartes"
             sourceLocatorId="org.eclipse.m2e.launching.MavenSourceLocator"
             sourcePathComputerId="org.eclipse.m2e.launching.MavenSourceComputer">
       </launchConfigurationType>
