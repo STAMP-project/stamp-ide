@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -233,10 +234,10 @@ createLabel(composite,"Path of the source : ","lb2"); // Label in (4,1)
         row.addWidget(sourceTestCombo);
         
         // add the sources to the combo
-        List<String> sources = wConf.getLocator().getSources();
+        List<String> sources = wConf.getContext().getNoTestSourceFolders();
         for(String entry : sources) sourcePathCombo.add(entry);
         // and the test to the test combo
-        sources = wConf.getLocator().getTests();
+        sources = wConf.getContext().getTestSourceFolders();
         for(String entry : sources) sourceTestCombo.add(entry);
         
         if(sourcePathCombo.getItems().length > 0) {
@@ -603,10 +604,10 @@ e1.printStackTrace();
      sourceTestCombo.removeAll();
      
      // add sources to the combo
-     List<String> sources = wConf.getLocator().getSources();
+     List<String> sources = wConf.getContext().getNoTestSourceFolders();
      for(String entry : sources) sourcePathCombo.add(entry);
      // and tests
-     sources = wConf.getLocator().getTests();
+     sources = wConf.getContext().getTestSourceFolders();
      for(String entry : sources) sourceTestCombo.add(entry);
 
         if(sourcePathCombo.getItems().length > 0) {

@@ -27,10 +27,12 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.List;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -68,6 +70,7 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 
 import eu.stamp.eclipse.dspot.launch.configuration.DSpotButtonsInformation;
+import eu.stamp.eclipse.dspot.plugin.context.DSpotContext;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotPageSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotRowSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotSizeManager;
@@ -368,7 +371,17 @@ setPageComplete(true);
             }
 
             private boolean isTestClass(IJavaElement child) {
-                return  !(wConf.getLocator().getQName(child.getElementName())).isEmpty();
+                String name = child.getElementName();
+                name = name.replaceAll(".java","").replaceAll(".class","");
+                java.util.List<File> files = 
+                		wConf.getContext().getTestFiles();
+                for(File file : files) {
+                	String filename = file.getName()
+                			.replaceAll(".java","").replaceAll(".class","");
+                	if(name.equalsIgnoreCase(filename))
+                		return true;
+                } 
+                return false;
             }
         };
         
@@ -401,8 +414,10 @@ setPageComplete(true);
             if(ob instanceof ICompilationUnit) { 
             if(!selection.isEmpty()) {
              selection = selection + WizardConfiguration
-             .getSeparator() + wConf.getLocator().getQName(((ICompilationUnit)ob).getElementName());}
-            else{ selection = wConf.getLocator().getQName(((ICompilationUnit)ob).getElementName()); }}
+             .getSeparator() + wConf.getContext().getFullName(((ICompilationUnit)ob).getElementName());}
+            else{ 
+            	DSpotContext context = wConf.getContext();
+            	selection = context.getFullName(((ICompilationUnit)ob).getElementName()); }}
             }
             executionClassesText.setText(selection);
         }
@@ -429,8 +444,13 @@ e.printStackTrace();
    if(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY) != null) {
    executionClassesText.setText(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY));
   
-   java.util.List<String> testNames = wConf.getLocator().getTestsNames();
-   
+   java.util.List<String> testNames = new LinkedList<String>();
+   java.util.List<File> files = wConf.getContext().getTestFiles();
+   for(File file : files) {
+	   String name = file.getName()
+			   .replaceAll(".java","").replaceAll(".class","");
+	   testNames.add(name);
+   }
    
    testSelection = new ArrayList<Object>(1);
    for(String testName : testNames) {
