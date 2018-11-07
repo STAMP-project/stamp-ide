@@ -18,6 +18,8 @@ public class DSpotContext implements IDSpotContext {
 	private List<String> testFolders;
 	
 	private List<DSpotTargetSource> targets;
+	
+	private Boolean compiledFound;
 
 	public DSpotContext(IJavaProject project) {
 		loadProject(project);
@@ -88,6 +90,7 @@ public class DSpotContext implements IDSpotContext {
 		noTestFolders = new LinkedList<String>();
 		testFolders = new LinkedList<String>();
 		targets = new LinkedList<DSpotTargetSource>();
+		compiledFound = false;
 		
 		try {
 			IClasspathEntry[] entries = project.getRawClasspath();
@@ -106,6 +109,8 @@ public class DSpotContext implements IDSpotContext {
 			e.printStackTrace();
 		}
 	}
+	
+	public boolean compiledFilesFound() { return compiledFound; }
 	
 	private class DSpotTargetFolder {
 		
@@ -127,6 +132,7 @@ public class DSpotContext implements IDSpotContext {
 			//get the source and compiled files lists
 			List<File> sources = search(sourceFolder,".java");
 			List<File> compiledOnes = search(outputFolder,".class");
+			if(!compiledOnes.isEmpty()) compiledFound = true;
 			
 			// generate DSpotTargetSourceObjects
 			targetSources = 

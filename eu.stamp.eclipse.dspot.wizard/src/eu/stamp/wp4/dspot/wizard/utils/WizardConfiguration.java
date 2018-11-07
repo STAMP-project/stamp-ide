@@ -90,11 +90,15 @@ shell,
  
  return;
 } 
-    canContinue = true;
     if(dspotContext == null) dspotContext = new DSpotContext(jproject);
     else dspotContext.loadProject(jproject);
+    if(dspotContext.compiledFilesFound()) canContinue = true;
+    else {
+    	MessageDialog.openError(shell,"Error",
+    			"CodeBase/TestSources could not be determined. Please, build the project "
+    	+ jproject.getProject().getName() + " and open this dialog again");
+    }
     this.configurations = obtainLaunchConfigurations();
-//}
 }
 // getter methods
 

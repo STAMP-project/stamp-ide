@@ -33,7 +33,7 @@ return dspotFile;
 /*
  *  File properties
  */
-public String projectPath;
+    public String projectPath;
     public String src;
     public String testSrc;
     public String javaVersion;
