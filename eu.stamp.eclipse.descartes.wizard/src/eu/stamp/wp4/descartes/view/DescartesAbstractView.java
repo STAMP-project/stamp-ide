@@ -10,8 +10,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.part.ViewPart;
 
@@ -28,26 +28,26 @@ public abstract class DescartesAbstractView extends ViewPart {
           
 	GridLayoutFactory.fillDefaults().numColumns(3).applyTo(parent);
 	
-	Button backButton = new Button(parent,SWT.PUSH);
-	backButton.setText(" Back ");
-	GridDataFactory.fillDefaults().applyTo(backButton);
+	Link backLink = new Link(parent,SWT.PUSH);
+	backLink.setText("<A>Back</A>");
+	GridDataFactory.fillDefaults().applyTo(backLink);
 	
-	Button forwardButton = new Button(parent,SWT.PUSH);
-	forwardButton.setText(" Forward ");	
-	GridDataFactory.fillDefaults().applyTo(forwardButton);
+	Link forwardLink = new Link(parent,SWT.PUSH);
+	forwardLink.setText("<A>Forward</A>");	
+	GridDataFactory.fillDefaults().applyTo(forwardLink);
 	
 	browser = new Browser(parent,SWT.NONE);
 	GridDataFactory.fillDefaults().span(3,1).grab(true, true)
 	.minSize(300,400).applyTo(browser);
 
-	backButton.addSelectionListener(new SelectionAdapter() {
+	backLink.addSelectionListener(new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			browser.back();
 		}
 	});
 	
-	forwardButton.addSelectionListener(new SelectionAdapter() {
+	forwardLink.addSelectionListener(new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			browser.forward();
