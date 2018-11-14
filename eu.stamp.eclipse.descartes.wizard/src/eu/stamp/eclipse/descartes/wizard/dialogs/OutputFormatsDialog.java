@@ -100,7 +100,7 @@ public class OutputFormatsDialog extends TitleAreaDialog
 		
 		void createButton(Composite composite){
 			button = new Button(composite,SWT.CHECK);
-			button.setText(" " + name + " : ");
+			button.setText(" " + name);
 			button.setSelection(selected);
 			button.addSelectionListener(new SelectionAdapter() {
 				@Override
