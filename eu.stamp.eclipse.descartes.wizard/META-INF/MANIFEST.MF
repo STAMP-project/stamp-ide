@@ -15,7 +15,8 @@ Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.jdt.launching,
  org.eclipse.m2e.launching,
  org.eclipse.debug.ui,
- org.eclipse.e4.ui.workbench
+ org.eclipse.e4.ui.workbench,
+ org.eclipse.swt
 Bundle-Vendor: Atos Spain S.A.
 Bundle-ClassPath: .,
  lib/rcptoolbox.1.0.10.jar

@@ -22,8 +22,6 @@ public abstract class DescartesWizardConstants {
 	public static final String DESCARTES_VERSION = "1.2.4";
 	public static final String POM_NAME_LAUNCH_CONSTANT = "pom name";
 	public static final String PITEST_VERSION = "1.4.0";
-	public static final String DESCARTES_VIEW_ID =
-			"eu.stamp.wp4.descartes.view.DescartesView";
 	public static final String LAUNCH_CONFIGURATION_DESCARTES_ID = 
 			"eu.stamp.wp4.descartes.wizard.launchConfiguration";
 }

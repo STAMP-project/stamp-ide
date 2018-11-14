@@ -120,10 +120,16 @@
       </category>
       <view
             category="eu.stamp.category"
-            class="eu.stamp.wp4.descartes.view.DescartesView"
-            id="eu.stamp.wp4.descartes.view.DescartesView"
-            inject="true"
-            name="Descartes view"
+            class="eu.stamp.wp4.descartes.view.DescartesIssuesView"
+            id="eu.stamp.wp4.descartes.view.issues"
+            name="Descartes Issues"
+            restorable="true">
+      </view>
+      <view
+            category="eu.stamp.category"
+            class="eu.stamp.wp4.descartes.view.PitCoverageView"
+            id="eu.stamp.wp4.descartes.view.coverage"
+            name="Pit Coverage"
             restorable="true">
       </view>
    </extension>

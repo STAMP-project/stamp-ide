@@ -1,12 +1,14 @@
 package eu.stamp.wp4.descartes.wizard.execution;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.m2e.internal.launch.MavenLaunchDelegate;
 
-import eu.stamp.wp4.descartes.wizard.utils.DescartesHtmlManager;
+import eu.stamp.wp4.descartes.view.DescartesViewsActivator;
 
 @SuppressWarnings("restriction")
 /**
@@ -21,8 +23,8 @@ public class DescartesDelegate extends MavenLaunchDelegate {
          
          // after finishing the process show the Descartes view for the html summaries
          while(!launch.isTerminated());
-         DescartesHtmlManager htmlManager = new DescartesHtmlManager(
-        		 configuration.getAttribute(ATTR_POM_DIR,"") + "/target/pit-reports");
-         htmlManager.openBrowsers(); 
+         DescartesViewsActivator viewsActivator = new DescartesViewsActivator(new File(
+        		 configuration.getAttribute(ATTR_POM_DIR,"") + "/target/pit-reports"));
+         viewsActivator.activate(); 
 	}
 }
