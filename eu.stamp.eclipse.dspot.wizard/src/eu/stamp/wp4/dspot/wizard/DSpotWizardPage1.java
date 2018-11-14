@@ -46,10 +46,20 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SegmentEvent;
+import org.eclipse.swt.events.SegmentListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
@@ -59,17 +69,6 @@ import com.richclientgui.toolbox.validation.IQuickFixProvider;
 import com.richclientgui.toolbox.validation.ValidatingField;
 import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 import com.richclientgui.toolbox.validation.validator.IFieldValidator;
-
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SegmentListener;
-import org.eclipse.swt.events.SegmentEvent;
 
 import eu.stamp.eclipse.dspot.launch.configuration.DSpotPropertiesFile;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotPageSizeCalculator;
@@ -233,10 +232,10 @@ createLabel(composite,"Path of the source : ","lb2"); // Label in (4,1)
         row.addWidget(sourceTestCombo);
         
         // add the sources to the combo
-        List<String> sources = wConf.getLocator().getSources();
+        List<String> sources = wConf.getContext().getNoTestSourceFolders();
         for(String entry : sources) sourcePathCombo.add(entry);
         // and the test to the test combo
-        sources = wConf.getLocator().getTests();
+        sources = wConf.getContext().getTestSourceFolders();
         for(String entry : sources) sourceTestCombo.add(entry);
         
         if(sourcePathCombo.getItems().length > 0) {
@@ -534,6 +533,7 @@ createLabel(composite,"Path of the project : ","lb1");
 // Obtain the path of the project
 String direction = wConf.getProjectPath();
 
+DSpotPropertiesFile.getInstance().projectPath = direction;
 projectField = valKit.createTextField(composite, new IFieldValidator<String>() {
 @Override
 public String getErrorMessage() { return "Project's directory not found"; }
@@ -603,10 +603,10 @@ e1.printStackTrace();
      sourceTestCombo.removeAll();
      
      // add sources to the combo
-     List<String> sources = wConf.getLocator().getSources();
+     List<String> sources = wConf.getContext().getNoTestSourceFolders();
      for(String entry : sources) sourcePathCombo.add(entry);
      // and tests
-     sources = wConf.getLocator().getTests();
+     sources = wConf.getContext().getTestSourceFolders();
      for(String entry : sources) sourceTestCombo.add(entry);
 
         if(sourcePathCombo.getItems().length > 0) {
