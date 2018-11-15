@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile>
+<id>id</id>
+<build>
+<plugins>
+    <plugin>
+     <groupId>org.pitest</groupId>
+     <artifactId>pitest-maven</artifactId>
+     <version>1.4.0</version>
+     <dependencies>
+       <dependency>
+         <groupId>eu.stamp-project</groupId>
+         <artifactId>descartes</artifactId>
+         <version>1.2.4</version>
+       </dependency>
+     </dependencies>
+     <configuration>
+       <mutationEngine>descartes</mutationEngine>
+          <mutators>
+          </mutators>
+          <outputFormats>
+         </outputFormats>
+         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>eu.stamp-project</groupId>
+        <artifactId>pitmp-maven-plugin</artifactId>
+        <version>1.3.4</version>
+        <configuration>
+          <mutationEngine>descartes</mutationEngine>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>.</directory>
+              <includes>
+                <include>*.txt</include>
+                <include>*.traces</include>
+                <include>*.log</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+</plugins>
+</build>
+</profile>

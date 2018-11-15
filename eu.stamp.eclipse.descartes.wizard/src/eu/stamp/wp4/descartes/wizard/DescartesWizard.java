@@ -14,6 +14,9 @@ package eu.stamp.wp4.descartes.wizard;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -94,11 +97,14 @@ public class DescartesWizard extends Wizard
 	public boolean performFinish() {
 		String pomName = one.getPomName();
 		String configurationName = one.getConfigurationName();
+		DateFormat format = new SimpleDateFormat("dd-MM-yy-hh-mm-ss");
+		String profileID = "descartes-plugin-profile-" 
+		                    + format.format(new Date());
 		DescartesEclipseJob job = new DescartesEclipseJob(wConf.getProjectPath(),
-				                          pomName,configurationName,this);
+				                          pomName,configurationName,this,profileID);
 		//String[] texts = one.getMutatorsSelection();
 		try {
-			DescartesPomParser parser = new DescartesPomParser(wConf.getProjectPath(),pomName);
+			DescartesPomParser parser = new DescartesPomParser(wConf.getProjectPath(),pomName,profileID);
 		    parser.preparePom(one.getMutatorsList(),outputsDialog.getFormatList());
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
