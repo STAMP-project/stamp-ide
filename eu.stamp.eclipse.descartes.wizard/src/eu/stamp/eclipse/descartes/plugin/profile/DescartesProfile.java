@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo José Tejada García (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.eclipse.descartes.plugin.profile;
 
 import java.io.IOException;
@@ -18,7 +30,12 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
-
+/**
+ * An instance of this class is responsible for generating the Maven profile 
+ * to execute Descartes,to do this it uses the template in files/descartes_profile.xml
+ * @see files/descartes_profile.xml
+ * @see eu.stamp.eclipse.descartes.plugin.pom.DescartesPomParser
+ */
 public class DescartesProfile {
 	
 	private Document profileDocument;

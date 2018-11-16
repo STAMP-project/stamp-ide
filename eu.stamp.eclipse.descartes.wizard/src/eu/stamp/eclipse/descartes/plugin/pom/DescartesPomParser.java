@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo José Tejada García (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.eclipse.descartes.plugin.pom;
 
 import java.io.File;
@@ -19,7 +31,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import eu.stamp.eclipse.descartes.plugin.profile.DescartesProfile;
-
+/**
+ * An instance of this class is responsible for creating
+ * the file to be used as POM
+ * @see eu.stamp.eclipse.descartes.plugin.pom.AbstractDescartesPomParser
+ */
 public class DescartesPomParser extends AbstractDescartesPomParser {
 	
 	private final String pomName;
