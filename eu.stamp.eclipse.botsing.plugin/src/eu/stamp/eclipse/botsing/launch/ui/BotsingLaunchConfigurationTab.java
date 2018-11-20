@@ -148,7 +148,7 @@ public class BotsingLaunchConfigurationTab
 				if(userDir.lastIndexOf("/") > n) n = userDir.lastIndexOf("/");
 			userDir = userDir.substring(0,n);
 		}
-		else userDir = userDir.substring(0,userDir.lastIndexOf("/"));
+		else if(userDir.contains("/")) userDir = userDir.substring(0,userDir.lastIndexOf("/"));
 		
 		/*
 		 *  Avoid file not found exception
