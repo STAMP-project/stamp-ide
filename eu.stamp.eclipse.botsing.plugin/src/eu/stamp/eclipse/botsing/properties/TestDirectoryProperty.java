@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 public class TestDirectoryProperty extends BotsingExplorerField {
 
 	public TestDirectoryProperty(String defaultValue, String key, String name) {
-		super(defaultValue, key, name,false);
+		super(defaultValue, key, name,false,true);
 	}
 
 	@Override

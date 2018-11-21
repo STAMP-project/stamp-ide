@@ -40,6 +40,7 @@ import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 import eu.stamp.eclipse.botsing.properties.ClassPathProperty;
+import eu.stamp.eclipse.botsing.properties.OutputTraceProperty;
 import eu.stamp.eclipse.botsing.properties.StackTraceProperty;
 import eu.stamp.eclipse.botsing.properties.TestDirectoryProperty;
 
@@ -172,6 +173,12 @@ public class BotsingWizardPage extends WizardPage
 			new ClassPathProperty("","-projectCP","Class Path : ");
 	classPathProperty.createControl(composite);
 	botsingProperties.add(classPathProperty);
+	
+	// Field for the trace output file
+	OutputTraceProperty outputTraceProperty =
+			new OutputTraceProperty("","Output folder : ",false);
+	outputTraceProperty.createControl(composite);
+	botsingProperties.add(outputTraceProperty);
 	
 	// dialog link
 	Link link = new Link(composite,SWT.NONE);

@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Group;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingPropertyListener;
-import eu.stamp.eclipse.botsing.invocation.BotsingInvocation;
+import eu.stamp.eclipse.botsing.invocation.InputManager;
 import eu.stamp.eclipse.botsing.launch.BotsingLaunchInfo;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
@@ -170,9 +170,8 @@ public class BotsingLaunchConfigurationTab
 				IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
 				userDir);
 		
-		String line = "";
-		for(int i = 1; i < command.length; i++)
-			line += BotsingInvocation.INVOCATION_SEPARATOR + command[i];
+		// TODO check
+		String line = (new InputManager(command).serializeToString());
 		
 		configuration.setAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
