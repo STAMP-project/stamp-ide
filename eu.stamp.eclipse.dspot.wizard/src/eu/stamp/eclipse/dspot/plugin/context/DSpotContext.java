@@ -168,9 +168,13 @@ public class DSpotContext implements IDSpotContext {
 		DSpotTargetSource(File source,File compiled, File folder){
 			this.file = source;
 			// TODO check
-			fullName = source.getAbsolutePath()
-					.replaceFirst(folder.getAbsolutePath(),"");
-			if(fullName.contains("\\")) fullName = fullName.replaceAll("\\",".");
+			String folderPath = folder.getAbsolutePath();
+			fullName = source.getAbsolutePath();
+			if(fullName.contains("\\")) {
+				fullName = fullName.replace('\\','/');
+				folderPath = folderPath.replace('\\','/');
+			}
+			fullName = fullName.replaceFirst(folderPath,"");
 			if(fullName.contains("/")) fullName = fullName.replaceAll("/",".");
 			fullName = fullName.replaceAll(".java","");
 			if(fullName.charAt(0) == '.' && fullName.length() > 1) 
