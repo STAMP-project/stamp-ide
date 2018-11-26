@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
@@ -56,6 +57,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -330,7 +332,6 @@ setPageComplete(true);
                         return true;
                     }
                     return false;
-                
             }
         };
 
@@ -524,6 +525,18 @@ if(argument.contains(DSpotMemory.CRITERION_KEY)) {
      for(int i = 0; i < selectedCases.length -1; i++) {
      selection = selection + selectedCases[i] + sep;
      }
+    if(selectedCases.length < 1) {
+    	Display.getDefault().asyncExec(new Runnable() {
+    		@Override
+    		public void run() {
+    			MessageDialog.openError(PlatformUI.getWorkbench()
+    			.getActiveWorkbenchWindow().getShell(),"Error",
+    			"CodeBase/Test class files could not be determined, please, build the proyect "
+    			 + wConf.getPro().getElementName() + " and open this dialog again");
+    		}
+    	});
+    	return null;
+    }
     selection = selection + selectedCases[selectedCases.length-1]; 
     memory.setDSpotValue(DSpotMemory.TEST_CASES_KEY, selection);
      }
