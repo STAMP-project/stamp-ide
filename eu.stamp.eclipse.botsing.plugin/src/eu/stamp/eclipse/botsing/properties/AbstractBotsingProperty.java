@@ -45,16 +45,19 @@ public abstract class AbstractBotsingProperty
 	
 	protected final boolean compulsory;
 	
+	protected final boolean isLaunchInfo;
+	
 	protected final List<IBotsingPropertyListener> listeners;
 	
 	protected AbstractBotsingProperty(String defaultValue,String key,
-			String name,boolean compulsory) {
+			String name,boolean compulsory,boolean isLaunchInfo) {
 		
 		this.defaultValue = defaultValue;
 		this.key = key;
 		this.name = name;
 		this.data = defaultValue;
 		this.compulsory = compulsory;
+		this.isLaunchInfo = isLaunchInfo;
 		listeners = new LinkedList<IBotsingPropertyListener>();
 	}
 	
@@ -91,6 +94,8 @@ public abstract class AbstractBotsingProperty
 	}
 	
 	public boolean isCompulsory() { return compulsory; }
+	
+	public boolean containsLaunchInfo() { return isLaunchInfo; }
 	
 	protected String getKey() { return key; }
 	

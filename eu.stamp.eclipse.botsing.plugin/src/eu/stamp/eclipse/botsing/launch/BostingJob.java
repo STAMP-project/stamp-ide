@@ -14,6 +14,8 @@ package eu.stamp.eclipse.botsing.launch;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,7 +30,8 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
-import eu.stamp.eclipse.botsing.invocation.BotsingInvocation;
+import eu.stamp.eclipse.botsing.invocation.InputManager;
+import eu.stamp.eclipse.botsing.properties.OutputTraceProperty;
 import eu.stamp.eclipse.botsing.wizard.BotsingWizard;
 
 public class BostingJob extends Job {
@@ -62,16 +65,20 @@ public class BostingJob extends Job {
 				wizard.appendToConfiguration(wc);
 				
 				String[] command = info.getCommand();
-
-                String line = command[0];
-               // System.out.println(command[0]);
-				for(int i = 1; i < command.length; i++) {
-					// System.out.println(command[i]);
-					line += BotsingInvocation.INVOCATION_SEPARATOR + command[i];
+				SimpleDateFormat format = new SimpleDateFormat("-dd-MM-yy_hh-mm-ss");
+				String path = wc.getAttribute(OutputTraceProperty.KEY,"");
+				InputManager input;
+				if(path != null) {
+					if(!path.isEmpty()) {
+					    path += "/botsing_execution_output" + format.format(new Date()) 
+						+ ".txt";
+						input = new InputManager(command,path);
+					}
+					else input = new InputManager(command);
 				}
-				/*
-				 *  Execute Botsing
-				 */	
+				else input = new InputManager(command);
+                String line = input.serializeToString();
+
 				String userDir = "";
 				boolean setUserDir = false;
 				for(String sr : command) {
@@ -95,6 +102,8 @@ public class BostingJob extends Job {
 				 *  Avoid file not found exception
 				 */
 				//System.out.println(userDir);
+
+				
 				File config = new File(userDir +
 						"/src/main/java/eu/stamp/botsing");
 				
@@ -113,7 +122,7 @@ public class BostingJob extends Job {
 						IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
 						line);
 				ILaunchConfiguration configuration = wc.doSave();
-				
+			    
 				configuration.launch(ILaunchManager.RUN_MODE, null);
 				
 			} catch (CoreException | IOException e) {
