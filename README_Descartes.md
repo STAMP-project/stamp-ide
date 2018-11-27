@@ -112,4 +112,3 @@ At the end you will see the summary in the console, the Descartes Issues and Pit
 You can use the links in the document and the back/forward links in the top left corner of the view to display all the reports.
 
 ![Descartes views](images/DescartesView.png)
-
