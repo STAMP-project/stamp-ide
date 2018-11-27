@@ -84,7 +84,7 @@ private DSpotMemory memory;
 private Spinner timeOutSpinner;
 private Spinner randomSeedSpinner;
 private List list;
-private ValidatingField<String> pathPitResultField;
+private ValidatingField<String> pathPitResultField; // TODO
 private ValidatingField<String> mavenHomeField;
 private Button nominimizeButton;
 private Button commentsButton;
@@ -97,7 +97,6 @@ private final DSpotRowSizeCalculator row;
 public DSpotAdvancedOptionsDialog(Shell parentShell, WizardConfiguration wConf) {
 super(parentShell);
 this.wConf = wConf;
-
     errorMessageHandler = new WizardErrorHandler();
 strValToolkit = new StringValidationToolkit(DECORATOR_POSITION,
         1,true);

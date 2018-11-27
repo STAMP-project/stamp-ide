@@ -9,7 +9,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTimeJSON;
 
 public class CloverCoverageReportsTree extends DSpotReportsTree{

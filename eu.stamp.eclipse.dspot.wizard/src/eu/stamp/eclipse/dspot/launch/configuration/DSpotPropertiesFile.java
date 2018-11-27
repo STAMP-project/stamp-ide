@@ -65,7 +65,7 @@ string = configuration.getAttribute(key,"");
       copy.setAttribute(key, info);
       
       info = projectPath;
-      if(info.contains("\\")) info = info.replaceAll("\\","/");
+      if(info.contains("\\")) info = info.replace('\\','/');
       info = info.substring(info.lastIndexOf("/")+1);
       copy.setAttribute(PROJECT_NAME_KEY, info);
       
