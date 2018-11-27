@@ -28,7 +28,7 @@ public class ClassPathProperty extends BotsingExplorerField {
 	
 	public ClassPathProperty(String defaultValue, 
 			String key, String name) {
-		super(defaultValue, key, name,true);
+		super(defaultValue, key, name,true,true);
 		folderKey = "folderKey";
 	}
 	@Override

@@ -12,6 +12,7 @@
  *******************************************************************************/
 package eu.stamp.eclipse.botsing.launch;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
@@ -26,7 +27,7 @@ import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
  */
 public class BotsingPartialInfo {
 
-	private final String name;
+	private String name;
 
 	private final List<AbstractBotsingProperty> properties;
 	
@@ -36,10 +37,17 @@ public class BotsingPartialInfo {
 	
 	public BotsingPartialInfo(String name,List<AbstractBotsingProperty> properties) {
 		this.name = name;
-		this.properties = properties;
+		this.properties = new ArrayList<AbstractBotsingProperty>(properties.size());
+	    for(AbstractBotsingProperty property : properties)
+	    	if(property.containsLaunchInfo())
+	    		this.properties.add(property);
 	}
 	
-	public boolean nameIsSet() { return name != null; }
+	public boolean nameIsSet() {
+		boolean result = (name != null);
+		if(result)if(name.isEmpty()) result = false;
+		return result; 
+		}
 	
 	public String getName() { return name; }
 	

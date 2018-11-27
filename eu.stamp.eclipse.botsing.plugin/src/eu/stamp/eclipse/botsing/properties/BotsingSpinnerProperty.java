@@ -43,7 +43,7 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 			String key,String name,int step,int minimun,
 			int maximun,boolean compulsory) {
 		
-		super(defaultValue,key,name,compulsory);
+		super(defaultValue,key,name,compulsory,true);
 		this.step = step;
 		this.minimun = minimun;
 		this.maximun = maximun;

@@ -35,8 +35,8 @@ public abstract class BotsingExplorerField extends AbstractBotsingProperty {
 	private Text text;
 	
 	protected BotsingExplorerField(String defaultValue, 
-			String key, String name,boolean compulsory) {
-		super(defaultValue, key, name,compulsory);
+			String key, String name,boolean compulsory,boolean isLaunchInfo) {
+		super(defaultValue, key, name,compulsory,isLaunchInfo);
 	}
 
 	@Override
