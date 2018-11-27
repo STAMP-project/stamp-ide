@@ -64,7 +64,7 @@ public class BotsingWizardPage extends WizardPage
 	protected BotsingWizardPage(
 			BotsingWizard wizard,BotsingAdvancedOptionsDialog dialog) {
 		super("First page"); 
-		setTitle("First Page");
+		setTitle("Botsing");
 		setDescription("Botsing Configuration");
 		configurationName = "new_configuration";
 		this.wizard = wizard;
@@ -158,25 +158,25 @@ public class BotsingWizardPage extends WizardPage
 	
 	// Field for the log directory
 	StackTraceProperty stackProperty = 
-			new StackTraceProperty("","-crash_log","Log file : ");
+			new StackTraceProperty("","-crash_log","Execution log file : ");
 	stackProperty.createControl(composite);
 	botsingProperties.add(stackProperty);
 	
 	// Spinner for the frame level
 	BotsingSpinnerProperty frameLevel = 
-    new BotsingSpinnerProperty("2","-target_frame","Frame level : ",true);
+    new BotsingSpinnerProperty("2","-target_frame","Exception frame level : ",true);
 	frameLevel.createControl(composite);
 	botsingProperties.add(frameLevel);
     
 	// Field for the classpath
 	ClassPathProperty classPathProperty = 
-			new ClassPathProperty("","-projectCP","Class Path : ");
+			new ClassPathProperty("","-projectCP","Execution class Path : ");
 	classPathProperty.createControl(composite);
 	botsingProperties.add(classPathProperty);
 	
 	// Field for the trace output file
 	OutputTraceProperty outputTraceProperty =
-			new OutputTraceProperty("","Output folder : ",false);
+			new OutputTraceProperty("","Botsing log output folder : ",false);
 	outputTraceProperty.createControl(composite);
 	botsingProperties.add(outputTraceProperty);
 	
