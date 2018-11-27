@@ -98,11 +98,18 @@ you can set the name of this file writing a name (it must end with .xml) in the 
 
 ![pom name row](images/pom.png)
 
+### Set the Descartes output formats
+
+You can open a dialog to choose the Descartes output formats.
+
+![pom name row](images/OutputFormatsDescartes.png)
+
 ### Result
 
 Press the finish button to execute Descartes, you will see the information about the execution in the Eclipse console.
 
-At the end you will see the summary in the console and the Descartes view will be opened to show the information in the html summaries 
-produced by Descartes, there will be several tab items, showing the different html documents.
+At the end you will see the summary in the console, the Descartes Issues and Pit Coverage views will be opened to show the information in the html summaries produced by Descartes, 
+You can use the links in the document and the back/forward links in the top left corner of the view to display all the reports.
 
 ![Descartes views](images/DescartesView.png)
+

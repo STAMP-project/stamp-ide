@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	Ricardo Jose Tejada Garcia (Atos) - main developer
+ * 	Ricardo José Tejada García (Atos) - main developer
  * 	Jesús Gorroñogoitia (Atos) - architect
  * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
  *******************************************************************************/
@@ -35,16 +35,18 @@ public class DescartesEclipseJob extends Job {
 	private String projectPath;
 	private String pomName;
 	private String configurationName;
+	private String profileID;
 	
 	private DescartesWizard wizard;
 
 	public DescartesEclipseJob(String projectPath,String pomName,
-			String configurationName,DescartesWizard wizard) {
+			String configurationName,DescartesWizard wizard,String profileID) {
 		super("Descartes working");
 		this.wizard = wizard;
 		this.projectPath = projectPath;
 		this.pomName = pomName;
 		this.configurationName = configurationName;
+		this.profileID = profileID;
 	}
 
 	@Override
@@ -76,6 +78,7 @@ public class DescartesEclipseJob extends Job {
             		"clean package org.pitest:pitest-maven:mutationCoverage -DmutationEngine=descartes -f "+pomName);
             wc.setAttribute(MavenLaunchConstants.PLUGIN_ID, DescartesWizardConstants.DESCARTES_PLUGIN_ID);
             wc.setAttribute(DescartesWizardConstants.POM_NAME_LAUNCH_CONSTANT, pomName);
+            wc.setAttribute(MavenLaunchConstants.ATTR_PROFILES, profileID);
             
             // save the configuration and start to run
             ILaunchConfiguration config = wc.doSave(); 

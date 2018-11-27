@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo José Tejada García (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.wp4.descartes.view;
 
 import java.io.File;
@@ -12,7 +24,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-
+/**
+ * An instance of this class is responsible for finding 
+ * the Descartes Issues and Pit Coverage reports indexes after
+ * load and show the views,after the Descartes execution, if a report is
+ * not produced (usually because of the user's output formats selection)
+ * only the non empty view will be shown
+ */
 public class DescartesViewsActivator {
 
 	private URL[] urls;
