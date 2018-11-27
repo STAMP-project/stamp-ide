@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
@@ -95,9 +95,10 @@ public class DSpotContext implements IDSpotContext {
 		try {
 			IClasspathEntry[] entries = project.getRawClasspath();
 			DSpotTargetFolder folder;
+			IPath default_output_location = project.getOutputLocation();
 			for(IClasspathEntry entry : entries)
 				if(entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-					folder = new DSpotTargetFolder(entry);
+					folder = new DSpotTargetFolder(entry, default_output_location);
 					if(folder.containsTests)
 						testFolders.add(folder.sourceFolder.getAbsolutePath());
 					if(folder.containsNoTests) noTestFolders.add(folder.sourceFolder.getAbsolutePath());
@@ -121,12 +122,15 @@ public class DSpotContext implements IDSpotContext {
 		boolean containsNoTests;
 		
 		// entry must be of kind source
-		DSpotTargetFolder(IClasspathEntry entry){
+		DSpotTargetFolder(IClasspathEntry entry, IPath default_output_location){
+			outputFolder = new File(project.getProject().getLocation().toString()
+					+ "/" + default_output_location.removeFirstSegments(1).toString());
 			
 			// get the folders
 			sourceFolder = new File(project.getProject().getLocation().toString()
 					+ "/" + entry.getPath().removeFirstSegments(1).toString());
-			outputFolder = new File(project.getProject().getLocation().toString()
+			if (entry.getOutputLocation()!= null)
+				outputFolder = new File(project.getProject().getLocation().toString()
 					+ "/" + entry.getOutputLocation().removeFirstSegments(1).toString());
 			
 			//get the source and compiled files lists
