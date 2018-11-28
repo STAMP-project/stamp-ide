@@ -91,7 +91,7 @@ private WizardConfiguration wConf;
 private Wizard wizard;
 private String[] amplifiers = {"StringLiteralAmplifier","NumberLiteralAmplifier","CharLiteralAmplifier",
 "BooleanLiteralAmplifier","AllLiteralAmplifiers","MethodAdd","MethodRemove","TestDataMutator",
-"StatementAdd",""};  // the possible amplifiers;
+"MethodGeneratorAmplifier","ReturnValueAmplifier","NullifierAmplifier","None",""};  // the possible amplifiers;
 
 // widgets 
 private Text executionClassesText; 
