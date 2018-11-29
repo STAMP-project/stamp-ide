@@ -18,6 +18,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.PlatformUI;
 
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
+
 import eu.stamp.eclipse.botsing.interfaces.IProjectRelated;
 
 /**
@@ -32,8 +34,9 @@ public class StackTraceProperty
     
     private FileDialog dialog;
 	
-	public StackTraceProperty(String defaultValue, String key, String name) {
-		super(defaultValue, key, name,true,true);
+	public StackTraceProperty(String defaultValue, String key,
+			String name,StringValidationToolkit kit) {
+		super(defaultValue, key, name,true,true,true,kit);
 	}
 	@Override
 	protected String openExplorer() { 

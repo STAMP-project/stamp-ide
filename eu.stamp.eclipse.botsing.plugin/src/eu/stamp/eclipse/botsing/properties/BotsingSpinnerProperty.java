@@ -19,7 +19,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 
 /**
@@ -69,8 +68,7 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 	@Override
 	public void createControl(Composite composite) {
         
-        Label label = new Label(composite,SWT.NONE);
-        label.setText(name);
+        super.createControl(composite);
         
         spinner = new Spinner(composite,SWT.BORDER);
         spinner.setMinimum(minimun);

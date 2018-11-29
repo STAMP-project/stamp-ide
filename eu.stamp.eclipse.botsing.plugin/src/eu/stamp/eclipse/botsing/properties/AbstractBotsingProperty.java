@@ -17,7 +17,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
@@ -107,6 +109,13 @@ public abstract class AbstractBotsingProperty
 	
 	protected abstract void setData(String data);
 	
-	public abstract void createControl(Composite composite);
+	/**
+	 * this must be override
+	 * @param composite
+	 */
+	public void createControl(Composite composite) {
+	       Label label = new Label(composite,SWT.NONE);
+	       label.setText(name);
+	}
 
 }

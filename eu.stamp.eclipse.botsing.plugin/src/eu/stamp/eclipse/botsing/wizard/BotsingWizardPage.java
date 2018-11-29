@@ -32,6 +32,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
+import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
+
 import eu.stamp.eclipse.botsing.dialog.BotsingAdvancedOptionsDialog;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingInfoSource;
@@ -43,9 +46,12 @@ import eu.stamp.eclipse.botsing.properties.ClassPathProperty;
 import eu.stamp.eclipse.botsing.properties.OutputTraceProperty;
 import eu.stamp.eclipse.botsing.properties.StackTraceProperty;
 import eu.stamp.eclipse.botsing.properties.TestDirectoryProperty;
+import eu.stamp.eclipse.text.validation.StampTextFieldErrorHandler;
+import eu.stamp.eclipse.text.validation.IValidationPage;
 
 public class BotsingWizardPage extends WizardPage 
-             implements IBotsingConfigurablePart, IProjectRelated, IBotsingInfoSource {
+             implements IBotsingConfigurablePart, IProjectRelated,
+             IBotsingInfoSource, IValidationPage {
     
 	/**
 	 * List with the properties in this page
@@ -150,15 +156,21 @@ public class BotsingWizardPage extends WizardPage
 		}
 	});
 	
+	// validation kit
+	IFieldErrorMessageHandler errorHandler = new StampTextFieldErrorHandler(this);
+	StringValidationToolkit kit = 
+			new StringValidationToolkit(SWT.LEFT | SWT.TOP,1,true);
+	kit.setDefaultErrorMessageHandler(errorHandler);
+	
 	 //Field for the tests directory
 	TestDirectoryProperty testDirectory = 
-			new TestDirectoryProperty("","-Dtest_dir","Test directory : ");
+			new TestDirectoryProperty("","-Dtest_dir","Test directory : ",kit);
 	testDirectory.createControl(composite,false); // no only read
 	botsingProperties.add(testDirectory);
 	
 	// Field for the log directory
 	StackTraceProperty stackProperty = 
-			new StackTraceProperty("","-crash_log","Execution log file : ");
+			new StackTraceProperty("","-crash_log","Execution log file : ",kit);
 	stackProperty.createControl(composite);
 	botsingProperties.add(stackProperty);
 	
@@ -170,13 +182,13 @@ public class BotsingWizardPage extends WizardPage
     
 	// Field for the classpath
 	ClassPathProperty classPathProperty = 
-			new ClassPathProperty("","-projectCP","Execution class Path : ");
+			new ClassPathProperty("","-projectCP","Execution class Path : ",kit);
 	classPathProperty.createControl(composite);
 	botsingProperties.add(classPathProperty);
 	
 	// Field for the trace output file
 	OutputTraceProperty outputTraceProperty =
-			new OutputTraceProperty("","Botsing log output folder : ",false);
+			new OutputTraceProperty("","Botsing log output folder : ",false,kit);
 	outputTraceProperty.createControl(composite);
 	botsingProperties.add(outputTraceProperty);
 	
@@ -218,4 +230,10 @@ public class BotsingWizardPage extends WizardPage
 	public BotsingPartialInfo getInfo() {
 		return new BotsingPartialInfo(configurationName,botsingProperties);
 	}
+
+	@Override
+	public void error(String arg) { setErrorMessage(arg); }
+
+	@Override
+	public void message(String arg0, int arg1) { setMessage(arg0); }
 }

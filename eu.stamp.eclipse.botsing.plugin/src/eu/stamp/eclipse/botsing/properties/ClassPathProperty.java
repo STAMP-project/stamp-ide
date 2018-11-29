@@ -17,6 +17,8 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.ui.PlatformUI;
 
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
+
 /**
  * @see eu.stamp.eclipse.botsing.properties.BotsingExplorerField
  */
@@ -27,8 +29,8 @@ public class ClassPathProperty extends BotsingExplorerField {
 	private final String folderKey;
 	
 	public ClassPathProperty(String defaultValue, 
-			String key, String name) {
-		super(defaultValue, key, name,true,true);
+			String key, String name,StringValidationToolkit kit) {
+		super(defaultValue, key, name,true,true,true,kit);
 		folderKey = "folderKey";
 	}
 	@Override
