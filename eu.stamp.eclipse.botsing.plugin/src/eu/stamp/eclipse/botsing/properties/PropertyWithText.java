@@ -7,6 +7,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+import com.richclientgui.toolbox.validation.ValidatingField;
 import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 import com.richclientgui.toolbox.validation.validator.IFieldValidator;
 
@@ -18,6 +19,8 @@ public abstract class PropertyWithText
          extends AbstractBotsingProperty implements IObjectWithTextValidation {
 
 	protected Text text;
+	
+	private ValidatingField<String> valField;
 	
 	protected IFieldValidator<String> validator;
 	
@@ -50,18 +53,19 @@ public abstract class PropertyWithText
     	
     	super.createControl(composite);
     	
-    	if(isReadOnly)
+    	if(isReadOnly && !compulsory)
     		text = new Text(composite,SWT.BORDER | SWT.READ_ONLY);
     	else {
-    	text = (Text)kit.createTextField(composite,validator,
-    			compulsory,defaultValue).getControl();
+    	valField = kit.createTextField(composite,validator,
+    			compulsory,defaultValue);
+    	text = (Text)valField.getControl();
     	text.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {}
 
 			@Override
             public void keyReleased(KeyEvent e) {
-				data = text.getText();
+				setData(text.getText());
 			}
     	});
     	}
@@ -69,6 +73,12 @@ public abstract class PropertyWithText
     	                     .grab(true, false).applyTo(text);
     	text.setText(data);
     }
+    
+  public boolean ok() { 
+	  if(valField == null) return true;
+	  return valField.isValid(); 
+	  }
+  
   @Override
   public String getName() { return name; }
 }

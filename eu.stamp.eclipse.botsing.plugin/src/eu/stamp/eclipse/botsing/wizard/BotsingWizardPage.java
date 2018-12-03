@@ -12,9 +12,15 @@
  *******************************************************************************/
 package eu.stamp.eclipse.botsing.wizard;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.WizardPage;
@@ -35,19 +41,23 @@ import org.eclipse.swt.widgets.Text;
 import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
 import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 
+import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.dialog.BotsingAdvancedOptionsDialog;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingInfoSource;
 import eu.stamp.eclipse.botsing.interfaces.IProjectRelated;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
+import eu.stamp.eclipse.botsing.listeners.IPropertyDataListener;
+import eu.stamp.eclipse.botsing.log.LogReader;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 import eu.stamp.eclipse.botsing.properties.ClassPathProperty;
 import eu.stamp.eclipse.botsing.properties.OutputTraceProperty;
+import eu.stamp.eclipse.botsing.properties.PropertyWithText;
 import eu.stamp.eclipse.botsing.properties.StackTraceProperty;
 import eu.stamp.eclipse.botsing.properties.TestDirectoryProperty;
 import eu.stamp.eclipse.text.validation.StampTextFieldErrorHandler;
-import eu.stamp.eclipse.text.validation.IValidationPage;
+import eu.stamp.eclipse.general.validation.IValidationPage;
 
 public class BotsingWizardPage extends WizardPage 
              implements IBotsingConfigurablePart, IProjectRelated,
@@ -67,6 +77,9 @@ public class BotsingWizardPage extends WizardPage
 	
 	private final BotsingAdvancedOptionsDialog dialog;
 	
+	private Properties properties;
+	private boolean propertiesLoaded;
+	
 	protected BotsingWizardPage(
 			BotsingWizard wizard,BotsingAdvancedOptionsDialog dialog) {
 		super("First page"); 
@@ -76,6 +89,17 @@ public class BotsingWizardPage extends WizardPage
 		this.wizard = wizard;
 		this.dialog = dialog;
 		botsingProperties = new LinkedList<AbstractBotsingProperty>();
+		URL url = FileLocator.find(
+				Platform.getBundle(BotsingPluginConstants.BOTSING_PLUGIN_ID),
+				new Path("files/botsing_page1.properties"),null);
+	  properties = new Properties();
+	  try {
+		properties.load(url.openStream());
+		propertiesLoaded = true;
+	} catch (IOException e) {
+		e.printStackTrace();
+		propertiesLoaded = false;
+	}
 	}
 
 	@Override
@@ -93,6 +117,8 @@ public class BotsingWizardPage extends WizardPage
 	 */
     Label loadLabel = new Label(composite,SWT.NONE);
     loadLabel.setText("Load configuration : ");
+    if(propertiesLoaded) loadLabel.setToolTipText(properties
+    		.getProperty("load_configuration"));
     
     Combo loadCombo = new Combo(composite,SWT.READ_ONLY | SWT.BORDER);
     String[] names = wizard.getConfigurationNames();
@@ -109,6 +135,8 @@ public class BotsingWizardPage extends WizardPage
     	public void widgetSelected(SelectionEvent e) {
     		configurationName = loadCombo.getText();
     		wizard.reconfigure(loadCombo.getText());
+    		for(AbstractBotsingProperty property : botsingProperties)
+    		    property.callListeners();
     	}
     });
     
@@ -117,6 +145,8 @@ public class BotsingWizardPage extends WizardPage
 	 */
 	Label newConfigurationLabel = new Label(composite,SWT.NONE);
 	newConfigurationLabel.setText("Create a new configuration : ");
+	if(propertiesLoaded) newConfigurationLabel.setToolTipText(
+			properties.getProperty("new_configuration"));
 	
 	Button newConfigurationButton = new Button(composite,SWT.CHECK);
 	newConfigurationButton.setSelection(true);
@@ -166,30 +196,50 @@ public class BotsingWizardPage extends WizardPage
 	TestDirectoryProperty testDirectory = 
 			new TestDirectoryProperty("","-Dtest_dir","Test directory : ",kit);
 	testDirectory.createControl(composite,false); // no only read
+	if(propertiesLoaded) testDirectory
+	.setTooltip(properties.getProperty("test_directory"));
 	botsingProperties.add(testDirectory);
 	
-	// Field for the log directory
+	// Field for the log file
 	StackTraceProperty stackProperty = 
 			new StackTraceProperty("","-crash_log","Execution log file : ",kit);
 	stackProperty.createControl(composite);
+	if(propertiesLoaded) stackProperty
+	.setTooltip(properties.getProperty("log_file"));
 	botsingProperties.add(stackProperty);
 	
 	// Spinner for the frame level
 	BotsingSpinnerProperty frameLevel = 
     new BotsingSpinnerProperty("2","-target_frame","Exception frame level : ",true);
 	frameLevel.createControl(composite);
+	if(propertiesLoaded) frameLevel.setTooltip(properties.getProperty("frame_level"));
 	botsingProperties.add(frameLevel);
+	
+	// the maximun of the spinner is the frame level
+	stackProperty.addDataListener(new IPropertyDataListener() {
+		@Override
+		public void dataChange(String newData){
+			LogReader reader = new LogReader();
+			reader.setFile(newData);
+			int level = reader.getFrameLevel();
+			if(level > 0) frameLevel.setMaximun(level);
+		}
+	});
     
 	// Field for the classpath
 	ClassPathProperty classPathProperty = 
 			new ClassPathProperty("","-projectCP","Execution class Path : ",kit);
 	classPathProperty.createControl(composite);
+	if(propertiesLoaded) classPathProperty.setTooltip(
+			properties.getProperty("class_path"));
 	botsingProperties.add(classPathProperty);
 	
 	// Field for the trace output file
 	OutputTraceProperty outputTraceProperty =
 			new OutputTraceProperty("","Botsing log output folder : ",false,kit);
 	outputTraceProperty.createControl(composite);
+	if(propertiesLoaded) outputTraceProperty
+	.setTooltip(properties.getProperty("output_folder"));
 	botsingProperties.add(outputTraceProperty);
 	
 	// dialog link
@@ -232,8 +282,20 @@ public class BotsingWizardPage extends WizardPage
 	}
 
 	@Override
-	public void error(String arg) { setErrorMessage(arg); }
+	public void error(String arg) { 
+		setErrorMessage(arg); 
+	    setPageComplete(false);
+		}
 
 	@Override
 	public void message(String arg0, int arg1) { setMessage(arg0); }
+
+	@Override
+	public void cleanError() { 
+		boolean ok = true;
+		for(AbstractBotsingProperty property : botsingProperties)
+			if(property instanceof PropertyWithText)
+				ok = ok && ((PropertyWithText)property).ok();
+		setPageComplete(ok); 
+		}
 }

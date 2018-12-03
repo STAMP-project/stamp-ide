@@ -19,6 +19,8 @@ import org.eclipse.ui.PlatformUI;
 
 import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 
+import eu.stamp.eclipse.text.validation.TextFieldValidatorFactory;
+
 /**
  * @see eu.stamp.eclipse.botsing.properties.BotsingExplorerField
  */
@@ -32,6 +34,8 @@ public class ClassPathProperty extends BotsingExplorerField {
 			String key, String name,StringValidationToolkit kit) {
 		super(defaultValue, key, name,true,true,true,kit);
 		folderKey = "folderKey";
+		TextFieldValidatorFactory.getFactory().notEmpty(TextFieldValidatorFactory.ERROR)
+		.pointsToDirectory(TextFieldValidatorFactory.ERROR).applyTo(this);
 	}
 	@Override
 	protected String openExplorer() {

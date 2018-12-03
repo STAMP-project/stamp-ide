@@ -1,4 +1,4 @@
-package eu.stamp.eclipse.botsing.interfaces;
+package eu.stamp.eclipse.botsing.listeners;
 
 public interface IBotsingPropertyListener {
 

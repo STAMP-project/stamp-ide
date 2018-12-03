@@ -20,17 +20,17 @@ import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
 import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
-import eu.stamp.eclipse.botsing.interfaces.IBotsingPropertyListener;
 import eu.stamp.eclipse.botsing.invocation.InputManager;
 import eu.stamp.eclipse.botsing.launch.BotsingLaunchInfo;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
+import eu.stamp.eclipse.botsing.listeners.IBotsingPropertyListener;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 import eu.stamp.eclipse.botsing.properties.ClassPathProperty;
 import eu.stamp.eclipse.botsing.properties.StackTraceProperty;
 import eu.stamp.eclipse.botsing.properties.TestDirectoryProperty;
 import eu.stamp.eclipse.text.validation.StampTextFieldErrorHandler;
-import eu.stamp.eclipse.text.validation.IValidationPage;
+import eu.stamp.eclipse.general.validation.IValidationPage;
 
 @SuppressWarnings("restriction")
 public class BotsingLaunchConfigurationTab 
@@ -104,7 +104,7 @@ public class BotsingLaunchConfigurationTab
 		};
 		
 		for(AbstractBotsingProperty property : botsingProperties)
-			property.addListener(listener);
+			property.addPropertyListener(listener);
 	}
 
 	@Override
@@ -233,5 +233,10 @@ public class BotsingLaunchConfigurationTab
 	@Override
 	public void message(String arg, int arg1) {
 		
+	}
+
+	@Override
+	public void cleanError() {
+		save = true;
 	}
 }

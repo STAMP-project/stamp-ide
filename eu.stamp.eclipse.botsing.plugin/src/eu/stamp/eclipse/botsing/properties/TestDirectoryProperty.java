@@ -27,11 +27,11 @@ public class TestDirectoryProperty extends BotsingExplorerField {
 
 	public TestDirectoryProperty(String defaultValue, String key, 
 			String name,StringValidationToolkit kit) {
-		super(defaultValue, key, name,false,true,false,kit);
+		super(defaultValue, key, name,true,true,false,kit);
 		char[] allowed;
 		if(System.getProperty("os.name").contains("indow"))
-			allowed = new char[] {'\\','/'};
-		else allowed = new char[] {'/'};
+			allowed = new char[] {'\\','/',':','-','_'};
+		else allowed = new char[] {'/','-','_'};
 		TextFieldValidatorFactory.getFactory().notEmpty(
 				TextFieldValidatorFactory.ERROR).onlyAlphaNumerical(TextFieldValidatorFactory.ERROR)
 		.setExtraCharactersAllowed(allowed,TextFieldValidatorFactory.ERROR).applyTo(this);

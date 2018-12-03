@@ -75,7 +75,8 @@ public abstract class BotsingExplorerField extends PropertyWithText {
 			   String selection = openExplorer();
 			   if(selection != null){
 				   text.setText(selection);
-			       data = selection;
+				   setData(selection);
+				   callListeners();
 			   }
 		   }
 	   });
