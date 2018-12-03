@@ -20,12 +20,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import eu.stamp.wp4.dspot.dialogs.DSpotExecutionErrorDialog;
 import eu.stamp.wp4.dspot.execution.handlers.DSpotExecutionHandler;
 import eu.stamp.wp4.dspot.view.DSpotView;
 
@@ -94,27 +94,16 @@ return Status.OK_STATUS;
 
 private void openDSpotErrorMessage(boolean DSpotError) {
 	
-	String title;
-	String message;
-	if(DSpotError) {
-		title = " DSpot Error";
-		message = 
-		"An Error ocurred during DSpot execution, please check DSpot logs, "
-	   +"you can report them in https://github.com/STAMP-project/dspot/issues";
-	} else {
-		title = " DSpot Plugin Error";
-		message = 
-			"An Error ocurred in DSpotPlugin, please check the Eclipse logs"
-		   +"you can report it in https://github.com/STAMP-project/stamp-ide/issues";
-	}
 	Display.getDefault().asyncExec(new Runnable() {
 		@Override
 		public void run() {
 			Shell shell = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getShell();
-		    MessageDialog.openError(shell,title,message);
+		    DSpotExecutionErrorDialog dialog = 
+		    		new DSpotExecutionErrorDialog(shell,DSpotError);
+		    dialog.open();
 		}
 	});
 }
-	
+	 
 }
