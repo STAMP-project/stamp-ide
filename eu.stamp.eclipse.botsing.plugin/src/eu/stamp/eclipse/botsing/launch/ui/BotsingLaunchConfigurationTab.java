@@ -16,20 +16,25 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 
+import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
+
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
-import eu.stamp.eclipse.botsing.interfaces.IBotsingPropertyListener;
 import eu.stamp.eclipse.botsing.invocation.InputManager;
 import eu.stamp.eclipse.botsing.launch.BotsingLaunchInfo;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
+import eu.stamp.eclipse.botsing.listeners.IBotsingPropertyListener;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 import eu.stamp.eclipse.botsing.properties.ClassPathProperty;
 import eu.stamp.eclipse.botsing.properties.StackTraceProperty;
 import eu.stamp.eclipse.botsing.properties.TestDirectoryProperty;
+import eu.stamp.eclipse.text.validation.StampTextFieldErrorHandler;
+import eu.stamp.eclipse.general.validation.IValidationPage;
 
 @SuppressWarnings("restriction")
 public class BotsingLaunchConfigurationTab 
-             extends AbstractLaunchConfigurationTab {
+             extends AbstractLaunchConfigurationTab implements IValidationPage {
 
 	private final List<AbstractBotsingProperty> botsingProperties;
 	
@@ -50,15 +55,22 @@ public class BotsingLaunchConfigurationTab
 		
 		GridLayoutFactory.swtDefaults().numColumns(3).applyTo(composite);
 		
-		 //Field for the tests directory
+		// Validation
+		IFieldErrorMessageHandler errorHandler = 
+				new StampTextFieldErrorHandler(this);
+		StringValidationToolkit kit = 
+				new StringValidationToolkit(SWT.LEFT | SWT.TOP,1,true);
+		kit.setDefaultErrorMessageHandler(errorHandler);
+		
+		//Field for the tests directory
 		TestDirectoryProperty testDirectory = 
-				new TestDirectoryProperty("","-Dtest_dir","Test directory : ");
+				new TestDirectoryProperty("","-Dtest_dir","Test directory : ",kit);
 		testDirectory.createControl(composite,false); // no only read
 		botsingProperties.add(testDirectory);
 		
 		// Field for the log directory
 		StackTraceProperty stackProperty = 
-				new StackTraceProperty("","-Dcrash_log","Log file : ");
+				new StackTraceProperty("","-Dcrash_log","Log file : ",kit);
 		stackProperty.createControl(composite);
 		botsingProperties.add(stackProperty);
 		
@@ -70,7 +82,7 @@ public class BotsingLaunchConfigurationTab
 	    
 		// Field for the classpath
 		ClassPathProperty classPathProperty = 
-				new ClassPathProperty("","-projectCP","Class Path : ");
+				new ClassPathProperty("","-projectCP","Class Path : ",kit);
 		classPathProperty.createControl(composite);
 		botsingProperties.add(classPathProperty);
 		
@@ -92,7 +104,7 @@ public class BotsingLaunchConfigurationTab
 		};
 		
 		for(AbstractBotsingProperty property : botsingProperties)
-			property.addListener(listener);
+			property.addPropertyListener(listener);
 	}
 
 	@Override
@@ -213,5 +225,18 @@ public class BotsingLaunchConfigurationTab
                           key,name,step,minimun,maximun,false);
     	
     	list.add(property);	
+	}
+
+	@Override
+	public void error(String arg) { setErrorMessage(arg); }
+
+	@Override
+	public void message(String arg, int arg1) {
+		
+	}
+
+	@Override
+	public void cleanError() {
+		save = true;
 	}
 }

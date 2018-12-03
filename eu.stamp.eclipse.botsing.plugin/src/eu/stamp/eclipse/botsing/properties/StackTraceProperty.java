@@ -18,7 +18,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.PlatformUI;
 
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
+
 import eu.stamp.eclipse.botsing.interfaces.IProjectRelated;
+import eu.stamp.eclipse.text.validation.TextFieldValidatorFactory;
 
 /**
  *  This is the property associated with the path of the .log file
@@ -32,8 +35,11 @@ public class StackTraceProperty
     
     private FileDialog dialog;
 	
-	public StackTraceProperty(String defaultValue, String key, String name) {
-		super(defaultValue, key, name,true,true);
+	public StackTraceProperty(String defaultValue, String key,
+			String name,StringValidationToolkit kit) {
+		super(defaultValue, key, name,true,true,true,kit);
+		TextFieldValidatorFactory.getFactory().notEmpty(TextFieldValidatorFactory.ERROR)
+		.pointsToFile(TextFieldValidatorFactory.ERROR).applyTo(this);
 	}
 	@Override
 	protected String openExplorer() { 

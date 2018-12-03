@@ -17,11 +17,15 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
-import eu.stamp.eclipse.botsing.interfaces.IBotsingPropertyListener;
+import eu.stamp.eclipse.botsing.listeners.IBotsingPropertyListener;
+import eu.stamp.eclipse.botsing.listeners.IPropertyDataListener;
 
 /**
  * Abstract implementation IBotsingProperty
@@ -47,7 +51,13 @@ public abstract class AbstractBotsingProperty
 	
 	protected final boolean isLaunchInfo;
 	
-	protected final List<IBotsingPropertyListener> listeners;
+	protected IBotsingPropertyListener propertyListener;
+	
+	protected final List<IPropertyDataListener> dataListeners;
+	
+	protected String tooltip;
+	
+	private Label label;
 	
 	protected AbstractBotsingProperty(String defaultValue,String key,
 			String name,boolean compulsory,boolean isLaunchInfo) {
@@ -58,7 +68,18 @@ public abstract class AbstractBotsingProperty
 		this.data = defaultValue;
 		this.compulsory = compulsory;
 		this.isLaunchInfo = isLaunchInfo;
-		listeners = new LinkedList<IBotsingPropertyListener>();
+		dataListeners = new LinkedList<IPropertyDataListener>();
+	}
+	
+	public void setTooltip(String tooltip) {
+		this.tooltip = tooltip;
+		if(label != null)if(!label.isDisposed())
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					label.setToolTipText(tooltip);
+				}
+			});
 	}
 	
 	@Override
@@ -76,14 +97,19 @@ public abstract class AbstractBotsingProperty
 		}
 	}
 	
-	public void addListener(IBotsingPropertyListener listener) {
-		listeners.add(listener);
+	public void addPropertyListener(IBotsingPropertyListener listener) {
+		this.propertyListener = listener;
 	}
 	
-	protected void callListeners() {
-		if(listeners.size() < 1) return;
-		for(IBotsingPropertyListener listener : listeners)
-			listener.activate();
+	public void addDataListener(IPropertyDataListener dataListener) {
+		dataListeners.add(dataListener);
+	}
+	
+	public void callListeners() {
+		if(propertyListener != null)	
+		propertyListener.activate();
+		for(IPropertyDataListener dataListener : dataListeners)
+			dataListener.dataChange(data);
 	}
 
 	@Override
@@ -105,8 +131,20 @@ public abstract class AbstractBotsingProperty
 	
 	protected abstract String getData();
 	
+	/**
+	 * this must be overrided
+	 * @param data
+	 */
 	protected abstract void setData(String data);
-	
-	public abstract void createControl(Composite composite);
+
+	/**
+	 * this must be override
+	 * @param composite
+	 */
+	public void createControl(Composite composite) {
+	       label = new Label(composite,SWT.NONE);
+	       label.setText(name);
+	       if(tooltip != null) label.setToolTipText(tooltip);
+	}
 
 }

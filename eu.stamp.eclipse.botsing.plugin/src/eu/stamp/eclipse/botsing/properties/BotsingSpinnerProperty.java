@@ -19,7 +19,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 
 /**
@@ -32,7 +31,7 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 	
 	private final int step;
 	private final int minimun;
-	private final int maximun;
+	private int maximun;
 	
 	public BotsingSpinnerProperty(String defaultValue,
 			String key,String name,boolean compulsory) {
@@ -65,12 +64,10 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 		});
 		
 	}
-
 	@Override
 	public void createControl(Composite composite) {
         
-        Label label = new Label(composite,SWT.NONE);
-        label.setText(name);
+        super.createControl(composite);
         
         spinner = new Spinner(composite,SWT.BORDER);
         spinner.setMinimum(minimun);
@@ -92,8 +89,22 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
        });
 	}
 	
+	public void setMaximun(int maximun) {
+		this.maximun = maximun;
+		if(spinner != null)if(!spinner.isDisposed()) {
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if(spinner.getSelection() > maximun) 
+						spinner.setSelection(maximun);
+					spinner.setMaximum(maximun);
+				}
+			});
+		}
+	}
+	
 	protected void spinnerSelected() {
-		data = spinner.getText();
+		setData(spinner.getText());
 		callListeners();
 	}
 	protected Spinner getSpinner() {
