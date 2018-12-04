@@ -31,8 +31,8 @@ public class DescartesWizardErrorHandler implements IFieldErrorMessageHandler{
 	
 	@Override
 	public void clearMessage() {
-		page.error(null);
-		page.message(null,DialogPage.ERROR);	
+	 page.error(null);
+	 page.message(null,DialogPage.ERROR);	
 	}
 	@Override
 	public void handleErrorMessage(String message, String input) {

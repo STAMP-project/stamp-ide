@@ -108,9 +108,15 @@ public class DescartesWizard extends Wizard
 		    parser.preparePom(one.getMutatorsList(),outputsDialog.getFormatList());
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
+			job.showErrorDialog(false);
 		}
 		//wConf.getDescartesParser().preparePom(texts,pomName,outputsDialog);
+		try {
 		job.schedule();
+		} catch(Exception e) {
+			e.printStackTrace();
+			job.showErrorDialog(job.toolError(job.getLaunch()));
+		}
 		return true;
 	}
 

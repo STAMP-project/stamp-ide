@@ -12,20 +12,28 @@
  *******************************************************************************/
 package eu.stamp.wp4.descartes.wizard.execution;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.m2e.actions.MavenLaunchConstants;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
+import eu.stamp.eclipse.descartes.wizard.dialogs.DescartesExecutionErrorDialog;
+import eu.stamp.wp4.descartes.view.DescartesViewsActivator;
 import eu.stamp.wp4.descartes.wizard.DescartesWizard;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 
@@ -38,6 +46,8 @@ public class DescartesEclipseJob extends Job {
 	private String profileID;
 	
 	private DescartesWizard wizard;
+	
+	private ILaunch launch;
 
 	public DescartesEclipseJob(String projectPath,String pomName,
 			String configurationName,DescartesWizard wizard,String profileID) {
@@ -82,11 +92,49 @@ public class DescartesEclipseJob extends Job {
             
             // save the configuration and start to run
             ILaunchConfiguration config = wc.doSave(); 
-  	        config.launch(ILaunchManager.RUN_MODE, null);
-
+  	        launch = config.launch(ILaunchManager.RUN_MODE, null);         	
+  	        
+  	         // after finishing the process show the Descartes view for the html summaries
+  	         while(!launch.isTerminated());
+  	         if(toolError(launch)) {
+  	        	 showErrorDialog(true);
+  	         } else {
+  	         DescartesViewsActivator viewsActivator = new DescartesViewsActivator(new File(
+  	        		 projectPath + "/target/pit-reports"));
+  	         viewsActivator.activate();
+  	         }
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}	
 		return Status.OK_STATUS;
+	}
+	
+	public ILaunch getLaunch() { return launch; }
+	
+	public void showErrorDialog(boolean toolError) {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				
+			  Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+					  .getShell();
+			  DescartesExecutionErrorDialog dialog = 
+					      new DescartesExecutionErrorDialog(shell,toolError);
+			   dialog.open();
+			}	
+		});
+	}
+	
+	public boolean toolError(ILaunch launch) {
+		if(launch == null) return false;
+		IProcess[] processes = launch.getProcesses();
+		try {
+		for(IProcess process : processes)
+				if(process.getExitValue() != 0) return true;
+			} catch (DebugException e) {
+				e.printStackTrace();
+				return false;
+			}
+		return false;
 	}
 }

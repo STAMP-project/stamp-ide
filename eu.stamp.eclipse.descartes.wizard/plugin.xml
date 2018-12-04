@@ -96,7 +96,7 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="eu.stamp.wp4.descartes.wizard.execution.DescartesDelegate"
+            delegate="org.eclipse.m2e.internal.launch.MavenLaunchDelegate"
             id="eu.stamp.wp4.descartes.wizard.launchConfiguration"
             modes="run,debug"
             name="Descartes"
