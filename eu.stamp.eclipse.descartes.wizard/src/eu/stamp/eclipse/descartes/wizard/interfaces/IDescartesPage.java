@@ -22,5 +22,4 @@ public interface IDescartesPage {
 	public void error(String mess);
 		
 	public void message(String mess, int style);
-	
 }
