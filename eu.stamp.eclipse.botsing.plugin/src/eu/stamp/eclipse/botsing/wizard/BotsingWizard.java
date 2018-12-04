@@ -87,6 +87,7 @@ public class BotsingWizard extends Wizard
 	
 	@Override
 	public boolean performFinish() {
+
 		List<BotsingPartialInfo> partialInfos = 
 				new LinkedList<BotsingPartialInfo>();
 		
@@ -97,7 +98,12 @@ public class BotsingWizard extends Wizard
         		
 		BostingJob job = new BostingJob(
 				new BotsingLaunchInfo(partialInfos),this);
-		job.schedule();
+		try { 
+			job.schedule();
+		} catch(Exception e){
+			e.printStackTrace();
+			job.showErrorDialog(job.isToolError(job.getLaunch()));	
+		}
 		return true;
 	}
 	

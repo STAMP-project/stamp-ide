@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Wizard
+Bundle-SymbolicName: eu.stamp.eclipse.wizard
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: eu.stamp.eclipse.wizard
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.jface,
+ org.eclipse.ui.workbench,
+ org.eclipse.core.runtime

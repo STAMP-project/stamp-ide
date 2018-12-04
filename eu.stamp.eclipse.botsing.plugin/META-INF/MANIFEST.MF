@@ -24,4 +24,4 @@ Bundle-ClassPath: .,
  lib/botsing-reproduction-1.0.1-SNAPSHOT-jar-with-dependencies.jar,
  lib/BotsingCall.jar,
  lib/rcptoolbox.1.0.10.jar,
- lib/stamp-eclipse-validation.jar
+ lib/stamp-eclipse-wizard.jar
