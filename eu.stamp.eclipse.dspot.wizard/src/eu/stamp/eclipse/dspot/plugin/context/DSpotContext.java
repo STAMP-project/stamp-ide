@@ -1,13 +1,21 @@
 package eu.stamp.eclipse.dspot.plugin.context;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 public class DSpotContext implements IDSpotContext {
 	
@@ -20,6 +28,8 @@ public class DSpotContext implements IDSpotContext {
 	private List<DSpotTargetSource> targets;
 	
 	private Boolean compiledFound;
+	
+	private Shell shell;
 
 	public DSpotContext(IJavaProject project) {
 		loadProject(project);
@@ -92,20 +102,59 @@ public class DSpotContext implements IDSpotContext {
 		targets = new LinkedList<DSpotTargetSource>();
 		compiledFound = false;
 		
+		Display.getDefault().syncExec(new Runnable(){
+			@Override
+			public void run() {
+				shell = PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell();
+			}
+		});
+		
 		try {
 			IClasspathEntry[] entries = project.getRawClasspath();
+			
+			ProgressMonitorDialog progressWindow = 
+					new ProgressMonitorDialog(shell);
+			// TODO make cancelable
+	    try {
+		   progressWindow.run(true, false, new IRunnableWithProgress() {
+					
+			@Override
+		    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			
+			monitor.beginTask("Inspecting " + project.getProject().getName() + " ClassPath entries",entries.length);
+		    
 			DSpotTargetFolder folder;
-			IPath default_output_location = project.getOutputLocation();
-			for(IClasspathEntry entry : entries)
-				if(entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-					folder = new DSpotTargetFolder(entry, default_output_location);
-					if(folder.containsTests)
-						testFolders.add(folder.sourceFolder.getAbsolutePath());
-					if(folder.containsNoTests) noTestFolders.add(folder.sourceFolder.getAbsolutePath());
-					List<DSpotTargetSource> list = folder.targetSources;
-					for(DSpotTargetSource element : list)
-						targets.add(element);
-				}		
+		    IPath default_output_location = null;	
+		    
+			try {
+			default_output_location = project.getOutputLocation();
+			} catch (JavaModelException e) {
+		   e.printStackTrace();
+		   monitor.done();
+			}
+							
+		   for(IClasspathEntry entry : entries) {
+			 
+			 if(entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+			 folder = new DSpotTargetFolder(entry, default_output_location);
+			 if(folder.containsTests)
+			 testFolders.add(folder.sourceFolder.getAbsolutePath());
+			 if(folder.containsNoTests) noTestFolders.add(folder.sourceFolder.getAbsolutePath());
+			 List<DSpotTargetSource> list = folder.targetSources;
+			 for(DSpotTargetSource element : list)
+			 targets.add(element);
+									}
+			 monitor.worked(1);
+								}
+		   monitor.done();
+					} // end of run
+					
+				});
+			} catch (InvocationTargetException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
+						
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
@@ -171,7 +220,6 @@ public class DSpotContext implements IDSpotContext {
 		
 		DSpotTargetSource(File source,File compiled, File folder){
 			this.file = source;
-			// TODO check
 			String folderPath = folder.getAbsolutePath();
 			fullName = source.getAbsolutePath();
 			if(fullName.contains("\\")) {
@@ -192,6 +240,5 @@ public class DSpotContext implements IDSpotContext {
 		}
 		
 	}
-	
 
 }
