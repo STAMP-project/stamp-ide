@@ -77,7 +77,6 @@ import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotPageSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotRowSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotSizeManager;
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
-import eu.stamp.wp4.dspot.dialogs.DspotWizardHelpDialog;
 import eu.stamp.wp4.dspot.wizard.utils.TestSelectionDisplayer;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
@@ -392,17 +391,7 @@ return true;
 // required to avoid an error in the System
 setControl(composite);
 setPageComplete(true);
-}  // end of create control
-
- @Override
- public void performHelp() {
- String[] myText = {"The first Text contains the project's path","The first combo the relative path (from the projects folder) to the sources package",
- "The second combo the relative path to the test sources","The output folder is the directory where the output files of DSpot will be placed",
- "The last parameter is a filter in the name of the classes to test, it's optional",""};
- Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
- DspotWizardHelpDialog info = new DspotWizardHelpDialog(shell, " This page contains the information to write the properties file for DSpot ",myText);
- info.open();
- }  
+}  // end of create control  
 
 private IJavaProject showProjectDialog() {
 

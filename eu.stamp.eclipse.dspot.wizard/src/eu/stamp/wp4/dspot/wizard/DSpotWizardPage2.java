@@ -54,7 +54,6 @@ import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotRowSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotSizeManager;
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.dialogs.DSpotAdvancedOptionsDialog;
-import eu.stamp.wp4.dspot.dialogs.DspotWizardHelpDialog;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotMemory;
 import eu.stamp.wp4.dspot.wizard.utils.TestSelectionDisplayer;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
@@ -438,7 +437,6 @@ if(argument.contains(DSpotMemory.CRITERION_KEY)) {
  */
 public void refreshPageConfiguration(WizardConfiguration wConf) {
 this.wConf = wConf;
-
 }
 /**
  *  set default DSpot execution values
@@ -453,17 +451,6 @@ combo1.setText("");
 expDiag.reset(wConf, 23, 10000, null , "");
 
 }
- @Override
- public void performHelp() {
- String[] myText = {"First spinner, number of amplification iterations : A larger number may help to kill more mutants but it has an impact on the execution time",
-"First text, test-classes to use","the option verbose prints more information about the process in the console",
-"the option clean removes the out dirctory if exists, else it will append the results to the exist files",
-"","The link DSpot advanced options opens a dialog to set the time value of degenerated test (ms), the randomSeed, the MAVEN_HOME ",
-"and the path to the .csv of the original result of Pit test, (this only avaiable if the test criterion is PitMutantScoreSelector)",""};
- DspotWizardHelpDialog info = new DspotWizardHelpDialog(shell," This page contains the information to execute DSpot ",myText);
- info.open();
-    
- }
  
  public void setResetAdvancedOptions(boolean resetAdvancedOptions) {
  this.resetAdvancedOptions = resetAdvancedOptions;
