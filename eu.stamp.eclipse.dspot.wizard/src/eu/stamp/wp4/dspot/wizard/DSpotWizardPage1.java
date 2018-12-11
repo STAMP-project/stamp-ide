@@ -19,6 +19,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -32,6 +33,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
@@ -76,6 +78,7 @@ import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotRowSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotSizeManager;
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
 import eu.stamp.wp4.dspot.dialogs.DspotWizardHelpDialog;
+import eu.stamp.wp4.dspot.wizard.utils.TestSelectionDisplayer;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
@@ -108,6 +111,7 @@ private Properties tooltipsProperties;
     private Button btNewConfig;
     private ValidatingField<String> configurationField;
     private ValidatingField<String> projectField;
+    private Text excludedText;
     
     // to compute size
     private DSpotPageSizeCalculator sizeCalculator;
@@ -196,17 +200,51 @@ row.reStart();
 createConfigurationField(composite);
 sizeCalculator.addRow(row);
 /*
- *  ROW 3 : Project's path
+ *  ROW 3 : Excluded classes
+ */
+Label excludedLabel = new Label(composite,SWT.NONE);
+excludedLabel.setText("Excluded classes : ");
+GridDataFactory.swtDefaults().indent(0,VS).applyTo(excludedLabel);
+
+excludedText = new Text(composite,SWT.BORDER | SWT.READ_ONLY);
+GridDataFactory.fillDefaults().indent(0,VS).grab(true,false).applyTo(excludedText);
+
+Button excludedButton = new Button(composite,SWT.PUSH);
+excludedButton.setText("Select");
+GridDataFactory.fillDefaults().indent(0,VS).applyTo(excludedButton);
+
+excludedButton.addSelectionListener(new SelectionAdapter() {
+	@Override
+	public void widgetSelected(SelectionEvent e) {
+		try {
+			String selection = TestSelectionDisplayer
+			.showElementTreeSelectionDialog(wConf.getPro(),wConf.getTheWindow(),
+					wConf,new LinkedList<Object>());
+		    if(selection != null) {
+		    	excludedText.setText(selection);
+		    }
+		} catch (JavaModelException e1) {
+			e1.printStackTrace();
+		}
+	}
+});
+
+excludedText.addSegmentListener(new SegmentListener() {
+	@Override
+	public void getSegments(SegmentEvent event) {
+		DSpotPropertiesFile.getInstance().excludedClasses = excludedText.getText();
+	}
+});
+
+/*
+ *  ROW 4 : Project's path
  */ 
 row.reStart();
-// Obtain the path of the project
-//String[] sour = wConf.getSources();  
-//boolean[] isTest = wConf.getIsTest();  // the packages in sour with test classes
 
 createProjectField(composite);
 sizeCalculator.addRow(row);
         /*
-         *  ROW 4 : Source path
+         *  ROW 5 : Source path
          */
 row.reStart();
 createLabel(composite,"Path of the source : ","lb2"); // Label in (4,1)
@@ -222,7 +260,7 @@ createLabel(composite,"Path of the source : ","lb2"); // Label in (4,1)
         }); // end of the selection listener
         sizeCalculator.addRow(row);
         /*
-         *  ROW 5 : SourceTest path
+         *  ROW 6 : SourceTest path
          */
         row.reStart();
         createLabel(composite,"Path of the source test : ","lb3");
@@ -255,7 +293,7 @@ createLabel(composite,"Path of the source : ","lb2"); // Label in (4,1)
         });
 sizeCalculator.addRow(row);
         /*
-         *  ROW 6 : Java version
+         *  ROW 7 : Java version
          */
 row.reStart();
         createLabel(composite,"Java version : ","lb4"); // Label in (6,1)
@@ -701,6 +739,7 @@ dspotFile.reload(wConf.getCurrentConfiguration());
 if(dspotFile.src != null) sourcePathCombo.setText(dspotFile.src);
 if(dspotFile.testSrc != null) sourceTestCombo.setText(dspotFile.testSrc);
 if(dspotFile.javaVersion != null) versionCombo.setText(dspotFile.javaVersion);
+if(dspotFile.excludedClasses != null) excludedText.setText(dspotFile.excludedClasses);
 if(dspotFile.outputDirectory != null) {
 String output = dspotFile.outputDirectory;
 if(output.contains("\\")) output = output.replaceAll("\\","/");
