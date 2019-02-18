@@ -3,6 +3,12 @@ package eu.stamp.eclipse.plugin.dspot.controls;
 
 import java.awt.Point;
 
+import eu.stamp.eclipse.dspot.controls.impl.CheckController;
+import eu.stamp.eclipse.dspot.controls.impl.ComboController;
+import eu.stamp.eclipse.dspot.controls.impl.ExplorerController;
+import eu.stamp.eclipse.dspot.controls.impl.ListController;
+import eu.stamp.eclipse.dspot.controls.impl.SpinnerController;
+import eu.stamp.eclipse.dspot.controls.impl.TextController;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 import eu.stamp.eclipse.plugin.dspot.properties.DSpotProperties;
 /**

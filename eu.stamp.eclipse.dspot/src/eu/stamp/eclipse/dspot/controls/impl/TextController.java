@@ -1,5 +1,5 @@
 
-package eu.stamp.eclipse.plugin.dspot.controls;
+package eu.stamp.eclipse.dspot.controls.impl;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.events.SegmentEvent;
@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 import eu.stamp.eclipse.dspot.wizard.validation.ValidationProvider;
+import eu.stamp.eclipse.plugin.dspot.controls.SimpleController;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 import eu.stamp.eclipse.plugin.dspot.properties.DSpotProperties;
 import eu.stamp.eclipse.plugin.dspot.wizard.IPageUserElement;

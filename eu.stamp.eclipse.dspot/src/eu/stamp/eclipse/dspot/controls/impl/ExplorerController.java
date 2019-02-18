@@ -1,5 +1,5 @@
 
-package eu.stamp.eclipse.plugin.dspot.controls;
+package eu.stamp.eclipse.dspot.controls.impl;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 import eu.stamp.eclipse.plugin.dspot.context.DSpotContext;
+import eu.stamp.eclipse.plugin.dspot.controls.MultiController;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 import eu.stamp.eclipse.plugin.dspot.properties.DSpotProperties;
 

@@ -1,4 +1,4 @@
-package eu.stamp.eclipse.plugin.dspot.controls;
+package eu.stamp.eclipse.dspot.controls.impl;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -10,6 +10,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 
+import eu.stamp.eclipse.plugin.dspot.controls.CheckProxy;
+import eu.stamp.eclipse.plugin.dspot.controls.Controller;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 import eu.stamp.eclipse.plugin.dspot.properties.DSpotProperties;
 
@@ -17,11 +19,15 @@ public class CheckController extends Controller {
 
 	private Button button;
 	
+	protected CheckProxy proxy;
+	
 	public CheckController(String key, String labelText, int place, String tooltip,String activationDirection,String condition) {
 		super(key,labelText,false,place,tooltip);
 		this.activationDirection = activationDirection;
 		this.condition = condition;
 	}
+	
+	public void setProxy(CheckProxy proxy) { this.proxy = proxy; }
 
 	@Override
 	public void notifyListener() { 
@@ -39,8 +45,9 @@ public class CheckController extends Controller {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
                 activations();
-				if(listenerOn)DSpotMapping.getInstance()
+				if(proxy == null) DSpotMapping.getInstance()
 					.setValue(key,String.valueOf(button.getSelection()));
+				// TODO
 			}
 		});
 		updateController(DSpotMapping.getInstance().getValue(key));

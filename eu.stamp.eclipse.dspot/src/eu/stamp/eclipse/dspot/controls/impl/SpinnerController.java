@@ -1,5 +1,5 @@
 
-package eu.stamp.eclipse.plugin.dspot.controls;
+package eu.stamp.eclipse.dspot.controls.impl;
 
 import java.awt.Point;
 
@@ -10,6 +10,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Spinner;
 
+import eu.stamp.eclipse.plugin.dspot.controls.SimpleController;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 import eu.stamp.eclipse.plugin.dspot.properties.DSpotProperties;
 
