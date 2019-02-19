@@ -81,7 +81,7 @@ public class ComboController extends MultiController {
 	@Override
 	public void loadProject() {
 		super.loadProject();
-		if(combo == null) return;
+		if(combo == null || combo.isDisposed()) return;
 		if(combo.getItemCount() > 0)
 		combo.setText(combo.getItem(0));
 	}

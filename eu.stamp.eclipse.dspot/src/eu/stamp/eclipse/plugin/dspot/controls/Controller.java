@@ -21,7 +21,7 @@ public abstract class Controller implements Comparable<Controller>{
 	/**
 	 * 
 	 */
-	private final int place;
+	protected int place;
 	/**
 	 * 
 	 */

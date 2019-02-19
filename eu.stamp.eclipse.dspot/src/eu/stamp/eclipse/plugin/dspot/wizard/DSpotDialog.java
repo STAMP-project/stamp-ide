@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import eu.stamp.eclipse.plugin.dspot.controls.Controller;
+import eu.stamp.eclipse.plugin.dspot.controls.IControllerProxy;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 
 /**
@@ -71,6 +72,8 @@ public class DSpotDialog extends TitleAreaDialog {
 			controller.setListenerOn(true);
 			controller.notifyListener();
 			controller.setListenerOn(false);
+			if(controller instanceof IControllerProxy)
+				((IControllerProxy)controller).save();
 		}
 		super.okPressed();
 	}

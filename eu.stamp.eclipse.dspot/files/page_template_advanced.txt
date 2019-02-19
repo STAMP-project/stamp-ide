@@ -4,7 +4,7 @@ type=spinner
 key=timeout
 labelText=Time out (ms) : 
 tooltip= the time out value of the degenerated tests in milliseconds
-direction=Advanced options/timeSpinner
+direction=AdvancedOptionsDialog/timeSpinner
 initialSelection=10000
 interval=100,100000
 step=100
@@ -18,7 +18,7 @@ labelText=Random seed :
 tooltip= a seed value use for all randomized operation
 initialSelection=23
 interval=10,50
-direction=Advanced options/seedSpinner
+direction=AdvancedOptionsDialog/seedSpinner
 place=2
 PARAMETER
 
@@ -28,7 +28,7 @@ key=cases
 project=TestMethods
 labelText=Test cases : 
 tooltip= specify the test cases to amplify
-direction=Advanced options/casesList
+direction=AdvancedOptionsDialog/casesList
 place=3
 PARAMETER
 
@@ -38,7 +38,7 @@ key=path-pit-result
 explorerType=file
 labelText=Path pit result : 
 tooltip= specify the path to the original result of pit test (criterion : Pit Mutant Score Selector)
-direction=Advanced options/pathPit
+direction=AdvancedOptionsDialog/pathPit
 place=4
 PARAMETER
 
@@ -48,7 +48,7 @@ key=budgetizer
 labelText=Budgetizer : 
 tooltip= select a budgetizer (default NoBudgetizer)
 content=NoBudgetizer,SimpleBudgetizer
-direction=Advanced options/Budgetizer
+direction=AdvancedOptionsDialog/Budgetizer
 place=5
 PARAMETER
 
@@ -57,7 +57,7 @@ type=check
 key=clean
 labelText=Clean 
 tooltip= if enabled, DSpot will remove the out directory if exists, else it will append the results to the existing files 
-direction=Advanced options/Clean
+direction=AdvancedOptionsDialog/Clean
 place=6
 PARAMETER
 
@@ -66,7 +66,7 @@ type=check
 key=no-minimize
 labelText=No minimize 
 tooltip=Disable the minimization of amplified tests
-direction=Advanced options/NoMinimize
+direction=AdvancedOptionsDialog/NoMinimize
 place=7
 PARAMETER
 
@@ -75,8 +75,8 @@ type=check
 key=descartes
 labelText=Descartes
 tooltip= use the Descartes mutation engine (Pit Mutant Score Selector)
-direction=Advanced options/Descartes
-activationDirection=Advanced options/Gregor
+direction=AdvancedOptionsDialog/Descartes
+activationDirection=AdvancedOptionsDialog/Gregor
 condition=Anti-true
 place=8
 PARAMETER
@@ -86,8 +86,8 @@ type=check
 key=gregor
 labelText=Gregor
 tooltip= use the Gregor mutation engine (Pit Mutant Score Selector)
-direction=Advanced options/Gregor
-activationDirection=Advanced options/Descartes
+direction=AdvancedOptionsDialog/Gregor
+activationDirection=AdvancedOptionsDialog/Descartes
 condition=Anti-true
 place=9
 PARAMETER
@@ -97,7 +97,7 @@ type=check
 key=targetOneTestClass
 labelText=Target One test Class
 tooltip= enable this option will make DSpot computing the mutation score of only one class (expert)
-direction=Advanced options/OneTestClass
+direction=AdvancedOptionsDialog/OneTestClass
 place=10
 PARAMETER
 
@@ -106,7 +106,7 @@ type=check
 key=verbose
 labelText=Verbose 
 tooltip= enable to get more information
-direction=Advanced options/Verbose
+direction=AdvancedOptionsDialog/Verbose
 place=11
 PARAMETER
 
@@ -115,6 +115,6 @@ type=check
 key=with-comment
 labelText=With comment  
 tooltip=details step of the amplification
-direction=Advanced options/Comment
+direction=AdvancedOptionsDialog/Comment
 place=12
 PARAMETER

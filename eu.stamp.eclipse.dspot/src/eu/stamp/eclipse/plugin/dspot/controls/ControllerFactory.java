@@ -181,6 +181,12 @@ public class ControllerFactory {
 		case "check" :  key = key + DSpotProperties.CHECK_EXTRA_KEY;
 			controller = new CheckController(key,labelText,place,tooltip,activationDirection,condition);
 		}
+		
+		if(direction.contains("ialog")) {
+			if(controller instanceof CheckController)
+				controller = new CheckProxy((CheckController)controller);
+		}
+		
 		if(controller != null) {
 			if(isFileParameter) DSpotMapping.getInstance().setFileParameter(key);
 			else DSpotMapping.getInstance().setCommandParameter(key);

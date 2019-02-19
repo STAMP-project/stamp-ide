@@ -8,7 +8,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 
 import eu.stamp.eclipse.plugin.dspot.controls.CheckProxy;
 import eu.stamp.eclipse.plugin.dspot.controls.Controller;
@@ -31,7 +30,8 @@ public class CheckController extends Controller {
 
 	@Override
 	public void notifyListener() { 
-		if(button != null) button.notifyListeners(SWT.Selection,new Event());
+		if(button != null) DSpotMapping.getInstance()
+		.setValue(key,String.valueOf(button.getSelection()));
 	}
 	
 	@Override
@@ -47,7 +47,7 @@ public class CheckController extends Controller {
                 activations();
 				if(proxy == null) DSpotMapping.getInstance()
 					.setValue(key,String.valueOf(button.getSelection()));
-				// TODO
+				else proxy.setTemporalData(button.getSelection());
 			}
 		});
 		updateController(DSpotMapping.getInstance().getValue(key));
@@ -64,7 +64,12 @@ public class CheckController extends Controller {
 	public void loadConfiguration(ILaunchConfiguration configuration) {
 		try {
 			String selection = configuration.getAttribute(key,"false");
-			if(button != null)button.setSelection(selection.contains("rue"));
+			boolean boo = selection.contains("rue");
+			if(button != null && !button.isDisposed())button.setSelection(boo);
+		    if(proxy != null) {
+		    	proxy.setTemporalData(boo);
+		    	proxy.save();
+		    }
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -80,7 +85,7 @@ public class CheckController extends Controller {
 	}
 
 	@Override
-	protected int checkActivation(String condition) {
+	public int checkActivation(String condition) {
 		if(button.getSelection() == condition.contains("rue")) {
 			if(condition.contains("nti")) return ANTI_ACTIVATION;
 			return ACTIVATION;

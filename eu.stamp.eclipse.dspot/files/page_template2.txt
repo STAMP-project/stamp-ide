@@ -36,7 +36,7 @@ labelText=Test criterion :
 tooltip= criterion to be maximized with amplification
 direction=page2/criterionCombo
 content=PitMutantScoreSelector,JacocoCoverageSelector,TakeAllSelector,ChangeDetectorSelector
-activationDirection=Advanced options/pathPit,Advanced options/Descartes,Advanced options/Gregor
+activationDirection=AdvancedOptionsDialog/pathPit,AdvancedOptionsDialog/Descartes,AdvancedOptionsDialog/Gregor
 condition=PitMutantScoreSelector,PitMutantScoreSelector,PitMutantScoreSelector
 place=9
 PARAMETER
