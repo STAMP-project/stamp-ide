@@ -41,7 +41,7 @@ public class ListController extends MultiController {
     	list.addSelectionListener(new SelectionAdapter() {
     		@Override
     		public void widgetSelected(SelectionEvent e) {
-                if(listenerOn) notifyListener();
+                notifyListener();
     		}
     	});
     	
@@ -64,11 +64,20 @@ public class ListController extends MultiController {
     	else {
     		loadProject();
     	}
+    	String value = DSpotMapping.getInstance().getValue(key);
+    	if(value == null) selection = new String[] {""};
+    	else if(value.contains(DSpotProperties.getSeparator()))
+    		selection = value.split(DSpotProperties.getSeparator());
+    	else selection = new String[] { value };
         updateController(null);
+        if(firstTime) {
+        	list.deselectAll();
+        	firstTime = false;
+        }
     }
 	@Override
 	protected void setContent(String[] content) {
-		DSpotMapping.getInstance().setValue(key,null);
+		//DSpotMapping.getInstance().setValue(key,null);
 		if(content == null || list == null) return;
 		if(content.length < 1 || list.isDisposed()) return;
 		list.removeAll();
@@ -77,6 +86,7 @@ public class ListController extends MultiController {
 
 	@Override
 	protected void setSelection(String[] selection) {
+		this.selection = selection;
 		if(selection == null) {
 			DSpotMapping.getInstance().setValue(key,null);
 			return;
@@ -126,27 +136,42 @@ public class ListController extends MultiController {
 		for(int i = 1; i < sel.length; i++)
 			result += DSpotProperties.getSeparator() + processEntry(sel[i]);
 		}
-		DSpotMapping.getInstance().setValue(key,result);
+		if(proxy == null) DSpotMapping.getInstance().setValue(key,result);
+		else proxy.setTemporalData(result);
 	}
 	@Override
 	public void updateController(String data) {
         if(selection == null || list == null || list.isDisposed()) return;
         if(selection.length < 1) {
-        	list.deselectAll();
+        	Display.getDefault().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					list.deselectAll();
+				}
+        	});
         	return;
         }
+        String[] processedSelection = new String[selection.length];
+        for(int i = 0; i < selection.length; i++)
+        	processedSelection[i] = match(selection[i]);
         Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				list.setSelection(selection);
-				list.showSelection();
+				list.setSelection(processedSelection);
+				//list.showSelection();
 			}
         	
         });
 }
+	
+	private String match(String sr) {
+		String[] items = list.getItems();
+		for(String item : items)if(item.contains(sr)) return item;
+		return "";
+	}
+	
 	@Override
-	protected int checkActivation(String condition) {
-		// TODO Auto-generated method stub
+	protected int checkActivation(String condition) { 
 		return 0;
 	}
 }

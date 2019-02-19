@@ -185,6 +185,8 @@ public class ControllerFactory {
 		if(direction.contains("ialog")) {
 			if(controller instanceof CheckController)
 				controller = new CheckProxy((CheckController)controller);
+			else if(controller instanceof MultiController)
+				controller = new MultiControllerProxy((MultiController)controller);
 		}
 		
 		if(controller != null) {
