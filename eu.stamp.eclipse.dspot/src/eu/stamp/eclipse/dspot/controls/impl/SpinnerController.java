@@ -58,7 +58,8 @@ public class SpinnerController extends SimpleController {
     	spinner.addSelectionListener(new SelectionAdapter() {
     		@Override
     		public void widgetSelected(SelectionEvent e) {
-				if(listenerOn) listenerAction();
+				if(proxy == null) listenerAction();
+				else proxy.setTemporalData(spinner.getText());
     		}
     	});
     	String value = DSpotMapping.getInstance().getValue(key);
@@ -70,7 +71,7 @@ public class SpinnerController extends SimpleController {
 	}
 
 	@Override
-	protected void setText(String text) {
+	public void setText(String text) {
 		DSpotMapping.getInstance().setValue(key,text);
 		if(spinner == null || text == null) return;
 		if(spinner.isDisposed() || text.isEmpty()) return;
@@ -102,8 +103,7 @@ public class SpinnerController extends SimpleController {
 		map.setValue(key,spinner.getText());
 	}
 	@Override
-	protected int checkActivation(String condition) {
-		// TODO Auto-generated method stub
+	public int checkActivation(String condition) {
 		return 0;
 	}
 }

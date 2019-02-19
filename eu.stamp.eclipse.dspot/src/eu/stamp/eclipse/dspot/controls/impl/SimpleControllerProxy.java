@@ -1,35 +1,31 @@
-package eu.stamp.eclipse.plugin.dspot.controls;
+package eu.stamp.eclipse.dspot.controls.impl;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.swt.widgets.Composite;
 
+import eu.stamp.eclipse.plugin.dspot.controls.IControllerProxy;
+import eu.stamp.eclipse.plugin.dspot.controls.SimpleController;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 
-public class MultiControllerProxy extends MultiController implements IControllerProxy {
+public class SimpleControllerProxy extends SimpleController implements IControllerProxy {
 
-	protected final MultiController innerController;
+	protected final SimpleController innerController;
 	
 	protected String data;
 	
 	protected String temporalData;
 	
-	public MultiControllerProxy(MultiController innerController) {
-		super(null,null,null,false,0,null,null);
+	public SimpleControllerProxy(SimpleController innerController) {
+		super(null,null,false,false,0,null);
 		this.innerController = innerController;
-		this.activationDirection = innerController.activationDirection;
-		this.place = innerController.place;
-		innerController.setProxy(this);
+        this.place = innerController.place;
+        this.activationDirection = innerController.activationDirection;		
+	    innerController.setProxy(this);
 	}
 	
 	@Override
 	public void createControl(Composite parent) {
-		DSpotMapping.getInstance().setValue(innerController.key,data);
 		innerController.createControl(parent);
-	}
-	
-	@Override
-	protected void setContent(String[] content) {
-		innerController.setContent(content);
 	}
 	
 	@Override
@@ -38,8 +34,8 @@ public class MultiControllerProxy extends MultiController implements IController
 	}
 
 	@Override
-	protected void setSelection(String[] selection) {
-		innerController.setSelection(selection);
+	public void setText(String text) {
+		innerController.setText(text);
 	}
 
 	@Override
@@ -50,6 +46,11 @@ public class MultiControllerProxy extends MultiController implements IController
 	@Override
 	public void setEnabled(boolean enabled) {
 		innerController.setEnabled(enabled);
+	}
+
+	@Override
+	public void loadProject() {
+		innerController.loadProject();
 	}
 
 	@Override
@@ -65,10 +66,11 @@ public class MultiControllerProxy extends MultiController implements IController
 	@Override
 	public void save() {
 		data = temporalData;
-		DSpotMapping.getInstance().setValue(innerController.key,data);
+		DSpotMapping.getInstance().setValue(innerController.getKey(),data);
 	}
 	
 	public void setTemporalData(String temporalData) {
 		this.temporalData = temporalData;
 	}
+
 }

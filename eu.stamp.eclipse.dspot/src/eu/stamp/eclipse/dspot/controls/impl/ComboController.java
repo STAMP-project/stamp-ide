@@ -38,9 +38,12 @@ public class ComboController extends MultiController {
         combo.addSelectionListener(new SelectionAdapter() {
     		@Override
     		public void widgetSelected(SelectionEvent e) {
-    			if(!listenerOn) return;
+    			if(proxy == null) {
     			DSpotMapping map = DSpotMapping.getInstance();
     			map.setValue(key,combo.getText());
+    			} else {
+    				proxy.setTemporalData(combo.getText());
+    			}
                 activations();
     		}
     	}); 
@@ -48,6 +51,7 @@ public class ComboController extends MultiController {
     		for(String entry : content) combo.add(entry);
     	if(combo.getText() != null && !combo.getText().isEmpty())
     		DSpotMapping.getInstance().setValue(key,combo.getText());
+    	updateController(DSpotMapping.getInstance().getValue(key));
     }
 	@Override
 	protected void setContent(String[] content) {
@@ -97,7 +101,7 @@ public class ComboController extends MultiController {
 		combo.setText(data);
 	}
 	@Override
-	protected int checkActivation(String condition) {
+	public int checkActivation(String condition) {
         if(combo.getText().equalsIgnoreCase(condition)) return ACTIVATION;
 		return ANTI_ACTIVATION;
 	}

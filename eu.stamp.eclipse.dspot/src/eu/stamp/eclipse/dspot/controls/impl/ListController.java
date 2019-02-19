@@ -171,7 +171,7 @@ public class ListController extends MultiController {
 	}
 	
 	@Override
-	protected int checkActivation(String condition) { 
+	public int checkActivation(String condition) { 
 		return 0;
 	}
 }

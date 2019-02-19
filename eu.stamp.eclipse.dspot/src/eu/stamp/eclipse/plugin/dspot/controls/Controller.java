@@ -21,7 +21,7 @@ public abstract class Controller implements Comparable<Controller>{
 	/**
 	 * 
 	 */
-	protected int place;
+	public int place;
 	/**
 	 * 
 	 */
@@ -57,7 +57,7 @@ public abstract class Controller implements Comparable<Controller>{
 	/**
 	 * 
 	 */
-	protected String activationDirection;
+	public String activationDirection;
 	/**
 	 * 
 	 */
@@ -158,5 +158,5 @@ public abstract class Controller implements Comparable<Controller>{
 	/**
 	 * 
 	 */
-	protected abstract int checkActivation(String condition);
+	public abstract int checkActivation(String condition);
 }

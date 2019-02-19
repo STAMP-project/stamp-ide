@@ -54,7 +54,7 @@ public class TextController extends SimpleController implements IPageUserElement
     	});
     }
 	@Override
-	protected void setText(String selection) {
+	public void setText(String selection) {
 		if(selection == null || text == null) {
 			DSpotMapping.getInstance().setValue(key,null);
 			return;
@@ -90,7 +90,7 @@ public class TextController extends SimpleController implements IPageUserElement
 	public void setPage(Object page) { this.page = page; }
 
 	@Override
-	protected int checkActivation(String condition) {
+	public int checkActivation(String condition) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

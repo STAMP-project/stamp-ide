@@ -7,6 +7,7 @@ import eu.stamp.eclipse.dspot.controls.impl.CheckController;
 import eu.stamp.eclipse.dspot.controls.impl.ComboController;
 import eu.stamp.eclipse.dspot.controls.impl.ExplorerController;
 import eu.stamp.eclipse.dspot.controls.impl.ListController;
+import eu.stamp.eclipse.dspot.controls.impl.SimpleControllerProxy;
 import eu.stamp.eclipse.dspot.controls.impl.SpinnerController;
 import eu.stamp.eclipse.dspot.controls.impl.TextController;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
@@ -187,6 +188,8 @@ public class ControllerFactory {
 				controller = new CheckProxy((CheckController)controller);
 			else if(controller instanceof MultiController)
 				controller = new MultiControllerProxy((MultiController)controller);
+			else if(controller instanceof SimpleController)
+				controller = new SimpleControllerProxy((SimpleController)controller);
 		}
 		
 		if(controller != null) {

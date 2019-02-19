@@ -156,7 +156,7 @@ public class ExplorerController extends MultiController {
 	}
 
 	@Override
-	protected int checkActivation(String condition) {
+	public int checkActivation(String condition) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

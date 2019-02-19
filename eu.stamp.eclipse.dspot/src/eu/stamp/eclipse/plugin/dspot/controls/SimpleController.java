@@ -4,11 +4,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.swt.widgets.Display;
 
+import eu.stamp.eclipse.dspot.controls.impl.SimpleControllerProxy;
+
 public abstract class SimpleController extends Controller {
 	/**
 	 * 
 	 */
 	protected final boolean projectDependent;
+	
+	protected SimpleControllerProxy proxy;
 /**
  * 
  * @param projectDependent
@@ -16,6 +20,10 @@ public abstract class SimpleController extends Controller {
 	public SimpleController(String key, String labelText, boolean checkButton,boolean projectDependent,int place,String tooltip) {
 		super(key, labelText, checkButton,place,tooltip);
 		this.projectDependent = projectDependent;
+	}
+	
+	public void setProxy(SimpleControllerProxy proxy) {
+		this.proxy = proxy;
 	}
 
 	@Override
@@ -29,13 +37,18 @@ public abstract class SimpleController extends Controller {
 				}
 			});
 			setData(data);
+			if(proxy != null) {
+				proxy.setTemporalData(data);
+				proxy.save();
+			}
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
+		firstTime = false;
 	}
     /**
      * 
      * @param text
      */
-	protected abstract void setText(String text);
+	public abstract void setText(String text);
 }
