@@ -2,6 +2,7 @@
 package eu.stamp.eclipse.plugin.dspot.launch;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -9,15 +10,20 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.m2e.actions.MavenLaunchConstants;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 import eu.stamp.eclipse.plugin.dspot.context.DSpotContext;
 import eu.stamp.eclipse.plugin.dspot.files.DSpotFileUtils;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 import eu.stamp.eclipse.plugin.dspot.properties.DSpotProperties;
+import eu.stamp.eclipse.plugin.dspot.view.DSpotView;
 
 /**
  * 
@@ -57,8 +63,27 @@ public class DSpotJob extends Job {
 			DSpotMapping.getInstance().prepareConfiguration(copy);
 			
 			ILaunchConfiguration configuration = copy.doSave();
-			configuration.launch(ILaunchManager.RUN_MODE,null);
-		} catch (CoreException e) {
+			ILaunch launch = configuration.launch(ILaunchManager.RUN_MODE,null);
+			
+			while(!launch.isTerminated()) Thread.sleep(100);
+				
+			String outputFolder = DSpotContext.getInstance().getProject()
+					.getProject().getLocation().toString() + "/target/dspot/output";
+			
+			Display.getDefault().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					try {
+					DSpotView view = (DSpotView)PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+							.getActivePage().showView(DSpotView.ID);
+					view.parseJSON(outputFolder);
+					} catch(IOException | PartInitException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			
+		} catch (CoreException | InterruptedException e) {
 		    e.printStackTrace();
 		}
         

@@ -122,4 +122,14 @@
             sourcePathComputerId="org.eclipse.m2e.launching.MavenSourceComputer">
       </launchConfigurationType>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="STAMP"
+            class="eu.stamp.eclipse.plugin.dspot.view.DSpotView"
+            id="eu.stamp.eclipse.dspot.reports.view"
+            name="DSpot view"
+            restorable="true">
+      </view>
+   </extension>
 </plugin>
