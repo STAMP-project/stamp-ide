@@ -4,4 +4,4 @@
 #(lines containing # are ignored)
 
 page=page2/Second page
-dialog=page2/AdvancedOptionsDialog/AdvancedOptionsDialog/set advanced dspot options
+dialog=page2/AdvancedOptionsDialog/Advanced Options/set advanced dspot options
