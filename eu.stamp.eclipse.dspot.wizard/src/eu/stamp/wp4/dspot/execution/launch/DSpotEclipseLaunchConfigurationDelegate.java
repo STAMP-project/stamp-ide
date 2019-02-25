@@ -34,23 +34,13 @@ import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.console.IConsoleConstants;
 import org.osgi.framework.Bundle;
-
-import eu.stamp.wp4.dspot.view.DSpotView;
 
 public class DSpotEclipseLaunchConfigurationDelegate extends JavaLaunchDelegate {
 
 @Override
 public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 throws CoreException {
-
-String outputDirectory = configuration.getAttribute("outputDirectory", ""); // TODO
 
 if (monitor == null) {
 monitor = new NullProgressMonitor(); 
@@ -162,6 +152,7 @@ e1.printStackTrace();
 } catch (IOException e1) {
 e1.printStackTrace();
 }
+/*
 finally {
 monitor.done();
 while(!launch.isTerminated());
@@ -177,8 +168,8 @@ PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 
 } catch (PartInitException | IOException e) { e.printStackTrace(); }
 }
-});
-}
+})
+}*/
     }
 
 public static String getPluginDir(String pluginId)

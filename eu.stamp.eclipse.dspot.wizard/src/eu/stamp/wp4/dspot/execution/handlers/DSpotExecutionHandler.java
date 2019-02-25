@@ -16,12 +16,14 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
@@ -51,18 +53,17 @@ DSpotExecutionHandler.arguments = arguments;
 
 @Override
 public Object execute(ExecutionEvent event) throws ExecutionException {
-
+String outputDirectory = "";
 try {
-executeDSpotInJDTLauncher(conf.getPro(), event);
+outputDirectory = executeDSpotInJDTLauncher(conf.getPro(), event);
 } catch (CoreException e) {
 e.printStackTrace();
 }
-
-return null;
+return outputDirectory;
 }
 
 
-private void executeDSpotInJDTLauncher(IJavaProject javaProject, ExecutionEvent event) throws CoreException, ExecutionException {
+private String executeDSpotInJDTLauncher(IJavaProject javaProject, ExecutionEvent event) throws CoreException, ExecutionException {
 
 
 DebugPlugin plugin = DebugPlugin.getDefault();
@@ -73,24 +74,38 @@ DebugPlugin plugin = DebugPlugin.getDefault();
       wc.setAttribute(
         IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, 
         javaProject.getElementName());
-      System.out.println(javaProject.getElementName());
+      //System.out.println(javaProject.getElementName());
       wc.setAttribute(
         IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, DSpotProperties.MAIN_CLASS);
       wc.setAttribute(
           IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, arguments);
       wc.setAttribute("outputDirectory", conf.getProjectPath() +"/"+ 
           DSpotPropertiesFile.getInstance().outputDirectory);
-      System.out.println(arguments);
+      //System.out.println(arguments);
       wc = DSpotPropertiesFile.getInstance().appendToConfiguration(wc);
       ILaunchConfiguration config = wc.doSave();   
-      myLaunch = config.launch(ILaunchManager.RUN_MODE, null);
       hasStarted = true;
-     
+      myLaunch = config.launch(ILaunchManager.RUN_MODE, null);   
+      return wc.getAttribute("outputDirectory","");
 }
 
 public boolean isFinished() {
 if(hasStarted) return myLaunch.isTerminated();
 return false;
+}
+
+public int getExitCode() {
+	if(myLaunch == null) return 0;
+	IProcess[] processes = myLaunch.getProcesses();
+	for(IProcess process : processes)
+		try {
+		if(process.getExitValue() != 0) 
+			return process.getExitValue();
+		} catch(DebugException e) {
+			e.printStackTrace();
+			return 0;
+		}
+	return 0;
 }
 
 }

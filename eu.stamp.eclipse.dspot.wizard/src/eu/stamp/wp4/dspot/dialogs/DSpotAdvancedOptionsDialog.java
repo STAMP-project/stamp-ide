@@ -84,7 +84,7 @@ private DSpotMemory memory;
 private Spinner timeOutSpinner;
 private Spinner randomSeedSpinner;
 private List list;
-private ValidatingField<String> pathPitResultField;
+private ValidatingField<String> pathPitResultField; // TODO
 private ValidatingField<String> mavenHomeField;
 private Button nominimizeButton;
 private Button commentsButton;
@@ -97,7 +97,6 @@ private final DSpotRowSizeCalculator row;
 public DSpotAdvancedOptionsDialog(Shell parentShell, WizardConfiguration wConf) {
 super(parentShell);
 this.wConf = wConf;
-
     errorMessageHandler = new WizardErrorHandler();
 strValToolkit = new StringValidationToolkit(DECORATOR_POSITION,
         1,true);
@@ -116,7 +115,7 @@ setTitleImage(descriptor.createImage());
 }
 
 @Override
-     protected Control createDialogArea(Composite parent) {
+protected Control createDialogArea(Composite parent) {
      
 // load the properties for the tooltips
 Properties tooltipsProperties = new Properties();
@@ -132,7 +131,7 @@ inputStream.close();} catch (IOException e2) {
 e2.printStackTrace(); }
 
          // create the composite
-     Composite composite = (Composite)super.createDialogArea(parent);
+  Composite composite = (Composite)super.createDialogArea(parent);
   GridLayout layout = new GridLayout();
   layout.numColumns = 3;
   composite.setLayout(layout);
@@ -190,7 +189,9 @@ e2.printStackTrace(); }
      GridDataFactory.fillDefaults().grab(true, false)
      .hint(200, 100).span(2,1).indent(0, vSpace).applyTo(list);
      if(selection != null) {
-     if(selection.length > 0) list.setSelection(selection);}
+     if(selection.length == cases.length) list.deselectAll();
+     else if(selection.length > 0) list.setSelection(selection);
+     }
 
      /*
       *  Row 4 : button to clean the test cases list

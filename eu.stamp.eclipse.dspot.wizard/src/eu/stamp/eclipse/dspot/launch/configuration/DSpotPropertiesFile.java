@@ -33,14 +33,15 @@ return dspotFile;
 /*
  *  File properties
  */
-public String projectPath;
+    public String projectPath;
     public String src;
     public String testSrc;
     public String javaVersion;
     public String outputDirectory;
+    public String excludedClasses;
     public String filter;
     
-    public void reload(ILaunchConfiguration configuration) {
+public void reload(ILaunchConfiguration configuration) {
     String string = "";
     try {
 string = configuration.getAttribute(key,"");
@@ -52,20 +53,22 @@ string = configuration.getAttribute(key,"");
     this.testSrc = strings[2];
     this.javaVersion = strings[3];
     this.outputDirectory = strings[4];
-    if(strings.length > 5) this.filter = strings[5];
+    this.excludedClasses = strings[5]; // TODO check empty excluded classes
+    if(strings.length > 6) this.filter = strings[6];
     else this.filter = "";
     }
     }
-      public ILaunchConfigurationWorkingCopy appendToConfiguration(
+    
+ public ILaunchConfigurationWorkingCopy appendToConfiguration(
         ILaunchConfigurationWorkingCopy copy) {
       
       String info = projectPath + separator + src + separator + testSrc 
       + separator + javaVersion + separator + outputDirectory + 
-      separator + filter;
+      separator + excludedClasses + separator + filter;
       copy.setAttribute(key, info);
       
       info = projectPath;
-      if(info.contains("\\")) info = info.replaceAll("\\","/");
+      if(info.contains("\\")) info = info.replace('\\','/');
       info = info.substring(info.lastIndexOf("/")+1);
       copy.setAttribute(PROJECT_NAME_KEY, info);
       
@@ -93,12 +96,14 @@ bw.write("javaVersion="+javaVersion);
 bw.newLine();
 bw.write("outputDirectory="+outputDirectory);
 bw.newLine();
+bw.write("excludedClasses="+excludedClasses);
+bw.newLine();
 bw.write("filter="+filter);
 bw.close();
 } catch (IOException e) { e.printStackTrace(); }
       }
       
-      public boolean fileReady() { return file != null; }
+public boolean fileReady() { return file != null; }
       
-      public String getFileLocation() { return file.getAbsolutePath(); }
+public String getFileLocation() { return file.getAbsolutePath(); }
 }

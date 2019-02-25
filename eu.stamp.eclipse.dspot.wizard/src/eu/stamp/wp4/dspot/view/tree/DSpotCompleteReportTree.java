@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +23,6 @@ import com.google.gson.Gson;
 
 import eu.stamp.wp4.dspot.wizard.json.DSpotTestClassJSON;
 import eu.stamp.wp4.dspot.wizard.json.DSpotTimeJSON;
-import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 
 public class DSpotCompleteReportTree { // TODO java-docs and comments

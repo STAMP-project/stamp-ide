@@ -29,9 +29,10 @@ public class DSpotWizardHandler extends AbstractHandler {
 
 private WizardConfiguration wConf;  // instance of the class with the project's information 
 
-    @Override
-    public Object execute(ExecutionEvent event) throws ExecutionException {
-    try {
+@Override
+public Object execute(ExecutionEvent event) throws ExecutionException {	
+	
+try {
 wConf = new WizardConfiguration(); 
 } catch (CoreException e) {
 e.printStackTrace();
