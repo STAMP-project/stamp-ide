@@ -16,16 +16,40 @@
   
   <repositories>
     <repository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>http://repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>atlassian-public</id>
       <name>atlassian-public</name>
       <url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
     </repository>
-    <repository>
+<!--    <repository>
       <id>renderer-repository</id>
       <name>renderer-repo</name>
       <url>https://mvnrepository.com/artifact/com.atlassian.renderer/atlassian-renderer</url>
+    </repository>-->
+    <repository>
+      <id>mvn-repository</id>
+      <name>Mvn Repository</name>
+      <url>https://mvnrepository.com/artifact/</url>
     </repository>
     <repository>
+      <id>atlassian-3rdparty</id>
+      <name>Atlasian 3rdparty</name>
+      <url>https://maven.atlassian.com/3rdparty/</url>
+    </repository>
+    <repository>
+        <id>adobe-public</id>
+        <url>https://repo.adobe.com/nexus/content/repositories/public/</url>
+    </repository>
+
+<!--    <repository>
       <id>slf4j-repo</id>
       <name>slf4j-repo</name>
       <url>https://mvnrepository.com/artifact/org.slf4j/slf4j-api</url>
@@ -34,7 +58,7 @@
       <id>junit-repo</id>
       <name>junit-repo</name>
       <url>https://mvnrepository.com/artifact/junit/junit</url>
-    </repository>
+    </repository>-->
   </repositories>
 
   <dependencies>
@@ -55,28 +79,36 @@
     <groupId>com.atlassian.jira</groupId>
     <artifactId>jira-rest-java-client-core</artifactId>
     <version>LATEST</version>
-    <scope>provided</scope>
     </dependency>
     
     <dependency>
     <groupId>com.atlassian.fugue</groupId>
     <artifactId>fugue</artifactId>
     <version>LATEST</version>
-    <scope>provided</scope>
     </dependency>
     
     <dependency>
     <groupId>io.atlassian.fugue</groupId>
     <artifactId>fugue</artifactId>
     <version>LATEST</version>
-    <scope>provided</scope>
     </dependency>
     
     <dependency>
     <groupId>com.atlassian.renderer</groupId>
     <artifactId>atlassian-renderer</artifactId>
-    <version>2007-06-06</version>
-    <scope>provided</scope>
+    <version>8.0.5</version>
+    </dependency>
+
+    <dependency>
+    <groupId>opensymphony</groupId>
+    <artifactId>oscore</artifactId>
+    <version>2.2.7</version>
+    </dependency>
+
+    <dependency>
+    <groupId>javax.activation</groupId>
+    <artifactId>activation</artifactId>
+    <version>1.0.2</version>
     </dependency>
     
   </dependencies>
