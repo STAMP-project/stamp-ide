@@ -20,17 +20,34 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.equinox.security.storage.StorageException;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.LocationListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
+
+import eu.stamp.eclipse.descartes.jira.DescartesJiraWizard;
 
 public class DescartesIssuesView extends DescartesAbstractView {
 	
 	public static final String ID = "eu.stamp.wp4.descartes.view.issues";
     
 	protected List<String> info;
+	
+	protected DescartesJiraWizard wizard;
+	
+	public DescartesIssuesView() {
+		super();
+		try {
+			wizard = new DescartesJiraWizard();
+		} catch (StorageException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -59,7 +76,7 @@ public class DescartesIssuesView extends DescartesAbstractView {
 				    reader.close();
 				    if(jiraButton != null && !jiraButton.isDisposed())
 				    	jiraButton.setEnabled(packageFound && classFound);
-				} catch (IOException e) {
+				    	} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
@@ -68,9 +85,27 @@ public class DescartesIssuesView extends DescartesAbstractView {
          jiraButton.addSelectionListener(new SelectionAdapter() {
 			 @Override
 			 public void widgetSelected(SelectionEvent e) {
-				 for(String sr : info) System.out.println(sr);
-			 }
+				 StringBuilder builder = new StringBuilder();
+				 for(String sr : info) builder.append(sr);
+                 String target = builder.toString();
+                 int start = target.indexOf("<title>") + 7;
+                 int end = target.indexOf("</title>");
+                 String title = target.substring(start,end);
+                 
+                 if(wizard != null) {
+                	 wizard.setTitle(title);
+                	 wizard.parseDescription(target);
+                	 Display.getDefault().syncExec(new Runnable() {
+						@Override
+						public void run() {
+					WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench()
+							.getActiveWorkbenchWindow().getShell(),wizard);
+					dialog.open();
+						}	        
 		});
+	}
+			 }
+			 });
 	}
 	
 	@Override

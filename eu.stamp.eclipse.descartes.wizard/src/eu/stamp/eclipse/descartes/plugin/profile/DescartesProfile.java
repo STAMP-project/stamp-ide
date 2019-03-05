@@ -30,6 +30,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
+import eu.stamp.eclipse.descartes.plugin.pom.AbstractDescartesPomParser;
 /**
  * An instance of this class is responsible for generating the Maven profile 
  * to execute Descartes,to do this it uses the template in files/descartes_profile.xml
@@ -65,7 +66,8 @@ public class DescartesProfile {
 	private Node prepareProfileNode(String profileID,List<String> mutators,List<String> formats) {
 		
 		Element root = profileDocument.getDocumentElement();
-		root.getElementsByTagName("id").item(0).setTextContent(profileID);
+		Node rootNode = root.getElementsByTagName("id").item(0);
+		AbstractDescartesPomParser.setTextContent(rootNode,profileID);
 		
 		Node mutatorsNode = root.getElementsByTagName("mutators").item(0);
 		for(String mutator : mutators)

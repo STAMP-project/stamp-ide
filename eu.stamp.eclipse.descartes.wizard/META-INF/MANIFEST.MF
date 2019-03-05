@@ -16,10 +16,13 @@ Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.m2e.launching,
  org.eclipse.debug.ui,
  org.eclipse.e4.ui.workbench,
- org.eclipse.swt
+ org.eclipse.swt,
+ org.eclipse.equinox.security,
+ org.eclipse.jface
 Bundle-Vendor: Atos Spain S.A.
 Bundle-ClassPath: .,
  lib/rcptoolbox.1.0.10.jar,
- lib/stamp-eclipse-wizard.jar
+ lib/stamp-eclipse-wizard.jar,
+ lib/descartes.jira-0.0.1-SNAPSHOT.jar
 Automatic-Module-Name: eu.stamp.eclipse.descartes.wizard
 

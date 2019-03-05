@@ -14,6 +14,24 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
   <repositories>
     <repository>
       <id>central</id>
@@ -70,45 +88,45 @@
     </dependency>
     
     <dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-api</artifactId>
-    <version>1.8.0-beta4</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.8.0-beta4</version>
     </dependency>
     
     <dependency>
-    <groupId>com.atlassian.jira</groupId>
-    <artifactId>jira-rest-java-client-core</artifactId>
-    <version>LATEST</version>
+      <groupId>com.atlassian.jira</groupId>
+      <artifactId>jira-rest-java-client-core</artifactId>
+      <version>LATEST</version>
     </dependency>
     
     <dependency>
-    <groupId>com.atlassian.fugue</groupId>
-    <artifactId>fugue</artifactId>
-    <version>LATEST</version>
+      <groupId>com.atlassian.fugue</groupId>
+      <artifactId>fugue</artifactId>
+      <version>LATEST</version>
     </dependency>
     
     <dependency>
-    <groupId>io.atlassian.fugue</groupId>
-    <artifactId>fugue</artifactId>
-    <version>LATEST</version>
+      <groupId>io.atlassian.fugue</groupId>
+      <artifactId>fugue</artifactId>
+      <version>LATEST</version>
     </dependency>
     
     <dependency>
-    <groupId>com.atlassian.renderer</groupId>
-    <artifactId>atlassian-renderer</artifactId>
-    <version>8.0.5</version>
+      <groupId>com.atlassian.renderer</groupId>
+      <artifactId>atlassian-renderer</artifactId>
+      <version>8.0.5</version>
     </dependency>
 
     <dependency>
-    <groupId>opensymphony</groupId>
-    <artifactId>oscore</artifactId>
-    <version>2.2.7</version>
+      <groupId>opensymphony</groupId>
+      <artifactId>oscore</artifactId>
+      <version>2.2.7</version>
     </dependency>
 
     <dependency>
-    <groupId>javax.activation</groupId>
-    <artifactId>activation</artifactId>
-    <version>1.0.2</version>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>1.0.2</version>
     </dependency>
     
   </dependencies>
