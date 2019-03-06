@@ -5,8 +5,6 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.equinox.security.storage.ISecurePreferences;
-import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
@@ -17,28 +15,40 @@ import eu.stamp.descartes.jira.DescartesJiraTracker;
 
 public class DescartesJiraWizard extends Wizard {
 	
-	private ISecurePreferences preferences;
-	
 	private DescartesJiraTracker tracker;
 	
+	private DescartesJiraAccountsManager2 manager;
+	
+	private boolean errorFlag;
+	
 	public DescartesJiraWizard() throws StorageException {
-		// preferences
-		preferences = SecurePreferencesFactory.getDefault()
-				.node(DescartesJiraPreferencePage.PREFERENCES_KEY);
-		// tracker
-        tracker = new DescartesJiraTracker(
-        		preferences.get(DescartesJiraPreferencePage.URL_KEY,""),
-        		preferences.get(DescartesJiraPreferencePage.USER_KEY,""),
-        		preferences.get(DescartesJiraPreferencePage.PASSWORD_KEY,""));
+		manager = new DescartesJiraAccountsManager2();
+		errorFlag = manager.empty();
+        if(!errorFlag) tracker = new DescartesJiraTracker(
+        		manager.getUrl(),manager.getUser(),manager.getPassword());
 	}
 	
-	public void setTitle(String title) { tracker.setTitle(title); }
+	public boolean error() { return errorFlag; }
+	
+	public DescartesJiraAccountsManager2 getmanager() { return manager; }
+	
+	public void setManager(DescartesJiraAccountsManager2 manager) {
+		this.manager = manager;
+	}
+	
+	public void setTitle(String title) { 
+		if(tracker != null) tracker.setTitle(title); 
+		}
 	
 	public void parseDescription(String description) {
-		tracker.parseDescription(description);
+		if(tracker != null) tracker.parseDescription(description);
 	}
 	
 	public DescartesJiraTracker getTracker() { return tracker; }
+	
+	public void setTracker(DescartesJiraTracker tracker) {
+		this.tracker = tracker;
+	}
 	
 	@Override
 	public void addPages() {
@@ -59,7 +69,7 @@ public class DescartesJiraWizard extends Wizard {
 	
 	@Override
 	public boolean performFinish() {
-    	tracker.createIssue();
+    	if(!errorFlag) tracker.createIssue();
 		return true;
 	}
 }

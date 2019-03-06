@@ -47,11 +47,11 @@
       <name>atlassian-public</name>
       <url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
     </repository>
-<!--    <repository>
+    <!--<repository>
       <id>renderer-repository</id>
       <name>renderer-repo</name>
       <url>https://mvnrepository.com/artifact/com.atlassian.renderer/atlassian-renderer</url>
-    </repository>-->
+    </repository> -->
     <repository>
       <id>mvn-repository</id>
       <name>Mvn Repository</name>

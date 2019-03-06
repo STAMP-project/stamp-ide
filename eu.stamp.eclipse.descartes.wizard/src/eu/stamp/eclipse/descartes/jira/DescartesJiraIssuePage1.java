@@ -19,6 +19,10 @@ import eu.stamp.descartes.jira.DescartesJiraTracker;
 
 public class DescartesJiraIssuePage1 extends WizardPage{
 
+	private DescartesJiraAccountsManager2 manager;
+	
+	private DescartesJiraTracker tracker;
+	
 	protected DescartesJiraIssuePage1(String pageName) { super(pageName); }
 
 	@Override
@@ -31,11 +35,32 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 		layout.makeColumnsEqualWidth = true;
 		composite.setLayout(layout);
 		
-		DescartesJiraTracker tracker = ((DescartesJiraWizard)getWizard()).getTracker();
+		final DescartesJiraWizard wizard = (DescartesJiraWizard)getWizard();
+		if(wizard.error()) {
+			Label errorLabel = new Label(composite,SWT.NONE);
+			errorLabel.setText("No Jira accounts found, please go to the Descartes Jira "
+					+ "preferences page in Window > Preferences and set a new jira account");
+			setControl(composite);
+			setPageComplete(true);
+			return;
+		}
+		
+		tracker = wizard.getTracker();
+		manager = wizard.getmanager();
+		
+		// Accounts
+		Label accountsLabel = new Label(composite,SWT.BORDER);
+		accountsLabel.setText("Jira account : ");
+		
+		Combo accountCombo = new Combo(composite,SWT.READ_ONLY | SWT.BORDER);
+        GridDataFactory.fillDefaults().span(2,1).grab(true,false).applyTo(accountCombo);
+        	String[] accounts = manager.getAccounts();
+        	for(String account : accounts) accountCombo.add(account);
 		
 		// Project
 		Label projectLabel = new Label(composite,SWT.NONE);
 		projectLabel.setText("Select a project : ");
+		GridDataFactory.swtDefaults().indent(0,8).applyTo(projectLabel);
 		
 		Combo projectCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);
 		Set<String> projects = tracker.getProjects();
@@ -45,7 +70,8 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 			projectCombo.add(project);
 		}
 		tracker.setProject(initialSelection);
-		GridDataFactory.fillDefaults().span(2,1).grab(true,false).applyTo(projectCombo);
+		GridDataFactory.fillDefaults().span(2,1).grab(true,false)
+		.indent(0,8).applyTo(projectCombo);
 		projectCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -101,6 +127,20 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 			public void getSegments(SegmentEvent event) {
 				tracker.setDescription(descriptionText.getText());
 			}	
+		});
+		
+		accountCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				manager.setSelection(accountCombo.getText());
+				tracker = new DescartesJiraTracker(manager.getUrl(),manager.getUser(),manager.getPassword());
+			    wizard.setTracker(tracker); // remember java is pass by value
+				
+				// update page
+				Set<String> projects = tracker.getProjects();
+				projectCombo.removeAll();
+				for(String project : projects) projectCombo.add(project);
+			}
 		});
 		
 		// required

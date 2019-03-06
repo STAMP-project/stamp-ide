@@ -1,7 +1,8 @@
 package eu.stamp.eclipse.descartes.jira;
 
-import org.eclipse.equinox.security.storage.ISecurePreferences;
-import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.PreferencePage;
@@ -11,6 +12,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -20,13 +22,13 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class DescartesJiraPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private Text userText;
+	private Text userText,passwordText,passwordText2,urlText;
 	
-	private Text passwordText;
+	private Combo existingCombo;
 	
-	private Text passwordText2;
+	private DescartesJiraAccountsManager2 manager;
 	
-	private Text urlText;
+	private boolean modify;
 	
 	public static final String PREFERENCES_KEY = "ExperimentPreferences";
 	
@@ -36,14 +38,20 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 	
 	public static final String PASSWORD_KEY = "password";
 	
-	public DescartesJiraPreferencePage() {}
+	public DescartesJiraPreferencePage() { initialization(); }
 
 	public DescartesJiraPreferencePage(String title) {
 		super(title);
+		initialization();
 	}
 
 	public DescartesJiraPreferencePage(String title, ImageDescriptor image) {
 		super(title, image);
+		initialization();
+	}
+	
+	private void initialization() {
+		manager = new DescartesJiraAccountsManager2();
 	}
 
 	@Override
@@ -93,39 +101,65 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 		GridDataFactory.fillDefaults().span(2,1).grab(true,false)
 		.indent(0,4).applyTo(passwordText2);
 		
-		Label printLabel = new Label(parent,SWT.NONE);
-		printLabel.setText("Print preferences : ");
+	    // create or modify
+		Button createButton = new Button(parent,SWT.RADIO);
+		createButton.setTextDirection(SWT.LEFT);
+		createButton.setText("Create new account");
+		createButton.setSelection(true);
+		GridDataFactory.swtDefaults().indent(0,8).applyTo(createButton);
 		
-		Button printButton = new Button(parent,SWT.PUSH);
-		printButton.setText("Print nowadays data");
-		printButton.addSelectionListener(new SelectionAdapter() {
+		Button modifyButton = new Button(parent,SWT.RADIO);
+		modifyButton.setTextDirection(SWT.LEFT);
+		modifyButton.setText(" Modify an existing account");
+		GridDataFactory.swtDefaults().span(2,1).indent(0,8).applyTo(modifyButton);
+		
+		// Existing accounts
+		Label existingLabel = new Label(parent,SWT.NONE);
+		existingLabel.setText("Existing accounts : ");
+		GridDataFactory.swtDefaults().indent(0,4).applyTo(existingLabel);
+		
+		Combo existingCombo = new Combo(parent,SWT.BORDER | SWT.READ_ONLY);
+	    String[] accounts = manager.getAccounts();
+		GridDataFactory.fillDefaults().indent(0,4).span(2,1)
+		.grab(true,false).applyTo(existingCombo);
+	    for(String account : accounts) existingCombo.add(account);
+		existingCombo.add("");
+		existingCombo.setText("");
+		existingCombo.setEnabled(false);
+		
+		createButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-			if(!SecurePreferencesFactory.getDefault().nodeExists(PREFERENCES_KEY)) {
-				System.out.println("No preferences set");
-				return;
-			}
-			ISecurePreferences preferences = SecurePreferencesFactory.getDefault().node(PREFERENCES_KEY);
-			try {
-				String user = preferences.get(USER_KEY,null);
-				if(user == null || user.isEmpty()) {
-					System.out.println("No preferences set");
-					return;
-				}
-				String url = preferences.get(URL_KEY,"");
-				String password = preferences.get(PASSWORD_KEY,"");
-				System.out.println("Nowadays preferences :");
-				System.out.println("   - Jira URL : "
-						+ url + " eccripted = " + String.valueOf(preferences.isEncrypted(URL_KEY)));
-				System.out.println("   - User : " + user + 
-						" encripted = " + String.valueOf(preferences.isEncrypted(USER_KEY)));
-				System.out.println("   - Password : " + password
-						+ " Encripted = " + String.valueOf(preferences.isEncrypted(PASSWORD_KEY)));
-			} catch (StorageException e1) {
-				e1.printStackTrace();
-			}
+				existingCombo.setEnabled(false);
+				urlText.setText("");
+				userText.setText("");
+				passwordText.setText("");
+				passwordText2.setText("");
+				modify = !createButton.getSelection();
 			}
 		});
+		
+		modifyButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+	            existingCombo.setEnabled(true); 
+	            modify = modifyButton.getSelection();
+			}
+		});
+		
+		existingCombo.addSelectionListener(new SelectionAdapter(){
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+            	if(existingCombo.getText().isEmpty()) return;
+                manager.setSelection(existingCombo.getText());
+                urlText.setText(manager.getUrl());
+                userText.setText(manager.getUser());
+                String password = manager.getPassword();
+                passwordText.setText(password);
+                passwordText2.setText(password);
+            }
+		});
+		// TODO combo listener
 		
 		parent.pack();
 		return parent;
@@ -157,15 +191,8 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 		}
 		
 		// save data
-        ISecurePreferences preferences = SecurePreferencesFactory.getDefault()
-        		.node(PREFERENCES_KEY);
-        try {
-			preferences.put(USER_KEY,user,true);
-			preferences.put(PASSWORD_KEY,password,true);
-			preferences.put(URL_KEY, url,true);
-		} catch (StorageException e) {
-			e.printStackTrace();
-		}
+		if(modify) manager.modify(url,user,password);
+		else manager.createAccount(url,user, password);
 		return true;
 	}
 
