@@ -78,6 +78,7 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 				tracker.setProject(projectCombo.getText());
 			}
 		});
+		tracker.setProject(projectCombo.getText());
 		
 		// Title
 		Label titleLabel = new Label(composite,SWT.NONE);
@@ -112,6 +113,7 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 				tracker.setIssueType(typeCombo.getText());
 			}
 		});
+		tracker.setIssueType(typeCombo.getText());
 		
 		// Description
 		Label descriptionLabel = new Label(composite,SWT.NONE);
@@ -128,20 +130,27 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 				tracker.setDescription(descriptionText.getText());
 			}	
 		});
+		tracker.setDescription(descriptionText.getText());
 		
 		accountCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				manager.setSelection(accountCombo.getText());
 				tracker = new DescartesJiraTracker(manager.getUrl(),manager.getUser(),manager.getPassword());
-			    wizard.setTracker(tracker); // remember java is pass by value
+			    tracker.setTitle(titleText.getText());
+			    tracker.setDescription(descriptionText.getText());
+			    tracker.setIssueType(typeCombo.getText());
+			    tracker.setProject(projectCombo.getText());
+				wizard.setTracker(tracker); // remember java is pass by value
 				
 				// update page
 				Set<String> projects = tracker.getProjects();
 				projectCombo.removeAll();
-				for(String project : projects) projectCombo.add(project);
+				for(String project : projects) projectCombo.add(project);	
 			}
 		});
+		
+		wizard.setTracker(tracker);
 		
 		// required
 		setControl(composite);

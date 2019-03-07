@@ -1,9 +1,5 @@
 package eu.stamp.eclipse.descartes.jira;
 
-import java.util.List;
-import java.util.Set;
-
-import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -23,8 +19,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class DescartesJiraPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private Text userText,passwordText,passwordText2,urlText;
-	
-	private Combo existingCombo;
 	
 	private DescartesJiraAccountsManager2 manager;
 	
@@ -195,5 +189,4 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 		else manager.createAccount(url,user, password);
 		return true;
 	}
-
 }

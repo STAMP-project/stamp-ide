@@ -74,6 +74,10 @@ public class DescartesJiraAccountsManager2 {
 	}
 	
 	public void modify(String url,String user,String password){
+		if(accounts.isEmpty()) {
+			createAccount(url,user,password);
+			return;
+		}
 		Account account = accounts.get(selection);
 		account.url = url;
 		account.user = user;
