@@ -150,8 +150,6 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 			}
 		});
 		
-		wizard.setTracker(tracker);
-		
 		// required
 		setControl(composite);
 		setPageComplete(true);

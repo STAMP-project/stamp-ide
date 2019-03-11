@@ -153,7 +153,19 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
                 passwordText2.setText(password);
             }
 		});
-		// TODO combo listener
+		
+		Button removeButton = new Button(parent,SWT.PUSH);
+		removeButton.setText("Remove account");
+		GridDataFactory.swtDefaults().span(3,1).indent(0,4).applyTo(removeButton);
+		removeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String sr = existingCombo.getText();
+				if(sr == null || sr.isEmpty()) return;
+				manager.removeAccount(sr);
+				existingCombo.remove(sr);
+			}
+		});
 		
 		parent.pack();
 		return parent;

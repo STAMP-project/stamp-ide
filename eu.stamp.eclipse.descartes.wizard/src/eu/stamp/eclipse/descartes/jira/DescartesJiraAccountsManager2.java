@@ -73,9 +73,17 @@ public class DescartesJiraAccountsManager2 {
 		save();
 	}
 	
+	public void removeAccount(String summary) {
+		int i = find(summary);
+		accounts.remove(i);
+		if(selection > i) selection --;
+		else if(selection == i) selection = 0;
+	}
+	
 	public void modify(String url,String user,String password){
 		if(accounts.isEmpty()) {
 			createAccount(url,user,password);
+			save();
 			return;
 		}
 		Account account = accounts.get(selection);
