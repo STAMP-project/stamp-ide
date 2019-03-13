@@ -1,8 +1,9 @@
 package eu.stamp.eclipse.descartes.jira;
 
+import java.util.List;
+
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -11,6 +12,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -20,9 +22,11 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 
 	private Text userText,passwordText,passwordText2,urlText;
 	
-	private DescartesJiraAccountsManager2 manager;
-	
 	private boolean modify;
+	
+	private Combo existingCombo;
+	
+	private Button modifyButton;
 	
 	public static final String PREFERENCES_KEY = "ExperimentPreferences";
 	
@@ -31,22 +35,6 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 	public static final String USER_KEY = "user";
 	
 	public static final String PASSWORD_KEY = "password";
-	
-	public DescartesJiraPreferencePage() { initialization(); }
-
-	public DescartesJiraPreferencePage(String title) {
-		super(title);
-		initialization();
-	}
-
-	public DescartesJiraPreferencePage(String title, ImageDescriptor image) {
-		super(title, image);
-		initialization();
-	}
-	
-	private void initialization() {
-		manager = new DescartesJiraAccountsManager2();
-	}
 
 	@Override
 	public void init(IWorkbench workbench) {
@@ -60,6 +48,8 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 		layout.numColumns = 3;
 		parent.setLayout(layout);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
+		
+		DescartesJiraAccountsManager manager = DescartesJiraAccountsManager.getInstance();
 		
 		// URL
 		Label urlLabel = new Label(parent,SWT.NONE);
@@ -102,7 +92,7 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 		createButton.setSelection(true);
 		GridDataFactory.swtDefaults().indent(0,8).applyTo(createButton);
 		
-		Button modifyButton = new Button(parent,SWT.RADIO);
+		modifyButton = new Button(parent,SWT.RADIO);
 		modifyButton.setTextDirection(SWT.LEFT);
 		modifyButton.setText(" Modify an existing account");
 		GridDataFactory.swtDefaults().span(2,1).indent(0,8).applyTo(modifyButton);
@@ -112,34 +102,15 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 		existingLabel.setText("Existing accounts : ");
 		GridDataFactory.swtDefaults().indent(0,4).applyTo(existingLabel);
 		
-		Combo existingCombo = new Combo(parent,SWT.BORDER | SWT.READ_ONLY);
-	    String[] accounts = manager.getAccounts();
+		existingCombo = new Combo(parent,SWT.BORDER | SWT.READ_ONLY);
+	    List<String> accounts = manager.getAccounts();
+	    if(accounts.size() < 1) modifyButton.setEnabled(false);
 		GridDataFactory.fillDefaults().indent(0,4).span(2,1)
 		.grab(true,false).applyTo(existingCombo);
 	    for(String account : accounts) existingCombo.add(account);
 		existingCombo.add("");
 		existingCombo.setText("");
 		existingCombo.setEnabled(false);
-		
-		createButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				existingCombo.setEnabled(false);
-				urlText.setText("");
-				userText.setText("");
-				passwordText.setText("");
-				passwordText2.setText("");
-				modify = !createButton.getSelection();
-			}
-		});
-		
-		modifyButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-	            existingCombo.setEnabled(true); 
-	            modify = modifyButton.getSelection();
-			}
-		});
 		
 		existingCombo.addSelectionListener(new SelectionAdapter(){
             @Override
@@ -164,9 +135,45 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 				if(sr == null || sr.isEmpty()) return;
 				manager.removeAccount(sr);
 				existingCombo.remove(sr);
+				if(existingCombo.getItemCount() < 1) {
+					createButton.setSelection(true);
+					createButton.notifyListeners(SWT.Selection,new Event());
+					modifyButton.setEnabled(false);
+					modifyButton.setSelection(false);
+				}
 			}
 		});
 		
+		createButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				existingCombo.setEnabled(false);
+				existingCombo.add("");
+				existingCombo.setText("");
+				urlText.setText("");
+				userText.setText("");
+				passwordText.setText("");
+				passwordText2.setText("");
+				modify = !createButton.getSelection();
+				removeButton.setEnabled(false);
+			}
+		});
+		
+		modifyButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			      existingCombo.setEnabled(true);
+			      modify = modifyButton.getSelection();
+			      int i = existingCombo.indexOf("");
+			      while(i > -1) {
+			      existingCombo.remove(i);
+			      i = existingCombo.indexOf("");
+			      }
+			      existingCombo.select(0);
+			      existingCombo.notifyListeners(SWT.Selection,new Event());
+			      removeButton.setEnabled(true);
+			}
+				});
 		parent.pack();
 		return parent;
 	}
@@ -195,10 +202,15 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 			setErrorMessage("User is Empty");
 			return false;
 		}
-		
 		// save data
-		if(modify) manager.modify(url,user,password);
-		else manager.createAccount(url,user, password);
+		if(modify) DescartesJiraAccountsManager.getInstance().modify(url,user,password);
+		else{
+			String summary = DescartesJiraAccountsManager.getInstance().createAccount(url,user, password);
+			if(existingCombo != null && !existingCombo.isDisposed()) {
+				existingCombo.add(summary);
+				modifyButton.setEnabled(true);
+			}
+		}
 		return true;
 	}
 }

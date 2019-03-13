@@ -1,57 +1,62 @@
 package eu.stamp.eclipse.descartes.jira;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 
-public class DescartesJiraAccountsManager2 {
+import eu.stamp.wp4.descartes.view.DescartesIssuesView;
+
+public class DescartesJiraAccountsManager {
+	
+	private static DescartesJiraAccountsManager INSTANCE;
 
 	// constants for storage
 	private static final String OUT_KEY = "DescartesJiraStorage";
 	private static final String IN_KEY = "DescartesJiraAccounts";
 	private static final String SEPARATOR = ",";
 	
-	private List<Account> accounts;
+	private AccountList accounts;
 	
 	private int selection;
 	
-	private boolean error;
+	//private boolean error;
 	
-	public DescartesJiraAccountsManager2(){
+	public static DescartesJiraAccountsManager getInstance() {
+		if(INSTANCE == null) INSTANCE = new DescartesJiraAccountsManager();
+		return INSTANCE;
+	}
+	
+	private DescartesJiraAccountsManager(){
 		
 		ISecurePreferences preferences = SecurePreferencesFactory.getDefault().node(OUT_KEY);
 		try {
 			String serializationString = preferences.get(IN_KEY,"");
-			error = !deserialization(serializationString);
+	        deserialization(serializationString);
 		} catch (StorageException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	private String processString(String string) {
+		if(string == null) return "";
+		return string;
+	}
+	
 	// public methods
-	public String getUrl() {
-		if(error) return "";
-		return accounts.get(selection).url;
-	}
+	public String getUrl() { return processString(accounts.get(selection).url); }
 	
-	public String getUser() {
-		if(error) return "";
-		return accounts.get(selection).user;
-	}
+	public String getUser() { return processString(accounts.get(selection).user); }
 	
-	public String getPassword() {
-		if(error) return "";
-		return accounts.get(selection).password;
-	}
+	public String getPassword() { return processString(accounts.get(selection).password); }
 	
-	public String[] getAccounts() {
-		if(error) return new String[] {""};
-		String[] result = new String[accounts.size()];
-		for(int i = 0; i < accounts.size(); i++)
-			result[i] = accounts.get(i).getSummary();
+	public List<String> getAccounts() {
+		List<String> result = new ArrayList<String>(accounts.size());
+		for(Account account : accounts)if(account.url != null)
+            result.add(account.getSummary());
 		return result;
 	}
 	
@@ -63,14 +68,16 @@ public class DescartesJiraAccountsManager2 {
 		return accounts == null || accounts.isEmpty();
 	}
 	
-	public void createAccount(String url,String user,String password) {
+	public String createAccount(String url,String user,String password) {
 		Account account = new Account();
 		account.url = url;
 		account.user = user;
 		account.password = password;
-		if(accounts == null) accounts = new ArrayList<Account>(1);
+		if(accounts == null) accounts = new AccountList(1);
 		accounts.add(account);
+		selection = accounts.size() - 1;
 		save();
+		return account.getSummary();
 	}
 	
 	public void removeAccount(String summary) {
@@ -98,34 +105,29 @@ public class DescartesJiraAccountsManager2 {
 		ISecurePreferences preferences = SecurePreferencesFactory.getDefault().node(OUT_KEY);
 		try {
 			preferences.put(IN_KEY,serialization(),true);
+			DescartesIssuesView.resetWizard();
 		} catch (StorageException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private boolean deserialization(String serializationString) {
-		if(serializationString == null || serializationString.isEmpty()) return false;
+	private void deserialization(String serializationString) {
+		if(serializationString == null || serializationString.isEmpty()) return;
 		if(!serializationString.contains(SEPARATOR)) {
-			accounts = new ArrayList<Account>(1);
+			accounts = new AccountList(1);
 			Account account = new Account();
-			if(account.deserialize(serializationString)) {
-				accounts.add(account);
-				return true;
-			}
-			return false;
+			account.deserialize(serializationString);
+		    accounts.add(account);
+			return;
 		}
 		String[] strings = serializationString.split(SEPARATOR);
-		accounts = new ArrayList<Account>(strings.length);
+		accounts = new AccountList(strings.length);
 		Account account = null;
-		boolean sucess = false;
 		for(String string : strings) {
 			account = new Account();
-			if(account.deserialize(string)) {
-				accounts.add(account);
-				sucess = true;
-			}
+			account.deserialize(string);
+			accounts.add(account);
 		}
-		return sucess;
 	}
 	
 	private String serialization() {
@@ -165,14 +167,13 @@ public class DescartesJiraAccountsManager2 {
 			return result;
 		}
 		
-		boolean deserialize(String serialization) {
-			if(!serialization.contains(INNER_SEPARATOR))return false;
+		void deserialize(String serialization) {
+			if(!serialization.contains(INNER_SEPARATOR))return;
 		    String[] target = serialization.split(INNER_SEPARATOR);
-		    if(target.length != 3) return false;
+		    if(target.length != 3) return;
 		    url = target[0];
 		    user = target[1];
 		    password = target[2];
-		    return true;
 		}
 		
 		String serialize() {
@@ -180,6 +181,34 @@ public class DescartesJiraAccountsManager2 {
 			builder.append(url).append(INNER_SEPARATOR).append(user)
 			.append(INNER_SEPARATOR).append(password);
 			return builder.toString();
+		}
+	}
+	
+	// Nested classes
+	private class AccountList implements Iterable<Account> {
+		
+		final List<Account> list;
+		
+		AccountList(int size) { list = new ArrayList<Account>(size); }
+		
+		void add(Account account) {
+			if(account == null || account.url == null || account.url.isEmpty()) return;
+			for(Account element : list)if(element.url.equalsIgnoreCase(account.url)
+					&& element.user.equalsIgnoreCase(account.user)) return;
+			list.add(account);
+		}
+		
+		Account get(int index) { return list.get(index); }
+
+		int size() { return list.size(); }
+		
+		boolean isEmpty() { return list.isEmpty(); }
+		
+		void remove(int index) { list.remove(index); }
+		
+		@Override
+		public Iterator<Account> iterator() {
+			return list.iterator();
 		}
 	}
 }

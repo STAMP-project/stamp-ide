@@ -36,12 +36,16 @@ public class DescartesIssuesView extends DescartesAbstractView {
 	
 	public static final String ID = "eu.stamp.wp4.descartes.view.issues";
     
-	protected List<String> info;
+	private List<String> info;
 	
-	protected DescartesJiraWizard wizard;
+	private static DescartesJiraWizard wizard;
 	
 	public DescartesIssuesView() {
 		super();
+        resetWizard();
+	}
+	
+	public static void resetWizard() {
 		try {
 			wizard = new DescartesJiraWizard();
 		} catch (StorageException e) {

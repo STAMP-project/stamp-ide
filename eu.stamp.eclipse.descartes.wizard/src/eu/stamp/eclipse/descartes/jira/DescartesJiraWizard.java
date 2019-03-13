@@ -17,24 +17,18 @@ public class DescartesJiraWizard extends Wizard {
 	
 	private DescartesJiraTracker tracker;
 	
-	private DescartesJiraAccountsManager2 manager;
+	//private DescartesJiraAccountsManager manager;
 	
 	private boolean errorFlag;
 	
 	public DescartesJiraWizard() throws StorageException {
-		manager = new DescartesJiraAccountsManager2();
+		DescartesJiraAccountsManager manager = DescartesJiraAccountsManager.getInstance();
 		errorFlag = manager.empty();
         if(!errorFlag) tracker = new DescartesJiraTracker(
         		manager.getUrl(),manager.getUser(),manager.getPassword());
 	}
 	
 	public boolean error() { return errorFlag; }
-	
-	public DescartesJiraAccountsManager2 getmanager() { return manager; }
-	
-	public void setManager(DescartesJiraAccountsManager2 manager) {
-		this.manager = manager;
-	}
 	
 	public void setTitle(String title) { 
 		if(tracker != null) tracker.setTitle(title); 
