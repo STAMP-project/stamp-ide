@@ -1,10 +1,12 @@
 package eu.stamp.eclipse.descartes.jira;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -19,12 +21,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+
+import com.atlassian.jira.rest.client.api.RestClientException;
 
 import eu.stamp.descartes.jira.DescartesJiraTracker;
 
 public class DescartesJiraIssuePage1 extends WizardPage{
 	
-	private DescartesJiraTracker tracker;
+	private TrackerPseudoProxy trackerProxy;
 	
 	protected DescartesJiraIssuePage1(String pageName) { super(pageName); }
 	
@@ -69,7 +74,7 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 			return;
 		}
 		
-		tracker = wizard.getTracker();
+		trackerProxy = new TrackerPseudoProxy(wizard.getTracker());
 		Map<String,Control> controlsToCheck = new HashMap<String,Control>();
 		
 		// Accounts
@@ -89,24 +94,24 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 		GridDataFactory.swtDefaults().indent(0,8).applyTo(projectLabel);
 		
 		Combo projectCombo = new Combo(composite,SWT.BORDER | SWT.READ_ONLY);
-		Set<String> projects = tracker.getProjects();
-		String initialSelection = null;
+		String initialSelection = "";
+		Set<String> projects = trackerProxy.getProjects();
 		for(String project : projects) {
-			if(initialSelection == null) initialSelection = project;
+			if(initialSelection.isEmpty()) initialSelection = project;
 			projectCombo.add(project);
 		}
 		controlsToCheck.put("Project combo",projectCombo);
-		tracker.setProject(initialSelection);
+		trackerProxy.setProject(initialSelection);
 		GridDataFactory.fillDefaults().span(2,1).grab(true,false)
 		.indent(0,8).applyTo(projectCombo);
 		projectCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				tracker.setProject(projectCombo.getText());
+				trackerProxy.setProject(projectCombo.getText());
 				checkPage(controlsToCheck);
 			}
 		});
-		tracker.setProject(projectCombo.getText());
+	   trackerProxy.setProject(projectCombo.getText());
 		
 		// Title
 		Label titleLabel = new Label(composite,SWT.NONE);
@@ -116,12 +121,12 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 		Text titleText = new Text(composite,SWT.BORDER);
 		GridDataFactory.fillDefaults().span(2,1).grab(true,false)
 		.indent(0,6).applyTo(titleText);
-		titleText.setText(tracker.getTitle());
+		titleText.setText(trackerProxy.getTitle());
 		controlsToCheck.put("Title",titleText);
 		titleText.addSegmentListener(new SegmentListener() {
 			@Override
 			public void getSegments(SegmentEvent event) {
-				tracker.setTitle(titleText.getText());
+				trackerProxy.setTitle(titleText.getText());
 				checkPage(controlsToCheck);
 			}
 		});
@@ -132,7 +137,7 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 		GridDataFactory.swtDefaults().indent(0,6).applyTo(typeLabel);
 		
 		Combo typeCombo = new Combo(composite,SWT.READ_ONLY | SWT.BORDER);
-		Set<String> types = tracker.getIssueTypes();
+		Set<String> types = trackerProxy.getIssueTypes();
 		for(String type : types) typeCombo.add(type);
 		typeCombo.setText("Bug");
 		GridDataFactory.fillDefaults().span(2,1).grab(true,false)
@@ -140,10 +145,10 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 		typeCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				tracker.setIssueType(typeCombo.getText());
+				trackerProxy.setIssueType(typeCombo.getText());
 			}
 		});
-		tracker.setIssueType(typeCombo.getText());
+		trackerProxy.setIssueType(typeCombo.getText());
 		
 		// Description
 		Label descriptionLabel = new Label(composite,SWT.NONE);
@@ -154,41 +159,108 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 		controlsToCheck.put("Description",descriptionText);
 		GridDataFactory.fillDefaults().span(3,3).grab(true,true)
 		.minSize(100,120).applyTo(descriptionText);
-		descriptionText.setText(tracker.getDescription());
+		descriptionText.setText(trackerProxy.getDescription());
 		descriptionText.addSegmentListener(new SegmentListener() {
 			@Override
 			public void getSegments(SegmentEvent event) {
-				tracker.setDescription(descriptionText.getText());
+				trackerProxy.setDescription(descriptionText.getText());
 				checkPage(controlsToCheck);
 			}	
 		});
-		tracker.setDescription(descriptionText.getText());
+		trackerProxy.setDescription(descriptionText.getText());
 		
 		accountCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent event) {
 				manager.setSelection(accountCombo.getText());
 				// update page
 				if(manager.getUrl() != null && !manager.getUrl().isEmpty())
-				tracker = new DescartesJiraTracker(manager.getUrl(),manager.getUser(),manager.getPassword());
-				Set<String> projects = tracker.getProjects();
+					try{
+					trackerProxy = new TrackerPseudoProxy(
+					new DescartesJiraTracker(manager.getUrl(),manager.getUser(),manager.getPassword()));
+				} catch(RestClientException exception) {
+			      MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+			    		  .getShell(),"Rest client exception","The account " + 
+			      manager.getUser() + " : " + manager.getUrl() + 
+			      " is not correct, please check it in the Descartes Jira preferences page in Window > Preferences");
+				}
+				Set<String> projects = trackerProxy.getProjects();
 				projectCombo.removeAll();
 				for(String project : projects) projectCombo.add(project);
 				if(projects.size() > 0) projectCombo.select(0);
 				
-				tracker.setTitle(titleText.getText());
-			    tracker.setDescription(descriptionText.getText());
-			    tracker.setIssueType(typeCombo.getText());
-			    tracker.setProject(projectCombo.getText());
-				wizard.setTracker(tracker); // remember java is pass by value
+				trackerProxy.setTitle(titleText.getText());
+			    trackerProxy.setDescription(descriptionText.getText());
+			    trackerProxy.setIssueType(typeCombo.getText());
+			    trackerProxy.setProject(projectCombo.getText());
+				wizard.setTracker(trackerProxy.tracker); // remember java is pass by value
 				
 			    checkPage(controlsToCheck);
 			}
 		});
 		accountCombo.notifyListeners(SWT.Selection,new Event());
 		
+		if(descriptionText.getText() == null || descriptionText.getText().isEmpty()) {
+			String text = wizard.getDescription();
+			if(text != null) descriptionText.setText(DescartesJiraTracker.parse(text));
+		}
+		if(titleText.getText() == null || titleText.getText().isEmpty()) {
+			String text = wizard.getTitle();
+			if(text != null) titleText.setText(text);
+		}
 		// required
 		setControl(composite);
 		setPageComplete(true);
+	}
+	
+	// Nested classes
+	private class TrackerPseudoProxy {
+
+		DescartesJiraTracker tracker;
+		
+		TrackerPseudoProxy(DescartesJiraTracker tracker){
+			this.tracker = tracker;
+		}
+		
+		/*
+		 *   Getters
+		 */
+		Set<String> getIssueTypes() { 
+			if(tracker == null) return new HashSet<String>();
+			return tracker.getIssueTypes();
+		}
+		
+		Set<String> getProjects() { 
+			if(tracker == null) return new HashSet<String>();
+			return tracker.getProjects();
+		}
+		
+		String getTitle() { 
+			if(tracker == null) return ""; 
+			return tracker.getTitle();
+			}
+		
+		String getDescription() { 
+			if(tracker == null) return "";
+			return ""; 
+			}
+		
+		/*
+		 *   Setters
+		 */
+		void setIssueType(String type) {
+			if(tracker != null) tracker.setIssueType(type);
+		}
+		
+		void setProject(String projectName) {
+			if(tracker != null) tracker.setProject(projectName);
+		}
+		
+		void setTitle(String title) {
+			if(tracker != null) tracker.setTitle(title);
+		}
+		void setDescription(String description) {
+			if(tracker != null) tracker.parseDescription(description);
+		}
 	}
 }

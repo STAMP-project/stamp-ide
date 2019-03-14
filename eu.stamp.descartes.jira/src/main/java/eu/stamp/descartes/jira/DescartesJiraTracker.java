@@ -62,6 +62,11 @@ public class DescartesJiraTracker {
     	System.out.println("   - Self : " + basicIssue.getSelf().toString());
 	}
 	
+	public static String parse(String description) {
+		DefaultWysiwygConverter converter = new DefaultWysiwygConverter();
+		return converter.convertXHtmlToWikiMarkup(description);
+	}
+	
 	public void parseDescription(String description) {
 		DefaultWysiwygConverter converter = new DefaultWysiwygConverter();
 		this.description = converter.convertXHtmlToWikiMarkup(description);

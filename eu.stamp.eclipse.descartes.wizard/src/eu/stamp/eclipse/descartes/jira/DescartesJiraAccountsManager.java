@@ -133,7 +133,7 @@ public class DescartesJiraAccountsManager {
 	private String serialization() {
 		if(accounts == null || accounts.isEmpty()) return "";
 		StringBuilder builder = new StringBuilder();
-		builder.append(accounts.get(0).toString());
+		builder.append(accounts.get(0).serialize());
 		for(int i = 1; i < accounts.size(); i++){
 			builder.append(SEPARATOR);
 			builder.append(accounts.get(i).serialize());
