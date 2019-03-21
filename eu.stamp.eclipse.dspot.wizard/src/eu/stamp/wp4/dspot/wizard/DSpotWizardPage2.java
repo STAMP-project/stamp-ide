@@ -12,22 +12,6 @@
  *******************************************************************************/
 package eu.stamp.wp4.dspot.wizard;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.List;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,55 +20,47 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Properties;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
-import org.eclipse.jdt.internal.ui.wizards.TypedViewerFilter;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.ui.JavaElementComparator;
-import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 import eu.stamp.eclipse.dspot.launch.configuration.DSpotButtonsInformation;
-import eu.stamp.eclipse.dspot.plugin.context.DSpotContext;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotPageSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotRowSizeCalculator;
 import eu.stamp.eclipse.dspot.wizard.page.utils.DSpotSizeManager;
 import eu.stamp.wp4.dspot.constants.DSpotWizardConstants;
-import eu.stamp.wp4.dspot.dialogs.*;
+import eu.stamp.wp4.dspot.dialogs.DSpotAdvancedOptionsDialog;
 import eu.stamp.wp4.dspot.wizard.utils.DSpotMemory;
+import eu.stamp.wp4.dspot.wizard.utils.TestSelectionDisplayer;
 import eu.stamp.wp4.dspot.wizard.utils.WizardConfiguration;
 
 /**
  * this class describes the second page of the DSpot wizard 
  */
-@SuppressWarnings("restriction")
 public class DSpotWizardPage2 extends WizardPage {
 
 private WizardConfiguration wConf; 
@@ -103,7 +79,7 @@ private Button cleanButton;
 
 
 // Dialogs
-private ArrayList<Object> testSelection = new ArrayList<Object>(1);
+private LinkedList<Object> testSelection = new LinkedList<Object>();
 // this is for the advanced dialog
 private int r = 23;
 private int timeOut = 10000;
@@ -187,7 +163,7 @@ sizeCalculator.addRow(row);
  */
 row.reStart();
 Label lb2 = new Label(composite,SWT.NONE);   // A label in (2,1)
-lb2.setText("Execution classes :  ");
+lb2.setText("Test classes :  ");
 lb2.setToolTipText(tooltipsProperties.getProperty("lb2"));
 row.addWidget(lb2);
 
@@ -205,10 +181,12 @@ row.addWidget(executionClassesText);
      row.addWidget(fileButton);
      fileButton.addSelectionListener(new SelectionAdapter() {
      @Override
-     public void widgetSelected(SelectionEvent e) {
+ public void widgetSelected(SelectionEvent e) {
      
  try {
-showElementTreeSelectionDialog2(wConf.getPro(),wConf.getTheWindow());
+String selection = TestSelectionDisplayer
+.showElementTreeSelectionDialog(wConf.getPro(),wConf.getTheWindow(),wConf,testSelection);
+executionClassesText.setText(selection);
 } catch (JavaModelException e1) {
 e1.printStackTrace();
 } 
@@ -315,115 +293,7 @@ row.reStart();
 setControl(composite);
 setPageComplete(true);
 }  // end of create Control
-/**
- * Method to create and show a dialog to select test classes
- * @param jProject : the selected project
- * @param window : the active workbench window
- * @return a string with the class selected by the user
- * @throws JavaModelException
- */
-    private String showElementTreeSelectionDialog2(IJavaProject jProject, IWorkbenchWindow window) throws JavaModelException {
-        Class<?>[] acceptedClasses= new Class[] { IPackageFragmentRoot.class, IJavaProject.class, IJavaElement.class };
-        TypedElementSelectionValidator validator= new TypedElementSelectionValidator(acceptedClasses, true) {
-            @Override
-            public boolean isSelectedValid(Object element) { // this method is override to specify what objects can be selected
-                
-                    if (element instanceof ICompilationUnit) {
-                        return true;
-                    }
-                    return false;
-            }
-        };
 
-        acceptedClasses= new Class[] { IJavaModel.class, IPackageFragmentRoot.class, IJavaProject.class, IJavaElement.class, ICompilationUnit.class };
-        ViewerFilter filter= new TypedViewerFilter(acceptedClasses) {
-            @Override
-            public boolean select(Viewer viewer, Object parent, Object element) {
-                if (element instanceof IJavaProject) {
-                    if (!((IJavaProject) element).getElementName().equals(jProject.getElementName())) {
-                        return false;
-                    }
-                }
-                if (element instanceof IPackageFragment) {
-                    try {
-                        return containsTestClasses ((IPackageFragment)element);
-                    } catch (JavaModelException e) {
-                        JavaPlugin.log(e.getStatus()); // just log, no UI in validation
-                        return false;
-                    }
-                }
-                if (element instanceof JarPackageFragmentRoot) {
-                    return false;
-                }
-                return super.select(viewer, parent, element);
-            }
-
-            private boolean containsTestClasses(IPackageFragment element) throws JavaModelException {
-                boolean result = false;
-                if (!(element instanceof JarPackageFragmentRoot)) {
-                    for (IJavaElement child:element.getChildren()) {
-                        if (child instanceof ICompilationUnit && isTestClass (child)) {
-                            result = true;
-                            break;
-                        }
-                    }
-                } 
-                return result;
-            }
-
-            private boolean isTestClass(IJavaElement child) {
-                String name = child.getElementName();
-                name = name.replaceAll(".java","").replaceAll(".class","");
-                java.util.List<File> files = 
-                		wConf.getContext().getTestFiles();
-                for(File file : files) {
-                	String filename = file.getName()
-                			.replaceAll(".java","").replaceAll(".class","");
-                	if(name.equalsIgnoreCase(filename))
-                		return true;
-                } 
-                return false;
-            }
-        };
-        
-        IWorkspaceRoot fWorkspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
-        IJavaElement initElement = jProject.getPackageFragmentRoots()[0];
-        
-        StandardJavaElementContentProvider provider= new StandardJavaElementContentProvider();
-        ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
-        ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(window.getShell(), labelProvider, provider);
-        dialog.setValidator(validator);
-        dialog.setComparator(new JavaElementComparator());
-        dialog.setTitle(" Select a test-class ");
-        dialog.setMessage(" Select a class file ");
-        dialog.addFilter(filter);
-        dialog.setInput(JavaCore.create(fWorkspaceRoot));
-        dialog.setInitialSelection(initElement);
-        dialog.setHelpAvailable(false);
-        if(!testSelection.isEmpty()) {
-        dialog.setInitialSelections(testSelection.toArray());
-        }  
-        
-        String selection = "";
-        if (dialog.open() == Window.OK) {
-            Object[] results = dialog.getResult();
-            testSelection = new ArrayList<Object>(1);
-            for(Object ob : results) {
-            testSelection.add(ob);
-            }
-            for(Object ob : results) {
-            if(ob instanceof ICompilationUnit) { 
-            if(!selection.isEmpty()) {
-             selection = selection + WizardConfiguration
-             .getSeparator() + wConf.getContext().getFullName(((ICompilationUnit)ob).getElementName());}
-            else{ 
-            	DSpotContext context = wConf.getContext();
-            	selection = context.getFullName(((ICompilationUnit)ob).getElementName()); }}
-            }
-            executionClassesText.setText(selection);
-        }
-        return selection;
-    }
 /**
  * this method updates the information in the page when a configuration has been selected in page one
  */
@@ -453,7 +323,7 @@ e.printStackTrace();
 	   testNames.add(name);
    }
    
-   testSelection = new ArrayList<Object>(1);
+   testSelection = new LinkedList<Object>();
    for(String testName : testNames) {
    if(dSpotMemory.getDSpotValue(DSpotMemory.TEST_CLASSES_KEY)
    .contains(testName)) testSelection.add(testName);
@@ -567,7 +437,6 @@ if(argument.contains(DSpotMemory.CRITERION_KEY)) {
  */
 public void refreshPageConfiguration(WizardConfiguration wConf) {
 this.wConf = wConf;
-
 }
 /**
  *  set default DSpot execution values
@@ -582,17 +451,6 @@ combo1.setText("");
 expDiag.reset(wConf, 23, 10000, null , "");
 
 }
- @Override
- public void performHelp() {
- String[] myText = {"First spinner, number of amplification iterations : A larger number may help to kill more mutants but it has an impact on the execution time",
-"First text, test-classes to use","the option verbose prints more information about the process in the console",
-"the option clean removes the out dirctory if exists, else it will append the results to the exist files",
-"","The link DSpot advanced options opens a dialog to set the time value of degenerated test (ms), the randomSeed, the MAVEN_HOME ",
-"and the path to the .csv of the original result of Pit test, (this only avaiable if the test criterion is PitMutantScoreSelector)",""};
- DspotWizardHelpDialog info = new DspotWizardHelpDialog(shell," This page contains the information to execute DSpot ",myText);
- info.open();
-    
- }
  
  public void setResetAdvancedOptions(boolean resetAdvancedOptions) {
  this.resetAdvancedOptions = resetAdvancedOptions;

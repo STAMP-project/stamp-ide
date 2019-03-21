@@ -1,4 +1,4 @@
-package eu.stamp.eclipse.dspot.plugin.context;
+package eu.stamp.eclipse.plugin.dspot.context;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -30,19 +30,28 @@ public class DSpotContext implements IDSpotContext {
 	private Boolean compiledFound;
 	
 	private Shell shell;
-
-	public DSpotContext(IJavaProject project) {
-		loadProject(project);
+	
+	private static DSpotContext INSTANCE;
+	
+	public static DSpotContext getInstance() {
+		if(INSTANCE == null) INSTANCE = new DSpotContext();
+		return INSTANCE;
 	}
+
+	private DSpotContext() {}
 	
 	@Override
 	public IJavaProject getProject() { return project; }
 
 	@Override
-	public List<String> getNoTestSourceFolders() { return noTestFolders; }
+	public String[] getNoTestSourceFolders() { 
+		return noTestFolders.toArray(new String[noTestFolders.size()]); 
+		} // TODO
 
 	@Override
-	public List<String> getTestSourceFolders() { return testFolders; }
+	public String[] getTestSourceFolders() { 
+		return testFolders.toArray(new String[testFolders.size()]); 
+		}
 
 	@Override
 	public List<File> getTestFiles() {
@@ -60,9 +69,25 @@ public class DSpotContext implements IDSpotContext {
 				return target.fullName;
 		return null;
 	}
+	public String[] getFullNames() {
+		String[] result = new String[targets.size()];
+        int i = 0;
+        for(DSpotTargetSource target : targets) {
+        	result[i] = target.fullName;
+        	i++;
+        }
+		return result;
+	}
+	
+	public String[] getTestFullNames() {
+		List<String> result = new ArrayList<String>(targets.size());
+        for(DSpotTargetSource target : targets)if(target.isTest)
+        	result.add(target.fullName);
+		return result.toArray(new String[result.size()]);
+	}
 	
 	@Override
-	public List<String> getTestMethods() {
+	public String[] getTestMethods() {
 		List<String> result = new LinkedList<String>();
 		for(DSpotTargetSource target : targets) {
 			String name = target.fullName;
@@ -70,7 +95,7 @@ public class DSpotContext implements IDSpotContext {
 			for(String method : methods)
 				result.add(name + "/" + method);
 		}
-		return result;
+		return result.toArray(new String[result.size()]);
 	}
 	
 	private List<File> search(File folder, String end) { // recursive
@@ -237,8 +262,9 @@ public class DSpotContext implements IDSpotContext {
 			isTest = info.containsTests();
 			testMethods = info.getTestMethods();
 			sucess = info.itsOk();
-		}
-		
+		}	
 	}
-
+   public static void reset() {
+	   INSTANCE = null;
+   }
 }
