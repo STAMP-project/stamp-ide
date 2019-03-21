@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.Point;
 public abstract class DSpotProperties {
 	
 	public static final String MAVEN_NATURE = "org.eclipse.m2e.core.maven2Nature";
-	public static final String PLUGIN_ID = "eu.stamp.eclipse.dspot";
+	public static final String PLUGIN_ID = "eu.stamp.eclipse.dspot.wizard";
 	public static final String CONFIGURATION_ID = "eu.stamp.dspot.configuration";
 	public static final String PROJECT_KEY = "project";
 	public static final String CHECK_EXTRA_KEY = "CHECK";
