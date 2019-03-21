@@ -31,9 +31,10 @@ public class DescartesPomReader extends AbstractDescartesPomParser{
 			throws ParserConfigurationException, SAXException, IOException {
 		super(projectLocation);
 		NodeList list = findNodeList("mutator",root);
+	   
 		mutators = new String[list.getLength()];
 		for(int i = 0; i < list.getLength(); i++)
-			mutators[i] = list.item(i).getTextContent();
+			mutators[i] = getTextContent(list.item(i));
 	}
 	
 	public String[] getMutators() { return mutators; }	

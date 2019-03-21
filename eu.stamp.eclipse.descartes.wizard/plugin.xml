@@ -133,5 +133,13 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="eu.stamp.eclipse.descartes.jira.DescartesJiraPreferencePage"
+            id="eu.stamp.eclipse.descartes.jira.preferences"
+            name="Descartes Jira preferences">
+      </page>
+   </extension>
 
 </plugin>
