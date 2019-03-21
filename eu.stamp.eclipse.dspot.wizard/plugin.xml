@@ -132,4 +132,12 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="eu.stamp.eclipse.dspot.plugin.launch.ui.DSpotLaunchConfigurationTabGroup"
+            id="eu.stamp.eclipse.dspot.launchConfigurationTabGroup"
+            type="eu.stamp.dspot.configuration">
+      </launchConfigurationTabGroup>
+   </extension>
 </plugin>
