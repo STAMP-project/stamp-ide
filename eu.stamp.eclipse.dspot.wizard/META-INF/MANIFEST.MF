@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Dspot
-Bundle-SymbolicName: eu.stamp.eclipse.dspot;singleton:=true
+Bundle-SymbolicName: eu.stamp.eclipse.dspot.wizard;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: eu.stamp.eclipse.dspot
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
