@@ -1,0 +1,50 @@
+
+FILE PARAMETER
+type=combo
+key=src
+labelText=Path of the source : 
+tooltip= path of the source folder relative to the project folder
+direction=page1/sourceCombo
+project=NoTestSourceFolders
+place=1
+FILE PARAMETER
+
+FILE PARAMETER
+type=combo
+key=testSrc
+labelText=Path of the source test : 
+tooltip= path of the test source folder relative to the project folder
+direction=page1/sourceTestCombo
+project=TestSourceFolders
+place=2
+FILE PARAMETER
+
+FILE PARAMETER
+type=spinner
+key=javaVersion
+labelText=Java version : 
+tooltip= java version used
+direction=page1/versionSpinner
+initialSelection=8
+step=1
+interval=7,10
+place=3
+FILE PARAMETER
+
+FILE PARAMETER
+type=text
+key=outputDirectory
+labelText=Path of the output directory : 
+tooltip= output folder for the reports produced by DSpot
+direction=page1/outputText
+place=4
+FILE PARAMETER
+
+FILE PARAMETER
+type=text
+key=filter
+labelText=Filter : 
+tooltip= filter, only for pit mutant score selector
+direction=page1/filterText
+place=5
+FILE PARAMETER

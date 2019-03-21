@@ -1,0 +1,54 @@
+PARAMETER
+type=spinner
+key=iteration
+labelText=Number of iterations : 
+tooltip= number may help to improve the test criterion but it will take more time
+direction=page2/iterationSpinner
+place=6
+interval=1,100
+PARAMETER
+
+PARAMETER
+type=list
+key=test
+labelText=Execution classes : 
+tooltip= the test to execute
+project=TestFullNames
+direction=page2/testList
+place=7
+PARAMETER
+
+PARAMETER
+type=list
+key=amplifiers
+content=MethodAdd,MethodRemove,TestDataMutator,MethodGeneratorAmplifier,ReturnValueAmplifier,StringLiteralAmplifier,ReturnValueAmplifier,StringLiteralAmplifier,NumberLiteralAmplifier,BooleanLiteralAmplifier,CharLiteralAmplifier,AllLiteralAmplifiers,NullifierAmplifier,None
+labelText=Amplifiers : 
+tooltip= select the list of amplifiers to use (default all)
+direction=page2/amplifiersList
+place=8
+PARAMETER
+
+PARAMETER
+type=combo
+key=test-criterion
+direction=page2/criterionCombo
+labelText=Test criterion : 
+tooltip= criterion to be maximized with amplification
+direction=page2/criterionCombo
+content=PitMutantScoreSelector,JacocoCoverageSelector,TakeAllSelector,ChangeDetectorSelector
+activationDirection=AdvancedOptionsDialog/pathPit,AdvancedOptionsDialog/Descartes,AdvancedOptionsDialog/Gregor
+condition=PitMutantScoreSelector,PitMutantScoreSelector,PitMutantScoreSelector
+place=9
+PARAMETER
+
+PARAMETER
+type=spinner
+key=max-test-amplified
+labelText=Max tests amplified : 
+tooltip= specify the maximun number of amplified tests that dspot keeps (before generationg assertion)
+direction=page2/maxTestsSpinner
+initialSelection=200
+step=10
+interval=10,1000
+place=10
+PARAMETER

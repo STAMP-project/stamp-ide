@@ -1,0 +1,233 @@
+{
+"pages" : [
+{
+"ID" : "page2",
+"name" : "Second page",
+"dialogs" : [{
+   "ID" : "AdvancedOptionsDialog",
+   "title" : "Advanced options",
+   "message" : "configure DSpot advanced options"
+}]
+}
+],
+
+"factories" : [
+{
+"isFileParameter" : true,
+"type" : "combo",
+"key" : "src",
+"labelText" : "Path of the source : ",
+"tooltip" : "path of the source folder, relative to the project folder",
+"direction" : "page1/sourceTestCombo",
+"project" : "TestSourceFolders",
+"place" : 1
+},
+{
+"isFileParameter" : true,
+"type" : "combo",
+"key" : "testSrc",
+"labelText" : "Path of the source test : ",
+"tooltip" : "path of the test source folder, relative to the project folder",
+"direction" : "page1/sourceTestCombo",
+"project" : "NoTestSourceFolders",
+"place" : 2
+},
+{
+"isFileParameter" : true,
+"type" : "spinner",
+"key" : "javaVersion",
+"labelText" : "Java version : ",
+"tooltip" : "java version used",
+"direction" : "page1/versionSpinner",
+"initialSelection" : 8,
+"step" : 1,
+"interval" : {"x" : 7,"y" : 10},
+"place" : 3
+},
+{
+"isFileParameter" : true,
+"type" : "text",
+"key" : "outputDirectory",
+"labelText" : "Path of the output directory : ",
+"tooltip" : "output folder for the reports produced by DSpot",
+"direction" : "page1/outputText",
+"place" : 4
+},
+{
+"isFileParameter" : false,
+"type" : "spinner",
+"key" : "iteration",
+"labelText" : "Number of iterations : ",
+"tooltip" : "number may help to improve the test criterion but it will take more time",
+"direction" : "page2/iterationSpinner",
+"interval" : {"x" : 1, "y" : 100},
+"place" : 1
+},
+{
+"isFileParameter" : false,
+"type" : "list",
+"key" : "test",
+"labelText" : "Execution classes : ",
+"tooltip" : "the test to execute",
+"project" : "TestFullNames",
+"direction" : "page2/testList",
+"place" : 2
+},
+{
+"isFileParameter" : false,
+"type" : "list",
+"key" : "amplifiers",
+"content" : ["MethodAdd","MethodRemove","TestDataMutator","MethodGeneratorAmplifier",
+"ReturnValueAmplifier","StringLiteralAmplifier","ReturnValueAmplifier",
+"StringLiteralAmplifier","NumberLiteralAmplifier","BooleanLiteralAmplifier",
+"CharLiteralAmplifier","AllLiteralAmplifiers","NullifierAmplifier","None"],
+"labelText" : "Amplifiers : ",
+"tooltip" : "select the list of amplifiers to use (default all)",
+"direction" : "page2/amplifiersList",
+"place" : 3
+},
+{
+"isFileParameter" : false,
+"type" : "combo",
+"key" : "test-criterion",
+"direction" : "page2/criterionCombo",
+"labelText" : "Test criterion : ",
+"tooltip" : "criterion to be maximized with amplification",
+"content" : ["PitMutantScoreSelector","JacocoCoverageSelector",
+"TakeAllSelector","ChangeDetectorSelector"],
+"activationDirection" : "AdvancedOptionsDialog/pathPit,AdvancedOptionsDialog/Descartes,AdvancedOptionsDialog/Gregor",
+"condition" : "PitMutantScoreSelector,PitMutantScoreSelector,PitMutantScoreSelector",
+"place" : 4
+},
+{
+"isFileParameter" : false,
+"type" : "spinner",
+"key" : "max-test-amplified",
+"labelText" : "Max tests amplified",
+"tooltip" : "specify the maximun number of amplified tests that dspot keeps (before generating assertion)",
+"direction" : "page2/maxTestSpinner",
+"initialSelection" : 200,
+"step" : 10,
+"interval" : {"x":10,"y":1000},
+"place" : 5
+},
+{
+"isFileParameter" : false,
+"type" : "spinner",
+"key" : "timeout",
+"labelText" : "Time out (ms) : ",
+"tooltip" : "the time out value of degenerated tests in milliseconds",
+"initialSelection" : 10000,
+"interval" : {"x":100,"y":500000},
+"step" : 100,
+"place" : 1
+},
+{
+"isFileParameter" : false,
+"type" : "spinner",
+"key" : "randomSeed",
+"labelText" : "Random Seed : ",
+"tooltip" : "a seed value used for all randomized operation",
+"initialSelection" : 23,
+"interval" : {"x":5,"y":100},
+"direction" : "AdvancedOptionsDialog/seedSpinner",
+"place" : 2
+},
+{
+"isFileParameter" : false,
+"type" : "list",
+"key" : "cases",
+"project" : "TestMethods",
+"labelText" : "Test cases : ",
+"tooltip" : "specify the test cases to amplify",
+"direction" : "AdvancedOptionsDialog/casesList",
+"place" : 3
+},
+{
+"isFileParameter" : false,
+"type" : "explorer",
+"key" : "path-pit-result",
+"labelText" : "Path pit result : ",
+"tooltip" : "specify the path to the original result of pith test (criterion, PitMutantScoreSelector)",
+"direction" : "advancedOptionsDialog/pathPit",
+"place" : 4
+},
+{
+"isFileParameter" : false,
+"type" : "combo",
+"key" : "budgetizer",
+"labelText" : "Budgetizer : ",
+"tooltip" : "select a budgetizer (default NoBudgetizer)",
+"content" : ["NoBudgetizer","SimpleBudgetizer"],
+"direction" : "AdvancedOptionsDialog/Budgetizer",
+"place" : 5
+},
+{
+"isFileParameter" : false,
+"type" : "check",
+"key" : "clean",
+"labelText" : "Clean",
+"tooltip" : "if enabled, DSpot will remove the out directory if exists",
+"direction" : "AdvancedOptionsDialog/Clean",
+"Place" : 6
+},
+{
+"isFileParameter" : false,
+"type" : "check",
+"key" : "no-minimize",
+"labelText" : "No Minimize",
+"tooltip" : "Disable the minimization of amplified tests",
+"direction" : "AdvancedOptionsDialog/NoMinimize",
+"place" : 7
+},
+{
+"isFileParameter" : false,
+"type" : "check",
+"key" : "descartes",
+"labelText" : "Descartes",
+"tooltip" : "use the Descartes mutation engine (PitMutantScoreSelector)",
+"direction" : "AdvancedOptionsDialog/Descartes",
+"activationDirection" : "AdvancedOptionsDialog/Gregor",
+"condition" : "Anti-true",
+"place" : 8
+},
+{
+"isFileParameter" : false,
+"type" : "check",
+"key" : "gregor",
+"labelText" : "Gregor",
+"tooltip" : "use the Gregor mutation engine (PitMutantScoreSelector)",
+"direction" : "AdvancedOptionsDialog/Gregor",
+"activationDirection" : "AdvancedOptionsDialog/Descartes",
+"condition" : "Anti-true",
+"place" : 9
+},
+{
+"isFileParameter" : false,
+"type" : "check",
+"key" : "targetOneTestClass",
+"labelText" : "Target one test class",
+"tooltip" : "enable this option will make DSpot computing the mutation score of only one class (expert)",
+"direction" : "AdvancedOptionsDialog/OneTestClass",
+"place" : 10
+},
+{
+"isFileParameter" : false,
+"type" : "check",
+"key" : "verbose",
+"labelText" : "Verbose",
+"tooltip" : "enable to get more information",
+"direction" : "AdvancedOptionsDialog/Verbose",
+"place" : 11
+},
+{
+"isFileParameter" : false,
+"type" : "check",
+"key" : "with-comment",
+"labelText" : "With comment",
+"tooltip" : "details step of the amplification",
+"direction" : "AdvancedOptionsDialog/Comment",
+"place" : 12
+}
+]
+}

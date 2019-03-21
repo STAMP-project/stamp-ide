@@ -1,7 +1,0 @@
-# page=ID/name
-# dialog=pageID/ID/title/message
-# page one is special and is not in the templates
-#(lines containing # are ignored)
-
-page=page2/Second page
-dialog=page2/AdvancedOptionsDialog/Advanced Options/set advanced dspot options

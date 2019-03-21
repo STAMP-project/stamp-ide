@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
 <plugin>
-
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="eu.stamp.wp4.dspot.wizard.utils.DSpotWizardHandler"
+            defaultHandler="eu.stamp.eclipse.plugin.dspot.handler.DSpotWizardHandler"
             name="Open Dspot Wizard"
             id="eu.stamp.wp4.dspot.menu.wizard.command">
       </command>
@@ -84,29 +84,6 @@
       </application>
    </extension>
    <extension
-         point="org.eclipse.ui.views">
-      <category
-            id="eu.stamp.category"
-            name="STAMP">
-      </category>
-      <view
-            category="eu.stamp.category"
-            class="eu.stamp.wp4.dspot.view.DSpotView"
-            id="eu.stamp.wp4.dspot.wizard.view"
-            inject="true"
-            name="DSpot Properties"
-            restorable="true">
-      </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            name="name"
-            class="eu.stamp.wp4.dspot.wizard.PerspectiveFactory1"
-            id="com.dspot.menu.wizard.perspective1">
-      </perspective>
-   </extension>
-   <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
@@ -126,15 +103,6 @@
       </definition>
    </extension>
    <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            name="DSpot"
-            delegate="eu.stamp.wp4.dspot.execution.launch.DSpotEclipseLaunchConfigurationDelegate"
-            modes="run, debug"
-            id="eu.stamp.launchEclipseConfigurationDSpot">
-      </launchConfigurationType>
-   </extension>
-   <extension
          point="org.eclipse.ui.bindings">
       <key
             commandId="eu.stamp.wp4.dspot.menu.wizard.command"
@@ -144,12 +112,24 @@
       </key>
    </extension>
    <extension
-         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-      <launchConfigurationTabGroup
-            type="eu.stamp.launchEclipseConfigurationDSpot"
-            class="eu.stamp.wp4.dspot.execution.launch.ui.DSpotLaunchConfigurationTabGroup"
-            id="eu.stamp.wp4.dspot.wizard.launchConfigurationTabGroup">
-      </launchConfigurationTabGroup>
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.eclipse.m2e.internal.launch.MavenLaunchDelegate"
+            id="eu.stamp.dspot.configuration"
+            modes="run,debug"
+            name="DSpot Execution"
+            sourceLocatorId="org.eclipse.m2e.launching.MavenSourceLocator"
+            sourcePathComputerId="org.eclipse.m2e.launching.MavenSourceComputer">
+      </launchConfigurationType>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="STAMP"
+            class="eu.stamp.eclipse.plugin.dspot.view.DSpotView"
+            id="eu.stamp.eclipse.dspot.reports.view"
+            name="DSpot view"
+            restorable="true">
+      </view>
+   </extension>
 </plugin>
