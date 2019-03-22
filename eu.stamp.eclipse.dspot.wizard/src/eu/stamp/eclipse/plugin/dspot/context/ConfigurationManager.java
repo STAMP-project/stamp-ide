@@ -116,7 +116,7 @@ public class ConfigurationManager {
 	    	if(name == null || name.isEmpty()) {
 	    		newConfButton.setSelection(true);
 	    		DSpotMapping.getInstance().setConfigurationName(name);
-	    		newConfButton.notifyAll();
+	    		newConfButton.notifyListeners(SWT.Selection,new Event());
 	    		return;
 	    	}
 	    	DSpotMapping.getInstance().setConfigurationName(name);
