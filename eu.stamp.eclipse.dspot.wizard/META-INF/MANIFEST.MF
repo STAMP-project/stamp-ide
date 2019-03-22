@@ -20,6 +20,7 @@ Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.swt,
  org.junit,
  org.eclipse.jface,
- com.google.gson
+ com.google.gson,
+ org.eclipse.equinox.registry
 Bundle-ClassPath: lib/rcptoolbox.1.0.10.jar,
  .
