@@ -73,8 +73,8 @@ public class SpinnerController extends SimpleController {
 	@Override
 	public void setText(String text) {
 		DSpotMapping.getInstance().setValue(key,text);
-		if(spinner == null || text == null) return;
-		if(spinner.isDisposed() || text.isEmpty()) return;
+		if(spinner == null || spinner.isDisposed()) return;
+		if(text == null || text.isEmpty()) spinner.setSelection(initialSelection);
 		spinner.setSelection(Integer.parseInt(text));
 		listenerAction();
 	}
@@ -94,7 +94,11 @@ public class SpinnerController extends SimpleController {
 	}
 	@Override
 	public void updateController(String data) {
-		if(data == null || spinner == null || data.isEmpty() || spinner.isDisposed()) return;
+		if(spinner == null || spinner.isDisposed()) return;
+		if(data == null || data.isEmpty()) {
+			spinner.setSelection(initialSelection);
+		    return;
+		}
 		spinner.setSelection(Integer.parseInt(data));
 	}
 	
