@@ -132,7 +132,7 @@ public class DSpotJob extends Job {
        else {
     	   title = "DSpot Error";
     	   message = "Error during DSpot launch, please check the trace, "
-       		+ "you can repot it in : https://github.com/STAMP-project/dspot/issues";
+       		+ "you can report it in : https://github.com/STAMP-project/dspot/issues";
 	   }
        Display.getDefault().asyncExec(new Runnable() {
 		  @Override
