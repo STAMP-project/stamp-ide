@@ -159,7 +159,8 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 		controlsToCheck.put("Description",descriptionText);
 		GridDataFactory.fillDefaults().span(3,3).grab(true,true)
 		.minSize(100,120).applyTo(descriptionText);
-		descriptionText.setText(trackerProxy.getDescription());
+		descriptionText.setText(trackerProxy
+				.getDescription());
 		descriptionText.addSegmentListener(new SegmentListener() {
 			@Override
 			public void getSegments(SegmentEvent event) {
@@ -202,7 +203,9 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 		
 		if(descriptionText.getText() == null || descriptionText.getText().isEmpty()) {
 			String text = wizard.getDescription();
-			if(text != null) descriptionText.setText(DescartesJiraTracker.parse(text));
+			if(text != null) descriptionText.setText(
+					DescartesJiraTracker.parse(text));
+					//.replaceAll("[Back]",""));
 		}
 		if(titleText.getText() == null || titleText.getText().isEmpty()) {
 			String text = wizard.getTitle();

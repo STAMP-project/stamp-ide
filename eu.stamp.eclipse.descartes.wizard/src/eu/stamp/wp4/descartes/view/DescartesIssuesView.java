@@ -31,14 +31,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 import eu.stamp.eclipse.descartes.jira.DescartesJiraWizard;
+import eu.stamp.wp4.descartes.wizard.utils.IssuesHtmlProcessor;
 
 public class DescartesIssuesView extends DescartesAbstractView {
 	
 	public static final String ID = "eu.stamp.wp4.descartes.view.issues";
     
-	private List<String> info;
+	//private List<String> info;
 	
 	private static DescartesJiraWizard wizard;
+	
+	private String title,htmlDescription;
 	
 	public DescartesIssuesView() {
 		super();
@@ -67,9 +70,9 @@ public class DescartesIssuesView extends DescartesAbstractView {
 				try {
 					URL direction = new URL(event.location);
 					InputStream stream = direction.openStream();
-				    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+					BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 				    String line;
-				    info = new LinkedList<String>();
+				    List<String> info = new LinkedList<String>();
 				    boolean packageFound = false;
 				    boolean classFound = false;
 				    while((line = reader.readLine()) != null) {
@@ -78,27 +81,34 @@ public class DescartesIssuesView extends DescartesAbstractView {
 				        if(line.contains("Class")) classFound = true;
 				    }
 				    reader.close();
-				    if(jiraButton != null && !jiraButton.isDisposed())
-				    	jiraButton.setEnabled(packageFound && classFound);
+				    if(packageFound && classFound) {
+				    	StringBuilder issueBuilder = new StringBuilder();
+				    	for(String fragment : info) issueBuilder.append(fragment);
+                        IssuesHtmlProcessor processor = new IssuesHtmlProcessor();
+                        String[] result = processor.process(issueBuilder.toString());
+                        title = result[0];
+                        htmlDescription = result[1];
+				    }
+				    if(jiraLink != null && !jiraLink.isDisposed())
+				    	jiraLink.setEnabled(packageFound && classFound);
 				    	} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		});
 		
-         jiraButton.addSelectionListener(new SelectionAdapter() {
+         jiraLink.addSelectionListener(new SelectionAdapter() {
 			 @Override
 			 public void widgetSelected(SelectionEvent e) {
-				 StringBuilder builder = new StringBuilder();
+				/* StringBuilder builder = new StringBuilder();
 				 for(String sr : info) builder.append(sr);
                  String target = builder.toString();
                  int start = target.indexOf("<title>") + 7;
                  int end = target.indexOf("</title>");
-                 String title = target.substring(start,end);
-                 
+                 String title = target.substring(start,end);*/
                  if(wizard != null) {
                 	 wizard.setTitle(title);
-                	 wizard.parseDescription(target);
+                	 wizard.parseDescription(htmlDescription);
                 	 Display.getDefault().syncExec(new Runnable() {
 						@Override
 						public void run() {

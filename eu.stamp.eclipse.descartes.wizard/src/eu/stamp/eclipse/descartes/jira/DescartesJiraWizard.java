@@ -46,7 +46,9 @@ public class DescartesJiraWizard extends Wizard {
 	
 	public String getTitle() { return title; }
 	
-	public String getDescription() { return description; }
+	public String getDescription() { 
+		return description; 
+		}
 	
 	public void setTitle(String title) { 
 		this.title = title;
@@ -84,7 +86,7 @@ public class DescartesJiraWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
     	if(tracker == null) {
-    		Display.getDefault().syncExec(new Runnable() {
+    		Display.getDefault().asyncExec(new Runnable() {
 				@Override
 				public void run() {
 		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
@@ -94,7 +96,17 @@ public class DescartesJiraWizard extends Wizard {
     		});
     		return true;
     	}
-		if(!errorFlag) tracker.createIssue();
+		if(!errorFlag) {
+			String result = tracker.createIssue();
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					MessageDialog.openInformation(PlatformUI
+							.getWorkbench().getActiveWorkbenchWindow().getShell()
+							,"Jira Issue created",result);
+				}
+			});
+		}
 		return true;
 	}
 }

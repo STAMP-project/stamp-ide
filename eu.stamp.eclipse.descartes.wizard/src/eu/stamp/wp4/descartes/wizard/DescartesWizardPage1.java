@@ -100,7 +100,7 @@ public class DescartesWizardPage1 extends WizardPage
 	
 	// useful strings
 	private String[] initialNames;
-	private String pomName;
+	private String pomName, oldPomName;
 	private String projectPath;
 	
 	// widgets
@@ -149,6 +149,7 @@ public class DescartesWizardPage1 extends WizardPage
 		layout.numColumns = 3;
 		layout.makeColumnsEqualWidth = true;
 		composite.setLayout(layout);
+		//boo = false;
 		
         // ROW 1 : Load configuration
 		createLabel(composite,"load configuration : ","configurationLabel");
@@ -262,13 +263,15 @@ public class DescartesWizardPage1 extends WizardPage
         pomButton.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent e) {
-             pomField.getControl().setEnabled(pomButton.getSelection());
-             if(!pomButton.getSelection() && configurationField.getControl().isEnabled())
-            	 ((Text)pomField.getControl()).setText(
-            			 ((Text)configurationField.getControl()).getText() + "_pom.xml"); 
+             if(pomButton.getSelection()) {
+             pomField.getControl().setEnabled(true);
+             oldPomName = ((Text)pomField.getControl()).getText();
+             } else {
+            	 ((Text)pomField.getControl()).setText(oldPomName);
+            	 pomField.getControl().setEnabled(false);
+             }
         	}
         });
-        
         if(pomName != null)if(!pomName.isEmpty())
         	((Text)pomField.getControl()).setText(pomName);
         

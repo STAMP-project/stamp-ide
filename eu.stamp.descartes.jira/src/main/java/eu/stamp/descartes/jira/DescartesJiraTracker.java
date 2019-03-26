@@ -45,8 +45,8 @@ public class DescartesJiraTracker {
         issueTypes.put("Epic",new Long(10000));
         issueType = 10006; // default Bug
 	}
-	
-	public void createIssue() {
+
+	public String createIssue() {
 		// prepare Issue Configuration
         IssueRestClient issueClient = client.getIssueClient();
         IssueInputBuilder inputBuilder = new IssueInputBuilder(projectKey,issueType,title);
@@ -55,11 +55,17 @@ public class DescartesJiraTracker {
         // create issue
         BasicIssue basicIssue = issueClient.createIssue(inputBuilder.build()).claim();
         
-        // logging result
-    	System.out.println("\n----- Created Jira Issue -----\n");
-    	System.out.println("   - key : " + basicIssue.getKey());
-    	System.out.println("   - Id : " + basicIssue.getId());
-    	System.out.println("   - Self : " + basicIssue.getSelf().toString());
+        // returning ticket creation message
+        StringBuilder resultBuilder = new StringBuilder();
+        resultBuilder.append(" - Key : ");
+        resultBuilder.append(basicIssue.getKey());
+        resultBuilder.append('\n');
+        resultBuilder.append(" - Id : ");
+        resultBuilder.append(basicIssue.getId());
+        resultBuilder.append('\n');
+        resultBuilder.append(" - Self : ");
+        resultBuilder.append(basicIssue.getSelf().toString());
+        return resultBuilder.toString();
 	}
 	
 	public static String parse(String description) {
