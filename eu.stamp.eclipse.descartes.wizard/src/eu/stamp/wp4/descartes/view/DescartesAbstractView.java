@@ -22,7 +22,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IWorkbench;
@@ -41,7 +40,7 @@ public abstract class DescartesAbstractView extends ViewPart {
 	
 	protected Browser browser;
 	
-	protected Button jiraButton;
+	protected Link jiraLink;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -57,10 +56,10 @@ public abstract class DescartesAbstractView extends ViewPart {
 	GridDataFactory.fillDefaults().applyTo(forwardLink);
 	
 	if(putJiraButton()) {
-	jiraButton = new Button(parent,SWT.PUSH);
-	jiraButton.setText("Open Jira ticket");
-	GridDataFactory.swtDefaults().align(SWT.RIGHT,SWT.CENTER).applyTo(jiraButton);
-	jiraButton.setEnabled(false);
+	jiraLink = new Link(parent,SWT.PUSH);
+	jiraLink.setText("<A>Open Jira ticket</A>");
+	GridDataFactory.swtDefaults().align(SWT.RIGHT,SWT.CENTER).applyTo(jiraLink);
+	jiraLink.setEnabled(false);
 	}
 	
 	browser = new Browser(parent,SWT.NONE);

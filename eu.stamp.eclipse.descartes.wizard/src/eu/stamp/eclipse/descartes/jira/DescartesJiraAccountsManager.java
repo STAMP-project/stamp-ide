@@ -54,6 +54,10 @@ public class DescartesJiraAccountsManager {
 	public String getPassword() { return processString(accounts.get(selection).password); }
 	
 	public List<String> getAccounts() {
+		if(accounts == null) {
+			accounts = new AccountList(1);
+			return new ArrayList<String>(1);
+		}
 		List<String> result = new ArrayList<String>(accounts.size());
 		for(Account account : accounts)if(account.url != null)
             result.add(account.getSummary());
