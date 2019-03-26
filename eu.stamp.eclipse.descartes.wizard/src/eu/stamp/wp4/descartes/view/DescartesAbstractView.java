@@ -40,6 +40,8 @@ public abstract class DescartesAbstractView extends ViewPart {
 	
 	protected Browser browser;
 	
+	protected Link jiraLink;
+	
 	@Override
 	public void createPartControl(Composite parent) {
           
@@ -52,6 +54,13 @@ public abstract class DescartesAbstractView extends ViewPart {
 	Link forwardLink = new Link(parent,SWT.PUSH);
 	forwardLink.setText("<A>Forward</A>");	
 	GridDataFactory.fillDefaults().applyTo(forwardLink);
+	
+	if(putJiraButton()) {
+	jiraLink = new Link(parent,SWT.PUSH);
+	jiraLink.setText("<A>Open Jira ticket</A>");
+	GridDataFactory.swtDefaults().align(SWT.RIGHT,SWT.CENTER).applyTo(jiraLink);
+	jiraLink.setEnabled(false);
+	}
 	
 	browser = new Browser(parent,SWT.NONE);
 	GridDataFactory.fillDefaults().span(3,1).grab(true, true)
@@ -86,4 +95,6 @@ public abstract class DescartesAbstractView extends ViewPart {
 		if(browser != null)if(!browser.isDisposed())if(url != null)
 			browser.setUrl(url.toString());
 	}
+	
+	protected boolean putJiraButton() { return false; }
 }

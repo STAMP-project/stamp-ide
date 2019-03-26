@@ -51,6 +51,28 @@ public abstract class AbstractDescartesPomParser {
 		root = findBaseNode();
 	}
 	
+	public static String getTextContent(Node node) {
+        Node textNode = getTextNode(node);
+        if(textNode != null) return textNode.getNodeValue();
+		return "";
+	}
+	
+	public static void setTextContent(Node node, String text) {
+		Node textNode = getTextNode(node);
+		if(textNode != null) textNode.setNodeValue(text);
+	}
+	
+	private static Node getTextNode(Node node) {
+		if(node.getNodeName().equalsIgnoreCase("#text"))
+			return node;
+	    NodeList list = node.getChildNodes();
+	    for(int i = 0; i < list.getLength(); i++) {
+	    	Node result = getTextNode(list.item(i));
+	    	if(result != null) return result;
+	    }
+		return null;
+	}
+	
 	protected NodeList findNodeList(String name, Node node) {
 
 		if(node != null) {

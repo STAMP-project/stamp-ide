@@ -18,6 +18,8 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import eu.stamp.eclipse.descartes.plugin.pom.AbstractDescartesPomParser;
 /**
  * An instance of this class is responsible for keeping the information
  * in the template files/descartes_profile.xml, and generating a profile
@@ -44,7 +46,7 @@ public class DescartesInterDocumentNode {
 		name = node.getNodeName();
 		childs = new LinkedList<DescartesInterDocumentNode>();
 		
-		if(isText) text = node.getTextContent();
+		if(isText) text = AbstractDescartesPomParser.getTextContent(node);
 		else {
 			text = null;
 			NodeList list = node.getChildNodes();

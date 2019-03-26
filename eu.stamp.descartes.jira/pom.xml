@@ -1,0 +1,133 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>issues</groupId>
+  <artifactId>jira.experiment</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>jira.experiment</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <repositories>
+    <repository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>http://repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>atlassian-public</id>
+      <name>atlassian-public</name>
+      <url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
+    </repository>
+    <!--<repository>
+      <id>renderer-repository</id>
+      <name>renderer-repo</name>
+      <url>https://mvnrepository.com/artifact/com.atlassian.renderer/atlassian-renderer</url>
+    </repository> -->
+    <repository>
+      <id>mvn-repository</id>
+      <name>Mvn Repository</name>
+      <url>https://mvnrepository.com/artifact/</url>
+    </repository>
+    <repository>
+      <id>atlassian-3rdparty</id>
+      <name>Atlasian 3rdparty</name>
+      <url>https://maven.atlassian.com/3rdparty/</url>
+    </repository>
+    <repository>
+        <id>adobe-public</id>
+        <url>https://repo.adobe.com/nexus/content/repositories/public/</url>
+    </repository>
+
+<!--    <repository>
+      <id>slf4j-repo</id>
+      <name>slf4j-repo</name>
+      <url>https://mvnrepository.com/artifact/org.slf4j/slf4j-api</url>
+    </repository>
+    <repository>
+      <id>junit-repo</id>
+      <name>junit-repo</name>
+      <url>https://mvnrepository.com/artifact/junit/junit</url>
+    </repository>-->
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.8.0-beta4</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.atlassian.jira</groupId>
+      <artifactId>jira-rest-java-client-core</artifactId>
+      <version>LATEST</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.atlassian.fugue</groupId>
+      <artifactId>fugue</artifactId>
+      <version>LATEST</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>io.atlassian.fugue</groupId>
+      <artifactId>fugue</artifactId>
+      <version>LATEST</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.atlassian.renderer</groupId>
+      <artifactId>atlassian-renderer</artifactId>
+      <version>8.0.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>opensymphony</groupId>
+      <artifactId>oscore</artifactId>
+      <version>2.2.7</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+    
+  </dependencies>
+</project>
