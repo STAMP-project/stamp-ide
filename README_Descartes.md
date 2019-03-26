@@ -111,4 +111,4 @@ Press the finish button to execute Descartes, you will see the information about
 At the end you will see the summary in the console, the Descartes Issues and Pit Coverage views will be opened to show the information in the html summaries produced by Descartes, 
 You can use the links in the document and the back/forward links in the top left corner of the view to display all the reports.
 
-![Descartes views](images/DescartesViews.png)
+![Descartes views](images/DescartesView.png)

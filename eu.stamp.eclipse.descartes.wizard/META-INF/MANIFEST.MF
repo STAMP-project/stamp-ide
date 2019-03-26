@@ -25,4 +25,3 @@ Bundle-ClassPath: .,
  lib/stamp-eclipse-wizard.jar,
  lib/descartes.jira-0.0.1-SNAPSHOT.jar
 Automatic-Module-Name: eu.stamp.eclipse.descartes.wizard
-
