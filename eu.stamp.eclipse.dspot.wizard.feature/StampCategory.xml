@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/eu.stamp.eclipse.dspot.wizard.feature_1.0.0.201807171455.jar" id="eu.stamp.eclipse.dspot.wizard.feature" version="1.0.0.201807171455"/>
-   <category-def name="Stamp" label="Stamp"/>
-</site>
