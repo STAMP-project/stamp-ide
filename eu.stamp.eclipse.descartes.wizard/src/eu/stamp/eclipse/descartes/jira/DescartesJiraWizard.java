@@ -16,6 +16,7 @@ import org.eclipse.ui.PlatformUI;
 import com.atlassian.jira.rest.client.api.RestClientException;
 
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
+import eu.stamp.wp4.descartes.wizard.utils.IssuesHtmlProcessor;
 import eu.stamp.descartes.jira.DescartesJiraTracker;
 
 public class DescartesJiraWizard extends Wizard {
@@ -57,7 +58,8 @@ public class DescartesJiraWizard extends Wizard {
 	
 	public void parseDescription(String description) {
 		this.description = description;
-		if(tracker != null) tracker.parseDescription(description);
+		if(tracker != null) tracker.setDescription(
+				IssuesHtmlProcessor.h2mu(description));
 	}
 	
 	public DescartesJiraTracker getTracker() { return tracker; }
@@ -70,6 +72,9 @@ public class DescartesJiraWizard extends Wizard {
 	public void addPages() {
 		addPage(new DescartesJiraIssuePage1("Create jira ticket"));
 	}
+	
+	@Override
+	public boolean needsPreviousAndNextButtons() { return false; }
 	
 	@Override
 	public String getWindowTitle() { return "Jira Issue"; }
@@ -105,7 +110,7 @@ public class DescartesJiraWizard extends Wizard {
 							.getWorkbench().getActiveWorkbenchWindow().getShell()
 							,"Jira Issue created",result);
 				}
-			});
+			}); 
 		}
 		return true;
 	}

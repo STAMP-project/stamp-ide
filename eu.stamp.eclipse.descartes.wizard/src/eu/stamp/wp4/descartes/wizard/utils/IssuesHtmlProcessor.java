@@ -44,20 +44,6 @@ public class IssuesHtmlProcessor {
         String methodString = titleNode.getFirstChild().getNodeValue()
         		.replaceAll("\\(.*?\\)","");
         NodeList nameList = documentElement.getElementsByTagName("dd");
-        /*
-        boolean packageFound = false;
-        String classString = "";
-        for(int i = 0; i < nameList.getLength(); i++) {
-           string = nameList.item(i).getFirstChild().getNodeValue();
-           if(string.contains("/")) {
-        	   titleBuilder.append(string.replaceAll("/","."));
-        	   titleBuilder.append(".");
-        	   packageFound = true;
-           }
-           else if(packageFound) titleBuilder.append(string);
-           else classString = string;
-        }
-        titleBuilder.append(classString);*/
         String classString = "";
         String packageString = "";
         String string;
@@ -83,5 +69,18 @@ public class IssuesHtmlProcessor {
 	private String getHtmlDescription(String issueHtml) {
 		return issueHtml.replaceFirst("<head>.*?</head>","")
 				.replaceAll("<a href=.*?</a>","");
+	}
+	
+	public static String  h2mu(String html) {
+	  String result = html.replaceAll("<strong>","*")
+					.replaceAll("</strong>","*");
+	  result = result.replaceAll("<h1>","\nh2.").replaceAll("</h1>","\n\n");
+	  result = result.replaceAll("<h2>","\nh3.").replaceAll("</h2>","\n\n");
+	  result = result.replaceAll("<p>","\n\n").replaceAll("</p>","\n\n");
+	  result = result.replaceAll("</li>","\n").replaceAll("<li>","* ");	
+	  result.replaceAll("<.*?l>","\n\n");
+	  while(result.contains("\n\n\n")) result = result.replaceAll("\n\n\n","\n\n");
+	  result = result.replaceAll("<.*?>"," ");
+	  return result;
 	}
 }

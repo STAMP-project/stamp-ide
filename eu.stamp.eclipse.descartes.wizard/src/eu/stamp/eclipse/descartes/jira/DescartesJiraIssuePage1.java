@@ -26,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import com.atlassian.jira.rest.client.api.RestClientException;
 
 import eu.stamp.descartes.jira.DescartesJiraTracker;
+import eu.stamp.wp4.descartes.wizard.utils.IssuesHtmlProcessor;
 
 public class DescartesJiraIssuePage1 extends WizardPage{
 	
@@ -204,7 +205,7 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 		if(descriptionText.getText() == null || descriptionText.getText().isEmpty()) {
 			String text = wizard.getDescription();
 			if(text != null) descriptionText.setText(
-					DescartesJiraTracker.parse(text));
+					IssuesHtmlProcessor.h2mu(text));
 					//.replaceAll("[Back]",""));
 		}
 		if(titleText.getText() == null || titleText.getText().isEmpty()) {
@@ -263,7 +264,8 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 			if(tracker != null) tracker.setTitle(title);
 		}
 		void setDescription(String description) {
-			if(tracker != null) tracker.parseDescription(description);
+			if(tracker != null) tracker.setDescription(
+					IssuesHtmlProcessor.h2mu(description));
 		}
 	}
 }
