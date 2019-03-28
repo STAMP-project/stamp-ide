@@ -16,6 +16,7 @@ import org.eclipse.ui.PlatformUI;
 import com.atlassian.jira.rest.client.api.RestClientException;
 
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
+import eu.stamp.wp4.descartes.wizard.utils.IssuesHtmlProcessor;
 import eu.stamp.descartes.jira.DescartesJiraTracker;
 
 public class DescartesJiraWizard extends Wizard {
@@ -46,7 +47,9 @@ public class DescartesJiraWizard extends Wizard {
 	
 	public String getTitle() { return title; }
 	
-	public String getDescription() { return description; }
+	public String getDescription() { 
+		return description; 
+		}
 	
 	public void setTitle(String title) { 
 		this.title = title;
@@ -55,7 +58,8 @@ public class DescartesJiraWizard extends Wizard {
 	
 	public void parseDescription(String description) {
 		this.description = description;
-		if(tracker != null) tracker.parseDescription(description);
+		if(tracker != null) tracker.setDescription(
+				IssuesHtmlProcessor.h2mu(description));
 	}
 	
 	public DescartesJiraTracker getTracker() { return tracker; }
@@ -68,6 +72,9 @@ public class DescartesJiraWizard extends Wizard {
 	public void addPages() {
 		addPage(new DescartesJiraIssuePage1("Create jira ticket"));
 	}
+	
+	@Override
+	public boolean needsPreviousAndNextButtons() { return false; }
 	
 	@Override
 	public String getWindowTitle() { return "Jira Issue"; }
@@ -84,7 +91,7 @@ public class DescartesJiraWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
     	if(tracker == null) {
-    		Display.getDefault().syncExec(new Runnable() {
+    		Display.getDefault().asyncExec(new Runnable() {
 				@Override
 				public void run() {
 		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
@@ -94,7 +101,17 @@ public class DescartesJiraWizard extends Wizard {
     		});
     		return true;
     	}
-		if(!errorFlag) tracker.createIssue();
+		if(!errorFlag) {
+			String result = tracker.createIssue();
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					MessageDialog.openInformation(PlatformUI
+							.getWorkbench().getActiveWorkbenchWindow().getShell()
+							,"Jira Issue created",result);
+				}
+			}); 
+		}
 		return true;
 	}
 }
