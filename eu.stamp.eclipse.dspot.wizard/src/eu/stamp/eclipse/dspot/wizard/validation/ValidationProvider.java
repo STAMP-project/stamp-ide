@@ -12,14 +12,19 @@ import com.richclientgui.toolbox.validation.validator.IFieldValidator;
 
 public abstract class ValidationProvider {
 
-public static final int VALIDATOR_DEFAULT = 1;	
+public static final int VALIDATOR_DEFAULT = 1;
 	
 public static Text getTextWithvalidation(Composite parent,Object page,String name,
 		int typeOfValidator,boolean required) {
+	return getTextWithvalidation(parent,page,name,typeOfValidator,required,null);
+}
+
+public static Text getTextWithvalidation(Composite parent,Object page,String name,
+		int typeOfValidator,boolean required,ExtraChecker extraCheck) {
 	
 	IFieldErrorMessageHandler handler = ErrorHandlerFactory.getHandler(page);
 	if(handler == null) return new Text(parent,SWT.BORDER);
-	IFieldValidator<String> validator = getStringValidator(typeOfValidator,name);
+	IFieldValidator<String> validator = getStringValidator(typeOfValidator,name,extraCheck);
 	if(validator == null) return new Text(parent,SWT.BORDER);
 	StringValidationToolkit kit = new StringValidationToolkit(SWT.TOP | SWT.LEFT,2,true);
 	kit.setDefaultErrorMessageHandler(handler);
@@ -29,13 +34,13 @@ public static Text getTextWithvalidation(Composite parent,Object page,String nam
 	return (Text)field.getControl();
 }
 
-private static IFieldValidator<String> getStringValidator(int type,String name){
+private static IFieldValidator<String> getStringValidator(int type,String name,ExtraChecker extraCheck){
 	switch(type) {
 	case VALIDATOR_DEFAULT : return new IFieldValidator<String>() {
+		private String message;
 		@Override
 		public String getErrorMessage() {
-			return name 
-					+ "contains non allowed characters (allowed : alphanumerical, _ , - )";
+			return message;
 		}
 		@Override
 		public String getWarningMessage() {
@@ -43,9 +48,26 @@ private static IFieldValidator<String> getStringValidator(int type,String name){
 		}
 		@Override
 		public boolean isValid(String arg) {
+			if(extraCheck != null) {
+				String sr = extraCheck.before();
+				if(sr != null) {
+					message = sr;
+					return false;
+				}
+			}
 			if(arg == null || arg.isEmpty()) return true;
+			message = name + "contains non allowed characters (allowed : alphanumerical, _ , - )";
 			arg = arg.replaceAll("[0-9a-zA-Z]","").replaceAll("_","").replaceAll("-","");
-			return arg.isEmpty();
+			boolean result = arg.isEmpty();
+			if(!result) return false;
+			if(extraCheck != null) {
+				String sr = extraCheck.after();
+				if(sr != null) {
+					message = sr;
+					return false;
+				}
+			}
+			return true;
 		}
 		@Override
 		public boolean warningExist(String arg) {
