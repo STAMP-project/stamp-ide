@@ -46,7 +46,7 @@ public class ConfigurationManager {
 	/**
 	 * 
 	 */
-	private String confTx;
+	//private String confTx;
 	
 	public ConfigurationManager() {
 		try {
@@ -86,15 +86,15 @@ public class ConfigurationManager {
 	    Button newConfButton = new Button(parent,SWT.CHECK);
 	    GridDataFactory.swtDefaults().indent(DSpotProperties.INDENT).applyTo(newConfButton);
 
+        NoEmptyChecker extraCheck = new NoEmptyChecker();
 	    Text newConfText = ValidationProvider.getTextWithvalidation(parent,page,
-	    		"configuration name ",ValidationProvider.VALIDATOR_DEFAULT,false);
-	    
+	    		"configuration name ",ValidationProvider.VALIDATOR_DEFAULT,false,extraCheck);
+        extraCheck.setText(newConfText);
 	    GridDataFactory.fillDefaults().indent(DSpotProperties.INDENT)
 	    .grab(true,false).applyTo(newConfText);
 	    newConfText.addSegmentListener(new SegmentListener() {
 			@Override
 			public void getSegments(SegmentEvent event) { 
-				confTx = newConfText.getText();
 				DSpotMapping.getInstance().setConfigurationName(newConfText.getText());
 			}
 			});
@@ -159,6 +159,24 @@ public class ConfigurationManager {
 		List<Controller> controllers = DSpotMapping.getInstance().getAllControllers();
 		for(Controller controller : controllers) {
 			controller.loadConfiguration(conf);
+		}
+	}
+	
+	private class NoEmptyChecker implements ExtraChecker {
+		private Text text;
+    	@Override
+		public String before() {
+            if(text == null || text.isDisposed() || !text.isEnabled())
+            	return null;
+            if(text.getText() == null || text.getText().isEmpty())
+            	return "Configuration is empty";
+			return null;
+		}
+		@Override
+		public String after() { return null; }
+		
+		public void setText(Text text) {
+			this.text = text;
 		}
 	}
 }
