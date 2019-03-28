@@ -74,6 +74,7 @@ public class ListController extends MultiController {
         	list.deselectAll();
         	firstTime = false;
         }
+   if(selection == null || selection.length < 1 || selection[0].isEmpty()) list.deselectAll();
     }
 	@Override
 	protected void setContent(String[] content) {
@@ -102,7 +103,7 @@ public class ListController extends MultiController {
 		if(list == null) return;
 		if(list.isDisposed()) return;
 		list.deselectAll();
-		list.setSelection(selection);
+		if(!selection[0].isEmpty())list.setSelection(selection);
 		notifyListener();
 	}
 
