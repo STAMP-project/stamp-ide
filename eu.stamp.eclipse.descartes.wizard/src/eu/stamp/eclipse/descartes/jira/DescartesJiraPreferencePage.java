@@ -89,7 +89,6 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 		Button createButton = new Button(parent,SWT.RADIO);
 		createButton.setTextDirection(SWT.LEFT);
 		createButton.setText("Create new account");
-		createButton.setSelection(true);
 		GridDataFactory.swtDefaults().indent(0,8).applyTo(createButton);
 		
 		modifyButton = new Button(parent,SWT.RADIO);
@@ -174,6 +173,12 @@ public class DescartesJiraPreferencePage extends PreferencePage implements IWork
 			      removeButton.setEnabled(true);
 			}
 				});
+		
+		if(accounts != null && !accounts.isEmpty()) {
+			modifyButton.setSelection(true);
+			modifyButton.notifyListeners(SWT.Selection,new Event());
+		} else createButton.setSelection(true);
+		
 		parent.pack();
 		return parent;
 	}
