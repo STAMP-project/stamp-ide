@@ -146,10 +146,10 @@ This is a single page wizard, the "Jira account" combo contains the registered J
 The "Title text" contains the title of the issue, by default Descartes issue (full name of the class)::(method),
 this method is partially/pseudo tested, the "Issue type" text sets the issue type, default Bug, and the big text "Description" contains the description taken from the issue report converted to Jira wiki mark-up.
 
-![Jira ssue wizard](images/JiraIssueWizard)
+![Jira ssue wizard](images/JiraIssueWizard.png)
 
 You can edit the title and description, finally press finish, to create the ticket, an information dialog will provide you some information about the issue opened.
 
-![Issue created dialog](images/IssueCreatedDialog)
+![Issue created dialog](images/IssueCreatedDialog.png)
 
 
