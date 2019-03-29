@@ -111,4 +111,45 @@ Press the finish button to execute Descartes, you will see the information about
 At the end you will see the summary in the console, the Descartes Issues and Pit Coverage views will be opened to show the information in the html summaries produced by Descartes, 
 You can use the links in the document and the back/forward links in the top left corner of the view to display all the reports.
 
-![Descartes views](images/DescartesView.png)
+![Descartes Issues](images/DescartesIssues.png)
+![Descartes Pit Coverage](images/PitCoverage.png)
+
+### Open Jira issue
+
+The plugin allows you to open an issue in Jira for a Descartes issues report.
+
+#### Set a Jira account
+
+First you have to configure your Jira account or accounts in the Descartes Jira preferences page,
+go to Window > Preferences > Descartes Jira preferences.
+
+If there is no accounts the button "Create new account" will be selected, set the url, user and password in the corresponding texts and click in the apply button.
+
+If there is an account (or several accounts) registered, the button "Modify an existing account" will be selected, (you can select the "Create new account" button to create a new one), select the account to modify in the "Existing accounts" combo, the values of the account's fields will be loaded in their texts, 
+modify them and click apply to save the changes.
+
+If you want to remove an account select the "Mofify an existing" account button, select the account to delete 
+in the existing accounts combo, and press the "Remove account" button to delete it, press apply to confirm the operation.
+
+The accounts data are stored with encryption.
+
+![Descartes Jira preferences page](images/DescartesJiraPreferences.png)
+
+#### Open a new issue
+
+Go to the Descartes issues view, there is a link called "Open Jira ticket" in the top right corner of the view,
+this link is enabled if a specific method report is displayed (not enabled when displaying the index), click it
+to open the "Jira Issue wizard"
+
+This is a single page wizard, the "Jira account" combo contains the registered Jira accounts, the "Select a project" combo contains the projects found in the account.
+
+The "Title text" contains the title of the issue, by default Descartes issue (full name of the class)::(method),
+this method is partially/pseudo tested, the "Issue type" text sets the issue type, default Bug, and the big text "Description" contains the description taken from the issue report converted to Jira wiki mark-up.
+
+![Jira ssue wizard](images/JiraIssueWizard.png)
+
+You can edit the title and description, finally press finish, to create the ticket, an information dialog will provide you some information about the issue opened.
+
+![Issue created dialog](images/IssueCreatedDialog.png)
+
+

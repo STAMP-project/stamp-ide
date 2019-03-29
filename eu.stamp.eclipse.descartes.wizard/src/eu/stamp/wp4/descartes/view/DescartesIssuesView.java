@@ -32,12 +32,13 @@ import org.eclipse.ui.PlatformUI;
 
 import eu.stamp.eclipse.descartes.jira.DescartesJiraWizard;
 import eu.stamp.wp4.descartes.wizard.utils.IssuesHtmlProcessor;
-
+/**
+ * An Eclipse view to display the Descartes issue reports
+ * @see eu.stamp.wp4.descartes.view.DescartesAbstaractView
+ */
 public class DescartesIssuesView extends DescartesAbstractView {
 	
 	public static final String ID = "eu.stamp.wp4.descartes.view.issues";
-    
-	//private List<String> info;
 	
 	private static DescartesJiraWizard wizard;
 	
@@ -100,12 +101,6 @@ public class DescartesIssuesView extends DescartesAbstractView {
          jiraLink.addSelectionListener(new SelectionAdapter() {
 			 @Override
 			 public void widgetSelected(SelectionEvent e) {
-				/* StringBuilder builder = new StringBuilder();
-				 for(String sr : info) builder.append(sr);
-                 String target = builder.toString();
-                 int start = target.indexOf("<title>") + 7;
-                 int end = target.indexOf("</title>");
-                 String title = target.substring(start,end);*/
                  if(wizard != null) {
                 	 wizard.setTitle(title);
                 	 wizard.parseDescription(htmlDescription);
@@ -121,7 +116,6 @@ public class DescartesIssuesView extends DescartesAbstractView {
 			 }
 			 });
 	}
-	
 	@Override
 	protected boolean putJiraButton() { return true; }
 }

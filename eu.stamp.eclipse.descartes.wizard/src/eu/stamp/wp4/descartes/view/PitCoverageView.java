@@ -11,7 +11,11 @@
  * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
  *******************************************************************************/
 package eu.stamp.wp4.descartes.view;
-
+/**
+ * An Eclipse view to display the pit coverage reports
+ * produced by Descartes
+ * @see eu.stamp.wp4.descartes.view.DescartesAbstractView
+ */
 public class PitCoverageView extends DescartesAbstractView {
 	
 	public static final String ID = "eu.stamp.wp4.descartes.view.coverage";

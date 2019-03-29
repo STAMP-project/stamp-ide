@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo José Tejada García (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.wp4.descartes.wizard.utils;
 
 import java.io.ByteArrayInputStream;
@@ -14,9 +26,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
+/**
+ * This class contains methods to manage the issues HTML reports
+ * and provide the Jira issue wizard the title and description 
+ * converted to Jira wiki mark-up
+ */
 public class IssuesHtmlProcessor {
-	
+	/**
+	 * @param issueHtml : the hTML string taken from the issue report file
+	 * @return : [0] title, [1] HTML string with the description of the issue
+	 */
 	public String[] process(String issueHtml) {
 		try {
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance()
@@ -36,7 +55,11 @@ public class IssuesHtmlProcessor {
 			return new String[] {"",""};
 		}
 	}
-	
+	/**
+	 * @param documentElement : the DOM document instance for the issue HTML
+	 * @param issueHtml : the description of the issue
+	 * @return : Descartes issue (full class name)::(method) this method is partially/pseudo tested
+	 */
 	private String getTitle(Element documentElement,String issueHtml) {
 	    Node headNode = documentElement.getElementsByTagName("head").item(0);
         Node titleNode = ((Element)headNode)
@@ -65,12 +88,18 @@ public class IssuesHtmlProcessor {
         else titleBuilder.append(". This method is pseudo-tested");
         return titleBuilder.toString();
 	}
-	
+	/**
+	 * @param issueHtml : the complete report
+	 * @return : the report without the head
+	 */
 	private String getHtmlDescription(String issueHtml) {
 		return issueHtml.replaceFirst("<head>.*?</head>","")
 				.replaceAll("<a href=.*?</a>","");
 	}
-	
+	/**
+	 * @param html : HTML to convert to Jira wiki mark up
+	 * @return : the conversion to mark up
+	 */
 	public static String  h2mu(String html) {
 	  String result = html.replaceAll("<strong>","*")
 					.replaceAll("</strong>","*");
