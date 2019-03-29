@@ -95,6 +95,8 @@ public abstract class DescartesAbstractView extends ViewPart {
 		if(browser != null)if(!browser.isDisposed())if(url != null)
 			browser.setUrl(url.toString());
 	}
-	
+	/**
+	 * @return : true if the implementing view must have a Jira issue creation link
+	 */
 	protected boolean putJiraButton() { return false; }
 }

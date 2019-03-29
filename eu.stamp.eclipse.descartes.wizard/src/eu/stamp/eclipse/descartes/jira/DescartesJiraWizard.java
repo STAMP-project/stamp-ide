@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo José Tejada García (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.eclipse.descartes.jira;
 
 import java.net.URL;
@@ -18,20 +30,25 @@ import com.atlassian.jira.rest.client.api.RestClientException;
 import eu.stamp.wp4.descartes.wizard.utils.DescartesWizardConstants;
 import eu.stamp.wp4.descartes.wizard.utils.IssuesHtmlProcessor;
 import eu.stamp.descartes.jira.DescartesJiraTracker;
-
+/**
+ * A wizard to open a Jira ticket, the wizard will be opened by the
+ * link in the Descartes Issues view
+ * @see eu.stamp.wp4.descartes.view.DescartesAbstractView
+ * @see eu.stamp.wp4.descartes.view.DescartesIssuesView
+ */
 public class DescartesJiraWizard extends Wizard {
-	
+	/**
+	 * the tracker uses the Jira Java Api to provide information
+	 * about the accounts and to create issues
+	 */
 	private DescartesJiraTracker tracker;
 	
-	private String title;
-	
-	private String description;
-	
-	private String summary;
+	private String title,description,summary;
 	
 	private boolean errorFlag;
 	
 	public DescartesJiraWizard() throws StorageException {
+		// load data
 		DescartesJiraAccountsManager manager = DescartesJiraAccountsManager.getInstance();
 		errorFlag = manager.empty();
         if(!errorFlag)try { 
@@ -44,18 +61,27 @@ public class DescartesJiraWizard extends Wizard {
 	}
 	
 	public boolean error() { return errorFlag; }
-	
+	/**
+	 * @return : the title of the issue
+	 */
 	public String getTitle() { return title; }
-	
+	/**
+	 * @return : the description of the issue
+	 */
 	public String getDescription() { 
 		return description; 
 		}
-	
+	/**
+	 * @param title : a title for the issue
+	 */
 	public void setTitle(String title) { 
 		this.title = title;
 		if(tracker != null) tracker.setTitle(title); 
 		}
-	
+	/**
+	 * convert an HTML description to Jira wiki mark-up
+	 * @param description : the HTML string describing the issue
+	 **/
 	public void parseDescription(String description) {
 		this.description = description;
 		if(tracker != null) tracker.setDescription(

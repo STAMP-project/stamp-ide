@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo José Tejada García (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.eclipse.descartes.jira;
 
 import java.util.HashMap;
@@ -27,13 +39,19 @@ import com.atlassian.jira.rest.client.api.RestClientException;
 
 import eu.stamp.descartes.jira.DescartesJiraTracker;
 import eu.stamp.wp4.descartes.wizard.utils.IssuesHtmlProcessor;
-
+/**
+ * An instance of this class represents the single page of the Descartes
+ * Jira issue creation wizard
+ */
 public class DescartesJiraIssuePage1 extends WizardPage{
 	
 	private TrackerPseudoProxy trackerProxy;
 	
 	protected DescartesJiraIssuePage1(String pageName) { super(pageName); }
-	
+	/**
+	 * check if there is no empty fields and take the necessary actions
+	 * @param map : Map of field names / related controls
+	 */
 	private void checkPage(Map<String,Control> map) {
 		Set<String> names = map.keySet();
 		boolean ok = true;
@@ -41,7 +59,12 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 		setPageComplete(ok);
 		if(ok) setErrorMessage(null); // clear
 	}
-	
+	/**
+	 * check a field is not empty and display an error message if necessary
+	 * @param control : the control to check (a Text or Combo)
+	 * @param name : the name of the field related to the given control
+	 * @return : true if the field is not empty
+	 */
 	private boolean checkNoEmpty(Control control, String name) {
 	  String content = "0";
 	  if(control instanceof Text) content = ((Text)control).getText();
@@ -217,7 +240,10 @@ public class DescartesJiraIssuePage1 extends WizardPage{
 		setPageComplete(true);
 	}
 	
-	// Nested classes
+	// Nested class
+	/**
+	 *  this pseudo proxy manages null problems
+	 */
 	private class TrackerPseudoProxy {
 
 		DescartesJiraTracker tracker;

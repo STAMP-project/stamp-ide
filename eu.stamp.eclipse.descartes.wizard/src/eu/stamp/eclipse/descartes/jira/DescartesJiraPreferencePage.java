@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Atos
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * 	Ricardo José Tejada García (Atos) - main developer
+ * 	Jesús Gorroñogoitia (Atos) - architect
+ * Initially developed in the context of STAMP EU project https://www.stamp-project.eu
+ *******************************************************************************/
 package eu.stamp.eclipse.descartes.jira;
 
 import java.util.List;
@@ -17,23 +29,30 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-
+/**
+ * An instance of this class represents the Descartes Jira preferences page
+ * to be displayed in Window > Preferences
+ * @see eu.stamp.eclipse.descartes.jira.DescartesJiraAccountsManager
+ */
 public class DescartesJiraPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private Text userText,passwordText,passwordText2,urlText;
-	
+	/**
+	 *  true if the modify an existing account option is selected,
+	 *  false if te create a new account option is selected
+	 */
 	private boolean modify;
-	
+	/**
+	 *  A combo to select a registered account
+	 */
 	private Combo existingCombo;
 	
 	private Button modifyButton;
 	
+	// keys for saving and loaded data in the secure storage
 	public static final String PREFERENCES_KEY = "ExperimentPreferences";
-	
 	public static final String URL_KEY = "jiraUrl";
-	
 	public static final String USER_KEY = "user";
-	
 	public static final String PASSWORD_KEY = "password";
 
 	@Override
