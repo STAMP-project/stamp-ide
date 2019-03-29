@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/eu.stamp.eclipse.botsing.plugin.feature_1.0.0.201812041303.jar" id="eu.stamp.eclipse.botsing.plugin.feature" version="1.0.0.201812041303">
+   <feature url="features/eu.stamp.eclipse.botsing.plugin.feature_1.0.0.201903291446.jar" id="eu.stamp.eclipse.botsing.plugin.feature" version="1.0.0.201903291446">
       <category name="STAMP"/>
    </feature>
-   <feature url="features/eu.stamp.eclipse.descartes.wizard.feature_1.0.0.201812041303.jar" id="eu.stamp.eclipse.descartes.wizard.feature" version="1.0.0.201812041303">
+   <feature url="features/eu.stamp.eclipse.descartes.wizard.feature_1.0.0.201903291446.jar" id="eu.stamp.eclipse.descartes.wizard.feature" version="1.0.0.201903291446">
       <category name="STAMP"/>
    </feature>
-   <feature url="features/eu.stamp.eclipse.dspot.wizard.feature_1.0.0.201812041303.jar" id="eu.stamp.eclipse.dspot.wizard.feature" version="1.0.0.201812041303">
+   <feature url="features/eu.stamp.eclipse.dspot.wizard.feature_1.0.0.201903291446.jar" id="eu.stamp.eclipse.dspot.wizard.feature" version="1.0.0.201903291446">
       <category name="STAMP"/>
    </feature>
    <category-def name="STAMP" label="STAMP">
