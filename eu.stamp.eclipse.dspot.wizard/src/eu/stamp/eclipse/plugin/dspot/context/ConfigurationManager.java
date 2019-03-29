@@ -9,6 +9,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.swt.events.SegmentListener;
@@ -26,7 +27,6 @@ import eu.stamp.eclipse.dspot.wizard.validation.ValidationProvider;
 import eu.stamp.eclipse.plugin.dspot.controls.Controller;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 import eu.stamp.eclipse.plugin.dspot.properties.DSpotProperties;
-import eu.stamp.eclipse.plugin.dspot.wizard.DSpotPage1;
 /**
  * 
  */
@@ -103,12 +103,8 @@ public class ConfigurationManager {
 	    @Override
 	    public void widgetSelected(SelectionEvent e) {
 	    	String name = combo.getText();
-	    	if(name == null || name.isEmpty()) {
-	    		newConfButton.setSelection(true);
-	    		DSpotMapping.getInstance().setConfigurationName(name);
-	    		newConfButton.notifyListeners(SWT.Selection,new Event());
-	    		return;
-	    	}
+	    	if(name == null) name  = ""; // avoid null problems
+	    	
 	    	DSpotMapping.getInstance().setConfigurationName(name);
 	    	ILaunchConfiguration conf = null;
 	    	for(ILaunchConfiguration confi : configurations)
@@ -117,6 +113,16 @@ public class ConfigurationManager {
 	    			break;
 	    		}
 	    	if(conf != null) loadConf(conf);
+	    	WizardPage wPage = (WizardPage)page;
+	    	if(combo.isEnabled()) {
+	    	if(combo.getText().isEmpty()) {
+	    		wPage.setErrorMessage("Please, select a configuration");
+	    	    wPage.setPageComplete(false);
+	    	} else {
+	    		wPage.setErrorMessage(null);
+	    		wPage.setPageComplete(true);
+	    	}
+	    	}
 	    }
 	    });
 	    
@@ -138,7 +144,7 @@ public class ConfigurationManager {
         		combo.setText(sr);
         		break;
         	}
-        	if(!combo.getText().isEmpty())
+        	if(combo.getText().isEmpty())
         		combo.notifyListeners(SWT.Selection,new Event());
         		}	
 	    	}
