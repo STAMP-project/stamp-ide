@@ -19,7 +19,7 @@ STAMP Eclipse plugins require the following software requirements:
 
 Note: Eclipse needs to be configured with a default JRE instalation pointed to a JDK (not to a JRE)
 
-### Installation precedure
+### Installation procedure
 1. In a command line interface (CMI), pull STAMP eclipse-ide repository to get the update site locally:
 `git clone https://github.com/STAMP-project/eclipse-ide.git`
 This will create a eclipse-ide folder into your local file system
