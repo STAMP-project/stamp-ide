@@ -228,8 +228,7 @@ public class BotsingWizardPage extends WizardPage
     
 	// Field for the classpath
 	ClassPathProperty classPathProperty = 
-			new ClassPathProperty("","-projectCP","Execution class Path : ",kit);
-
+			new ClassPathProperty("","-project_cp","Execution class Path : ",kit);
 	classPathProperty.createControl(composite);
 	if(propertiesLoaded) classPathProperty.setTooltip(
 			properties.getProperty("class_path"));

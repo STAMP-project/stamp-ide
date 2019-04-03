@@ -20,7 +20,7 @@ import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
 import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
-import eu.stamp.eclipse.botsing.invocation.InputManager;
+import eu.stamp.eclipse.botsing.call.InputManager;
 import eu.stamp.eclipse.botsing.launch.BotsingLaunchInfo;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.listeners.IBotsingPropertyListener;

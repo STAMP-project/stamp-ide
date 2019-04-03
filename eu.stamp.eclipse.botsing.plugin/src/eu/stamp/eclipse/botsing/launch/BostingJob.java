@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.dialog.BotsingExecutionErrorDialog;
-import eu.stamp.eclipse.botsing.invocation.InputManager;
+import eu.stamp.eclipse.botsing.call.InputManager;
 import eu.stamp.eclipse.botsing.properties.OutputTraceProperty;
 import eu.stamp.eclipse.botsing.wizard.BotsingWizard;
 
