@@ -34,6 +34,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
@@ -222,7 +223,13 @@ public class BotsingWizardPage extends WizardPage
 			LogReader reader = new LogReader();
 			reader.setFile(newData);
 			int level = reader.getFrameLevel();
-			if(level > 0) frameLevel.setMaximun(level);
+			if(level > 0) {
+				frameLevel.setMaximun(level);
+			if(Integer.parseInt(frameLevel.getData()) > level) {
+				frameLevel.getSpinner().setSelection(level);
+				frameLevel.getSpinner().notifyListeners(SWT.Selection,new Event());
+			}
+			}
 		}
 	});
     

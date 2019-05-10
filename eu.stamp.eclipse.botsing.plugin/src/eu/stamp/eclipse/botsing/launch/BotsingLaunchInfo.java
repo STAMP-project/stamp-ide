@@ -65,12 +65,13 @@ public class BotsingLaunchInfo {
 			String[] strings = property.getPropertyString();
 			for(String sr : strings) resultList.add(sr);
 		}
-		String[] result = new String[resultList.size()];
+		String[] result = new String[resultList.size() + 1];
 	    int i = 0;
 	    for(String sr : resultList) {
 	    	result[i] = sr;
 	    	i++;
 	    }
+	    result[resultList.size()] = "-Dno_runtime_dependency=false";
 		return result;
 	}
 	/**
