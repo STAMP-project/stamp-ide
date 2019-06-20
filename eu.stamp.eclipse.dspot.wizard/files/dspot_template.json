@@ -16,7 +16,7 @@
 "isFileParameter" : true,
 "type" : "combo",
 "key" : "src",
-"labelText" : "Path of the source : ",
+"labelText" : "Path of the source AA: ",
 "tooltip" : "path of the source folder, relative to the project folder",
 "direction" : "page1/sourceTestCombo",
 "project" : "TestSourceFolders",

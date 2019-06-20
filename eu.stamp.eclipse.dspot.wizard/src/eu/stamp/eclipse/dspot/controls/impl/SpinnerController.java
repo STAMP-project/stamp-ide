@@ -29,6 +29,7 @@ public class SpinnerController extends SimpleController {
 	
 	private final Point interval;
 	
+	
 	public SpinnerController(String key, String labelText, boolean checkButton,
 			int initialSelection,int step,Point interval,int place,String tooltip) {
 		super(key, labelText, checkButton,false,place,tooltip);
@@ -62,8 +63,28 @@ public class SpinnerController extends SimpleController {
 				else proxy.setTemporalData(spinner.getText());
     		}
     	});
+    	
+    	if(check) {
+    		checkButton.addSelectionListener(new SelectionAdapter() {
+    			@Override
+    			public void widgetSelected(SelectionEvent e) {
+    				boolean boo = checkButton.getSelection();
+    				spinner.setEnabled(boo);
+    				if(!boo) spinner.setSelection(0);
+    			}
+    		});
+    	     checkButton.setSelection(false);
+    	     spinner.setEnabled(false);
+    	}
+    	
     	String value = DSpotMapping.getInstance().getValue(key);
     	updateController(value);
+    	
+    	if(check && spinner.getSelection() != 0) {
+    		checkButton.setSelection(true);
+    		spinner.setEnabled(true);
+    	}
+    	
     }
 	@Override
 	public void loadProject() {

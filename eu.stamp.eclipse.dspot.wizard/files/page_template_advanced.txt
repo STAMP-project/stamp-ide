@@ -47,9 +47,21 @@ type=combo
 key=budgetizer
 labelText=Budgetizer : 
 tooltip= select a budgetizer (default NoBudgetizer)
-content=NoBudgetizer,SimpleBudgetizer
+content=NoBudgetizer,SimpleBudgetizer,TextualDistanceBudgetizer
 direction=AdvancedOptionsDialog/Budgetizer
 place=5
+PARAMETER
+
+PARAMETER
+type=spinner
+checkButton=true
+key=execute-test-parallel-with-number-processors
+labelText=Execute test parallel with number processors :
+tooltip= If enabled, DSpot will execute the tests in parallel. For JUnit5 tests it will use the number of given processors 
+initialSelection=0
+interval=0,64
+direction=AdvancedOptionsDialog/NumberProcessors
+place=6
 PARAMETER
 
 PARAMETER
@@ -58,7 +70,7 @@ key=clean
 labelText=Clean 
 tooltip= if enabled, DSpot will remove the out directory if exists, else it will append the results to the existing files 
 direction=AdvancedOptionsDialog/Clean
-place=6
+place=7
 PARAMETER
 
 PARAMETER
@@ -67,7 +79,7 @@ key=no-minimize
 labelText=No minimize 
 tooltip=Disable the minimization of amplified tests
 direction=AdvancedOptionsDialog/NoMinimize
-place=7
+place=8
 PARAMETER
 
 PARAMETER
@@ -78,7 +90,7 @@ tooltip= use the Descartes mutation engine (Pit Mutant Score Selector)
 direction=AdvancedOptionsDialog/Descartes
 activationDirection=AdvancedOptionsDialog/Gregor
 condition=Anti-true
-place=8
+place=9
 PARAMETER
 
 PARAMETER
@@ -89,7 +101,7 @@ tooltip= use the Gregor mutation engine (Pit Mutant Score Selector)
 direction=AdvancedOptionsDialog/Gregor
 activationDirection=AdvancedOptionsDialog/Descartes
 condition=Anti-true
-place=9
+place=10
 PARAMETER
 
 PARAMETER
@@ -98,7 +110,7 @@ key=targetOneTestClass
 labelText=Target One test Class
 tooltip= enable this option will make DSpot computing the mutation score of only one class (expert)
 direction=AdvancedOptionsDialog/OneTestClass
-place=10
+place=11
 PARAMETER
 
 PARAMETER
@@ -107,7 +119,7 @@ key=verbose
 labelText=Verbose 
 tooltip= enable to get more information
 direction=AdvancedOptionsDialog/Verbose
-place=11
+place=12
 PARAMETER
 
 PARAMETER
@@ -116,5 +128,14 @@ key=with-comment
 labelText=With comment  
 tooltip=details step of the amplification
 direction=AdvancedOptionsDialog/Comment
-place=12
+place=13
+PARAMETER
+
+PARAMETER
+type=check
+key=allow-path-in-assertions
+labelText=Allow path in assertions
+tooltip=If enabled, DSpot will execute the tests in parallel. For JUnit5 tests it will use the number of
+direction=AdvancedOptionsDialog/AllowPath
+place=14
 PARAMETER
