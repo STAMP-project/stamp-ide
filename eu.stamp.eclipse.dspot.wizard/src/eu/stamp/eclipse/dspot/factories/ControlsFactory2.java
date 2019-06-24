@@ -89,6 +89,8 @@ private String[] extensions;
 /**
  * 
  */
+private int decimals;
+
 public void createController() {
 			
 	if(direction == null || type == null || key == null) return;
@@ -99,7 +101,7 @@ public void createController() {
 			key,labelText,checkButton,(project != null),place,tooltip);
 	break;
 	case "spinner" : controller = new SpinnerController(
-		key,labelText,checkButton,initialSelection,step,interval,place,tooltip);
+		key,labelText,checkButton,initialSelection,step,interval,place,tooltip,decimals);
 	break;
 	case "combo" : controller = new ComboController(key,project,labelText,checkButton,
 		activationDirection,condition,place,tooltip,content);

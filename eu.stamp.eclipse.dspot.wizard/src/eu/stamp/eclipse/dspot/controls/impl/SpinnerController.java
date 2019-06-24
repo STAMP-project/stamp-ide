@@ -29,13 +29,16 @@ public class SpinnerController extends SimpleController {
 	
 	private final Point interval;
 	
+	private int decimals;
+	
 	
 	public SpinnerController(String key, String labelText, boolean checkButton,
-			int initialSelection,int step,Point interval,int place,String tooltip) {
+			int initialSelection,int step,Point interval,int place,String tooltip,int decimals) {
 		super(key, labelText, checkButton,false,place,tooltip);
 		this.initialSelection = initialSelection;
 		this.step = step;
 		this.interval = interval;
+		this.decimals = decimals;
 	}
 	/**
 	 * 
@@ -48,6 +51,9 @@ public class SpinnerController extends SimpleController {
     	spinner.setIncrement(step);
     	spinner.setMinimum(interval.x);
     	spinner.setMaximum(interval.y);
+    	if(decimals != 0) {
+    		spinner.setDigits(decimals);
+    	}
     	if(check)GridDataFactory.fillDefaults().indent(DSpotProperties.INDENT)
     	.grab(true,false).applyTo(spinner);
     	else GridDataFactory.fillDefaults().indent(DSpotProperties.INDENT)
@@ -60,7 +66,7 @@ public class SpinnerController extends SimpleController {
     		@Override
     		public void widgetSelected(SelectionEvent e) {
 				if(proxy == null) listenerAction();
-				else proxy.setTemporalData(spinner.getText());
+				else proxy.setTemporalData(spinner.getText().replaceAll(",","."));
     		}
     	});
     	
@@ -120,12 +126,15 @@ public class SpinnerController extends SimpleController {
 			spinner.setSelection(initialSelection);
 		    return;
 		}
-		spinner.setSelection(Integer.parseInt(data));
+		String myData = data;
+		if(myData.contains(",")) myData = myData.substring(myData.indexOf(",")+1);
+		if(myData.contains(".")) myData = myData.substring(myData.indexOf(".")+1);
+		spinner.setSelection(Integer.parseInt(myData));
 	}
 	
 	private void listenerAction() {
 		DSpotMapping map = DSpotMapping.getInstance();
-		map.setValue(key,spinner.getText());
+		map.setValue(key,spinner.getText().replaceAll(",","."));
 	}
 	@Override
 	public int checkActivation(String condition) {

@@ -84,7 +84,11 @@ public class ControllerFactory {
 	 * 
 	 */
     private String[] extensions;
-	
+    /**
+     * 
+     */
+	private int decimals;
+    
 	public void reset() {
 		type = null; 
 		project = null; 
@@ -103,6 +107,7 @@ public class ControllerFactory {
 		content = null;
 		fileDialog = true;
 		extensions = null;
+		decimals = 0;
 	}
     public void setFile(boolean isFileParameter) { 
     	this.isFileParameter = isFileParameter;
@@ -148,6 +153,8 @@ public class ControllerFactory {
 		case "explorerType" : if(value.contains("ile")) fileDialog = true;
 		else fileDialog = false;
 		break;
+		case "decimals" : decimals = Integer.parseInt(value);
+		break;
 		case "interval" : if(value.contains(",")) {
 			String[] point = value.split(",");
 			interval = new Point(Integer.parseInt(point[0]),
@@ -168,7 +175,7 @@ public class ControllerFactory {
 				key,labelText,checkButton,(project != null),place,tooltip);
 		break;
 		case "spinner" : controller = new SpinnerController(
-				key,labelText,checkButton,initialSelection,step,interval,place,tooltip);
+				key,labelText,checkButton,initialSelection,step,interval,place,tooltip,decimals);
         break;
 		case "combo" : controller = new ComboController(key,project,labelText,checkButton,
 				activationDirection,condition,place,tooltip,content);
