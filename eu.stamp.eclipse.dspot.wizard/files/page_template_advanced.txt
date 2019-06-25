@@ -77,6 +77,16 @@ place=7
 FILE PARAMETER
 
 PARAMETER
+type=text
+checkButton=true
+key=maven-home
+labelText=Maven Home :
+tooltip=path to the maven home
+direction=AdvancedOptionsDialog/MavenHome
+place=8
+PARAMETER
+
+PARAMETER
 type=check
 key=clean
 labelText=Clean 

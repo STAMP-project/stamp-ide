@@ -2,9 +2,13 @@
 package eu.stamp.eclipse.dspot.controls.impl;
 
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SegmentEvent;
 import org.eclipse.swt.events.SegmentListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
 
 import eu.stamp.eclipse.dspot.wizard.validation.ValidationProvider;
@@ -48,10 +52,29 @@ public class TextController extends SimpleController implements IPageUserElement
     	text.addSegmentListener(new SegmentListener(){
 			@Override
 			public void getSegments(SegmentEvent event) {
-				if(listenerOn)
+				if(proxy == null)
 				DSpotMapping.getInstance().setValue(key,text.getText());
+				else proxy.setTemporalData(text.getText());
 			}
     	});
+    	if(check) {
+    		checkButton.addSelectionListener(new SelectionAdapter() {
+    			@Override
+    			public void widgetSelected(SelectionEvent e) {
+    				text.setEnabled(checkButton.getSelection());
+    			}
+    		});
+    		checkButton.setSelection(false);
+    		text.setEnabled(false);
+    	}
+    	if(check) {
+    	String myValue = DSpotMapping.getInstance().getValue(key);
+        if(myValue != null && !myValue.isEmpty()) {
+        	checkButton.setEnabled(true);
+        	text.setEnabled(true);
+        	text.setText(myValue);
+        }
+    	}
     }
 	@Override
 	public void setText(String selection) {
@@ -78,12 +101,19 @@ public class TextController extends SimpleController implements IPageUserElement
 		text.setEnabled(enabled);
 	}
 	@Override
-	public void notifyListener() { text.notifyAll(); }
+	public void notifyListener() { 
+		text.notifyListeners(SWT.Segments,new Event()); 
+		}
 	
 	@Override
 	public void updateController(String data) {
 		if(data == null || text == null || text.isDisposed()) return;
 		text.setText(data);
+		if(check) {
+            boolean boo = !data.isEmpty();
+            checkButton.setSelection(boo);
+            text.setEnabled(boo);
+		}
 	}
 	
 	@Override
