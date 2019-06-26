@@ -64,17 +64,15 @@ direction=AdvancedOptionsDialog/NumberProcessors
 place=6
 PARAMETER
 
-FILE PARAMETER
-type=spinner
-key=delta
-labelText=Delta :
-tooltip=specify the delta value for the assertions of floating-point numbers. If DSpot generates assertions for float, it uses Assert.assertEquals(expected, actual, delta). This property specify the delta value.(default: 0.1)
-initialSelection=1
-direction=AdvancedOptionsDialog/Delta
-interval=1,10
-decimals=1
-place=7
-FILE PARAMETER
+PARAMETER
+type=text
+checkButton=true
+key=working-directory
+labelText=Working Directory :
+tooltip=Enable this option to change working directory with the root of the project
+direction=AdvancedOptionsDialog/WorkingDirectory
+place=8
+PARAMETER
 
 PARAMETER
 type=text
@@ -83,7 +81,7 @@ key=maven-home
 labelText=Maven Home :
 tooltip=path to the maven home
 direction=AdvancedOptionsDialog/MavenHome
-place=8
+place=9
 PARAMETER
 
 PARAMETER
@@ -92,7 +90,7 @@ key=clean
 labelText=Clean 
 tooltip= if enabled, DSpot will remove the out directory if exists, else it will append the results to the existing files 
 direction=AdvancedOptionsDialog/Clean
-place=9
+place=10
 PARAMETER
 
 PARAMETER
@@ -101,7 +99,7 @@ key=no-minimize
 labelText=No minimize 
 tooltip=Disable the minimization of amplified tests
 direction=AdvancedOptionsDialog/NoMinimize
-place=10
+place=11
 PARAMETER
 
 PARAMETER
@@ -112,7 +110,7 @@ tooltip= use the Descartes mutation engine (Pit Mutant Score Selector)
 direction=AdvancedOptionsDialog/Descartes
 activationDirection=AdvancedOptionsDialog/Gregor
 condition=Anti-true
-place=11
+place=12
 PARAMETER
 
 PARAMETER
@@ -123,7 +121,7 @@ tooltip= use the Gregor mutation engine (Pit Mutant Score Selector)
 direction=AdvancedOptionsDialog/Gregor
 activationDirection=AdvancedOptionsDialog/Descartes
 condition=Anti-true
-place=12
+place=13
 PARAMETER
 
 PARAMETER
@@ -132,7 +130,7 @@ key=targetOneTestClass
 labelText=Target One test Class
 tooltip= enable this option will make DSpot computing the mutation score of only one class (expert)
 direction=AdvancedOptionsDialog/OneTestClass
-place=13
+place=14
 PARAMETER
 
 PARAMETER
@@ -141,7 +139,7 @@ key=verbose
 labelText=Verbose 
 tooltip= enable to get more information
 direction=AdvancedOptionsDialog/Verbose
-place=14
+place=15
 PARAMETER
 
 PARAMETER
@@ -150,7 +148,7 @@ key=with-comment
 labelText=With comment  
 tooltip=details step of the amplification
 direction=AdvancedOptionsDialog/Comment
-place=15
+place=16
 PARAMETER
 
 PARAMETER
@@ -159,7 +157,7 @@ key=allow-path-in-assertions
 labelText=Allow path in assertions
 tooltip=If enabled, DSpot will execute the tests in parallel. For JUnit5 tests it will use the number of
 direction=AdvancedOptionsDialog/AllowPath
-place=16
+place=17
 PARAMETER
 
 PARAMETER
@@ -168,7 +166,7 @@ key=generate-new-test-class
 labelText=Generate new test class
 tooltip=Enable the creation of a new test class
 direction=AdvancedOptionsDialog/NewTestClass
-place=17
+place=18
 PARAMETER
 
 PARAMETER
@@ -177,7 +175,7 @@ key=keep-original-test-methods
 labelText=Keep original test methods
 tooltip=If enabled, DSpot keeps original test methods of the amplified test class
 direction=AdvancedOptionsDialog/KeepOriginal
-place=18
+place=19
 PARAMETER
 
 PARAMETER
@@ -186,5 +184,5 @@ key=use-maven-to-exe-test
 labelText=Use maven to execute test
 tooltip=If enabled, DSpot will use maven to execute the tests
 direction=AdvancedOptionsDialog/UseMaven
-place=19
+place=20
 PARAMETER

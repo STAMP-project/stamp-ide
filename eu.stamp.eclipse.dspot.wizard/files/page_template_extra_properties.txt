@@ -1,0 +1,61 @@
+FILE PARAMETER
+type=spinner
+key=delta
+labelText=Delta :
+tooltip=specify the delta value for the assertions of floating-point numbers. If DSpot generates assertions for float, it uses Assert.assertEquals(expected, actual, delta). This property specify the delta value.(default: 0.1)
+initialSelection=1
+direction=OptionalProperties/Delta
+interval=1,10
+decimals=1
+place=1
+FILE PARAMETER
+
+FILE PARAMETER
+type=explorer
+key=targetModule
+explorerType=folder
+labelText=Module :
+tooltip=specify the module to be amplified. This value must be a relative path from the property project. If your project is multi-module, you must use this property because DSpot works at module level.
+direction=OptionalProperties/Module
+place=2
+FILE PARAMETER
+
+FILE PARAMETER
+type=text
+checkButton=true
+key=additionalClasspathElements
+labelText=Aditional class path elements :
+tooltip=specify additional classpath elements. (e.g. a jar file) This value should be a list of relative paths from project/targetModule. Elements of the list must be separated by a comma ','
+direction=OptionalProperties/ExtraClassPath
+place=3
+FILE PARAMETER
+
+FILE PARAMETER
+type=text
+checkButton=true
+key=systemProperties
+labelText=System properties : 
+tooltip=specify system properties. This value should be a list of couple property;value, separated by a comma ','. For example, systemProperties=admin=toto,passwd=tata. This define two system properties.
+direction=OptionalProperties/SystemProperties
+place=4
+FILE PARAMETER
+
+FILE PARAMETER
+type=text
+checkButton=true
+key=mavenPreGoals
+labelText=Maven pre-goals :
+tooltip=specify pre goals to run before executing test with maven.This property will used as follow: the elements, separated by a comma,must be valid maven goals and they will be placed just before the "test" goal, _e.g._maven.pre.goals=preGoal1,preGoal2 will give "mvn preGoal1 preGoal2 test"
+direction=OptionalProperties/MavenPreGoals
+place=5
+FILE PARAMETER
+
+FILE PARAMETER
+type=text
+checkButton=true
+key=jvmArgs
+labelText= Jvm arguments : 
+tooltip=specify JVM args to use when executing the test, PIT or other java process. This arguments should be a list, separated by a comma ',', e.g. jvmArgs=Xmx2048m,-Xms1024m',-Dis.admin.user=admin,-Dis.admin.passwd=$2pRSid#
+direction=OptionalProperties/JvmArguments
+place=6
+FILE PARAMETER

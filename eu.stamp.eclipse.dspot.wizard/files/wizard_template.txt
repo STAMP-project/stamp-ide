@@ -5,3 +5,4 @@
 
 page=page2/Second page
 dialog=page2/AdvancedOptionsDialog/Advanced Options/set advanced dspot options
+dialog=page2/OptionalProperties/Optional Properties/set optional dspot file properties
