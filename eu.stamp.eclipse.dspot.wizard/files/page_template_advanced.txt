@@ -43,13 +43,23 @@ place=4
 PARAMETER
 
 PARAMETER
+type=explorer
+explorerType=folder
+key=pathToSecondVersion
+labelText=Path to second version :
+tooltip=when using the ChangeDetectorSelector, you must specify this property. This property should have for value the path to the root of the second version of the project. It is recommended to give an absolute path
+direction=AdvancedOptionsDialog/pathSecondVersion
+place=5
+PARAMETER
+
+PARAMETER
 type=combo
 key=budgetizer
 labelText=Budgetizer : 
 tooltip= select a budgetizer (default NoBudgetizer)
 content=NoBudgetizer,SimpleBudgetizer,TextualDistanceBudgetizer
 direction=AdvancedOptionsDialog/Budgetizer
-place=5
+place=6
 PARAMETER
 
 PARAMETER
@@ -61,7 +71,7 @@ tooltip= If enabled, DSpot will execute the tests in parallel. For JUnit5 tests 
 initialSelection=0
 interval=0,64
 direction=AdvancedOptionsDialog/NumberProcessors
-place=6
+place=7
 PARAMETER
 
 PARAMETER
@@ -108,7 +118,7 @@ key=descartes
 labelText=Descartes
 tooltip= use the Descartes mutation engine (Pit Mutant Score Selector)
 direction=AdvancedOptionsDialog/Descartes
-activationDirection=AdvancedOptionsDialog/Gregor
+activationDirection=AdvancedOptionsDialog/Gregor,OptionalProperties/descartesVersion
 condition=Anti-true
 place=12
 PARAMETER
