@@ -88,6 +88,10 @@ public class ControllerFactory {
      * 
      */
 	private int decimals;
+	/**
+	 * 
+	 */
+	private String enable;
     
 	public void reset() {
 		type = null; 
@@ -155,6 +159,7 @@ public class ControllerFactory {
 		break;
 		case "decimals" : decimals = Integer.parseInt(value);
 		break;
+		case "enable" : enable = value;
 		case "interval" : if(value.contains(",")) {
 			String[] point = value.split(",");
 			interval = new Point(Integer.parseInt(point[0]),
@@ -190,6 +195,9 @@ public class ControllerFactory {
 			controller = new CheckController(key,labelText,place,tooltip,activationDirection,condition);
 		}
 		
+		if(enable != null && !enable.isEmpty())
+			controller.setEnableCondition(getCondition());
+		
 		if(direction.contains("ialog")) {
 			if(controller instanceof CheckController)
 				controller = new CheckProxy((CheckController)controller);
@@ -205,4 +213,14 @@ public class ControllerFactory {
 			DSpotMapping.getInstance().setController(controller,direction);
 		}
 		}
+	private EnableCondition getCondition() {
+		boolean equal = true;
+		String myEnableString = enable;
+		if(enable.contains("!")) {
+			equal = false;
+			myEnableString = enable.replaceAll("!","");
+		}
+        String[] keyValue = myEnableString.split("/");
+        return new EnableCondition(keyValue[0],keyValue[1],equal);
+	}
 }

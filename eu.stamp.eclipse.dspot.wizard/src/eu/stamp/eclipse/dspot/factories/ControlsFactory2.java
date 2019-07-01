@@ -90,6 +90,10 @@ private String[] extensions;
  * 
  */
 private int decimals;
+/*
+ * 
+ */
+private String enable;
 
 public void createController() {
 			

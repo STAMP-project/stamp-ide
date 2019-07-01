@@ -86,8 +86,7 @@ it will take more time.
 
 ### Select the test classes to amplify 
 
-Push the "Select tests" button in page two, a dialog will be opened, select the test classes to use (multiple selection is allowed), 
-the text is only read so you have to select the tests in the dialog.
+The second page contains a list with the test clases, select the test you want to use, if there is not test selected all will be used, under the list there is a button called "clean list" for deselecting all the elements.
 
 <center>![tests selection](images/tests.png)</center>  
   
@@ -140,7 +139,7 @@ select the folder pushing the "Select folder" button or write the path in the te
 At the left botton of page two there are two check buttons called clean and verbose, verbose shows more information in console, 
 if clean is enabled, DSpot will remove the out directory if exists, else it will append the results to the exist files.
 
-<center>![verbose and clean buttons](images/buttons.png)</center>
+<center>![check buttons](images/buttons.png)</center>
 
 ### MAVEN_HOME
 
