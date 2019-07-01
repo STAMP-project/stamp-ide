@@ -134,7 +134,7 @@ select the folder pushing the "Select folder" button or write the path in the te
 
 ### check options
 
-In the botton of the advanced options dialog there are several check buttons to select a set of enable/disable options like verbose, clean ... (see DSpot documentation)
+In the bottom of the advanced options dialog there are several check buttons to select a set of enable/disable options like verbose, clean ... (see DSpot documentation)
 
 <center>![check buttons](images/buttons.png)</center>
 
@@ -149,7 +149,7 @@ in the advanced options dialog, if you want to do this, select the check button 
 
 The dialog Extra properties allows to configure a set of optional properties (they will be written in the DSpot properties file), (see DSpot documentation)
 
-<center>![optional properties dialog](optionalDialog.png)</center>
+<center>![optional properties dialog](images/optionalDialog.png)</center>
 
 
 
