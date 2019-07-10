@@ -10,6 +10,7 @@ import eu.stamp.eclipse.dspot.controls.impl.ListController;
 import eu.stamp.eclipse.dspot.controls.impl.SimpleControllerProxy;
 import eu.stamp.eclipse.dspot.controls.impl.SpinnerController;
 import eu.stamp.eclipse.dspot.controls.impl.TextController;
+import eu.stamp.eclipse.dspot.controls.impl.TreeController;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 import eu.stamp.eclipse.plugin.dspot.properties.DSpotProperties;
 /**
@@ -189,6 +190,9 @@ public class ControllerFactory {
 	     		key,project,labelText,checkButton,place,tooltip,content,fileDialog,extensions);
 		break;
 		case "list" : controller = new ListController(
+				key,project,labelText,checkButton,place,tooltip,content);
+		break;
+		case "tree" : controller = new TreeController(
 				key,project,labelText,checkButton,place,tooltip,content);
 		break;
 		case "check" :  key = key + DSpotProperties.CHECK_EXTRA_KEY;

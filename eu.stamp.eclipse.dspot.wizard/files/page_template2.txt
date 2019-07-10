@@ -9,7 +9,7 @@ interval=1,100
 PARAMETER
 
 PARAMETER
-type=list
+type=tree
 key=test
 labelText=Execution classes : 
 tooltip= the test to execute
@@ -31,7 +31,6 @@ PARAMETER
 PARAMETER
 type=combo
 key=test-criterion
-direction=page2/criterionCombo
 labelText=Test criterion : 
 tooltip= criterion to be maximized with amplification
 direction=page2/criterionCombo

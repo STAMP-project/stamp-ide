@@ -20,7 +20,7 @@ public abstract class MultiController extends Controller{
 	/**
 	 * 
 	 */
-	protected final String[] content;
+	protected String[] content;
 	
 	protected MultiControllerProxy proxy;
 	
