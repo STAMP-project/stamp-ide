@@ -50,6 +50,7 @@ public abstract class MultiController extends Controller{
 			            if(proxy != null) {
 			            	proxy.setTemporalData(attribute);
 			            	proxy.save();
+			            	//proxy.updateController(attribute);
 			            }
 			            DSpotMapping.getInstance().setValue(key,attribute);
 		            	return;
@@ -62,9 +63,9 @@ public abstract class MultiController extends Controller{
 		            if(proxy != null) {
 		            	proxy.setTemporalData(attribute);
 		            	proxy.save();
+		            	//proxy.updateController(attribute);
 		            }
 		            DSpotMapping.getInstance().setValue(key,attribute);
-
 				}
 			});
 		} catch (CoreException e) {

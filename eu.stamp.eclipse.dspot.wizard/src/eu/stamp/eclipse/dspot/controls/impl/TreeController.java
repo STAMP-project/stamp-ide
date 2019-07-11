@@ -1,6 +1,5 @@
 package eu.stamp.eclipse.dspot.controls.impl;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,6 +53,8 @@ public class TreeController extends MultiController {
 	    		DSpotMapping.getInstance().setValue(key,builder.toString());
 	    	}
 	    });
+        String myData = DSpotMapping.getInstance().getValue(key);
+        if(myData != null && !myData.isEmpty()) updateController(myData);
 		tree.pack();
 	}
 	@Override
@@ -106,17 +107,13 @@ public class TreeController extends MultiController {
 	@Override
 	public void updateController(String data) {
 		if(tree == null || tree.isDisposed() || data == null) return;
-		List<TreeItem> resultList = new ArrayList<TreeItem>(allItems.size());
-		for(TreeItem item : allItems)if(data.contains(item.getText()))resultList.add(item);
-		TreeItem[] result = new TreeItem[resultList.size()];
-		for(int i = 0; i < resultList.size(); i++) result[i] = resultList.get(i);
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				tree.setSelection(result);
-				tree.notifyListeners(SWT.Selection,new Event());
-			}	
-		});
+		tree.deselectAll();
+		for(TreeItem item : allItems) {
+			if(data.contains(item.getData().toString())) {
+				tree.select(item);
+				item.setChecked(true);
+			} else item.setChecked(false);
+		}
 	}
 
 	@Override
