@@ -51,12 +51,23 @@ place=5
 FILE PARAMETER
 
 FILE PARAMETER
+type=list
+key=excludedTestCases
+labelText=Excluded test cases :
+direction=OptionalPropertiesDialog/ExcludedCases
+project=TestMethods
+tooltip=specify the list of test cases to be excluded. Each is the name of a test case
+separator=,
+place=6
+FILE PARAMETER
+
+FILE PARAMETER
 type=text
 key=pitVersion
 labelText=Pit version :
 tooltip=specify the version of PIT to use.(default: 1.4.0)
 direction=OptionalPropertiesDialog/pitVersion
-place=6
+place=7
 FILE PARAMETER
 
 FILE PARAMETER
@@ -65,7 +76,7 @@ key=descartesVersion
 labelText=Descartes version :
 tooltip=specify the version of pit-descartes to use.(default: 1.2.4)
 direction=OptionalPropertiesDialog/descartesVersion
-place=7
+place=8
 FILE PARAMETER
 
 FILE PARAMETER
@@ -74,7 +85,7 @@ key=descartesMutators
 labelText=Descartes mutators :
 tooltip=specify the list of descartes mutators to be used separated by comma
 direction=OptionalPropertiesDialog/DescartesMutators
-place=8
+place=9
 FILE PARAMETER
 
 FILE PARAMETER
@@ -83,7 +94,7 @@ key=pitFilterClassesToKeep
 labelText=Pit filter classes to keep
 tooltip=specify the filter of classes to keep used by PIT. If you use PitMutantScoreSelector, we recommend you to set this property to your top-most package. This value will allow PIT to mutant all your code. However, if you want to restrict the scope of the mutation, you can specify a custom regex. If you do not specify any value, DSpot will compute a filter of classes to keep on the fly, trying to match the most of your classes, i.e. your top-most package
 direction=OptionalPropertiesDialog/PitClassesToKeep
-place=9
+place=10
 FILE PARAMETER
 
 FILE PARAMETER
@@ -93,7 +104,7 @@ key=additionalClasspathElements
 labelText=Aditional class path elements :
 tooltip=specify additional classpath elements. (e.g. a jar file) This value should be a list of relative paths from project/targetModule. Elements of the list must be separated by a comma ','
 direction=OptionalPropertiesDialog/ExtraClassPath
-place=10
+place=11
 FILE PARAMETER
 
 FILE PARAMETER
@@ -103,7 +114,7 @@ key=systemProperties
 labelText=System properties : 
 tooltip=specify system properties. This value should be a list of couple property;value, separated by a comma ','. For example, systemProperties=admin=toto,passwd=tata. This define two system properties.
 direction=OptionalPropertiesDialog/SystemProperties
-place=11
+place=12
 FILE PARAMETER
 
 FILE PARAMETER
@@ -113,7 +124,7 @@ key=mavenPreGoals
 labelText=Maven pre-goals :
 tooltip=specify pre goals to run before executing test with maven.This property will used as follow: the elements, separated by a comma,must be valid maven goals and they will be placed just before the "test" goal, _e.g._maven.pre.goals=preGoal1,preGoal2 will give "mvn preGoal1 preGoal2 test"
 direction=OptionalPropertiesDialog/MavenPreGoals
-place=12
+place=13
 FILE PARAMETER
 
 FILE PARAMETER
@@ -123,5 +134,5 @@ key=jvmArgs
 labelText= Jvm arguments : 
 tooltip=specify JVM args to use when executing the test, PIT or other java process. This arguments should be a list, separated by a comma ',', e.g. jvmArgs=Xmx2048m,-Xms1024m',-Dis.admin.user=admin,-Dis.admin.passwd=$2pRSid#
 direction=OptionalPropertiesDialog/JvmArguments
-place=13
+place=14
 FILE PARAMETER

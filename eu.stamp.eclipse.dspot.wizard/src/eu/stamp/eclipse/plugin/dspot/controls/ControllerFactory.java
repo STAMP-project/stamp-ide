@@ -93,6 +93,10 @@ public class ControllerFactory {
 	 * 
 	 */
 	private String enable;
+	/**
+	 * 
+	 */
+	private String separator;
     
 	public void reset() {
 		type = null; 
@@ -113,6 +117,7 @@ public class ControllerFactory {
 		fileDialog = true;
 		extensions = null;
 		decimals = 0;
+		separator = null;
 	}
     public void setFile(boolean isFileParameter) { 
     	this.isFileParameter = isFileParameter;
@@ -160,6 +165,8 @@ public class ControllerFactory {
 		break;
 		case "decimals" : decimals = Integer.parseInt(value);
 		break;
+		case "separator" : separator = value;
+		break;
 		case "enable" : enable = value;
 		case "interval" : if(value.contains(",")) {
 			String[] point = value.split(",");
@@ -176,6 +183,8 @@ public class ControllerFactory {
 		if(direction == null || type == null || key == null) return;
 		Controller controller = null;
 		
+		if(separator == null) separator = DSpotProperties.getSeparator();
+		
 		switch(type) {
 		case "text" : controller = new TextController(
 				key,labelText,checkButton,(project != null),place,tooltip);
@@ -184,16 +193,16 @@ public class ControllerFactory {
 				key,labelText,checkButton,initialSelection,step,interval,place,tooltip,decimals);
         break;
 		case "combo" : controller = new ComboController(key,project,labelText,checkButton,
-				activationDirection,condition,place,tooltip,content);
+				activationDirection,condition,place,tooltip,content,separator);
 		break;
 		case "explorer" : controller = new ExplorerController(
-	     		key,project,labelText,checkButton,place,tooltip,content,fileDialog,extensions);
+	     		key,project,labelText,checkButton,place,tooltip,content,fileDialog,extensions,separator);
 		break;
 		case "list" : controller = new ListController(
-				key,project,labelText,checkButton,place,tooltip,content);
+				key,project,labelText,checkButton,place,tooltip,content,separator);
 		break;
 		case "tree" : controller = new TreeController(
-				key,project,labelText,checkButton,place,tooltip,content);
+				key,project,labelText,checkButton,place,tooltip,content,separator);
 		break;
 		case "check" :  key = key + DSpotProperties.CHECK_EXTRA_KEY;
 			controller = new CheckController(key,labelText,place,tooltip,activationDirection,condition);

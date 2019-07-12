@@ -21,8 +21,8 @@ public class ComboController extends MultiController {
 	private Combo combo;
 	
 	public ComboController(String key, String project, String labelText, boolean checkButton,
-			String activationDirection,String condition,int place,String tooltip,String[] content) {
-		super(key, project, labelText, checkButton,place,tooltip,content);
+			String activationDirection,String condition,int place,String tooltip,String[] content,String separator) {
+		super(key, project, labelText, checkButton,place,tooltip,content,separator);
 		this.activationDirection = activationDirection;
 		this.condition = condition;
 	}

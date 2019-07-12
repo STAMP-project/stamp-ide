@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import eu.stamp.eclipse.plugin.dspot.controls.MultiController;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
-import eu.stamp.eclipse.plugin.dspot.properties.DSpotProperties;
 
 public class TreeController extends MultiController {
 	
@@ -28,8 +27,8 @@ public class TreeController extends MultiController {
 	private List<TreeItem> allItems;
 
 	public TreeController(String key, String project, String labelText, boolean checkButton, int place, String tooltip,
-			String[] content) {
-		super(key, project, labelText, checkButton, place, tooltip, content);
+			String[] content,String separator) {
+		super(key, project, labelText, checkButton, place, tooltip, content,separator);
 		if(content == null && project != null && !project.isEmpty()) super.loadProject();
 	}
 	
@@ -47,7 +46,7 @@ public class TreeController extends MultiController {
 	    		StringBuilder builder = new StringBuilder();
 	    		for(int i = 0; i < items.length; i++) {
 	    			selection[i] = items[i].getData().toString();
-	    			if(i > 0) builder.append(DSpotProperties.getSeparator());
+	    			if(i > 0) builder.append(separator);
 	    			builder.append(selection[i]);
 	    		}
 	    		DSpotMapping.getInstance().setValue(key,builder.toString());

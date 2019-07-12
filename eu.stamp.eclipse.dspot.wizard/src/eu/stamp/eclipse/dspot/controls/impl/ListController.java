@@ -24,8 +24,8 @@ public class ListController extends MultiController {
 	
 	private String[] selection;
 	
-	public ListController(String key, String project, String labelText, boolean checkButton,int place,String tooltip,String[] content) {
-		super(key, project, labelText, checkButton,place,tooltip,content);
+	public ListController(String key, String project, String labelText, boolean checkButton,int place,String tooltip,String[] content,String separator) {
+		super(key, project, labelText, checkButton,place,tooltip,content,separator);
 	}
     @Override
     public void createControl(Composite parent) {
@@ -66,8 +66,8 @@ public class ListController extends MultiController {
     	}
     	String value = DSpotMapping.getInstance().getValue(key);
     	if(value == null) selection = new String[] {""};
-    	else if(value.contains(DSpotProperties.getSeparator()))
-    		selection = value.split(DSpotProperties.getSeparator());
+    	else if(value.contains(separator))
+    		selection = value.split(separator);
     	else selection = new String[] { value };
         updateController(null);
         if(firstTime) {
@@ -98,7 +98,7 @@ public class ListController extends MultiController {
 		}
 		String result = processEntry(selection[0]);
         for(int i = 1; i < selection.length; i++)
-        	result += DSpotProperties.getSeparator() + processEntry(selection[i]);
+        	result += separator + processEntry(selection[i]);
         DSpotMapping.getInstance().setValue(key,result);
 		if(list == null) return;
 		if(list.isDisposed()) return;
@@ -135,7 +135,7 @@ public class ListController extends MultiController {
 			selection = sel;
 			result = processEntry(sel[0]);
 		for(int i = 1; i < sel.length; i++)
-			result += DSpotProperties.getSeparator() + processEntry(sel[i]);
+			result += separator + processEntry(sel[i]);
 		}
 		if(proxy == null) DSpotMapping.getInstance().setValue(key,result);
 		else proxy.setTemporalData(result);

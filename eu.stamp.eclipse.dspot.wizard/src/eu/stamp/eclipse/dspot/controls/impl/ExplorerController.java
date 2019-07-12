@@ -37,8 +37,8 @@ public class ExplorerController extends MultiController {
 	private String[] targets;
 	
 	public ExplorerController(String key, String project, String labelText, boolean checkButton,
-			int place,String tooltip,String[] content,boolean file,String[] filterExtensions) {
-		super(key, project, labelText, checkButton,place,tooltip,content);
+			int place,String tooltip,String[] content,boolean file,String[] filterExtensions,String separator) {
+		super(key, project, labelText, checkButton,place,tooltip,content,separator);
 		this.filterExtensions = filterExtensions;
 		this.file = file;
 	}
