@@ -144,7 +144,7 @@ public class ConfigurationManager {
         		combo.setText(sr);
         		break;
         	}
-        	if(combo.getText().isEmpty())
+        	if(!combo.getText().isEmpty())
         		combo.notifyListeners(SWT.Selection,new Event());
         		}	
 	    	}
