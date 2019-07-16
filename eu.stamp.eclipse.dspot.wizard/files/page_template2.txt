@@ -39,15 +39,3 @@ activationDirection=AdvancedOptionsDialog/pathPit,AdvancedOptionsDialog/Descarte
 condition=PitMutantScoreSelector,PitMutantScoreSelector,PitMutantScoreSelector,ChangeDetectorSelector
 place=9
 PARAMETER
-
-PARAMETER
-type=spinner
-key=max-test-amplified
-labelText=Max tests amplified : 
-tooltip= specify the maximun number of amplified tests that dspot keeps (before generationg assertion)
-direction=page2/maxTestsSpinner
-initialSelection=200
-step=10
-interval=10,1000
-place=10
-PARAMETER

@@ -1,0 +1,81 @@
+PARAMETER
+type=spinner
+key=max-test-amplified
+labelText=Max tests amplified : 
+tooltip= specify the maximun number of amplified tests that dspot keeps (before generationg assertion)
+direction=page3/maxTestsSpinner
+initialSelection=200
+step=10
+interval=10,1000
+place=1
+PARAMETER
+
+PARAMETER
+type=spinner
+key=timeout
+labelText=Time out (ms) : 
+tooltip= the time out value of the degenerated tests in milliseconds
+direction=page3/timeSpinner
+initialSelection=10000
+interval=100,100000
+step=100
+place=2
+PARAMETER
+
+PARAMETER
+type=spinner
+key=randomSeed
+labelText=Random seed : 
+tooltip= a seed value use for all randomized operation
+initialSelection=23
+interval=10,50
+direction=page3/seedSpinner
+place=3
+PARAMETER
+
+PARAMETER
+type=combo
+key=budgetizer
+labelText=Budgetizer : 
+tooltip= select a budgetizer (default NoBudgetizer)
+content=RandomBudgetizer,SimpleBudgetizer,TextualDistanceBudgetizer
+direction=page3/Budgetizer
+place=4
+PARAMETER
+
+PARAMETER
+type=list
+key=cases
+project=TestMethods
+labelText=Test cases : 
+tooltip= specify the test cases to amplify
+direction=page3/casesList
+place=5
+PARAMETER
+
+PARAMETER
+type=check
+key=clean
+labelText=Clean 
+tooltip= if enabled, DSpot will remove the out directory if exists, else it will append the results to the existing files 
+direction=page3/Clean
+place=6
+PARAMETER
+
+PARAMETER
+type=check
+key=verbose
+labelText=Verbose 
+tooltip= enable to get more information
+direction=page3/Verbose
+place=7
+PARAMETER
+
+PARAMETER
+type=check
+key=with-comment
+labelText=With comment  
+tooltip=details step of the amplification
+direction=page3/Comment
+place=8
+PARAMETER

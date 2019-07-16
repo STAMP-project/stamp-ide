@@ -1,0 +1,32 @@
+FILE PARAMETER
+type=spinner
+key=delta
+labelText=Delta :
+tooltip=specify the delta value for the assertions of floating-point numbers. If DSpot generates assertions for float, it uses Assert.assertEquals(expected, actual, delta). This property specify the delta value.(default: 0.1)
+initialSelection=1
+direction=page4/Delta
+interval=1,10
+decimals=1
+place=1
+FILE PARAMETER
+
+FILE PARAMETER
+type=tree
+key=excludedClasses
+labelText=Excluded classes : 
+tooltip=specify the full qualified name of excluded test classes. Each qualified name must be separated by a comma ','. These classes won't be amplified, nor executed during the mutation analysis, if the PitMutantScoreSelector is used.This property can be valued by a regex.
+direction=page4/Excluded
+project=TestFullNames
+place=2
+FILE PARAMETER
+
+FILE PARAMETER
+type=list
+key=excludedTestCases
+labelText=Excluded test cases :
+direction=page4/ExcludedCases
+project=TestMethods
+tooltip=specify the list of test cases to be excluded. Each is the name of a test case
+separator=,
+place=3
+FILE PARAMETER

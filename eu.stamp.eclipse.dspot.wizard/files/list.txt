@@ -1,1 +1,1 @@
-wizard_template.txt/page_template1.txt/page_template2.txt/page_template_advanced.txt/page_template_extra_properties.txt
+wizard_template.txt/page_template1.txt/page_template2.txt/page_template3.txt/page_template4.txt/page_template_advanced.txt/page_template_extra_properties.txt

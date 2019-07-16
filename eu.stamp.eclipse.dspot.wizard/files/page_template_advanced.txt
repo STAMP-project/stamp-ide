@@ -1,38 +1,5 @@
 
 PARAMETER
-type=spinner
-key=timeout
-labelText=Time out (ms) : 
-tooltip= the time out value of the degenerated tests in milliseconds
-direction=AdvancedOptionsDialog/timeSpinner
-initialSelection=10000
-interval=100,100000
-step=100
-place=1
-PARAMETER
-
-PARAMETER
-type=spinner
-key=randomSeed
-labelText=Random seed : 
-tooltip= a seed value use for all randomized operation
-initialSelection=23
-interval=10,50
-direction=AdvancedOptionsDialog/seedSpinner
-place=2
-PARAMETER
-
-PARAMETER
-type=list
-key=cases
-project=TestMethods
-labelText=Test cases : 
-tooltip= specify the test cases to amplify
-direction=AdvancedOptionsDialog/casesList
-place=3
-PARAMETER
-
-PARAMETER
 type=explorer
 key=path-pit-result
 explorerType=file
@@ -53,16 +20,6 @@ place=5
 PARAMETER
 
 PARAMETER
-type=combo
-key=budgetizer
-labelText=Budgetizer : 
-tooltip= select a budgetizer (default NoBudgetizer)
-content=RandomBudgetizer,SimpleBudgetizer,TextualDistanceBudgetizer
-direction=AdvancedOptionsDialog/Budgetizer
-place=6
-PARAMETER
-
-PARAMETER
 type=spinner
 checkButton=true
 key=execute-test-parallel-with-number-processors
@@ -71,7 +28,7 @@ tooltip= If enabled, DSpot will execute the tests in parallel. For JUnit5 tests 
 initialSelection=0
 interval=0,64
 direction=AdvancedOptionsDialog/NumberProcessors
-place=7
+place=6
 PARAMETER
 
 PARAMETER
@@ -81,7 +38,7 @@ key=working-directory
 labelText=Working Directory :
 tooltip=Enable this option to change working directory with the root of the project
 direction=AdvancedOptionsDialog/WorkingDirectory
-place=8
+place=7
 PARAMETER
 
 PARAMETER
@@ -91,7 +48,7 @@ key=maven-home
 labelText=Maven Home :
 tooltip=path to the maven home
 direction=AdvancedOptionsDialog/MavenHome
-place=9
+place=8
 PARAMETER
 
 PARAMETER
@@ -101,7 +58,7 @@ key=full-classpath
 labelText=Full classpath :
 tooltip=specify the classpath of the project. If this option is used, DSpot won't use an AutomaticBuilder (e.g. Maven) to clean, compile and get the classpath of the project. Please ensure that your project is in a good shape, i.e. clean and correctly compiled, sources and test sources.
 direction=AdvancedOptionsDialog/FullClasspath
-place=10
+place=9
 PARAMETER
 
 PARAMETER
@@ -111,7 +68,7 @@ key=systemProperties
 labelText=System properties :
 tooltip=specify system properties. This value should be a list of couple property;value, separated by a comma ','. For example, systemProperties=admin=toto,passwd=tata. This define two system properties.
 direction=AdvancedOptionsDialog/SystemProperties
-place=11
+place=10
 PARAMETER
 
 PARAMETER
@@ -121,16 +78,7 @@ key=path-to-test-list-csv
 labelText=Path to test list csv
 tooltip=Enable the selection of the test to be amplified from a csv file. This parameter is a path that must point to a csv file that list test classes and their test methods in the following format: test-class-name;test-method-1;test-method-2;test-method-3;... If this parameter is used, DSpot will ignore the value used in the parameter test and cases It is recommended to use an absolute path Such files can be computed by the dedicated module dspot-diff-test-selection.
 direction=AdvancedOptionsDialog/PathToTestList
-place=12
-PARAMETER
-
-PARAMETER
-type=check
-key=clean
-labelText=Clean 
-tooltip= if enabled, DSpot will remove the out directory if exists, else it will append the results to the existing files 
-direction=AdvancedOptionsDialog/Clean
-place=13
+place=11
 PARAMETER
 
 PARAMETER
@@ -139,7 +87,7 @@ key=no-minimize
 labelText=No minimize 
 tooltip=Disable the minimization of amplified tests
 direction=AdvancedOptionsDialog/NoMinimize
-place=14
+place=13
 PARAMETER
 
 PARAMETER
@@ -150,7 +98,7 @@ tooltip= use the Descartes mutation engine (Pit Mutant Score Selector)
 direction=AdvancedOptionsDialog/Descartes
 activationDirection=AdvancedOptionsDialog/Gregor,OptionalProperties/descartesVersion
 condition=Anti-true
-place=15
+place=14
 PARAMETER
 
 PARAMETER
@@ -161,7 +109,7 @@ tooltip= use the Gregor mutation engine (Pit Mutant Score Selector)
 direction=AdvancedOptionsDialog/Gregor
 activationDirection=AdvancedOptionsDialog/Descartes
 condition=Anti-true
-place=16
+place=15
 PARAMETER
 
 PARAMETER
@@ -170,25 +118,7 @@ key=targetOneTestClass
 labelText=Target One test Class
 tooltip= enable this option will make DSpot computing the mutation score of only one class (expert)
 direction=AdvancedOptionsDialog/OneTestClass
-place=17
-PARAMETER
-
-PARAMETER
-type=check
-key=verbose
-labelText=Verbose 
-tooltip= enable to get more information
-direction=AdvancedOptionsDialog/Verbose
-place=18
-PARAMETER
-
-PARAMETER
-type=check
-key=with-comment
-labelText=With comment  
-tooltip=details step of the amplification
-direction=AdvancedOptionsDialog/Comment
-place=19
+place=16
 PARAMETER
 
 PARAMETER
@@ -197,7 +127,7 @@ key=allow-path-in-assertions
 labelText=Allow path in assertions
 tooltip=If enabled, DSpot will execute the tests in parallel. For JUnit5 tests it will use the number of
 direction=AdvancedOptionsDialog/AllowPath
-place=20
+place=19
 PARAMETER
 
 PARAMETER
