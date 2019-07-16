@@ -10,7 +10,6 @@ import org.eclipse.swt.widgets.Display;
 import eu.stamp.eclipse.plugin.dspot.context.ConfigurationManager;
 import eu.stamp.eclipse.plugin.dspot.context.DSpotContext;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
-import eu.stamp.eclipse.plugin.dspot.properties.DSpotProperties;
 
 public abstract class MultiController extends Controller{
     /**
@@ -20,14 +19,22 @@ public abstract class MultiController extends Controller{
 	/**
 	 * 
 	 */
-	protected final String[] content;
-	
+	protected String[] content;
+	/**
+	 * 
+	 */
+	protected String separator;
+	/**
+	 * 
+	 */
 	protected MultiControllerProxy proxy;
 	
-	public MultiController(String key, String project, String labelText, boolean checkButton,int place,String tooltip,String[] content) {
+	public MultiController(String key, String project, String labelText, boolean checkButton,
+			int place,String tooltip,String[] content,String separator) {
 		super(key, labelText, checkButton,place,tooltip);
 		this.project = project;
 		this.content = content;
+		this.separator = separator;
 	}
 	
 	public void setProxy(MultiControllerProxy proxy) { this.proxy = proxy; }
@@ -44,12 +51,13 @@ public abstract class MultiController extends Controller{
 		            	return;
 		            }
 		            if(!attribute.contains(ConfigurationManager.LIST_SEPARATOR)
-		            		&& !attribute.contains(DSpotProperties.getSeparator())) {
+		            		&& !attribute.contains(separator)) {
 		            	setSelection(new String[]{attribute});
 			            //setSelection(content);
 			            if(proxy != null) {
 			            	proxy.setTemporalData(attribute);
 			            	proxy.save();
+			            	//proxy.updateController(attribute);
 			            }
 			            DSpotMapping.getInstance().setValue(key,attribute);
 		            	return;
@@ -57,14 +65,14 @@ public abstract class MultiController extends Controller{
 		            String[] mySelection;
 		            if(attribute.contains(ConfigurationManager.LIST_SEPARATOR))
 		            mySelection = attribute.split(ConfigurationManager.LIST_SEPARATOR);
-		            else mySelection = attribute.split(DSpotProperties.getSeparator());
+		            else mySelection = attribute.split(separator);
 		            setSelection(mySelection);
 		            if(proxy != null) {
 		            	proxy.setTemporalData(attribute);
 		            	proxy.save();
+		            	//proxy.updateController(attribute);
 		            }
 		            DSpotMapping.getInstance().setValue(key,attribute);
-
 				}
 			});
 		} catch (CoreException e) {

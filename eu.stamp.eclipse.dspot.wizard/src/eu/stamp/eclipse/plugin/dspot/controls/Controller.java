@@ -6,6 +6,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
@@ -22,6 +23,10 @@ public abstract class Controller implements Comparable<Controller>{
 	 * 
 	 */
 	public int place;
+	/**
+	 * 
+	 */
+	protected EnableCondition enableCondition;
 	/**
 	 * 
 	 */
@@ -83,6 +88,9 @@ public abstract class Controller implements Comparable<Controller>{
 	public int compareTo(Controller otherController) {
 		return (this.place - otherController.place);
 	}
+	public void setEnableCondition(EnableCondition enableCondition) {
+		this.enableCondition = enableCondition;
+	}
 	/**
 	 * 
 	 * @param parent 
@@ -133,6 +141,11 @@ public abstract class Controller implements Comparable<Controller>{
 			else if(order == ANTI_ACTIVATION)DSpotMapping.getInstance()
 			.getController(activations[i]).setEnabled(false);
 		}
+	}
+	
+	protected void enableControl(Control control) {
+		if(enableCondition == null) return;
+		control.setEnabled(enableCondition.enable());
 	}
 	/**
 	 * 

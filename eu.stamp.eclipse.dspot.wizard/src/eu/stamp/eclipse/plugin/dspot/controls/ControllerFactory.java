@@ -10,6 +10,7 @@ import eu.stamp.eclipse.dspot.controls.impl.ListController;
 import eu.stamp.eclipse.dspot.controls.impl.SimpleControllerProxy;
 import eu.stamp.eclipse.dspot.controls.impl.SpinnerController;
 import eu.stamp.eclipse.dspot.controls.impl.TextController;
+import eu.stamp.eclipse.dspot.controls.impl.TreeController;
 import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 import eu.stamp.eclipse.plugin.dspot.properties.DSpotProperties;
 /**
@@ -84,7 +85,19 @@ public class ControllerFactory {
 	 * 
 	 */
     private String[] extensions;
-	
+    /**
+     * 
+     */
+	private int decimals;
+	/**
+	 * 
+	 */
+	private String enable;
+	/**
+	 * 
+	 */
+	private String separator;
+    
 	public void reset() {
 		type = null; 
 		project = null; 
@@ -103,6 +116,8 @@ public class ControllerFactory {
 		content = null;
 		fileDialog = true;
 		extensions = null;
+		decimals = 0;
+		separator = null;
 	}
     public void setFile(boolean isFileParameter) { 
     	this.isFileParameter = isFileParameter;
@@ -148,6 +163,11 @@ public class ControllerFactory {
 		case "explorerType" : if(value.contains("ile")) fileDialog = true;
 		else fileDialog = false;
 		break;
+		case "decimals" : decimals = Integer.parseInt(value);
+		break;
+		case "separator" : separator = value;
+		break;
+		case "enable" : enable = value;
 		case "interval" : if(value.contains(",")) {
 			String[] point = value.split(",");
 			interval = new Point(Integer.parseInt(point[0]),
@@ -163,25 +183,33 @@ public class ControllerFactory {
 		if(direction == null || type == null || key == null) return;
 		Controller controller = null;
 		
+		if(separator == null) separator = DSpotProperties.getSeparator();
+		
 		switch(type) {
 		case "text" : controller = new TextController(
 				key,labelText,checkButton,(project != null),place,tooltip);
 		break;
 		case "spinner" : controller = new SpinnerController(
-				key,labelText,checkButton,initialSelection,step,interval,place,tooltip);
+				key,labelText,checkButton,initialSelection,step,interval,place,tooltip,decimals);
         break;
 		case "combo" : controller = new ComboController(key,project,labelText,checkButton,
-				activationDirection,condition,place,tooltip,content);
+				activationDirection,condition,place,tooltip,content,separator);
 		break;
 		case "explorer" : controller = new ExplorerController(
-	     		key,project,labelText,checkButton,place,tooltip,content,fileDialog,extensions);
+	     		key,project,labelText,checkButton,place,tooltip,content,fileDialog,extensions,separator);
 		break;
 		case "list" : controller = new ListController(
-				key,project,labelText,checkButton,place,tooltip,content);
+				key,project,labelText,checkButton,place,tooltip,content,separator);
+		break;
+		case "tree" : controller = new TreeController(
+				key,project,labelText,checkButton,place,tooltip,content,separator);
 		break;
 		case "check" :  key = key + DSpotProperties.CHECK_EXTRA_KEY;
 			controller = new CheckController(key,labelText,place,tooltip,activationDirection,condition);
 		}
+		
+		if(enable != null && !enable.isEmpty())
+			controller.setEnableCondition(getCondition());
 		
 		if(direction.contains("ialog")) {
 			if(controller instanceof CheckController)
@@ -198,4 +226,14 @@ public class ControllerFactory {
 			DSpotMapping.getInstance().setController(controller,direction);
 		}
 		}
+	private EnableCondition getCondition() {
+		boolean equal = true;
+		String myEnableString = enable;
+		if(enable.contains("!")) {
+			equal = false;
+			myEnableString = enable.replaceAll("!","");
+		}
+        String[] keyValue = myEnableString.split("/");
+        return new EnableCondition(keyValue[0],keyValue[1],equal);
+	}
 }

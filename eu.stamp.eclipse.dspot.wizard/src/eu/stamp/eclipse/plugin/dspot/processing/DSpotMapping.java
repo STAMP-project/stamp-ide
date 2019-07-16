@@ -77,10 +77,16 @@ public class DSpotMapping {
 	public void prepareConfiguration(ILaunchConfigurationWorkingCopy copy) {
 		copy.setAttribute(DSpotProperties.PROJECT_KEY,DSpotContext.getInstance()
 				.getProject().getElementName());
-		for(String key : fileParameters.keySet())
-			copy.setAttribute(key,fileParameters.get(key));
-		for(String key : parameters.keySet())
-			copy.setAttribute(key,parameters.get(key));
+		for(String key : fileParameters.keySet()) {
+			String value = fileParameters.get(key);
+			  if(value != null && !value.isEmpty())
+				  copy.setAttribute(key,value);
+		}
+		for(String key : parameters.keySet()) {
+			String value = parameters.get(key);
+			  if(value != null && !value.isEmpty())
+			      copy.setAttribute(key,value);
+		}
 	}
 	
 	/**
@@ -150,12 +156,22 @@ public class DSpotMapping {
 		fileParameters.put("src",DSpotContext.getInstance().getNoTestSourceFolders()[0]);
 	    if(fileParameters.containsKey("testSrc") && fileParameters.get("testSrc") == null)
 		fileParameters.put("testSrc",DSpotContext.getInstance().getTestSourceFolders()[0]);
+	    
+	    
+	    List<String> resultList = new ArrayList<String>(fileParameters.keySet().size());
+	    String value;
+	    for(String key : fileParameters.keySet()) {
+	    	value = fileParameters.get(key);
+	    	if(value != null && !value.isEmpty()) resultList.add(key + "=" + value);
+	    }
+	    String result[] = new String[resultList.size()];
+	    for(int i = 0; i < result.length; i++) result[i] = resultList.get(i);
 		
-		Set<String> set = fileParameters.keySet();
+		/*Set<String> set = fileParameters.keySet();
 		String[] keys = set.toArray(new String[set.size()]);
 		String[] result = new String[keys.length];
 		for(int i = 0; i < keys.length; i++)
-			result[i] = keys[i] + "=" + fileParameters.get(keys[i]);
+			result[i] = keys[i] + "=" + fileParameters.get(keys[i]);*/
 		return result;
 	}
 	/**

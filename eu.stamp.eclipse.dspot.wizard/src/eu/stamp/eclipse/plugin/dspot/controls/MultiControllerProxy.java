@@ -14,7 +14,7 @@ public class MultiControllerProxy extends MultiController implements IController
 	protected String temporalData;
 	
 	public MultiControllerProxy(MultiController innerController) {
-		super(null,null,null,false,0,null,null);
+		super(null,null,null,false,0,null,null,null);
 		this.innerController = innerController;
 		this.activationDirection = innerController.activationDirection;
 		this.place = innerController.place;
