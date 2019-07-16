@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Spinner;
 
 /**
@@ -49,7 +50,7 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 	}
 
 	@Override
-	protected String getData() { return data; }
+	public String getData() { return data; }
 
 	@Override
 	protected void setData(String data) {
@@ -87,6 +88,7 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
     		   spinnerSelected();
     	   }
        });
+       spinner.notifyListeners(SWT.Selection,new Event());
 	}
 	
 	public void setMaximun(int maximun) {
@@ -107,7 +109,7 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 		setData(spinner.getText());
 		callListeners();
 	}
-	protected Spinner getSpinner() {
+	public Spinner getSpinner() {
 		return spinner;
 	}
 }

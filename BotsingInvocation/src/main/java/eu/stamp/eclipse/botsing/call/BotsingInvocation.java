@@ -2,7 +2,6 @@ package eu.stamp.eclipse.botsing.call;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 
 import eu.stamp.botsing.Botsing;
 
@@ -36,8 +35,26 @@ public class BotsingInvocation {
 				"/home/ricardo/eclipse-workspace/ExceptionsForBotsing/logs/index_example.log",
 				"-target_frame",
 				"2",
-				"-projectCP",
-				"/home/ricardo/eclipse-workspace/ExceptionsForBotsing/target"
+			setErr(doubleStream);
+			
+			System.out.println("\n----- COMMAND -----\n");
+			for(String sr : command) System.out.println(sr);
+			System.out.println("\n---END---\n");
+			
+			Botsing.main(command);
+			
+			//System.setOut(original);
+			//System.setErr(original);	"-projectCP",
+			setErr(doubleStream);
+			
+			System.out.println("\n----- COMMAND -----\n");
+			for(String sr : command) System.out.println(sr);
+			System.out.println("\n---END---\n");
+			
+			Botsing.main(command);
+			
+			//System.setOut(original);
+			//System.setErr(original);	"/home/ricardo/eclipse-workspace/ExceptionsForBotsing/target"
 		};*/
 		//String path = "/home/ricardo/eclipse-workspace/ExceptionsForBotsing/tests/out.txt";
 		
@@ -49,16 +66,20 @@ public class BotsingInvocation {
 			try {
 		    if(!file.exists())file.createNewFile();
 		    
-		    PrintStream original = System.out;
-		    PrintStream doubleStream = new DoublePrintStream(original,file);
+		    //PrintStream original = System.out;
+		    //PrintStream doubleStream = new DoublePrintStream(original,file);
 			
-		    System.setOut(doubleStream);
-			System.setErr(doubleStream);
+		   // System.setOut(doubleStream);
+		   // System.setErr(doubleStream);
+			
+			System.out.println("\n----- COMMAND -----\n");
+			for(String sr : command) System.out.println(sr);
+			System.out.println("\n---END---\n");
 			
 			Botsing.main(command);
 			
-			System.setOut(original);
-			System.setErr(original);
+			//System.setOut(original);
+			//System.setErr(original);
 			
 			return;
 			
@@ -66,6 +87,5 @@ public class BotsingInvocation {
 			e.printStackTrace();
 		}
 		}
-		Botsing.main(command);
 	}	
 }
