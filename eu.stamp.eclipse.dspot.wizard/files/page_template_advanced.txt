@@ -1,3 +1,25 @@
+PARAMETER
+type=spinner
+key=randomSeed
+labelText=Random seed : 
+tooltip= a seed value use for all randomized operation
+initialSelection=23
+interval=10,50
+direction=AdvancedOptionsDialog/seedSpinner
+place=1
+PARAMETER
+
+FILE PARAMETER
+type=spinner
+key=delta
+labelText=Delta :
+tooltip=specify the delta value for the assertions of floating-point numbers. If DSpot generates assertions for float, it uses Assert.assertEquals(expected, actual, delta). This property specify the delta value.(default: 0.1)
+initialSelection=1
+direction=AdvancedOptionsDialog/Delta
+interval=1,10
+decimals=1
+place=2
+FILE PARAMETER
 
 PARAMETER
 type=explorer
@@ -17,18 +39,6 @@ labelText=Path to second version :
 tooltip=when using the ChangeDetectorSelector, you must specify this property. This property should have for value the path to the root of the second version of the project. It is recommended to give an absolute path
 direction=AdvancedOptionsDialog/pathSecondVersion
 place=5
-PARAMETER
-
-PARAMETER
-type=spinner
-checkButton=true
-key=execute-test-parallel-with-number-processors
-labelText=Execute test parallel with number processors :
-tooltip= If enabled, DSpot will execute the tests in parallel. For JUnit5 tests it will use the number of given processors 
-initialSelection=0
-interval=0,64
-direction=AdvancedOptionsDialog/NumberProcessors
-place=6
 PARAMETER
 
 PARAMETER

@@ -11,7 +11,7 @@ PARAMETER
 PARAMETER
 type=tree
 key=test
-labelText=Execution classes : 
+labelText=Test classes to amplify : 
 tooltip= the test to execute
 project=TestFullNames
 direction=page2/testList

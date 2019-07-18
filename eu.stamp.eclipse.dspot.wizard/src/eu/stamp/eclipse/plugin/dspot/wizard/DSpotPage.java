@@ -36,6 +36,15 @@ public class DSpotPage extends WizardPage {
 		setDescription("configure DSpot");
 	}
 	
+	public DSpotPage(String pageName,String ID,String title,String description) {
+		super(pageName);
+		this.ID = ID;
+		dialogs = new LinkedList<DSpotDialog>();
+		setTitle(title);
+		setDescription(description);
+		
+	}
+	
 	public void addDialog(DSpotDialog dialog) {
 		dialogs.add(dialog);
 	}
