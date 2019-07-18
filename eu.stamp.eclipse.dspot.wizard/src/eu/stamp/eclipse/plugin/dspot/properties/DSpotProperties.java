@@ -14,19 +14,11 @@ public abstract class DSpotProperties {
 	public static final String PROJECT_KEY = "project";
 	public static final String CHECK_EXTRA_KEY = "CHECK";
 	public static final Point INDENT = new Point(4,6);
+	public static final String SEPARATOR = ",";
 	
-	// System dependent constants
-	private static String SEPARATOR;
+	// System dependent
 	private static String PATH_SEPARATOR;
 
-	public static String getSeparator() {
-		if(SEPARATOR == null) {
-			if(System.getProperty("os.name")
-					.contains("indow")) SEPARATOR = ";";
-			else SEPARATOR = ":";
-		}
-		return SEPARATOR;
-	}
 	public static String getPathSeparator() {
 		if(PATH_SEPARATOR == null) {
 			if(System.getProperty("os.name")

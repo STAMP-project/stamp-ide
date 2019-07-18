@@ -183,7 +183,7 @@ public class ControllerFactory {
 		if(direction == null || type == null || key == null) return;
 		Controller controller = null;
 		
-		if(separator == null) separator = DSpotProperties.getSeparator();
+		if(separator == null) separator = DSpotProperties.SEPARATOR;
 		
 		switch(type) {
 		case "text" : controller = new TextController(

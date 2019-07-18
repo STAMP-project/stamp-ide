@@ -88,11 +88,7 @@ public class ListController extends MultiController {
 	@Override
 	protected void setSelection(String[] selection) {
 		this.selection = selection;
-		if(selection == null) {
-			DSpotMapping.getInstance().setValue(key,null);
-			return;
-		}
-		if(selection.length < 1) {
+		if(selection == null || selection.length < 1 || selection[0] == null || selection[0].isEmpty()) {
 			DSpotMapping.getInstance().setValue(key,null);
 			return;
 		}

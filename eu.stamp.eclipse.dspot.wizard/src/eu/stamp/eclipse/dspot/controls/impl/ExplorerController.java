@@ -121,7 +121,7 @@ public class ExplorerController extends MultiController {
 		if(selection.length < 1) return null;
 		String result = selection[0];
 		for(int i = 1; i < selection.length; i++)
-			result += DSpotProperties.getSeparator() + selection[i];
+			result += DSpotProperties.SEPARATOR + selection[i];
 		return result;
 	}
 

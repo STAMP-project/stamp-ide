@@ -70,10 +70,11 @@ public class TreeController extends MultiController {
 			@Override
 			public void run() {
 				tree.deselectAll();
-				for(String sr : selection)for(TreeItem item : allItems) {
+				for(TreeItem item : allItems)for(String sr : selection){
 					if(item.getData().toString().equalsIgnoreCase(sr)) {
 						tree.select(item);
 						item.setChecked(true);
+						break;
 					} else {
 						item.setChecked(false);
 					}
