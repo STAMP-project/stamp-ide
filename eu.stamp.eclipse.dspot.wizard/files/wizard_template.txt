@@ -4,5 +4,7 @@
 #(lines containing # are ignored)
 
 page=page2/Second page
-dialog=page2/AdvancedOptionsDialog/Advanced Options/set advanced dspot options
-dialog=page2/OptionalPropertiesDialog/Optional Properties/set optional dspot file properties
+page=page3/Third page
+page=page4/Fourth page
+dialog=page3/AdvancedOptionsDialog/Advanced Options/set advanced dspot options
+dialog=page3/OptionalPropertiesDialog/Optional Properties/set optional dspot file properties

@@ -102,6 +102,10 @@ public class SpinnerController extends SimpleController {
 		DSpotMapping.getInstance().setValue(key,text);
 		if(spinner == null || spinner.isDisposed()) return;
 		if(text == null || text.isEmpty()) spinner.setSelection(initialSelection);
+		if(text.contains(".")) {
+			text = text.replaceAll("0\\.","");
+			text = text.replaceAll("\\.","");
+		}
 		spinner.setSelection(Integer.parseInt(text));
 		listenerAction();
 	}

@@ -44,7 +44,7 @@ public class DSpotPage extends WizardPage {
 	public void createControl(Composite parent) {
 		
 		// create the composite
-		Composite composite = new Composite(parent,SWT.NONE);
+		Composite composite = new Composite(parent,SWT.V_SCROLL);
 		GridLayout layout = new GridLayout();    // the layout of composite
 		layout.numColumns = 3;
 		composite.setLayout(layout);

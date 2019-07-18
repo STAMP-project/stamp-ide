@@ -88,22 +88,25 @@ public class ListController extends MultiController {
 	@Override
 	protected void setSelection(String[] selection) {
 		this.selection = selection;
-		if(selection == null) {
+		if(selection == null || selection.length < 1 || selection[0] == null || selection[0].isEmpty()) {
 			DSpotMapping.getInstance().setValue(key,null);
 			return;
 		}
-		if(selection.length < 1) {
-			DSpotMapping.getInstance().setValue(key,null);
-			return;
-		}
-		String result = processEntry(selection[0]);
-        for(int i = 1; i < selection.length; i++)
-        	result += separator + processEntry(selection[i]);
-        DSpotMapping.getInstance().setValue(key,result);
+		String[] processedSelection = new String[selection.length];
+		for(int i = 0; i < selection.length; i++) processedSelection[i] = processEntry(selection[i]);
+		StringBuilder resultBuilder = new StringBuilder();
+		resultBuilder.append(processedSelection[0]);
+        for(int i = 1; i < processedSelection.length; i++) {
+        	resultBuilder.append(separator);
+        	resultBuilder.append(processedSelection[i]);
+        }
+        DSpotMapping.getInstance().setValue(key,resultBuilder.toString());
 		if(list == null) return;
 		if(list.isDisposed()) return;
 		list.deselectAll();
-		if(!selection[0].isEmpty())list.setSelection(selection);
+		String[] items = new String[selection.length];
+		for(int i = 0; i < selection.length; i++)items[i] = match(selection[i]);
+		if(!items[0].isEmpty())list.setSelection(items);
 		notifyListener();
 	}
 
@@ -158,8 +161,7 @@ public class ListController extends MultiController {
         Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				list.setSelection(processedSelection);
-				//list.showSelection();
+				list.setSelection(selection);
 			}
         	
         });

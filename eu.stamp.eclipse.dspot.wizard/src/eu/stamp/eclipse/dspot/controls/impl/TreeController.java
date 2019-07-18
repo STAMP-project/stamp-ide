@@ -1,5 +1,6 @@
 package eu.stamp.eclipse.dspot.controls.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,15 +42,7 @@ public class TreeController extends MultiController {
 	    tree.addSelectionListener(new SelectionAdapter() {
 	    	@Override
 	    	public void widgetSelected(SelectionEvent e) {
-	    		TreeItem[] items = tree.getSelection();
-	    		selection = new String[items.length];
-	    		StringBuilder builder = new StringBuilder();
-	    		for(int i = 0; i < items.length; i++) {
-	    			selection[i] = items[i].getData().toString();
-	    			if(i > 0) builder.append(separator);
-	    			builder.append(selection[i]);
-	    		}
-	    		DSpotMapping.getInstance().setValue(key,builder.toString());
+               updateTreeSelection();
 	    	}
 	    });
         String myData = DSpotMapping.getInstance().getValue(key);
@@ -77,10 +70,11 @@ public class TreeController extends MultiController {
 			@Override
 			public void run() {
 				tree.deselectAll();
-				for(String sr : selection)for(TreeItem item : allItems) {
+				for(TreeItem item : allItems)for(String sr : selection){
 					if(item.getData().toString().equalsIgnoreCase(sr)) {
 						tree.select(item);
 						item.setChecked(true);
+						break;
 					} else {
 						item.setChecked(false);
 					}
@@ -117,6 +111,23 @@ public class TreeController extends MultiController {
 
 	@Override
 	public int checkActivation(String condition) { return 0; }
+	
+	private void updateTreeSelection() {
+		 List<String> newSelection = new ArrayList<String>(allItems.size());
+		 for(TreeItem item : allItems)if(item.getChecked())
+			      newSelection.add(item.getData().toString());
+		 selection = new String[newSelection.size()];
+		 for(int i = 0; i < newSelection.size(); i++)
+			 selection[i] = newSelection.get(i);
+		 if(selection.length < 1) return;
+		 StringBuilder dataBuilder = new StringBuilder();
+		 dataBuilder.append(selection[0]);
+		 for(int i = 1; i < selection.length; i++) {
+			 dataBuilder.append(separator);
+			 dataBuilder.append(selection[i]);
+		 }
+		 DSpotMapping.getInstance().setValue(key,dataBuilder.toString());
+	}
 	
 	private void getTreeItems(){
 		Set<String> packages = new HashSet<String>();

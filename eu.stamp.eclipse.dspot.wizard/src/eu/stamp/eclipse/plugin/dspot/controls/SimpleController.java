@@ -30,6 +30,7 @@ public abstract class SimpleController extends Controller {
 	public void loadConfiguration(ILaunchConfiguration configuration) {
 		try {
 			String data = configuration.getAttribute(key,"");
+			if(data == null || data.isEmpty()) return;
 			Display.getDefault().syncExec(new Runnable() {
 				@Override
 				public void run() {
