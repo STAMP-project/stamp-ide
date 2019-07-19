@@ -17,7 +17,7 @@ import eu.stamp.eclipse.plugin.dspot.processing.DSpotMapping;
 public class DSpotPage1 extends DSpotPage {
 
 	protected DSpotPage1(String pageName) {
-		super(pageName,"page1");
+		super(pageName,"page1","configure DSpot","Target project configuration");
 	}
 	
 	@Override

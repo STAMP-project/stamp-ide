@@ -93,7 +93,9 @@ public abstract class DSpotFileUtils {
 				String[] parts0 = line.split("=");
 				if(parts0[0].contains("age")) {
 					String[] parts = parts0[1].split("/");  // ID/name
-					DSpotPage page = new DSpotPage(parts[1],parts[0]);
+					DSpotPage page;
+					if(parts.length < 4) page = new DSpotPage(parts[1],parts[0]);
+					else page = new DSpotPage(parts[1],parts[0],parts[2],parts[3]);
 					temporalMap.put(parts[0],page);
 					result.add(page);
 				} else if(parts0[0].contains("ialog")) {

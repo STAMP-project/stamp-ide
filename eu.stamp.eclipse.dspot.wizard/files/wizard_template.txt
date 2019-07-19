@@ -3,8 +3,8 @@
 # page one is special and is not in the templates
 #(lines containing # are ignored)
 
-page=page2/Second page
-page=page3/Third page
-page=page4/Fourth page
-dialog=page3/AdvancedOptionsDialog/Advanced Options/set advanced dspot options
-dialog=page3/OptionalPropertiesDialog/Optional Properties/set optional dspot file properties
+page=page2/Second page/Configure DSpot/Execution configuration
+page=page3/Third page/Configure DSpot/Aditional Configuration
+page=page4/Fourth page/Configure DSpot/Aditional configuration
+dialog=page4/AdvancedOptionsDialog/Advanced Options/set advanced dspot options
+dialog=page4/OptionalPropertiesDialog/Optional Properties/set optional dspot file properties

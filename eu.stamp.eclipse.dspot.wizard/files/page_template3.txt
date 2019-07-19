@@ -24,12 +24,13 @@ PARAMETER
 
 PARAMETER
 type=spinner
-key=randomSeed
-labelText=Random seed : 
-tooltip= a seed value use for all randomized operation
-initialSelection=23
-interval=10,50
-direction=page3/seedSpinner
+checkButton=true
+key=execute-test-parallel-with-number-processors
+labelText=Execute test parallel with number processors :
+tooltip= If enabled, DSpot will execute the tests in parallel. For JUnit5 tests it will use the number of given processors 
+initialSelection=0
+interval=0,64
+direction=page3/NumberProcessors
 place=3
 PARAMETER
 
