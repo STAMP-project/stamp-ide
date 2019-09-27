@@ -10,7 +10,7 @@ An Eclipse wizard allows a confortable user's experience, the user can create, s
 The wizard allows the user to add and remove mutators easily without manipulating a xml file and the Descartes console output 
 is displayed in the Eclipse console.
 
-### Instalation
+### Installation
 
 ## User's manual
 
