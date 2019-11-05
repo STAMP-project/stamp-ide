@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.e4.ui.workbench,
  org.eclipse.swt,
  org.eclipse.equinox.security,
- org.eclipse.jface
+ org.eclipse.jface,
+ javax.inject
 Bundle-Vendor: Atos Spain S.A.
 Bundle-ClassPath: .,
  lib/rcptoolbox.1.0.10.jar,
