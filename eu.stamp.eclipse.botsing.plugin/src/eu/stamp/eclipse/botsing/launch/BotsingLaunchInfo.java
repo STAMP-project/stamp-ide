@@ -63,7 +63,7 @@ public class BotsingLaunchInfo {
 		List<String> resultList = new LinkedList<String>();
 		for(IBotsingProperty property : properties) {
 			String[] strings = property.getPropertyString();
-			for(String sr : strings) resultList.add(sr);
+			if(strings != null)for(String sr : strings) resultList.add(sr);
 		}
 		String[] result = new String[resultList.size() + 1];
 	    int i = 0;

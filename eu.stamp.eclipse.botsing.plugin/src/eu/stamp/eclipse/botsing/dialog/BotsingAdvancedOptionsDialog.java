@@ -38,6 +38,7 @@ import eu.stamp.eclipse.botsing.interfaces.IBotsingInfoSource;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.BotsingDialogProperty;
+import eu.stamp.eclipse.botsing.properties.BotsingExplorerField;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 
 public class BotsingAdvancedOptionsDialog extends TitleAreaDialog 
@@ -79,6 +80,9 @@ public class BotsingAdvancedOptionsDialog extends TitleAreaDialog
          addSpinner("1800","-Dsearch_budget","Search Budget : ",100,800,80000,search);
          addSpinner("30","-Dmax_recursion","Max recursion : ",5,5,1000,rec);
          
+         /*BotsingExplorerField modelProperty = 
+        		 new BotsingExplorerField("","-model","Model path",false,true
+        				 ,false,null); */
 	}
 	
 	@Override

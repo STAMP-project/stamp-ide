@@ -30,9 +30,9 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 	
 	private Spinner spinner;
 	
-	private final int step;
-	private final int minimun;
+	private final int step,minimun,digits;
 	private int maximun;
+	
 	
 	public BotsingSpinnerProperty(String defaultValue,
 			String key,String name,boolean compulsory) {
@@ -42,11 +42,18 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 	public BotsingSpinnerProperty(String defaultValue,
 			String key,String name,int step,int minimun,
 			int maximun,boolean compulsory) {
+		this(defaultValue,key,name,step,minimun,maximun,compulsory,0);
+	}
+	
+	public BotsingSpinnerProperty(String defaultValue,
+			String key,String name,int step,int minimun,
+			int maximun,boolean compulsory,int digits) {
 		
 		super(defaultValue,key,name,compulsory,true);
 		this.step = step;
 		this.minimun = minimun;
 		this.maximun = maximun;
+		this.digits = digits;
 	}
 
 	@Override
@@ -60,7 +67,8 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				   spinner.setSelection(Integer.parseInt(data));
+				   String processedData = data.replaceAll(",","\\.").replaceAll("0.","").replaceAll("\\.",""); // TODO check
+				   spinner.setSelection(Integer.parseInt(processedData));
 			}
 		});
 		
@@ -75,6 +83,7 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
         if(maximun > minimun + 1) spinner.setMaximum(maximun);
         spinner.setIncrement(step);
         spinner.setSelection(Integer.parseInt(data));
+        if(digits != 0) spinner.setDigits(digits);
         
         GridData gridData = 
         		new GridData(SWT.FILL,SWT.FILL,true,false);

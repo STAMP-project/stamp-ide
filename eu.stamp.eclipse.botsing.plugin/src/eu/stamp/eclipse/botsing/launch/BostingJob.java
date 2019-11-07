@@ -129,6 +129,8 @@ public class BostingJob extends Job {
 				wc.setAttribute(
 						IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
 						line);
+				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
+						"-Xmx4000m");
 				ILaunchConfiguration configuration = wc.doSave();
 			    
 				launch = configuration.launch(ILaunchManager.RUN_MODE, null);  

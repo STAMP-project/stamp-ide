@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="eu.stamp.eclipse.botsing.model.generation.launch.ModelGenerationLaunchDelegate"
+            id="eu.stamp.eclipse.botsing.model.generation.wizard.launchConfigurationType"
+            name="ModelGeneration">
+      </launchConfigurationType>
+   </extension>
+
+</plugin>

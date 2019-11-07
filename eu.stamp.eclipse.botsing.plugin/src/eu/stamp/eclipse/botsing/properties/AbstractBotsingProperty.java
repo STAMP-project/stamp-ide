@@ -116,6 +116,7 @@ public abstract class AbstractBotsingProperty
 	public String[] getPropertyString() {
 		
 	    if(compulsory) return new String[] {key,getData()};
+	    else if(getData() == null || getData().isEmpty()) return null;
 	    else return new String[] {key + "=" + getData()};
 	}
 	

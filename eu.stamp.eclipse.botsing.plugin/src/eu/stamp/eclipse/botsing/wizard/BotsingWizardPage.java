@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -34,10 +35,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
 import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
@@ -53,12 +57,15 @@ import eu.stamp.eclipse.botsing.log.LogReader;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 import eu.stamp.eclipse.botsing.properties.ClassPathProperty;
+import eu.stamp.eclipse.botsing.properties.ModelProperty;
 import eu.stamp.eclipse.botsing.properties.OutputTraceProperty;
 import eu.stamp.eclipse.botsing.properties.PropertyWithText;
 import eu.stamp.eclipse.botsing.properties.StackTraceProperty;
 import eu.stamp.eclipse.botsing.properties.TestDirectoryProperty;
 import eu.stamp.eclipse.text.validation.StampTextFieldErrorHandler;
 import eu.stamp.eclipse.general.validation.IValidationPage;
+
+import eu.stamp.eclipse.botsing.model.generation.wizard.ModelGenerationWizard;
 
 public class BotsingWizardPage extends WizardPage 
              implements IBotsingConfigurablePart, IProjectRelated,
@@ -214,7 +221,7 @@ public class BotsingWizardPage extends WizardPage
     new BotsingSpinnerProperty("2","-target_frame","Exception frame level : ",true);
 	frameLevel.createControl(composite);
 	if(propertiesLoaded) frameLevel.setTooltip(properties.getProperty("frame_level"));
-	botsingProperties.add(frameLevel);
+	botsingProperties.add(frameLevel);	
 	
 	// the maximun of the spinner is the frame level
 	stackProperty.addDataListener(new IPropertyDataListener() {
@@ -249,6 +256,19 @@ public class BotsingWizardPage extends WizardPage
 	.setTooltip(properties.getProperty("output_folder"));
 	botsingProperties.add(outputTraceProperty);
 	
+	// Field for the model
+	ModelProperty modelProperty = new ModelProperty(kit);
+	modelProperty.createControl(composite);
+	if(propertiesLoaded) modelProperty.setTooltip("model");
+	botsingProperties.add(modelProperty);
+	
+	// object pool
+	BotsingSpinnerProperty poolProperty = new BotsingSpinnerProperty("10","-Dp_object_pool","Object pool",1,1,10,false,1);
+    poolProperty.createControl(composite);
+    if(propertiesLoaded) poolProperty.setTooltip("percentaje of use of the model");
+    botsingProperties.add(poolProperty);
+	
+	
 	// dialog link
 	Link link = new Link(composite,SWT.NONE);
 	link.setText("<A>Advanced options</A>");
@@ -258,7 +278,25 @@ public class BotsingWizardPage extends WizardPage
 			dialog.open();
 		}
 	});
-
+	
+	// Botsing model generation wizard link
+	Link modelWizardLink = new Link(composite,SWT.NONE);
+	modelWizardLink.setText("<A>Model Generation</A>");
+    modelWizardLink.addSelectionListener(new SelectionAdapter() {
+    	@Override
+    	public void widgetSelected(SelectionEvent e) {
+    	  Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() { // TODo check
+	    		Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+	    		ModelGenerationWizard modelGenerationWizard = new ModelGenerationWizard();
+	    		WizardDialog diag = new WizardDialog(activeShell,modelGenerationWizard);
+	    		diag.open();
+			}  
+    	  });
+    	}
+    });
+	
 	// required
 	setControl(composite);
 	setPageComplete(true);	
