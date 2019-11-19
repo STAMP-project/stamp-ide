@@ -6,10 +6,13 @@ import java.util.Map;
 import org.eclipse.jface.wizard.Wizard;
 
 import eu.stamp.eclipse.botsing.model.generation.constants.ModelGenerationLaunchConstants;
+import eu.stamp.eclipse.botsing.model.generation.launch.ModelGenerationJob;
 
 public class ModelGenerationWizard extends Wizard {
 	
 	private final Map<String,String> map;
+	
+	private ModelGenerationJob job;
 	
 	public ModelGenerationWizard() {
 		
@@ -32,11 +35,19 @@ public class ModelGenerationWizard extends Wizard {
 	public String getWindowTitle() {
 		return "Botsing model generation";
 	}
-	
+	/**
+	 *  this wizard provide the job to other plugins in order to execute it in the
+	 *  right moment, it dosn't execute the job
+	 */
 	@Override
 	public boolean performFinish() {
-		// TODO
+		StringBuilder builder = new StringBuilder();
+		for(String key : map.keySet())if(!map.get(key).isEmpty())
+			builder.append(key).append(' ').append(map.get(key));
+		job = new ModelGenerationJob(builder.toString());
 		return true;
 	}
+	
+	public ModelGenerationJob getJob() { return job; }
 
 }
