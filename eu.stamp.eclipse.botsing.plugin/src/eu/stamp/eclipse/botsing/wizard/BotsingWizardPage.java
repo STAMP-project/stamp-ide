@@ -289,7 +289,8 @@ public class BotsingWizardPage extends WizardPage
 			@Override
 			public void run() { // TODo check
 	    		Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-	    		ModelGenerationWizard modelGenerationWizard = new ModelGenerationWizard();
+	    		ModelGenerationWizard modelGenerationWizard = 
+	    				new ModelGenerationWizard(wizard.getProject());
 	    		WizardDialog diag = new WizardDialog(activeShell,modelGenerationWizard);
 	    		diag.open();
 			}  

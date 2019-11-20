@@ -11,7 +11,11 @@ Require-Bundle: org.eclipse.swt,
  org.eclipse.core.runtime,
  org.eclipse.debug.core,
  org.eclipse.jdt.launching,
- org.eclipse.jdt.core
+ org.eclipse.jdt.core,
+ org.eclipse.ui.workbench,
+ org.eclipse.ui
 Bundle-ClassPath: .,
  lib/botsing-model-generation-1.0.7.jar
-Export-Package: eu.stamp.eclipse.botsing.model.generation.wizard
+Export-Package: eu.stamp.eclipse.botsing.model.generation.handler,
+ eu.stamp.eclipse.botsing.model.generation.launch,
+ eu.stamp.eclipse.botsing.model.generation.wizard

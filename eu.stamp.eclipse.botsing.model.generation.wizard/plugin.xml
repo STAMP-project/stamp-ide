@@ -6,8 +6,33 @@
       <launchConfigurationType
             delegate="eu.stamp.eclipse.botsing.model.generation.launch.ModelGenerationLaunchDelegate"
             id="eu.stamp.eclipse.botsing.model.generation.wizard.launchConfigurationType"
+            modes="run,debug"
             name="ModelGeneration">
       </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="stamp.menu.main"
+               label="STAMP">
+            <command
+                  commandId="eu.stamp.eclipse.botsing.model.generation.command"
+                  label="Botsing model generation"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="eu.stamp.eclipse.botsing.model.generation.handler.ModelGenerationHandler"
+            id="eu.stamp.eclipse.botsing.model.generation.command"
+            name="OpenModelGeneration">
+      </command>
    </extension>
 
 </plugin>

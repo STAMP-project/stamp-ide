@@ -4,26 +4,25 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 import eu.stamp.eclipse.botsing.model.generation.constants.ModelgenerationPluginConstants;
 
-public class ModelGenerationJob extends Job {
+public class ModelGenerationJob extends SequentialJob {
 	
 	private final String arguments;
 	
-	private IProcess[] processes;
+	private final IJavaProject project;
 
-	public ModelGenerationJob(String arguments) {
+	public ModelGenerationJob(String arguments,IJavaProject project) {
 		super("Botsing models generation");
 		this.arguments = arguments;
+		this.project = project;
 	}
 
 	@Override
@@ -38,13 +37,18 @@ public class ModelGenerationJob extends Job {
 			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
 					"-Xmx4000m");
 			
+			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME,project.getElementName());
+			
+			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,
+					project.getProject().getLocation().toString());
+			
 			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME,
 					ModelgenerationPluginConstants.GENERATION_MAIN);
 			
 			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
 					arguments);
 			
-			ILaunchConfiguration launchConfiguration = launchCopy.doSave();
+			launchConfiguration = launchCopy.doSave();
 			ILaunch launch = launchConfiguration.launch(ILaunchManager.RUN_MODE,null);
 			processes = launch.getProcesses();
 			
@@ -53,13 +57,6 @@ public class ModelGenerationJob extends Job {
 		}
 		
 		return Status.OK_STATUS;
-	}
-	
-	public boolean isWorking() {
-		if(processes == null) return false;
-		for(IProcess process : processes)if(!process.isTerminated())return true;
-		return false;
-	}
-   
+	} 
 	
 }

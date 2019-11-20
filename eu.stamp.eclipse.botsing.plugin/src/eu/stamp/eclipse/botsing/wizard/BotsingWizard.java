@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.core.IJavaProject;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.dialog.BotsingAdvancedOptionsDialog;
@@ -54,9 +55,12 @@ public class BotsingWizard extends Wizard
 	 */
 	private final ConfigurationsManager configurationsManager;
 	
-	public BotsingWizard() {
+	private final IJavaProject project;
+	
+	public BotsingWizard(IJavaProject project) {
 		configurableParts = new LinkedList<IBotsingConfigurablePart>();
 		configurationsManager = new ConfigurationsManager();
+		this.project = project;
 	}
 	
 	@Override
@@ -129,4 +133,6 @@ public class BotsingWizard extends Wizard
 		for(IBotsingConfigurablePart part : configurableParts)
 			part.load(configuration);
 	}
+	
+	public IJavaProject getProject() { return project; }
 }

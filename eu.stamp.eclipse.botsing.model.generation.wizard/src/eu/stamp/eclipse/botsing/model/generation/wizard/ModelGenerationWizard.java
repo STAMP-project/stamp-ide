@@ -3,6 +3,7 @@ package eu.stamp.eclipse.botsing.model.generation.wizard;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.Wizard;
 
 import eu.stamp.eclipse.botsing.model.generation.constants.ModelGenerationLaunchConstants;
@@ -14,7 +15,9 @@ public class ModelGenerationWizard extends Wizard {
 	
 	private ModelGenerationJob job;
 	
-	public ModelGenerationWizard() {
+	private final IJavaProject project;
+	
+	public ModelGenerationWizard(IJavaProject project) {
 		
 	super();
 		
@@ -23,6 +26,8 @@ public class ModelGenerationWizard extends Wizard {
 	map.put(ModelGenerationLaunchConstants.PROJECT_CLASS_PATH,"");
 	map.put(ModelGenerationLaunchConstants.PROJECT_PREFIX,"");
 	map.put(ModelGenerationLaunchConstants.OUT_DIR,ModelGenerationLaunchConstants.OUT_DIR_DEFAULT);
+	
+	this.project = project;
 	}
 	
 	@Override
@@ -43,8 +48,8 @@ public class ModelGenerationWizard extends Wizard {
 	public boolean performFinish() {
 		StringBuilder builder = new StringBuilder();
 		for(String key : map.keySet())if(!map.get(key).isEmpty())
-			builder.append(key).append(' ').append(map.get(key));
-		job = new ModelGenerationJob(builder.toString());
+			builder.append(key).append(' ').append(map.get(key)).append(' ');
+		job = new ModelGenerationJob(builder.toString(),project);
 		return true;
 	}
 	
