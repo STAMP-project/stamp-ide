@@ -35,10 +35,10 @@ import org.eclipse.swt.widgets.Shell;
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingInfoSource;
+import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.BotsingDialogProperty;
-import eu.stamp.eclipse.botsing.properties.BotsingExplorerField;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 
 public class BotsingAdvancedOptionsDialog extends TitleAreaDialog 
@@ -137,8 +137,8 @@ public class BotsingAdvancedOptionsDialog extends TitleAreaDialog
 
 	@Override
 	public BotsingPartialInfo getInfo() {
-		List<AbstractBotsingProperty> result = 
-				new LinkedList<AbstractBotsingProperty>();
+		List<IBotsingProperty> result = 
+				new LinkedList<IBotsingProperty>();
 		for(BotsingDialogProperty property : properties)
 			result.add(property.getCoreProperty());
 		return new BotsingPartialInfo(result);

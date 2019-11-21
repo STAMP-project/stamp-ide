@@ -20,11 +20,11 @@ import com.richclientgui.toolbox.validation.IFieldErrorMessageHandler;
 import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
+import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
 import eu.stamp.eclipse.botsing.call.InputManager;
 import eu.stamp.eclipse.botsing.launch.BotsingLaunchInfo;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.listeners.IBotsingPropertyListener;
-import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 import eu.stamp.eclipse.botsing.properties.ClassPathProperty;
 import eu.stamp.eclipse.botsing.properties.StackTraceProperty;
@@ -36,7 +36,7 @@ import eu.stamp.eclipse.general.validation.IValidationPage;
 public class BotsingLaunchConfigurationTab 
              extends AbstractLaunchConfigurationTab implements IValidationPage {
 
-	private final List<AbstractBotsingProperty> botsingProperties;
+	private final List<IBotsingProperty> botsingProperties;
 	
 	private boolean dirty;
 	private boolean save;
@@ -44,7 +44,7 @@ public class BotsingLaunchConfigurationTab
 	BotsingLaunchConfigurationTab() {
 		super();
 		botsingProperties = 
-				new LinkedList<AbstractBotsingProperty>();
+				new LinkedList<IBotsingProperty>();
 	}
 	
 	@Override
@@ -103,7 +103,7 @@ public class BotsingLaunchConfigurationTab
 			}
 		};
 		
-		for(AbstractBotsingProperty property : botsingProperties)
+		for(IBotsingProperty property : botsingProperties)
 			property.addPropertyListener(listener);
 	}
 
@@ -117,7 +117,7 @@ public class BotsingLaunchConfigurationTab
 		ILaunchConfigurationWorkingCopy copy;
 		try {
 			copy = configuration.getWorkingCopy();
-			for(AbstractBotsingProperty property : botsingProperties)
+			for(IBotsingProperty property : botsingProperties)
 				property.load(copy);
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -131,13 +131,13 @@ public class BotsingLaunchConfigurationTab
 				IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, 
 				BotsingPluginConstants.BOTSING_MAIN);
 		
-		for(AbstractBotsingProperty property : botsingProperties)
+		for(IBotsingProperty property : botsingProperties)
 			property.appendToConfiguration(configuration);
 		
-		List<AbstractBotsingProperty> defaultProperties =
+		List<IBotsingProperty> defaultProperties =
 				getDefaultProperties();
 		
-        for(AbstractBotsingProperty property : defaultProperties)
+        for(IBotsingProperty property : defaultProperties)
         	property.appendToConfiguration(configuration);
         
         List<BotsingPartialInfo> infos = 
@@ -204,10 +204,10 @@ public class BotsingLaunchConfigurationTab
 		return dirty;
 	}
     
-	private List<AbstractBotsingProperty> getDefaultProperties() {
+	private List<IBotsingProperty> getDefaultProperties() {
 		 
-		 List<AbstractBotsingProperty> defaultProperties =
-				 new LinkedList<AbstractBotsingProperty>();
+		 List<IBotsingProperty> defaultProperties =
+				 new LinkedList<IBotsingProperty>();
 		 
 		 addDefaultProperty("100","-Dpopulation","Population : ",10,20,4000,defaultProperties);
          addDefaultProperty("1800","-Dsearch_budget","Search Budget : ",100,800,80000,defaultProperties);
@@ -218,7 +218,7 @@ public class BotsingLaunchConfigurationTab
 	
 	private void addDefaultProperty(String defaultValue,String key,
     		String name,int step,int minimun,int maximun,
-    		List<AbstractBotsingProperty> list) {
+    		List<IBotsingProperty> list) {
 		
     	BotsingSpinnerProperty property = 
     			new BotsingSpinnerProperty(defaultValue,

@@ -115,7 +115,7 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 	}
 	
 	protected void spinnerSelected() {
-		setData(spinner.getText());
+		setData(spinner.getText().replaceAll(",","\\."));
 		callListeners();
 	}
 	public Spinner getSpinner() {

@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
 import eu.stamp.eclipse.botsing.listeners.IBotsingPropertyListener;
 import eu.stamp.eclipse.botsing.listeners.IPropertyDataListener;
@@ -37,7 +36,7 @@ import eu.stamp.eclipse.botsing.listeners.IPropertyDataListener;
  * @see eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart
  */
 public abstract class AbstractBotsingProperty 
-     implements IBotsingProperty, IBotsingConfigurablePart {
+     implements IBotsingProperty {
 	
 	protected final String defaultValue;
 	
@@ -105,6 +104,7 @@ public abstract class AbstractBotsingProperty
 		dataListeners.add(dataListener);
 	}
 	
+	@Override
 	public void callListeners() {
 		if(propertyListener != null)	
 		propertyListener.activate();
@@ -122,6 +122,7 @@ public abstract class AbstractBotsingProperty
 	
 	public boolean isCompulsory() { return compulsory; }
 	
+	@Override
 	public boolean containsLaunchInfo() { return isLaunchInfo; }
 	
 	protected String getKey() { return key; }

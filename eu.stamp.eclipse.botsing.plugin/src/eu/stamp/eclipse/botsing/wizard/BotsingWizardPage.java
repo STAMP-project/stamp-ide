@@ -50,14 +50,15 @@ import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.dialog.BotsingAdvancedOptionsDialog;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingInfoSource;
+import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
 import eu.stamp.eclipse.botsing.interfaces.IProjectRelated;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.listeners.IPropertyDataListener;
 import eu.stamp.eclipse.botsing.log.LogReader;
-import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 import eu.stamp.eclipse.botsing.properties.ClassPathProperty;
 import eu.stamp.eclipse.botsing.properties.ModelProperty;
+import eu.stamp.eclipse.botsing.properties.MultipleProperty;
 import eu.stamp.eclipse.botsing.properties.OutputTraceProperty;
 import eu.stamp.eclipse.botsing.properties.PropertyWithText;
 import eu.stamp.eclipse.botsing.properties.StackTraceProperty;
@@ -74,7 +75,7 @@ public class BotsingWizardPage extends WizardPage
 	/**
 	 * List with the properties in this page
 	 */
-	private List<AbstractBotsingProperty> botsingProperties;
+	private List<IBotsingProperty> botsingProperties;
 	
 	private String configurationName;
     
@@ -96,7 +97,7 @@ public class BotsingWizardPage extends WizardPage
 		configurationName = "new_configuration";
 		this.wizard = wizard;
 		this.dialog = dialog;
-		botsingProperties = new LinkedList<AbstractBotsingProperty>();
+		botsingProperties = new LinkedList<IBotsingProperty>();
 		URL url = FileLocator.find(
 				Platform.getBundle(BotsingPluginConstants.BOTSING_PLUGIN_ID),
 				new Path("files/botsing_page1.properties"),null);
@@ -143,7 +144,7 @@ public class BotsingWizardPage extends WizardPage
     	public void widgetSelected(SelectionEvent e) {
     		configurationName = loadCombo.getText();
     		wizard.reconfigure(loadCombo.getText());
-    		for(AbstractBotsingProperty property : botsingProperties)
+    		for(IBotsingProperty property : botsingProperties)
     		    property.callListeners();
     	}
     });
@@ -256,18 +257,23 @@ public class BotsingWizardPage extends WizardPage
 	.setTooltip(properties.getProperty("output_folder"));
 	botsingProperties.add(outputTraceProperty);
 	
+	// field of the model and Object pool must included or not together
+	MultipleProperty modelAndPool = new MultipleProperty();
+	
 	// Field for the model
 	ModelProperty modelProperty = new ModelProperty(kit);
 	modelProperty.createControl(composite);
 	if(propertiesLoaded) modelProperty.setTooltip("model");
-	botsingProperties.add(modelProperty);
+	modelAndPool.addProperty(modelProperty);
 	
 	// object pool
 	BotsingSpinnerProperty poolProperty = new BotsingSpinnerProperty("10","-Dp_object_pool","Object pool",1,1,10,false,1);
     poolProperty.createControl(composite);
     if(propertiesLoaded) poolProperty.setTooltip("percentaje of use of the model");
-    botsingProperties.add(poolProperty);
-	
+    modelAndPool.addProperty(poolProperty);
+    
+    // add Object and pool property to the list
+	botsingProperties.add(modelAndPool);
 	
 	// dialog link
 	Link link = new Link(composite,SWT.NONE);
@@ -287,7 +293,7 @@ public class BotsingWizardPage extends WizardPage
     	public void widgetSelected(SelectionEvent e) {
     	  Display.getDefault().syncExec(new Runnable() {
 			@Override
-			public void run() { // TODo check
+			public void run() { // TODO check
 	    		Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	    		ModelGenerationWizard modelGenerationWizard = 
 	    				new ModelGenerationWizard(wizard.getProject());
@@ -305,19 +311,19 @@ public class BotsingWizardPage extends WizardPage
 
 	@Override
 	public void appendToConfiguration(ILaunchConfigurationWorkingCopy configuration) {
-		for(AbstractBotsingProperty property : botsingProperties)
+		for(IBotsingProperty property : botsingProperties)
 		     property.appendToConfiguration(configuration);
 	}
 
 	@Override
 	public void load(ILaunchConfigurationWorkingCopy configuration) {
-		for(AbstractBotsingProperty property : botsingProperties)
+		for(IBotsingProperty property : botsingProperties)
 			property.load(configuration);
 	}
 
 	@Override
 	public void projectChanged(IJavaProject newProject) {
-		for(AbstractBotsingProperty property : botsingProperties)
+		for(IBotsingProperty property : botsingProperties)
 			if(property instanceof IProjectRelated)
 				((IProjectRelated)property).projectChanged(newProject);
 	}
@@ -339,7 +345,7 @@ public class BotsingWizardPage extends WizardPage
 	@Override
 	public void cleanError() { 
 		boolean ok = true;
-		for(AbstractBotsingProperty property : botsingProperties)
+		for(IBotsingProperty property : botsingProperties)
 			if(property instanceof PropertyWithText)
 				ok = ok && ((PropertyWithText)property).ok();
 		setPageComplete(ok); 

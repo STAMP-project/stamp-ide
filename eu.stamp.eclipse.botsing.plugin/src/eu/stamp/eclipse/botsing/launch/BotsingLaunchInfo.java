@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
-import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 
 /**
  *  An instance of this class carries the complete list of properties 
@@ -27,9 +26,9 @@ public class BotsingLaunchInfo {
 	
 	private final String name;
 
-	private final List<AbstractBotsingProperty> properties;
+	private final List<IBotsingProperty> properties;
 	
-	public BotsingLaunchInfo(String name,List<AbstractBotsingProperty> properties) {
+	public BotsingLaunchInfo(String name,List<IBotsingProperty> properties) {
 		this.name = name;
 		this.properties = properties;
 	}
@@ -43,12 +42,12 @@ public class BotsingLaunchInfo {
 	 */
 	public BotsingLaunchInfo (List<BotsingPartialInfo> partialInfos) {
 		String name = "new_configuration"; // default
-		properties = new LinkedList<AbstractBotsingProperty>();
+		properties = new LinkedList<IBotsingProperty>();
 		
 		for(BotsingPartialInfo partialInfo : partialInfos) {
 			if(partialInfo.nameIsSet()) name = partialInfo.getName();
-			List<AbstractBotsingProperty> list = partialInfo.getProperties();
-			for(AbstractBotsingProperty property : list)
+			List<IBotsingProperty> list = partialInfo.getProperties();
+			for(IBotsingProperty property : list)
 				properties.add(property);
 		}
 	
