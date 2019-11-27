@@ -1,12 +1,14 @@
 package eu.stamp.eclipse.botsing.call;
 
+import java.util.LinkedList;
+
 public class InputManager {
 	
 	private String[] command;
 	
 	private String outputFilePath;
 	
-	private final static String COMAND_SEPARATOR = "%";
+	public final static String COMAND_SEPARATOR = "%";
 	
 	private final static String OUT_SEPARATOR = "%%%";
 	
@@ -17,7 +19,10 @@ public class InputManager {
 	}
 	
 	public InputManager(String[] command,String outputFilePath) {
-		this.command = command;
+		LinkedList<String> commandList = new LinkedList<String>();
+		for(String sr : command)if(sr != null && 
+				!sr.replaceAll(" ","").isEmpty())commandList.add(sr);
+		this.command = commandList.toArray(new String[commandList.size()]);
 		this.outputFilePath = outputFilePath;
 	}
 	

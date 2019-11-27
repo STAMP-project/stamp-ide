@@ -20,7 +20,7 @@
                label="STAMP">
             <command
                   commandId="eu.stamp.eclipse.botsing.model.generation.command"
-                  label="Botsing model generation"
+                  label="Behavioral model generation"
                   style="push">
             </command>
          </menu>

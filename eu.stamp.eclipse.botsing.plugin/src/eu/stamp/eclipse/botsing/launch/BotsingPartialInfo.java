@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
-import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
 
 /**
  * objects of this class are produced by objects that contains Botsing properties

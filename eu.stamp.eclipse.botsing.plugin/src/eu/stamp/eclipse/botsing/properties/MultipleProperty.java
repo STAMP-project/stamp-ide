@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
+import eu.stamp.eclipse.botsing.call.InputManager;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
 import eu.stamp.eclipse.botsing.listeners.IBotsingPropertyListener;
 
@@ -37,12 +38,13 @@ public class MultipleProperty implements IBotsingProperty {
 	public String[] getPropertyString() {
 		if(checkProperties()) {
 			StringBuilder builder = new StringBuilder();
-			builder.append(' ');
+			int i = 0;
 			for(IBotsingProperty property : innerProperties) {
 				String[] propertyStrings = property.getPropertyString();
 				if(propertyStrings.length == 1) builder.append(propertyStrings[0]);
 				else builder.append(propertyStrings[0]).append(' ').append(propertyStrings[1]);
-				builder.append(' ');
+				if(i < innerProperties.size() - 1) builder.append(InputManager.COMAND_SEPARATOR);
+				i++;
 			}
 			return new String[] {builder.toString()};
 		}
@@ -53,7 +55,8 @@ public class MultipleProperty implements IBotsingProperty {
 	 * @return true if all the properties are ok
 	 */
     private boolean checkProperties() {
-    	for(IBotsingProperty property : innerProperties)if(property.getPropertyString() == null) return false;
+    	for(IBotsingProperty property : innerProperties)if(property.getPropertyString() == null
+    			|| !property.isSet()) return false;
     	return true;
     }
 
@@ -64,6 +67,9 @@ public class MultipleProperty implements IBotsingProperty {
 
 	@Override
 	public boolean containsLaunchInfo() { return true; }
+	
+	@Override
+	public boolean isSet() { return checkProperties(); }
 
 	@Override
 	public void addPropertyListener(IBotsingPropertyListener listener) {}

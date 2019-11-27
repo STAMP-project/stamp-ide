@@ -34,6 +34,9 @@ public class ModelProperty extends BotsingExplorerField {
 	}
 	
 	@Override
+	public String[] getPropertyString() { return new String[] {key,getData()}; }
+	
+	@Override
 	public void appendToConfiguration(ILaunchConfigurationWorkingCopy copy) {
 		super.appendToConfiguration(copy);
 		copy.setAttribute(MODEL_KEY,folderPath);
@@ -48,4 +51,9 @@ public class ModelProperty extends BotsingExplorerField {
 		}
 	}
 
+	@Override
+	public boolean isSet() {
+		if(data == null || data.replaceAll(" ","").isEmpty()) return false;
+		return true;
+	}
 }

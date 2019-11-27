@@ -35,8 +35,7 @@ import eu.stamp.eclipse.botsing.listeners.IPropertyDataListener;
  * @see eu.stamp.eclipse.botsing.interfaces.IBotsingProperty
  * @see eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart
  */
-public abstract class AbstractBotsingProperty 
-     implements IBotsingProperty {
+public abstract class AbstractBotsingProperty implements IBotsingProperty {
 	
 	protected final String defaultValue;
 	
@@ -149,4 +148,6 @@ public abstract class AbstractBotsingProperty
 	       if(tooltip != null) label.setToolTipText(tooltip);
 	}
 
+	@Override
+	public boolean isSet() { return true; }
 }

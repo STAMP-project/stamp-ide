@@ -38,7 +38,7 @@ public class ModelGenerationWizard extends Wizard {
 	
 	@Override
 	public String getWindowTitle() {
-		return "Botsing model generation";
+		return "Behavioral model generation";
 	}
 	/**
 	 *  this wizard provide the job to other plugins in order to execute it in the

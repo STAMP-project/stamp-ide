@@ -9,13 +9,18 @@ public class BotsingInvocation {
 
 	public static void main(String[] args) {
 
+		String argument;
+		
 		if(args.length != 1) {
-			System.out.println("Error in Botsing invocation args.length != 1");
-			return;
+			StringBuilder builder = new StringBuilder();
+			for(String arg : args) builder.append(' ').append(arg);
+            argument = builder.toString();
+		} else {
+			argument = args[0];
 		}
 		
            InputManager input = new InputManager();
-           input.loadFromString(args[0]);
+           input.loadFromString(argument);
            
            String[] command = input.getCommand();
            

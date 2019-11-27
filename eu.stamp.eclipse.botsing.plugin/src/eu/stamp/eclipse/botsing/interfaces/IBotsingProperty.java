@@ -32,4 +32,6 @@ public interface IBotsingProperty extends IBotsingConfigurablePart {
 	boolean containsLaunchInfo();
 
 	public void addPropertyListener(IBotsingPropertyListener listener);
+	
+	public boolean isSet();
 }
