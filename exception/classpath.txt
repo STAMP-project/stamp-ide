@@ -1,0 +1,1 @@
+./target/classes:./target/test-classes:target/dependency/junit-3.8.1.jar
