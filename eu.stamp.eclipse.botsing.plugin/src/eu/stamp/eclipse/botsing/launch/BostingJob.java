@@ -37,6 +37,7 @@ import org.eclipse.ui.PlatformUI;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.dialog.BotsingExecutionErrorDialog;
+import eu.stamp.botsing.Botsing;
 import eu.stamp.eclipse.botsing.call.InputManager;
 import eu.stamp.eclipse.botsing.properties.OutputTraceProperty;
 import eu.stamp.eclipse.botsing.wizard.BotsingWizard;
@@ -126,13 +127,21 @@ public class BostingJob extends Job {
 				wc.setAttribute(
 						IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, 
 						BotsingPluginConstants.BOTSING_MAIN);
+				
+				
+				String[] arguments = prepareLaunch(new String[] {line});
+				StringBuilder builder = new StringBuilder();
+				for(String sr : arguments)builder.append(sr).append(' ');
+						
 				wc.setAttribute(
 						IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
-						line);
-				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
-						"-Xmx4000m");
+						builder.toString());
+				String vmArgs;
+			    if(System.getProperty("java.version").contains("8")) vmArgs = "-d64 -Xmx4000m";
+			    else vmArgs = "-Xmx4000m";
+				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,vmArgs);
+				
 				ILaunchConfiguration configuration = wc.doSave();
-			    
 				launch = configuration.launch(ILaunchManager.RUN_MODE, null);  
 				
 				while(!launch.isTerminated());
@@ -174,4 +183,46 @@ public class BostingJob extends Job {
     	});
     }
     
+  private String[] prepareLaunch(String[] args) {  
+	String argument;
+	
+	if(args.length != 1) {
+		StringBuilder builder = new StringBuilder();
+		for(String arg : args) builder.append(' ').append(arg);
+        argument = builder.toString();
+	} else {
+		argument = args[0];
+	}
+	
+       InputManager input = new InputManager();
+       input.loadFromString(argument);
+       
+       String[] command = input.getCommand();
+       
+       if(!input.outputFileSet()) {
+    	   return command;
+       }
+       
+       String path = input.getoutputFilePath();
+	
+	if(path != null)if(!path.isEmpty()){
+    File file = new File(path);
+	if(file.getParentFile() != null)
+		if(!file.getParentFile().exists()) file.getParentFile().mkdirs();
+		
+		try {
+	    if(!file.exists())file.createNewFile();
+		
+		System.out.println("\n----- COMMAND -----\n");
+		for(String sr : command) System.out.println(sr);
+		System.out.println("\n---END---\n");
+		
+		return command;
+		
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	}
+	return command;
+  }
 }

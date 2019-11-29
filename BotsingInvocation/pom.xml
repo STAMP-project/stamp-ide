@@ -21,12 +21,6 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>eu.stamp-project</groupId>
-      <artifactId>botsing-reproduction</artifactId>
-      <version>1.0.7</version>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
   
   <build>
@@ -36,6 +30,9 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.1</version>
           <configuration>
+              <compilerArguments>
+                  <classpath>/home/ricardo/Ricardo/STAMP/Botsing/stamp-gui/BotsingInvocation/lib/botsing-reproduction-1.0.7.jar</classpath>
+              </compilerArguments>
               <source>1.7</source>
               <target>1.7</target>
           </configuration>

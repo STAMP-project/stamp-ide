@@ -115,7 +115,9 @@ public class BotsingSpinnerProperty extends AbstractBotsingProperty {
 	}
 	
 	protected void spinnerSelected() {
-		setData(spinner.getText().replaceAll(",","\\."));
+		double number = new Double(spinner.getSelection());
+		number = number/(Math.pow(10,digits));
+		setData(String.valueOf(number).replaceAll(",","\\."));
 		callListeners();
 	}
 	public Spinner getSpinner() {
