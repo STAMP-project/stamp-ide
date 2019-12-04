@@ -16,14 +16,16 @@ import java.io.IOException;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import eu.stamp.eclipse.botsing.model.generation.classpth.ClassPathCreator;
 import eu.stamp.eclipse.botsing.model.generation.handler.StampHandler;
-import eu.stamp.eclipse.ramp.plugin.classpth.ClassPathCreator;
+import eu.stamp.eclipse.ramp.plugin.constants.RampPluginConstants;
 import eu.stamp.eclipse.ramp.plugin.wizard.RampWizard;
 
 /**
@@ -45,6 +47,15 @@ public class RampWizardHandler extends StampHandler {
 			MessageDialog.openError(HandlerUtil.getActiveShell(event),"No project selected",
 					"There is no project selected, please select a project and open this dialog again");
 			return null;
+		}
+		try {
+			if(!project.getProject().hasNature(RampPluginConstants.MAVEN_NATURE)) {
+				MessageDialog.openError(HandlerUtil.getActiveShell(event),"Project is not maven",
+						"The selected project must be maven");
+				return null;
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
 		}
 		
 		ClassPathCreator classPathCreator = new ClassPathCreator(project,HandlerUtil.getActiveShell(event));
