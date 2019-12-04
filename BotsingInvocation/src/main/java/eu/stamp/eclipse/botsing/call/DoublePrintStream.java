@@ -34,7 +34,6 @@ public class DoublePrintStream extends PrintStream {
 
 	@Override
 	public void write(byte[] buf, int off, int len) {
-        consoleStream.write(buf, off, len);
 		super.write(buf, off, len);
 	}
 

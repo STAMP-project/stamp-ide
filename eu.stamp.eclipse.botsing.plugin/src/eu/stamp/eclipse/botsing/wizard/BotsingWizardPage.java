@@ -233,7 +233,7 @@ public class BotsingWizardPage extends WizardPage
 			int level = reader.getFrameLevel();
 			if(level > 0) {
 				frameLevel.setMaximun(level);
-			if(Integer.parseInt(frameLevel.getData()) > level) {
+			if(Double.parseDouble(frameLevel.getData()) > level) {
 				frameLevel.getSpinner().setSelection(level);
 				frameLevel.getSpinner().notifyListeners(SWT.Selection,new Event());
 			}

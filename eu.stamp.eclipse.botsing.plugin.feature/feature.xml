@@ -116,14 +116,14 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </url>
 
    <plugin
-         id="eu.stamp.eclipse.botsing.plugin"
+         id="eu.stamp.eclipse.botsing.model.generation.wizard"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="eu.stamp.eclipse.botsing.model.generation.wizard"
+         id="eu.stamp.eclipse.botsing.plugin"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -34,11 +34,15 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleListener;
 
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.dialog.BotsingExecutionErrorDialog;
-import eu.stamp.botsing.Botsing;
+import eu.stamp.eclipse.botsing.call.DoublePrintStream;
 import eu.stamp.eclipse.botsing.call.InputManager;
+import eu.stamp.eclipse.botsing.call.Invocator;
 import eu.stamp.eclipse.botsing.properties.OutputTraceProperty;
 import eu.stamp.eclipse.botsing.wizard.BotsingWizard;
 
@@ -49,6 +53,8 @@ public class BostingJob extends Job {
 	private final BotsingWizard wizard;
 	
 	private ILaunch launch;
+	
+	public static File outputFile;
 	
 	public BostingJob(BotsingLaunchInfo info,BotsingWizard wizard) {
 		super("Bosting working");
@@ -132,24 +138,25 @@ public class BostingJob extends Job {
 				String[] arguments = prepareLaunch(new String[] {line});
 				StringBuilder builder = new StringBuilder();
 				for(String sr : arguments)builder.append(sr).append(' ');
-						
+				builder.append(outputFile.getAbsolutePath());
+				String argument = builder.toString();		
 				wc.setAttribute(
-						IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
-						builder.toString());
+						IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,argument);
 				String vmArgs;
 			    if(System.getProperty("java.version").contains("8")) vmArgs = "-d64 -Xmx4000m";
 			    else vmArgs = "-Xmx4000m";
 				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,vmArgs);
 				
 				ILaunchConfiguration configuration = wc.doSave();
-				launch = configuration.launch(ILaunchManager.RUN_MODE, null);  
+				launch = configuration.launch(ILaunchManager.RUN_MODE, null);
 				
-				while(!launch.isTerminated());
+				while(!launch.isTerminated()) { Thread.sleep(50); }
+				
 				
 				if(isToolError(launch))
 					showErrorDialog(true);
 				
-			} catch (CoreException | IOException e) {
+			} catch (CoreException | IOException | InterruptedException e) {
 				e.printStackTrace();
 			} 
 		return Status.OK_STATUS;
@@ -206,12 +213,12 @@ public class BostingJob extends Job {
        String path = input.getoutputFilePath();
 	
 	if(path != null)if(!path.isEmpty()){
-    File file = new File(path);
-	if(file.getParentFile() != null)
-		if(!file.getParentFile().exists()) file.getParentFile().mkdirs();
+    outputFile = new File(path);
+	if(outputFile.getParentFile() != null)
+		if(!outputFile.getParentFile().exists()) outputFile.getParentFile().mkdirs();
 		
 		try {
-	    if(!file.exists())file.createNewFile();
+	    if(!outputFile.exists())outputFile.createNewFile();
 		
 		System.out.println("\n----- COMMAND -----\n");
 		for(String sr : command) System.out.println(sr);
