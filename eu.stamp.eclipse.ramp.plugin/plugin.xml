@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="eu.stamp.eclipse.ramp.plugin.handler.RampWizardHandler"
+            id="eu.stamp.eclipse.ramp.plugin.command"
+            name="Open RAMP Wizard">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               commandId="eu.stamp.eclipse.ramp.plugin.command"
+               id="stamp.menu.main"
+               label="STAMP">
+            <command
+                  commandId="eu.stamp.eclipse.ramp.plugin.command"
+                  label="RAMP"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            allowPrototypes="true"
+            delegate="eu.stamp.eclipse.ramp.plugin.job.RampLaunchDelegate"
+            id="eu.stamp.ramp.plugin.launchConfigurationType"
+            modes="run,debug"
+            name="RAMP Launch">
+      </launchConfigurationType>
+   </extension>
+
+</plugin>
