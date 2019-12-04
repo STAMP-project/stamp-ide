@@ -10,11 +10,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+
+import eu.stamp.eclipse.botsing.model.generation.constants.ModelgenerationPluginConstants;
 
 public class ClassPathCreator implements IRunnableWithProgress {
 	
@@ -24,17 +27,29 @@ public class ClassPathCreator implements IRunnableWithProgress {
 	
 	private String classPath;
 	
+	private boolean maven;
+	
 	public ClassPathCreator(IJavaProject project,Shell shell) {
-		projectLocation = project.getProject().getLocation().toString();
-		monitorDialog = new ProgressMonitorDialog(shell);
+		try {
+			if(project.getProject().hasNature(ModelgenerationPluginConstants.MAVEN_NATURE)) {
+				projectLocation = project.getProject().getLocation().toString();
+				monitorDialog = new ProgressMonitorDialog(shell);
+				maven = true;
+			} else {
+				classPath = "";
+				maven = false;
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 	
     public void createClassPathFile() {
+    	if(maven) {
 		try {
 			monitorDialog.run(true, false, this);
-		} catch (InvocationTargetException | InterruptedException e) {
-			e.printStackTrace();
-		}
+		} catch (InvocationTargetException | InterruptedException e) { e.printStackTrace(); }
+    	}
     }
 	
 	@Override
