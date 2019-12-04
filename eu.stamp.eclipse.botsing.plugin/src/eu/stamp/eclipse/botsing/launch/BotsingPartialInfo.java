@@ -15,7 +15,7 @@ package eu.stamp.eclipse.botsing.launch;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.stamp.eclipse.botsing.properties.AbstractBotsingProperty;
+import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
 
 /**
  * objects of this class are produced by objects that contains Botsing properties
@@ -29,16 +29,16 @@ public class BotsingPartialInfo {
 
 	private String name;
 
-	private final List<AbstractBotsingProperty> properties;
+	private final List<IBotsingProperty> properties;
 	
-	public BotsingPartialInfo(List<AbstractBotsingProperty> properties) {
+	public BotsingPartialInfo(List<IBotsingProperty> properties) {
 		this(null,properties);
 	}
 	
-	public BotsingPartialInfo(String name,List<AbstractBotsingProperty> properties) {
+	public BotsingPartialInfo(String name,List<IBotsingProperty> properties) {
 		this.name = name;
-		this.properties = new ArrayList<AbstractBotsingProperty>(properties.size());
-	    for(AbstractBotsingProperty property : properties)
+		this.properties = new ArrayList<IBotsingProperty>(properties.size());
+	    for(IBotsingProperty property : properties)
 	    	if(property.containsLaunchInfo())
 	    		this.properties.add(property);
 	}
@@ -51,7 +51,7 @@ public class BotsingPartialInfo {
 	
 	public String getName() { return name; }
 	
-	public  List<AbstractBotsingProperty> getProperties(){
+	public  List<IBotsingProperty> getProperties(){
 		return properties;
 	}
 	

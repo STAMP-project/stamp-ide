@@ -13,7 +13,9 @@
 package eu.stamp.eclipse.botsing.launch;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
@@ -37,6 +39,7 @@ import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
+import eu.stamp.eclipse.botsing.call.DoublePrintStream;
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 
 public class BotsingLaunchDelegate extends JavaLaunchDelegate{
@@ -44,6 +47,14 @@ public class BotsingLaunchDelegate extends JavaLaunchDelegate{
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 	throws CoreException {
+		
+	PrintStream out = System.out;
+	try {
+		DoublePrintStream myDoubleStream = new DoublePrintStream(out,BostingJob.outputFile);
+		System.setOut(myDoubleStream);
+		System.setProperty("eclipse.consoleLog","true");
+			} catch (FileNotFoundException e2) { e2.printStackTrace(); }
+		
 	if (monitor == null) {
 	monitor = new NullProgressMonitor(); 
 	}
@@ -163,6 +174,7 @@ public class BotsingLaunchDelegate extends JavaLaunchDelegate{
 	} catch (IOException e1) {
 	e1.printStackTrace();
 	}
+	System.setOut(out);
 	    }
 
 	public static String getPluginDir(String pluginId)

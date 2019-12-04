@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-import eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart;
 import eu.stamp.eclipse.botsing.interfaces.IBotsingProperty;
 import eu.stamp.eclipse.botsing.listeners.IBotsingPropertyListener;
 import eu.stamp.eclipse.botsing.listeners.IPropertyDataListener;
@@ -36,8 +35,7 @@ import eu.stamp.eclipse.botsing.listeners.IPropertyDataListener;
  * @see eu.stamp.eclipse.botsing.interfaces.IBotsingProperty
  * @see eu.stamp.eclipse.botsing.interfaces.IBotsingConfigurablePart
  */
-public abstract class AbstractBotsingProperty 
-     implements IBotsingProperty, IBotsingConfigurablePart {
+public abstract class AbstractBotsingProperty implements IBotsingProperty {
 	
 	protected final String defaultValue;
 	
@@ -105,6 +103,7 @@ public abstract class AbstractBotsingProperty
 		dataListeners.add(dataListener);
 	}
 	
+	@Override
 	public void callListeners() {
 		if(propertyListener != null)	
 		propertyListener.activate();
@@ -116,11 +115,13 @@ public abstract class AbstractBotsingProperty
 	public String[] getPropertyString() {
 		
 	    if(compulsory) return new String[] {key,getData()};
+	    else if(getData() == null || getData().isEmpty()) return null;
 	    else return new String[] {key + "=" + getData()};
 	}
 	
 	public boolean isCompulsory() { return compulsory; }
 	
+	@Override
 	public boolean containsLaunchInfo() { return isLaunchInfo; }
 	
 	protected String getKey() { return key; }
@@ -147,4 +148,6 @@ public abstract class AbstractBotsingProperty
 	       if(tooltip != null) label.setToolTipText(tooltip);
 	}
 
+	@Override
+	public boolean isSet() { return true; }
 }
