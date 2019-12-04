@@ -6,6 +6,8 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Text;
 
 import eu.stamp.eclipse.botsing.model.generation.constants.ModelGenerationLaunchConstants;
 import eu.stamp.eclipse.botsing.model.generation.controls.ModelGenerationControlsFactory;
@@ -31,9 +33,14 @@ public class ModelGenerationWizardPage extends WizardPage {
 		composite.setLayout(layout);
 		
 		// class path
-		ModelGenerationControlsFactory.getFactory().setMap(map).setKey(
+		Text classPathText = ModelGenerationControlsFactory.getFactory().setMap(map).setKey(
 				ModelGenerationLaunchConstants.PROJECT_CLASS_PATH).setLabelText("Class path : ")
 		.createText(composite);
+		
+		if(!classPathText.getText().isEmpty()) {
+			classPathText.setEnabled(false);
+			classPathText.notifyListeners(SWT.Segments,new Event());
+		}
 		
 		// project prefix
 		ModelGenerationControlsFactory.getFactory().setMap(map)

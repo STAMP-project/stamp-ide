@@ -24,6 +24,8 @@ public class ModelGenerationWizard extends Wizard {
 	public ModelGenerationWizard(IJavaProject project, String projectClassPath) {
 		
 	super();
+	
+	if(projectClassPath == null)projectClassPath = "";
 		
 	map = new HashMap<String,String>();
 	

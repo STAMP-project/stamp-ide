@@ -65,7 +65,7 @@ import eu.stamp.eclipse.botsing.properties.StackTraceProperty;
 import eu.stamp.eclipse.botsing.properties.TestDirectoryProperty;
 import eu.stamp.eclipse.text.validation.StampTextFieldErrorHandler;
 import eu.stamp.eclipse.general.validation.IValidationPage;
-
+import eu.stamp.eclipse.botsing.model.generation.classpth.ClassPathCreator;
 import eu.stamp.eclipse.botsing.model.generation.wizard.ModelGenerationWizard;
 
 public class BotsingWizardPage extends WizardPage 
@@ -88,6 +88,8 @@ public class BotsingWizardPage extends WizardPage
 	
 	private Properties properties;
 	private boolean propertiesLoaded;
+	
+	private String classPathString;
 	
 	protected BotsingWizardPage(
 			BotsingWizard wizard,BotsingAdvancedOptionsDialog dialog) {
@@ -293,10 +295,15 @@ public class BotsingWizardPage extends WizardPage
     	public void widgetSelected(SelectionEvent e) {
     	  Display.getDefault().syncExec(new Runnable() {
 			@Override
-			public void run() { // TODO check
+			public void run() {
 	    		Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+	    		if(classPathString == null || classPathString.isEmpty()) {
+	    		ClassPathCreator classPathCreator = new ClassPathCreator(wizard.getProject(),activeShell);
+	    		classPathCreator.createClassPathFile();
+	    		classPathString = classPathCreator.getClassPathString();
+	    		}
 	    		ModelGenerationWizard modelGenerationWizard = 
-	    				new ModelGenerationWizard(wizard.getProject());
+	    				new ModelGenerationWizard(wizard.getProject(),classPathString);
 	    		WizardDialog diag = new WizardDialog(activeShell,modelGenerationWizard);
 	    		diag.open();
 			}  
