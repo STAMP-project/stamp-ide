@@ -34,15 +34,10 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsoleListener;
 
+import eu.stamp.eclipse.botsing.call.InputManager;
 import eu.stamp.eclipse.botsing.constants.BotsingPluginConstants;
 import eu.stamp.eclipse.botsing.dialog.BotsingExecutionErrorDialog;
-import eu.stamp.eclipse.botsing.call.DoublePrintStream;
-import eu.stamp.eclipse.botsing.call.InputManager;
-import eu.stamp.eclipse.botsing.call.Invocator;
 import eu.stamp.eclipse.botsing.properties.OutputTraceProperty;
 import eu.stamp.eclipse.botsing.wizard.BotsingWizard;
 
@@ -56,10 +51,16 @@ public class BostingJob extends Job {
 	
 	public static File outputFile;
 	
+	private String modelConfiguration;
+	
 	public BostingJob(BotsingLaunchInfo info,BotsingWizard wizard) {
 		super("Bosting working");
         this.info = info;
         this.wizard = wizard;
+	}
+	
+	public void setModelConfiguration(String modelConfiguration) {
+		this.modelConfiguration = modelConfiguration;
 	}
 
 	@Override
@@ -134,6 +135,9 @@ public class BostingJob extends Job {
 						IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, 
 						BotsingPluginConstants.BOTSING_MAIN);
 				
+				if(modelConfiguration != null)
+				       wc.setAttribute(BotsingPluginConstants.ATTR_MODEL_SER,modelConfiguration);
+				else wc.setAttribute(BotsingPluginConstants.ATTR_MODEL_SER,"");
 				
 				String[] arguments = prepareLaunch(new String[] {line});
 				StringBuilder builder = new StringBuilder();

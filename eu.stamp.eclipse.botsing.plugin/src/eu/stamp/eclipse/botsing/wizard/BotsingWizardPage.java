@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -66,6 +67,7 @@ import eu.stamp.eclipse.botsing.properties.TestDirectoryProperty;
 import eu.stamp.eclipse.text.validation.StampTextFieldErrorHandler;
 import eu.stamp.eclipse.general.validation.IValidationPage;
 import eu.stamp.eclipse.botsing.model.generation.classpth.ClassPathCreator;
+import eu.stamp.eclipse.botsing.model.generation.load.GenerationConfigurationLoader;
 import eu.stamp.eclipse.botsing.model.generation.wizard.ModelGenerationWizard;
 
 public class BotsingWizardPage extends WizardPage 
@@ -78,6 +80,8 @@ public class BotsingWizardPage extends WizardPage
 	private List<IBotsingProperty> botsingProperties;
 	
 	private String configurationName;
+	
+	private GenerationConfigurationLoader modelPageLoader;
     
 	/**
 	 * Access to the wizard object is required in order to load configurations
@@ -112,6 +116,8 @@ public class BotsingWizardPage extends WizardPage
 		propertiesLoaded = false;
 	}
 	}
+	
+	public GenerationConfigurationLoader getLoader() { return modelPageLoader; }
 
 	@Override
 	public void createControl(Composite parent) {
@@ -146,8 +152,17 @@ public class BotsingWizardPage extends WizardPage
     	public void widgetSelected(SelectionEvent e) {
     		configurationName = loadCombo.getText();
     		wizard.reconfigure(loadCombo.getText());
-    		for(IBotsingProperty property : botsingProperties)
-    		    property.callListeners();
+    		for(IBotsingProperty property : botsingProperties) property.callListeners();
+    		try {
+				String modelLoadString = wizard.getConfigurationsManager().getCopy().
+						getAttribute(BotsingPluginConstants.ATTR_MODEL_SER,"");
+				if(!modelLoadString.isEmpty()) {
+					modelPageLoader = new GenerationConfigurationLoader();
+					modelPageLoader.fromString(modelLoadString);
+				}
+			} catch (CoreException e1) {
+				e1.printStackTrace();
+			}
     	}
     });
     
@@ -305,8 +320,11 @@ public class BotsingWizardPage extends WizardPage
 	    		}
 	    		ModelGenerationWizard modelGenerationWizard = 
 	    				new ModelGenerationWizard(wizard.getProject(),classPathString);
+	    		if(modelPageLoader != null) modelGenerationWizard.setLoader(modelPageLoader);
 	    		WizardDialog diag = new WizardDialog(activeShell,modelGenerationWizard);
+	    		diag.setBlockOnOpen(true);
 	    		diag.open();
+	    		modelPageLoader = modelGenerationWizard.getLoader();
 			}  
     	  });
     	}

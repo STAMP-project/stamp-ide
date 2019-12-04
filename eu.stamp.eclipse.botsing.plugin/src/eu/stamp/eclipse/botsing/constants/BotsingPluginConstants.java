@@ -23,4 +23,5 @@ public abstract class BotsingPluginConstants {
 	public static final String JUNIT_JAR_URL = "platform:/plugin/eu.stamp.eclipse.botsing.plugin/lib/junit-4.12.jar";
     public static final String HAMCREST_JAR_URL = "platform:/plugin/eu.stamp.eclipse.botsing.plugin/lib/hamcrest-core-1.3.jar";
     public static final String MOCKITO_JAR_URL = "platform:/plugin/eu.stamp.eclipse.botsing.plugin/lib/mockito-all-1.9.5.jar";
+    public static final String ATTR_MODEL_SER = "BehaviorModelGenerationConfiguration";
 }

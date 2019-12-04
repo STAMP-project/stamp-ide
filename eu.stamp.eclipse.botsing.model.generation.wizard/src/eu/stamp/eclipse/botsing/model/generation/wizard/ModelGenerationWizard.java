@@ -8,6 +8,7 @@ import org.eclipse.jface.wizard.Wizard;
 
 import eu.stamp.eclipse.botsing.model.generation.constants.ModelGenerationLaunchConstants;
 import eu.stamp.eclipse.botsing.model.generation.launch.ModelGenerationJob;
+import eu.stamp.eclipse.botsing.model.generation.load.GenerationConfigurationLoader;
 
 public class ModelGenerationWizard extends Wizard {
 	
@@ -16,6 +17,8 @@ public class ModelGenerationWizard extends Wizard {
 	private ModelGenerationJob job;
 	
 	private final IJavaProject project;
+	
+	private GenerationConfigurationLoader loader;
 	
 	public ModelGenerationWizard(IJavaProject project) {
 		this(project,"");
@@ -34,11 +37,15 @@ public class ModelGenerationWizard extends Wizard {
 	map.put(ModelGenerationLaunchConstants.OUT_DIR,ModelGenerationLaunchConstants.OUT_DIR_DEFAULT);
 	
 	this.project = project;
+	
+	loader = new GenerationConfigurationLoader();
 	}
+	
+	public GenerationConfigurationLoader getLoader() { return loader; }
 	
 	@Override
 	public void addPages() {
-		ModelGenerationWizardPage page = new ModelGenerationWizardPage(map);
+		ModelGenerationWizardPage page = new ModelGenerationWizardPage(map,this);
 		addPage(page);
 	}
 	
@@ -70,9 +77,14 @@ public class ModelGenerationWizard extends Wizard {
 		for(String key : map.keySet())if(!map.get(key).isEmpty())
 			builder.append(key).append(' ').append(map.get(key)).append(' ');
 		job = new ModelGenerationJob(builder.toString(),project);
+		loader.update(map);
 		return true;
 	}
 	
 	public ModelGenerationJob getJob() { return job; }
+
+	public void setLoader(GenerationConfigurationLoader loader) {
+		this.loader = loader;
+	}
 
 }

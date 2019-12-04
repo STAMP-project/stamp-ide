@@ -34,6 +34,7 @@ import eu.stamp.eclipse.botsing.launch.BotsingLaunchInfo;
 import eu.stamp.eclipse.botsing.launch.BostingJob;
 import eu.stamp.eclipse.botsing.launch.BotsingPartialInfo;
 import eu.stamp.eclipse.botsing.launch.ConfigurationsManager;
+import eu.stamp.eclipse.botsing.model.generation.load.GenerationConfigurationLoader;
 
 public class BotsingWizard extends Wizard
                       implements IBotsingConfigurablePart {
@@ -89,6 +90,8 @@ public class BotsingWizard extends Wizard
 		return image;
 	}
 	
+	public ConfigurationsManager getConfigurationsManager() { return configurationsManager; }
+	
 	@Override
 	public boolean performFinish() {
 
@@ -102,6 +105,8 @@ public class BotsingWizard extends Wizard
         		
 		BostingJob job = new BostingJob(
 				new BotsingLaunchInfo(partialInfos),this);
+		GenerationConfigurationLoader modelLoader = page.getLoader();
+		if(modelLoader != null && !modelLoader.getNoLoad())job.setModelConfiguration(modelLoader.toString());
 		try { 
 			job.schedule();
 		} catch(Exception e){
