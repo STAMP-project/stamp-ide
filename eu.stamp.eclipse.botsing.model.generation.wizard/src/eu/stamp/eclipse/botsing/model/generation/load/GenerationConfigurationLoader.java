@@ -26,11 +26,13 @@ public class GenerationConfigurationLoader {
 	
 	public void reset() { map = new HashMap<String,String>(); }
 	
+	public boolean getNoLoad() { return noLoad; }
+	
 	public String toString() { 
 		StringBuilder builder = new StringBuilder();
         boolean first = true;
         for(String key : map.keySet()) {
-        	if(!first) first = false;
+        	if(first) first = false;
         	else builder.append(ITEM_SEPARATOR);
         	builder.append(key).append(KEY_VALUE_SEPARATOR).append(map.get(key));
         }
@@ -44,6 +46,7 @@ public class GenerationConfigurationLoader {
 		for(String item : items) {
 			String[] keyValue = item.split(KEY_VALUE_SEPARATOR);
 			map.put(keyValue[0],keyValue[1]);
+			noLoad = false;
 		}
 		} catch(ArrayIndexOutOfBoundsException e) { 
 			System.err.println("ERROR : Wrong load string in GenerationConfigurationLoader"); 

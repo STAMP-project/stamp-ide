@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -115,6 +116,8 @@ public class BotsingWizardPage extends WizardPage
 		propertiesLoaded = false;
 	}
 	}
+	
+	public GenerationConfigurationLoader getLoader() { return modelPageLoader; }
 
 	@Override
 	public void createControl(Composite parent) {
@@ -149,8 +152,17 @@ public class BotsingWizardPage extends WizardPage
     	public void widgetSelected(SelectionEvent e) {
     		configurationName = loadCombo.getText();
     		wizard.reconfigure(loadCombo.getText());
-    		for(IBotsingProperty property : botsingProperties)
-    		    property.callListeners();
+    		for(IBotsingProperty property : botsingProperties) property.callListeners();
+    		try {
+				String modelLoadString = wizard.getConfigurationsManager().getCopy().
+						getAttribute(BotsingPluginConstants.ATTR_MODEL_SER,"");
+				if(!modelLoadString.isEmpty()) {
+					modelPageLoader = new GenerationConfigurationLoader();
+					modelPageLoader.fromString(modelLoadString);
+				}
+			} catch (CoreException e1) {
+				e1.printStackTrace();
+			}
     	}
     });
     

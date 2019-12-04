@@ -51,6 +51,10 @@ public class ModelGenerationControlsFactory {
 	}
 	
 	public Text createText(Composite composite,GenerationConfigurationLoader loadCentre) {
+		return createText(composite,loadCentre,false);
+	}
+	
+	public Text createText(Composite composite,GenerationConfigurationLoader loadCentre,boolean onlyLoadIfEmpty) {
 		createLabel(composite);
 		int n = ((GridLayout)composite.getLayout()).numColumns - 1;
 		Text text = new Text(composite,SWT.BORDER);
@@ -62,13 +66,27 @@ public class ModelGenerationControlsFactory {
 			   map.put(key,text.getText());
 			}	
 		});
-        LoadableElement loader = new LoadableElement(key) {
+		LoadableElement loader;
+		if(onlyLoadIfEmpty) {
+			loader = new LoadableElement(key) {
+				@Override
+				protected void loadValue(String value) {
+					String target = map.get(key);
+					if(target == null || target.isEmpty()) {
+						text.setText(value);
+						text.notifyListeners(SWT.Segments,new Event());
+					}
+				}
+			};
+		} else {
+        loader = new LoadableElement(key) {
 			@Override
 			protected void loadValue(String value) {
 				text.setText(value);
 				text.notifyListeners(SWT.Segments,new Event());
 			}
         };
+		}
         loadCentre.addLoadablePart(loader);
 		return text;
 	}
