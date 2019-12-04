@@ -29,7 +29,7 @@ in the main bar STAMP > DSPOT or with ctrl + 6.
 To create a new configuration select the check button in the right of the "New configuration" row in page one and write a name for the configuration in the text
 after this, select the Dspot parameters in the wizard, when you press finish button your new configuration will be saved and executed.
 
-[configuration support](images/loadConfiguration.png)
+![configuration support](images/loadConfiguration.png)
 
 ### DSpot field validation and quick fixers
 
@@ -37,7 +37,7 @@ Some fields of the DSpot wizard includes validation, if the text is wrong or emp
 there will be another signal in the left top corner of the text, clicking right on this signal a quick fix menu will be open if there is a quick fixer for that 
 specific problem, click on it to correct the text.
 
-[Quick fixer](images/DSpotValidation.png)
+![Quick fixer](images/DSpotValidation.png)
 
 ### Loading a stored configuration
 
@@ -50,7 +50,7 @@ if you change this parameters the changes will be saved after pressing the finis
 Push the select project button (page one) to open a project selection dialog, select a project and press the OK button,
 you will see the path of the new project in the "path of the project" text, you can also write the path of the project directly in the text box.
 
-[ select a project](images/selectProject.png)
+![ select a project](images/selectProject.png)
 
 ### Check the information about the project
 
@@ -58,7 +58,7 @@ The fields in page one contains information about the project to write the DSpot
 
 This information is loaded automatically when opening the wizard or changing of project, check them and correct it if necessary.
 
-[ project information](images/projectInformation.png)
+![ project information](images/projectInformation.png)
 
 #### Set the path of the sources and the java version
 
@@ -73,41 +73,41 @@ Under this combos there is another one for the Java version.
 In the "Optional information" group, at the botton of the first page there is a text box titled "Path of the output folder" to set the path of the folder
 to store the reports and files produced by DSpot.
 
-[output Folder](images/outputFolder.png)
+![output Folder](images/outputFolder.png)
 
 ### set the number of iterations
 
 At the top of the second page there is a spinner to set the number of amplification iterations. A larger number may help to improve the test but
 it will take more time.
 
-[iterations spinner](images/iterations.png)
+![iterations spinner](images/iterations.png)
 
 ### Select the test classes to amplify 
 
 The second page contains a tree with the test packages and clases, select the tests or test packages you want to amplify, (the test classes are the subitems of the packages), if there is not test selected all will be used.
 
-[tests selection](images/tests.png)
+![tests selection](images/tests.png)
   
 ### Select the amplifier
 
 The list titled "Amplifier" in page two contains the DSpot amplifiers, select them clicking on them (multiple selection is allowed with crtl),
 the selected ones appear in blue, if there is not selection all will be used.
 
-[amplifiers list](images/amplifiers.png)
+![amplifiers list](images/amplifiers.png)
 
 ### Choose a test criterion
 
 The combo in the "Test Criterion" row in page two, contains a list of the possible criterions to be maximized during the amplification,
 if there is not selection the default will be used (PitMutantScoreSelector).
 
-[criterion combo](images/criterion.png)
+![criterion combo](images/criterion.png)
 
 ### Select test cases
 
 To select the specific test cases to amplify go to page three, select the case or cases to use in the list titled "test cases", 
 under the list there is a button to clean the list. 
 
-[test cases list](images/cases.png)
+![test cases list](images/cases.png)
 
 ### Max tests amplified
 
@@ -117,7 +117,7 @@ The spinner in the "Max test amplified" row in page three allows specifying the 
 
 In page three there is a spinner titled "Time out (ms)", it specifies the degenerated test's time out.
 
-[max test & time out spinners](images/maxAndTimeSpinners.png)
+![max test & time out spinners](images/maxAndTimeSpinners.png)
 
 ### Random seed
 
