@@ -19,4 +19,5 @@ Bundle-ClassPath: .,
 Export-Package: eu.stamp.eclipse.botsing.model.generation.classpth,
  eu.stamp.eclipse.botsing.model.generation.handler,
  eu.stamp.eclipse.botsing.model.generation.launch,
+ eu.stamp.eclipse.botsing.model.generation.load,
  eu.stamp.eclipse.botsing.model.generation.wizard

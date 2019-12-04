@@ -66,6 +66,7 @@ import eu.stamp.eclipse.botsing.properties.TestDirectoryProperty;
 import eu.stamp.eclipse.text.validation.StampTextFieldErrorHandler;
 import eu.stamp.eclipse.general.validation.IValidationPage;
 import eu.stamp.eclipse.botsing.model.generation.classpth.ClassPathCreator;
+import eu.stamp.eclipse.botsing.model.generation.load.GenerationConfigurationLoader;
 import eu.stamp.eclipse.botsing.model.generation.wizard.ModelGenerationWizard;
 
 public class BotsingWizardPage extends WizardPage 
@@ -78,6 +79,8 @@ public class BotsingWizardPage extends WizardPage
 	private List<IBotsingProperty> botsingProperties;
 	
 	private String configurationName;
+	
+	private GenerationConfigurationLoader modelPageLoader;
     
 	/**
 	 * Access to the wizard object is required in order to load configurations
@@ -304,8 +307,11 @@ public class BotsingWizardPage extends WizardPage
 	    		}
 	    		ModelGenerationWizard modelGenerationWizard = 
 	    				new ModelGenerationWizard(wizard.getProject(),classPathString);
+	    		if(modelPageLoader != null) modelGenerationWizard.setLoader(modelPageLoader);
 	    		WizardDialog diag = new WizardDialog(activeShell,modelGenerationWizard);
+	    		diag.setBlockOnOpen(true);
 	    		diag.open();
+	    		modelPageLoader = modelGenerationWizard.getLoader();
 			}  
     	  });
     	}
