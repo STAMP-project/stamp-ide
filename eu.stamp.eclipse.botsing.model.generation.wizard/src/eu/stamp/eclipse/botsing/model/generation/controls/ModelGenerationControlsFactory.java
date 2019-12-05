@@ -82,8 +82,9 @@ public class ModelGenerationControlsFactory {
         loader = new LoadableElement(key) {
 			@Override
 			protected void loadValue(String value) {
-				text.setText(value);
+				if(!text.isDisposed()) { text.setText(value);
 				text.notifyListeners(SWT.Segments,new Event());
+				}
 			}
         };
 		}
