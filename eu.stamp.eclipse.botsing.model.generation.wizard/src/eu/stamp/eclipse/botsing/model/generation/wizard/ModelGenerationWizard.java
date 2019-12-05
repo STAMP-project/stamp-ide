@@ -6,6 +6,7 @@ import java.util.Map;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.Wizard;
 
+import eu.stamp.eclipse.botsing.model.generation.classpth.PackageRootLocator;
 import eu.stamp.eclipse.botsing.model.generation.constants.ModelGenerationLaunchConstants;
 import eu.stamp.eclipse.botsing.model.generation.launch.ModelGenerationJob;
 import eu.stamp.eclipse.botsing.model.generation.load.GenerationConfigurationLoader;
@@ -32,11 +33,12 @@ public class ModelGenerationWizard extends Wizard {
 		
 	map = new HashMap<String,String>();
 	
-	map.put(ModelGenerationLaunchConstants.PROJECT_CLASS_PATH,projectClassPath);
-	map.put(ModelGenerationLaunchConstants.PROJECT_PREFIX,"");
-	map.put(ModelGenerationLaunchConstants.OUT_DIR,ModelGenerationLaunchConstants.OUT_DIR_DEFAULT);
-	
 	this.project = project;
+	
+	map.put(ModelGenerationLaunchConstants.PROJECT_CLASS_PATH,projectClassPath);
+	PackageRootLocator rootLocator = new PackageRootLocator();
+	map.put(ModelGenerationLaunchConstants.PROJECT_PREFIX,rootLocator.findpackageRoot(project));
+	map.put(ModelGenerationLaunchConstants.OUT_DIR,ModelGenerationLaunchConstants.OUT_DIR_DEFAULT);
 	
 	loader = new GenerationConfigurationLoader();
 	}
