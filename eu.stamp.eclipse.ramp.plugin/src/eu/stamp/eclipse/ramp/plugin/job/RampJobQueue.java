@@ -16,23 +16,23 @@ public class  RampJobQueue extends Job {
 
 	private List<SequentialJob> jobs;
 	
-	public RampJobQueue(ModelGenerationJob modelGenerationJob,Map<String,String> launchMap,String projectName) {
-		this(launchMap,projectName,true);
+	public RampJobQueue(ModelGenerationJob modelGenerationJob,Map<String,String> launchMap,String projectName,String projectLocation) {
+		this(launchMap,projectName,true,projectLocation);
 		if(modelGenerationJob != null) jobs.add(0,modelGenerationJob); // the model generation job must be the first in the list
 	}
 	
-	public RampJobQueue(Map<String,String> launchMap,String projectName) {
-		this(launchMap,projectName,false);
+	public RampJobQueue(Map<String,String> launchMap,String projectName,String projectLocation) {
+		this(launchMap,projectName,false,projectLocation);
 	}
 	
-	private RampJobQueue(Map<String,String> launchMap, String projectName,boolean modelGeneration) {
+	private RampJobQueue(Map<String,String> launchMap, String projectName,boolean modelGeneration,String projectLocation) {
 		super("Evosuite working");
 		int n = launchMap.size();
 		if(modelGeneration) n++;
 		jobs = new ArrayList<SequentialJob>(n);
 		// create jobs
         for(String className : launchMap.keySet()) {
-          jobs.add(new RampJob(className,launchMap.get(className),projectName,0));
+          jobs.add(new RampJob(className,launchMap.get(className),projectName,projectLocation,0));
         }
 	}
 

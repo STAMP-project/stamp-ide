@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.Workbench;
 
+import eu.stamp.eclipse.botsing.model.generation.load.GenerationConfigurationLoader;
 import eu.stamp.eclipse.botsing.model.generation.wizard.ModelGenerationWizard;
 import eu.stamp.eclipse.ramp.plugin.constants.RampLaunchConstants;
 import eu.stamp.eclipse.ramp.plugin.controls.ControlsFactory;
@@ -39,10 +40,15 @@ public class RampPage1 extends WizardPage {
 	private final RampConfiguration evosuiteConfiguration;
 	
 	private Text classpathText;
+	
+	private GenerationConfigurationLoader modelLoader;
+	
+	private final RampWizard wizard;
 
-	protected RampPage1(String pageName, RampConfiguration evosuiteConfiguration) {
+	protected RampPage1(String pageName, RampConfiguration evosuiteConfiguration,RampWizard wizard) {
 		super(pageName);
 		this.evosuiteConfiguration = evosuiteConfiguration;
+		this.wizard = wizard;
 	}
 
 	@Override
@@ -54,13 +60,17 @@ public class RampPage1 extends WizardPage {
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 		
+		evosuiteConfiguration.setProperty(RampLaunchConstants.CLASS_PROPERTY,wizard.getClassesList());
         ControlsFactory.getFactory(evosuiteConfiguration).setPropertyKey(
         		RampLaunchConstants.CLASS_PROPERTY).setLabelText("Class : ")
-                .createText(composite);
+                .createList(composite);
         
         classpathText = ControlsFactory.getFactory(evosuiteConfiguration).setPropertyKey(
         		RampLaunchConstants.PROJECT_CP).setLabelText("Project class path : ")
                 .createText(composite);
+        
+        String classPath = classpathText.getText();
+        if(classPath != null && !classPath.isEmpty()) classpathText.setEnabled(false);
         
         ControlsFactory.getFactory(evosuiteConfiguration).setPropertyKey(
         		RampLaunchConstants.SEARCH_BUDGET).setLabelText("Search budget : ")
@@ -89,7 +99,7 @@ public class RampPage1 extends WizardPage {
         	public void widgetSelected(SelectionEvent event) {
         		if(useModelsButton.getSelection()) {
         			modelPathText.setEnabled(true);
-        			modelPathText.setText("results/models");
+        			modelPathText.setText("/model");
         		} else {
         			modelPathText.setEnabled(false);
         			modelPathText.setText("");
@@ -111,17 +121,17 @@ public class RampPage1 extends WizardPage {
         			  Shell shell = Workbench.getInstance().getActiveWorkbenchWindow().getShell();
         			  ModelGenerationWizard modelWizard = 
         					  new ModelGenerationWizard(evosuiteConfiguration.getProject(),classpathText.getText());
+        			  if(modelLoader != null) modelWizard.setLoader(modelLoader);
         			  WizardDialog diag = new WizardDialog(shell,modelWizard);
         			  diag.setBlockOnOpen(true);
         			  diag.open();
         			  evosuiteConfiguration.setModelGenerationJob(modelWizard.getJob());
+        			  modelLoader = modelWizard.getLoader();
         			}
         		});
         	}
         });
-	    
 		setControl(composite);
 		setPageComplete(true);
 	}
-
 }

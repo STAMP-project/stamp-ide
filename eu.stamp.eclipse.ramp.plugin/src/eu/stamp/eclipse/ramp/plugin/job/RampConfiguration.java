@@ -64,7 +64,7 @@ public class RampConfiguration {
 	
 	private IJavaProject project;
 	
-	public RampConfiguration(IJavaProject project) throws IOException {
+	public RampConfiguration(IJavaProject project,String classesList) throws IOException {
 		this.project = project;
 		
 		// initializing simple properties
@@ -74,7 +74,7 @@ public class RampConfiguration {
 		// initializing no equal sign properties
 		noEqualSignComposeProperties = new HashMap<String,String>();
 		noEqualSignComposeProperties
-		  .put(RampLaunchConstants.CLASS_PROPERTY,"");
+		  .put(RampLaunchConstants.CLASS_PROPERTY,classesList);
 		String projectLocation = project.getProject().getLocation().toString();
         BufferedReader reader = null;
 
@@ -161,8 +161,10 @@ public class RampConfiguration {
 	 * @return the job to be executed after wizard finish
 	 */
 	public RampJobQueue createJob() {
-		if(modelGenerationJob == null) return new RampJobQueue(generateLaunchMap(),project.getElementName());
-		return new RampJobQueue(modelGenerationJob,generateLaunchMap(),project.getElementName());
+		if(modelGenerationJob == null) return new RampJobQueue(generateLaunchMap()
+				,project.getElementName(),project.getProject().getLocation().toString());
+		return new RampJobQueue(modelGenerationJob,generateLaunchMap(),
+				project.getElementName(),project.getProject().getLocation().toString());
 	}
 	
 	public void setModelGenerationJob(ModelGenerationJob modelGenerationJob) {

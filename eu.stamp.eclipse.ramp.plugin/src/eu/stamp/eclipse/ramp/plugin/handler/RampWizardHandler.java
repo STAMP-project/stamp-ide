@@ -23,7 +23,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import eu.stamp.eclipse.botsing.model.generation.classpth.ClassPathCreator;
+import eu.stamp.eclipse.ramp.plugin.classpth.ClassPathCreator;
 import eu.stamp.eclipse.botsing.model.generation.handler.StampHandler;
 import eu.stamp.eclipse.ramp.plugin.constants.RampPluginConstants;
 import eu.stamp.eclipse.ramp.plugin.wizard.RampWizard;
@@ -61,17 +61,17 @@ public class RampWizardHandler extends StampHandler {
 		ClassPathCreator classPathCreator = new ClassPathCreator(project,HandlerUtil.getActiveShell(event));
 		classPathCreator.createClassPathFile();
 		
-	    openWizard();
+	    openWizard(classPathCreator.getClassCompactlist());
 		return null;
 	}
 	
-	private void openWizard() {
+	private void openWizard(String classList) {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					WizardDialog wizardDialog = new WizardDialog(
-							HandlerUtil.getActiveShell(event),new RampWizard(project));
+							HandlerUtil.getActiveShell(event),new RampWizard(project,classList));
 					 wizardDialog.open();
 				} catch (IOException e) {
 					e.printStackTrace();

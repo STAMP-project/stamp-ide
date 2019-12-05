@@ -20,10 +20,15 @@ public class ClassPathCreator implements IRunnableWithProgress {
 	
 	private String projectLocation;
 	
+	private IJavaProject project;
+	
 	private ProgressMonitorDialog monitorDialog;
+	
+	private String classList;
 	
 	public ClassPathCreator(IJavaProject project,Shell shell) {
 		projectLocation = project.getProject().getLocation().toString();
+		this.project = project;
 		monitorDialog = new ProgressMonitorDialog(shell);
 	}
 	
@@ -38,7 +43,7 @@ public class ClassPathCreator implements IRunnableWithProgress {
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		
-		monitor.beginTask("computing classpath",11);
+		monitor.beginTask("computing classpath",14);
 		
 		// copy dependencies
 		monitor.subTask("Copy dependencies");
@@ -80,9 +85,16 @@ public class ClassPathCreator implements IRunnableWithProgress {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-		
+				monitor.worked(1);
+				
+		// get no test class list (in a string name1:name2...)
+		monitor.subTask("looking for non test clases");
+		SourceFilesLocator sourcesLocator = new SourceFilesLocator();
+		classList = sourcesLocator.getFullNamesCompactList(project);
 		monitor.done();
 	}
+	
+	public String getClassCompactlist() { return classList; }
 	
 	/**
 	 * Recursive search for the jars in a folder, there is a maximun recursion level (1000)

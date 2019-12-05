@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 import eu.stamp.eclipse.botsing.model.generation.launch.SequentialJob;
+import eu.stamp.eclipse.ramp.plugin.constants.RampLaunchConstants;
 import eu.stamp.eclipse.ramp.plugin.constants.RampPluginConstants;
 
 public class RampJob extends SequentialJob {
@@ -34,13 +35,19 @@ public class RampJob extends SequentialJob {
 	
 	private final String projectName;
 	
+	private final String projectLocation;
+	
 	private ILaunchConfiguration launch;
 
-	public RampJob(String className, String launchString,String projectName,int place) {
+	public RampJob(String className, String launchString,String projectName,String projectLocation,int place) {
 		super("Evosuite running on class" + className);
+		while(launchString.contains("  ")) launchString = launchString.replaceFirst("  "," "); // avoid duplicate spaces
+		if(launchString.contains(RampLaunchConstants.MODEL_PATH + "= "))
+			launchString = launchString.replaceFirst(RampLaunchConstants.MODEL_PATH + "= ","");
 		this.launchString = launchString;
 		this.projectName = projectName;
 		this.place = place;
+		this.projectLocation  = projectLocation;
 	}
 
 	@Override
@@ -54,10 +61,12 @@ public class RampJob extends SequentialJob {
 		.newInstance(null,"Evosuite Launch");
 		
 		launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS,
-				"-Xmx4000m");
+				"-d64 -Xmx4000m");
 		
 		launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, 
 				projectName);
+		
+		launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY,projectLocation);
 		
 		launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, 
 				RampPluginConstants.MAIN_CLASS);
@@ -68,7 +77,8 @@ public class RampJob extends SequentialJob {
 		// System.out.println("Launch String : " + launchString); // logs
 		launch = launchCopy.doSave();
 		ILaunch launching = launch.launch(ILaunchManager.RUN_MODE,null);
-	    processes = launching.getProcesses();
+		processes = launching.getProcesses();
+		
 		}catch(CoreException e) {
 			e.printStackTrace();
 		}

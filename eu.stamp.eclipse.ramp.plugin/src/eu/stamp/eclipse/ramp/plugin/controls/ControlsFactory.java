@@ -26,8 +26,11 @@ import org.eclipse.swt.events.SegmentListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
@@ -127,6 +130,44 @@ public class ControlsFactory {
 			}
 	    });
 	    return text;
+	}
+	
+	public List createList(Composite composite) {
+		putLabel(composite);
+		List list = new List(composite,SWT.MULTI);
+		String[] items = evosuiteConfiguration.getProperty(propertyKey).split(System.getProperty("path.separator"));
+		list.setItems(items);
+		int nColumns = ((GridLayout)composite.getLayout()).numColumns;
+		GridDataFactory.fillDefaults().span(nColumns,4).minSize(200,200).grab(true,true).applyTo(list);
+		list.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String[] selection = list.getSelection();
+				if(selection == null || selection.length == 0) return;
+				else if(selection.length == 1) evosuiteConfiguration.setProperty(propertyKey,selection[0]);
+				else {
+					StringBuilder builder = new StringBuilder();
+					builder.append(selection[0]);
+					for(int i = 1; i < selection.length; i++)
+						builder.append(System.getProperty("path.separator")).append(selection[i]);
+					evosuiteConfiguration.setProperty(propertyKey,builder.toString());
+				}
+			}
+		});
+		Button cleanButton = new Button(composite,SWT.PUSH);
+		GridDataFactory.fillDefaults().applyTo(cleanButton);
+		cleanButton.setText("Clean list");
+		cleanButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				list.deselectAll();
+				list.notifyListeners(SWT.Selection,new Event());
+			}
+		});
+		Label space = new Label(composite,SWT.NONE);
+		space.setText("");
+		GridDataFactory.swtDefaults().span(nColumns-1,1).applyTo(space);
+		return list;
 	}
 
 	protected void putLabel(Composite composite) {

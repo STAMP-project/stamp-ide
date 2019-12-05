@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Image;
 
+import eu.stamp.eclipse.ramp.plugin.constants.RampLaunchConstants;
 import eu.stamp.eclipse.ramp.plugin.constants.RampPluginConstants;
 import eu.stamp.eclipse.ramp.plugin.job.RampConfiguration;
 import eu.stamp.eclipse.ramp.plugin.job.RampJobQueue;
@@ -31,13 +32,18 @@ public class RampWizard extends Wizard {
 	
 	private final RampConfiguration evosuiteConfiguration;
 	
-	public RampWizard(IJavaProject project) throws IOException {
-		evosuiteConfiguration = new RampConfiguration(project);
+	private String classesList;
+	
+	public RampWizard(IJavaProject project,String classesList) throws IOException {
+		evosuiteConfiguration = new RampConfiguration(project,classesList);
+		this.classesList = classesList;
 	}
+	
+	public String getClassesList() { return classesList; }
 	
 	@Override
 	public void addPages() {
-		addPage(new RampPage1("First page",evosuiteConfiguration));
+		addPage(new RampPage1("First page",evosuiteConfiguration,this));
 	}
 	
 	@Override
