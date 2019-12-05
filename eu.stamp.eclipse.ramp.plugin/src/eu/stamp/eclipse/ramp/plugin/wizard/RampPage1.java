@@ -99,7 +99,7 @@ public class RampPage1 extends WizardPage {
         	public void widgetSelected(SelectionEvent event) {
         		if(useModelsButton.getSelection()) {
         			modelPathText.setEnabled(true);
-        			modelPathText.setText("/model");
+        			modelPathText.setText("model/");
         		} else {
         			modelPathText.setEnabled(false);
         			modelPathText.setText("");
