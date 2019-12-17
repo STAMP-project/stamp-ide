@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2019 Atos
  * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v2.0
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * https://www.eclipse.org/legal/epl-2.0/
+ * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  * 	Ricardo Jose Tejada Garcia (Atos) - main developer
@@ -81,6 +81,16 @@ public class RampPage1 extends WizardPage {
         		RampLaunchConstants.SEED_CLONE).setLabelText("Seed clone : ")
                 .setSpinnerDigits(1).setSpinnerMin(1).setSpinnerMax(10)
                 .createSpinner(composite);
+        
+        // Test dir
+        ControlsFactory.getFactory(evosuiteConfiguration).setPropertyKey(
+        		RampLaunchConstants.TEST_DIR).setLabelText("Test directory : ")
+        .createText(composite);
+        
+        // Report dir
+        ControlsFactory.getFactory(evosuiteConfiguration).setPropertyKey(
+        		RampLaunchConstants.REPORT_DIR).setLabelText("Report dir : ")
+        .createText(composite);
         
         // Check button for enabling the use of the models, the listener is after the model path field
         Button useModelsButton = new Button(composite,SWT.CHECK);
