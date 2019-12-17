@@ -59,7 +59,7 @@ public class DSpotJob extends Job {
         folder.mkdirs();
         DSpotFileUtils.writePropertiesFile(folder);
        
-        String command = "eu.stamp-project:dspot-maven:LATEST:amplify-unit-tests" + 
+        String command = "eu.stamp-project:dspot-maven:2.2.1:amplify-unit-tests" + 
         DSpotMapping.getInstance().getCommand();
         System.out.println(command);
 		
