@@ -21,8 +21,7 @@ PARAMETER
 PARAMETER
 type=list
 key=amplifiers
-content=MethodAdd,MethodRemove,TestDataMutator,MethodGeneratorAmplifier,ReturnValueAmplifier,StringLiteralAmplifier,NumberLiteralAmplifier,BooleanLiteralAmplifier,CharLiteralAmplifier,AllLiteralAmplifiers,NullifierAmplifier,None
-labelText=Amplifiers : 
+content=MethodDuplicationAmplifier,MethodRemove,FastLiteralAmplifier,MethodAdderOnExistingObjectsAmplifier,ReturnValueAmplifier,StringLiteralAmplifier,NumberLiteralAmplifier,BooleanLiteralAmplifier,CharLiteralAmplifier,AllLiteralAmplifiers,NullifierAmplifier,ArrayAmplifier,None
 tooltip= select the list of amplifiers to use (default all)
 direction=page2/amplifiersList
 place=8
