@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
@@ -58,6 +57,7 @@ import eu.stamp.eclipse.botsing.listeners.IPropertyDataListener;
 import eu.stamp.eclipse.botsing.log.LogReader;
 import eu.stamp.eclipse.botsing.properties.BotsingSpinnerProperty;
 import eu.stamp.eclipse.botsing.properties.ClassPathProperty;
+import eu.stamp.eclipse.botsing.properties.FrameLevelProperty;
 import eu.stamp.eclipse.botsing.properties.ModelProperty;
 import eu.stamp.eclipse.botsing.properties.MultipleProperty;
 import eu.stamp.eclipse.botsing.properties.OutputTraceProperty;
@@ -235,8 +235,8 @@ public class BotsingWizardPage extends WizardPage
 	botsingProperties.add(stackProperty);
 	
 	// Spinner for the frame level
-	BotsingSpinnerProperty frameLevel = 
-    new BotsingSpinnerProperty("2","-target_frame","Exception frame level : ",true);
+	FrameLevelProperty frameLevel = 
+    new FrameLevelProperty("2","-target_frame","Exception frame level : ");
 	frameLevel.createControl(composite);
 	if(propertiesLoaded) frameLevel.setTooltip(properties.getProperty("frame_level"));
 	botsingProperties.add(frameLevel);	
@@ -248,13 +248,7 @@ public class BotsingWizardPage extends WizardPage
 			LogReader reader = new LogReader();
 			reader.setFile(newData);
 			int level = reader.getFrameLevel();
-			if(level > 0) {
-				frameLevel.setMaximun(level);
-			if(Double.parseDouble(frameLevel.getData()) > level) {
-				frameLevel.getSpinner().setSelection(level);
-				frameLevel.getSpinner().notifyListeners(SWT.Selection,new Event());
-			}
-			}
+			if(level > 0) frameLevel.setMaximun(level);
 		}
 	});
     
